@@ -1,0 +1,9 @@
+name: DiscordBMV
+version: '1.0'
+main: com.wairesd.discordbm.bukkit.DiscordBMB
+api-version: '1.21'
+authors: [1wairesd]
+commands:
+  discordBMB:
+    description: Discord bot plugin management
+    permission: discrdbmb.admin

@@ -1,0 +1,28 @@
+# Example
+commands:
+  - name: "hello"
+    description: "Says hello to the user"
+    context: "server"
+    options:
+      - name: "target"
+        type: "STRING"
+        description: "Who to greet"
+        required: true
+    conditions:
+      - type: "permission"
+        role: "Admin"
+    actions:
+      - type: "send_message"
+        message: "Hello, {user}! You greeted {target}."
+  - name: "openwebsite"
+    description: "Open the website"
+    context: "both"
+    actions:
+      - type: send_message
+        message: "Click the button below to open the site:"
+      - type: button
+        label: "Open the site"
+        style: "LINK"
+        url: "https://example.com"
+        emoji: "🔗"
+        disabled: false
