@@ -13,10 +13,10 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 // Handles the /discordbotmanager-bukkit command for reloading configurations.
-public class AdminCommand implements CommandExecutor, TabCompleter {
+public class CommandAdmin implements CommandExecutor, TabCompleter {
     private final DiscordBMB plugin;
 
-    public AdminCommand(DiscordBMB plugin) {
+    public CommandAdmin(DiscordBMB plugin) {
         this.plugin = plugin;
     }
 

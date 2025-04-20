@@ -6,7 +6,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.wairesd.discordbm.velocity.command.AdminCommand;
+import com.wairesd.discordbm.velocity.command.CommandAdmin;
 import com.wairesd.discordbm.velocity.command.custom.CommandManager;
 import com.wairesd.discordbm.velocity.command.custom.listeners.ButtonInteractionListener;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
@@ -55,7 +55,7 @@ public class DiscordBMV {
 
         proxy.getCommandManager().register(
                 proxy.getCommandManager().metaBuilder("discordBMV").build(),
-                new AdminCommand(this)
+                new CommandAdmin(this)
         );
 
         String token = Settings.getBotToken();

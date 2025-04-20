@@ -9,10 +9,10 @@ import com.wairesd.discordbm.velocity.util.Color;
 
 import java.util.stream.Collectors;
 
-public class AdminCommand implements SimpleCommand {
+public class CommandAdmin implements SimpleCommand {
     private final DiscordBMV plugin;
 
-    public AdminCommand(DiscordBMV plugin) {
+    public CommandAdmin(DiscordBMV plugin) {
         this.plugin = plugin;
     }
 

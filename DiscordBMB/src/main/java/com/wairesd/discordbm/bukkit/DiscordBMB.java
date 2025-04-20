@@ -2,7 +2,7 @@ package com.wairesd.discordbm.bukkit;
 
 import com.google.gson.Gson;
 import com.wairesd.discordbm.bukkit.api.DiscordBotManagerBukkitApi;
-import com.wairesd.discordbm.bukkit.command.AdminCommand;
+import com.wairesd.discordbm.bukkit.command.CommandAdmin;
 import com.wairesd.discordbm.bukkit.config.Messages;
 import com.wairesd.discordbm.bukkit.config.Settings;
 import com.wairesd.discordbm.bukkit.handle.DiscordCommandHandler;
@@ -38,8 +38,8 @@ public class DiscordBMB extends JavaPlugin {
         int velocityPort = Settings.getVelocityPort();
         serverName = Settings.getServerName();
 
-        getCommand("discordBMB").setExecutor(new AdminCommand(this));
-        getCommand("discordBMB").setTabCompleter(new AdminCommand(this));
+        getCommand("discordBMB").setExecutor(new CommandAdmin(this));
+        getCommand("discordBMB").setTabCompleter(new CommandAdmin(this));
 
         getServer().getScheduler().runTaskAsynchronously(this, () -> {
             try {
