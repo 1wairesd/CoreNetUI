@@ -6,9 +6,9 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.wairesd.discordbm.velocity.command.CommandAdmin;
-import com.wairesd.discordbm.velocity.command.custom.CommandManager;
-import com.wairesd.discordbm.velocity.command.custom.listeners.ButtonInteractionListener;
+import com.wairesd.discordbm.velocity.commands.CommandAdmin;
+import com.wairesd.discordbm.velocity.commands.custom.CommandManager;
+import com.wairesd.discordbm.velocity.commands.custom.listeners.ButtonInteractionListener;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
@@ -44,20 +44,40 @@ public class DiscordBMV {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        initializeConfiguration();
+        initializeDatabase();
+        initializeNettyServer();
+        registerCommands();
+        initializeDiscordBot();
+        startNettyServer();
+    }
+
+    private void initializeConfiguration() {
         ConfigManager.init(dataDirectory);
         ConfigManager.ConfigureReload();
+    }
 
+    private void initializeDatabase() {
         String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db").toString();
         dbManager = new DatabaseManager(dbPath);
+    }
 
+    private void initializeNettyServer() {
         nettyServer = new NettyServer(logger, dbManager);
-        new Thread(nettyServer::start, "Netty-Server-Thread").start();
+    }
 
+    private void startNettyServer() {
+        new Thread(nettyServer::start, "Netty-Server-Thread").start();
+    }
+
+    private void registerCommands() {
         proxy.getCommandManager().register(
                 proxy.getCommandManager().metaBuilder("discordBMV").build(),
                 new CommandAdmin(this)
         );
+    }
 
+    private void initializeDiscordBot() {
         String token = Settings.getBotToken();
         if (token == null || token.isEmpty()) {
             logger.error("Bot token is not specified in settings.yml!");
@@ -89,19 +109,15 @@ public class DiscordBMV {
         }
     }
 
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
     private Activity createActivity() {
         String activityType = Settings.getActivityType().toLowerCase();
         String activityMessage = Settings.getActivityMessage();
-        switch (activityType) {
-            case "playing": return Activity.playing(activityMessage);
-            case "watching": return Activity.watching(activityMessage);
-            case "listening": return Activity.listening(activityMessage);
-            default: return Activity.playing(activityMessage);
-        }
+        return switch (activityType) {
+            case "playing" -> Activity.playing(activityMessage);
+            case "watching" -> Activity.watching(activityMessage);
+            case "listening" -> Activity.listening(activityMessage);
+            default -> Activity.playing(activityMessage);
+        };
     }
 
     public void updateActivity() {
@@ -111,5 +127,11 @@ public class DiscordBMV {
         }
     }
 
-    public NettyServer getNettyServer() { return nettyServer; }
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public NettyServer getNettyServer() {
+        return nettyServer;
+    }
 }

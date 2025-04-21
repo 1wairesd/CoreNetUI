@@ -2,13 +2,14 @@ package com.wairesd.discordbm.bukkit;
 
 import com.google.gson.Gson;
 import com.wairesd.discordbm.bukkit.api.DiscordBotManagerBukkitApi;
-import com.wairesd.discordbm.bukkit.command.CommandAdmin;
-import com.wairesd.discordbm.bukkit.config.Messages;
-import com.wairesd.discordbm.bukkit.config.Settings;
-import com.wairesd.discordbm.bukkit.handle.DiscordCommandHandler;
-import com.wairesd.discordbm.bukkit.model.Command;
-import com.wairesd.discordbm.bukkit.model.RegisterMessage;
-import com.wairesd.discordbm.bukkit.model.ResponseMessage;
+import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
+import com.wairesd.discordbm.bukkit.config.ConfigManager;
+import com.wairesd.discordbm.bukkit.config.configurators.Settings;
+import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.bukkit.models.command.Command;
+import com.wairesd.discordbm.bukkit.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
+import com.wairesd.discordbm.bukkit.models.register.ResponseMessage;
 import com.wairesd.discordbm.bukkit.network.NettyClient;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,12 +28,13 @@ public class DiscordBMB extends JavaPlugin {
     private String serverName;
     private final Gson gson = new Gson();
     private boolean invalidSecret = false;
+    private ConfigManager configManager;
 
     @Override
     public void onEnable() {
         api = new DiscordBotManagerBukkitApi(this);
-        Settings.load(this);
-        Messages.load(this);
+        configManager = new ConfigManager(this);
+        configManager.loadConfigs();
 
         String velocityHost = Settings.getVelocityHost();
         int velocityPort = Settings.getVelocityPort();
@@ -73,9 +75,10 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public void sendResponse(String requestId, String response) {
+    public void sendResponse(String requestId, String embed) {
         if (nettyClient != null && nettyClient.isActive()) {
-            ResponseMessage respMsg = new ResponseMessage("response", requestId, response);
+            EmbedDefinition embedObj = gson.fromJson(embed, EmbedDefinition.class);
+            ResponseMessage respMsg = new ResponseMessage("response", requestId, null, embedObj);
             String json = gson.toJson(respMsg);
             nettyClient.send(json);
         }
@@ -102,6 +105,10 @@ public class DiscordBMB extends JavaPlugin {
                 getLogger().info("Sent registration message for " + addonCommands.size() + " addon commands.");
             }
         }
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 
     public Map<String, DiscordCommandHandler> getCommandHandlers() {

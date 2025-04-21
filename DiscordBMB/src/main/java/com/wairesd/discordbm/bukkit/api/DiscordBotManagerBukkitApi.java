@@ -2,10 +2,11 @@ package com.wairesd.discordbm.bukkit.api;
 
 import com.google.gson.Gson;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
-import com.wairesd.discordbm.bukkit.config.Settings;
-import com.wairesd.discordbm.bukkit.handle.DiscordCommandHandler;
-import com.wairesd.discordbm.bukkit.model.Command;
-import com.wairesd.discordbm.bukkit.model.RegisterMessage;
+import com.wairesd.discordbm.bukkit.config.configurators.Settings;
+import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.bukkit.models.command.Command;
+import com.wairesd.discordbm.bukkit.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
 
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class DiscordBotManagerBukkitApi {
         }
     }
 
-    public void sendResponse(String requestId, String response) {
-        plugin.sendResponse(requestId, response);
+    public void sendResponse(String requestId, EmbedDefinition embed) {
+        plugin.sendResponse(requestId, gson.toJson(embed));
     }
 
     public void sendNettyMessage(String message) {

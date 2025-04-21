@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.bukkit.api;
 
-import com.wairesd.discordbm.bukkit.model.Command;
-import com.wairesd.discordbm.bukkit.model.CommandOption;
+import com.wairesd.discordbm.bukkit.models.command.Command;
+import com.wairesd.discordbm.bukkit.models.command.CommandOption;
 
 import java.util.ArrayList;
 import java.util.List;

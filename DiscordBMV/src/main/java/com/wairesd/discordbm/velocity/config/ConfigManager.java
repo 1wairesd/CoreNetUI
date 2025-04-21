@@ -1,10 +1,11 @@
 
 package com.wairesd.discordbm.velocity.config;
 
-import java.nio.file.Path;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
+
+import java.nio.file.Path;
 
 public class ConfigManager {
 

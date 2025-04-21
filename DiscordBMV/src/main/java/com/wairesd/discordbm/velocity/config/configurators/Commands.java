@@ -1,21 +1,20 @@
-
 package com.wairesd.discordbm.velocity.config.configurators;
 
-import com.wairesd.discordbm.velocity.command.custom.actions.ButtonAction;
-import com.wairesd.discordbm.velocity.command.custom.actions.SendMessageAction;
-import com.wairesd.discordbm.velocity.command.custom.conditions.PermissionCondition;
-import com.wairesd.discordbm.velocity.command.custom.models.CommandAction;
-import com.wairesd.discordbm.velocity.command.custom.models.CommandCondition;
-import com.wairesd.discordbm.velocity.command.custom.models.CommandOption;
-import com.wairesd.discordbm.velocity.command.custom.models.CustomCommand;
+import com.wairesd.discordbm.velocity.commands.custom.actions.ButtonAction;
+import com.wairesd.discordbm.velocity.commands.custom.actions.SendMessageAction;
+import com.wairesd.discordbm.velocity.commands.custom.conditions.PermissionCondition;
+import com.wairesd.discordbm.velocity.commands.custom.models.CommandAction;
+import com.wairesd.discordbm.velocity.commands.custom.models.CommandCondition;
+import com.wairesd.discordbm.velocity.commands.custom.models.CommandOption;
+import com.wairesd.discordbm.velocity.commands.custom.models.CustomCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -24,47 +23,56 @@ import java.util.stream.Collectors;
 
 public class Commands {
     private static final Logger logger = LoggerFactory.getLogger(Commands.class);
+    private static final String COMMANDS_FILE_NAME = "commands.yml";
+
     private static Path dataDirectory;
     private static List<CustomCommand> customCommands;
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
-        load();
+        loadCommands();
     }
 
-    public static void load() {
+    private static void loadCommands() {
         CompletableFuture.runAsync(() -> {
             try {
-                Path commandsPath = dataDirectory.resolve("commands.yml");
+                Path commandsPath = dataDirectory.resolve(COMMANDS_FILE_NAME);
                 if (!Files.exists(commandsPath)) {
-                    Files.createDirectories(dataDirectory);
-                    try (InputStream in = Commands.class.getClassLoader().getResourceAsStream("commands.yml")) {
-                        if (in != null) {
-                            Files.copy(in, commandsPath);
-                        } else {
-                            logger.error("commands.yml not found in resources!");
-                            return;
-                        }
-                    }
+                    createDefaultCommandsFile(commandsPath);
                 }
-                Yaml yaml = new Yaml();
-                Map<String, Object> data = yaml.load(Files.newInputStream(commandsPath));
-                List<Map<String, Object>> commandsList = (List<Map<String, Object>>) data.get("commands");
-                customCommands = new ArrayList<>();
 
-                for (Map<String, Object> cmdData : commandsList) {
-                    CustomCommand cmd = parseCommand(cmdData);
-                    customCommands.add(cmd);
-                }
-                logger.info("commands.yml loaded successfully with {} commands", customCommands.size());
+                customCommands = loadCommandsFromFile(commandsPath);
+                logger.info("{} loaded successfully with {} commands", COMMANDS_FILE_NAME, customCommands.size());
             } catch (Exception e) {
-                logger.error("Error loading commands.yml: {}", e.getMessage(), e);
+                logger.error("Error loading {}: {}", COMMANDS_FILE_NAME, e.getMessage(), e);
             }
         });
     }
 
+    private static void createDefaultCommandsFile(Path commandsPath) throws IOException {
+        Files.createDirectories(dataDirectory);
+        try (InputStream in = Commands.class.getClassLoader().getResourceAsStream(COMMANDS_FILE_NAME)) {
+            if (in != null) {
+                Files.copy(in, commandsPath);
+            } else {
+                logger.error("{} not found in resources!", COMMANDS_FILE_NAME);
+            }
+        }
+    }
+
+    private static List<CustomCommand> loadCommandsFromFile(Path commandsPath) throws IOException {
+        try (InputStream in = Files.newInputStream(commandsPath)) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> data = yaml.load(in);
+            List<Map<String, Object>> commandsList = (List<Map<String, Object>>) data.getOrDefault("commands", Collections.emptyList());
+            return commandsList.stream()
+                    .map(Commands::parseCommand)
+                    .collect(Collectors.toList());
+        }
+    }
+
     public static void reload() {
-        load();
+        loadCommands();
     }
 
     public static List<CustomCommand> getCustomCommands() {
@@ -72,59 +80,84 @@ public class Commands {
     }
 
     private static CustomCommand parseCommand(Map<String, Object> cmdData) {
-        String name = (String) cmdData.get("name");
-        String description = (String) cmdData.get("description");
-        String context = (String) cmdData.getOrDefault("context", "both");
-        List<Map<String, Object>> optionsData = (List<Map<String, Object>>) cmdData.getOrDefault("options", Collections.emptyList());
-        List<Map<String, Object>> conditionsData = (List<Map<String, Object>>) cmdData.getOrDefault("conditions", Collections.emptyList());
-        List<Map<String, Object>> actionsData = (List<Map<String, Object>>) cmdData.getOrDefault("actions", Collections.emptyList());
+        String name = getString(cmdData, "name");
+        String description = getString(cmdData, "description");
+        String context = getString(cmdData, "context", "both");
 
-        List<CommandOption> options = optionsData.stream().map(Commands::createOption).toList();
-        List<CommandCondition> conditions = conditionsData.stream()
-                .map(Commands::createCondition)
-                .filter(c -> c != null)
-                .collect(Collectors.toList());
-
-        List<CommandAction> actions = actionsData.stream()
-                .map(Commands::createAction)
-                .filter(a -> a != null)
-                .collect(Collectors.toList());
-
+        List<CommandOption> options = getOptions(cmdData);
+        List<CommandCondition> conditions = getConditions(cmdData);
+        List<CommandAction> actions = getActions(cmdData);
 
         return new CustomCommand(
                 name,
                 description,
                 context,
-                options != null ? List.copyOf(options) : List.of(),
-                conditions != null ? List.copyOf(conditions) : List.of(),
-                actions != null ? List.copyOf(actions) : List.of()
+                options,
+                conditions,
+                actions
         );
+    }
+
+    private static String getString(Map<String, Object> data, String key) {
+        return (String) data.get(key);
+    }
+
+    private static String getString(Map<String, Object> data, String key, String defaultValue) {
+        return (String) data.getOrDefault(key, defaultValue);
+    }
+
+    private static List<CommandOption> getOptions(Map<String, Object> cmdData) {
+        return getList(cmdData, "options", Commands::createOption);
+    }
+
+    private static List<CommandCondition> getConditions(Map<String, Object> cmdData) {
+        return getList(cmdData, "conditions", Commands::createCondition);
+    }
+
+    private static List<CommandAction> getActions(Map<String, Object> cmdData) {
+        return getList(cmdData, "actions", Commands::createAction);
+    }
+
+    private static <T> List<T> getList(Map<String, Object> data, String key, CommandParser<T> parser) {
+        List<Map<String, Object>> listData = (List<Map<String, Object>>) data.getOrDefault(key, Collections.emptyList());
+        return listData.stream()
+                .map(parser::parse)
+                .filter(item -> item != null)
+                .collect(Collectors.toList());
     }
 
     private static CommandOption createOption(Map<String, Object> data) {
         return new CommandOption(
-                (String) data.get("name"),
-                (String) data.get("type"),
-                (String) data.get("description"),
-                (boolean) data.getOrDefault("required", false)
+                getString(data, "name"),
+                getString(data, "type"),
+                getString(data, "description"),
+                getBoolean(data, "required", false)
         );
     }
 
     private static CommandCondition createCondition(Map<String, Object> data) {
-        String type = (String) data.get("type");
-        if ("permission".equals(type)) {
-            return new PermissionCondition(data);
-        }
-        return null;
+        String type = getString(data, "type");
+        return switch (type) {
+            case "permission" -> new PermissionCondition(data);
+            default -> null;
+        };
     }
 
     private static CommandAction createAction(Map<String, Object> data) {
-        String type = (String) data.get("type");
-        if ("send_message".equals(type)) {
-            return new SendMessageAction(data);
-        } else if ("button".equals(type)) {
-            return new ButtonAction(data);
-        }
-        return null;
+        String type = getString(data, "type");
+        return switch (type) {
+            case "send_message" -> new SendMessageAction(data);
+            case "button" -> new ButtonAction(data);
+            default -> null;
+        };
+    }
+
+    private static boolean getBoolean(Map<String, Object> data, String key, boolean defaultValue) {
+        return (boolean) data.getOrDefault(key, defaultValue);
+    }
+
+    @FunctionalInterface
+    private interface CommandParser<T> {
+        T parse(Map<String, Object> data);
     }
 }

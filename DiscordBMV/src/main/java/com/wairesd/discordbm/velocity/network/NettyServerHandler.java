@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.discord.ResponseHandler;
-import com.wairesd.discordbm.velocity.model.RegisterMessage;
-import com.wairesd.discordbm.velocity.model.ResponseMessage;
+import com.wairesd.discordbm.velocity.models.register.RegisterMessage;
+import com.wairesd.discordbm.velocity.models.response.ResponseMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private void handleResponse(JsonObject json) {
         if (!authenticated) return;
         ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
-        ResponseHandler.handleResponse(respMsg.requestId(), respMsg.response());
+        ResponseHandler.handleResponse(respMsg);
     }
 
     @Override

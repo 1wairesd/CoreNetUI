@@ -2,43 +2,49 @@ package com.wairesd.discordbm.velocity.discord;
 
 import com.google.gson.Gson;
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.command.custom.CommandExecutor;
+import com.wairesd.discordbm.velocity.commands.custom.CommandExecutor;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
-import com.wairesd.discordbm.velocity.model.CommandDefinition;
-import com.wairesd.discordbm.velocity.model.RequestMessage;
+import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
+import com.wairesd.discordbm.velocity.models.register.RequestMessage;
 import com.wairesd.discordbm.velocity.network.NettyServer;
-import io.netty.channel.Channel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.slf4j.Logger;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DiscordBotListener extends ListenerAdapter {
+    private static final Gson GSON = new Gson();
+    private static final String SELECT_MENU_PREFIX = "select_server_";
+
     private final DiscordBMV plugin;
     private final NettyServer nettyServer;
-    private final Gson gson = new Gson();
-    private final ConcurrentHashMap<UUID, SlashCommandInteractionEvent> pendingRequests = new ConcurrentHashMap<>();
-    private final Map<String, SelectionInfo> pendingSelections = new ConcurrentHashMap<>();
     private final Logger logger;
     private final CommandExecutor commandExecutor;
+    private final ConcurrentHashMap<UUID, SlashCommandInteractionEvent> pendingRequests = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SelectionInfo> pendingSelections = new ConcurrentHashMap<>();
 
     public DiscordBotListener(DiscordBMV plugin, NettyServer nettyServer, Logger logger) {
+        this.plugin = plugin;
         this.nettyServer = nettyServer;
         this.logger = logger;
-        this.plugin = plugin;
         this.commandExecutor = new CommandExecutor();
     }
 
-    public ConcurrentHashMap<UUID, SlashCommandInteractionEvent> getPendingRequests() { return pendingRequests; }
-    public Map<String, SelectionInfo> getPendingSelections() { return pendingSelections; }
+    public ConcurrentHashMap<UUID, SlashCommandInteractionEvent> getPendingRequests() {
+        return pendingRequests;
+    }
+
+    public Map<String, SelectionInfo> getPendingSelections() {
+        return pendingSelections;
+    }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -46,96 +52,162 @@ public class DiscordBotListener extends ListenerAdapter {
         List<NettyServer.ServerInfo> servers = nettyServer.getServersForCommand(command);
 
         if (servers.isEmpty()) {
-            var customCommand = plugin.getCommandManager().getCommand(command);
-            if (customCommand != null) {
-                commandExecutor.execute(event, customCommand);
-            } else {
-                event.reply("Command unavailable.").setEphemeral(true).queue();
-            }
+            handleCustomCommand(event, command);
             return;
         }
 
         CommandDefinition cmdDef = nettyServer.getCommandDefinitions().get(command);
-        if ("dm".equals(cmdDef.context()) && event.getGuild() != null) {
-            event.reply("This command is only available in direct messages.").setEphemeral(true).queue();
+        if (isCommandRestrictedToDM(event, cmdDef)) {
+            replyCommandRestrictedToDM(event);
             return;
         }
 
+        handleServerSelection(event, servers);
+    }
+
+    private boolean isCommandRestrictedToDM(SlashCommandInteractionEvent event, CommandDefinition cmdDef) {
+        return "dm".equals(cmdDef.context()) && event.getGuild() != null;
+    }
+
+    private void replyCommandRestrictedToDM(SlashCommandInteractionEvent event) {
+        event.reply("This command is only available in direct messages.")
+                .setEphemeral(true)
+                .queue();
+    }
+
+    private void handleServerSelection(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
         if (servers.size() == 1) {
-            Channel channel = servers.get(0).channel();
-            UUID requestId = UUID.randomUUID();
-            pendingRequests.put(requestId, event);
-            event.deferReply().queue();
-
-            Map<String, String> options = new HashMap<>();
-            event.getOptions().forEach(opt -> options.put(opt.getName(), opt.getAsString()));
-
-            RequestMessage request = new RequestMessage("request", command, options, requestId.toString());
-            String message = gson.toJson(request);
-            if (Settings.isDebugClientResponses()) {
-                logger.info("Sending request to server: {}", message);
-            }
-            nettyServer.sendMessage(channel, message);
+            sendRequestToSingleServer(event, servers.get(0));
         } else {
-            String selectMenuId = "select_server_" + UUID.randomUUID().toString();
-            pendingSelections.put(selectMenuId, new SelectionInfo(event, servers));
+            sendServerSelectionMenu(event, servers);
+        }
+    }
 
-            StringSelectMenu menu = StringSelectMenu.create(selectMenuId)
-                    .setPlaceholder("Select a server")
-                    .setRequiredRange(1, 1)
-                    .addOptions(servers.stream()
-                            .map(server -> SelectOption.of(server.serverName(), server.serverName()))
-                            .toList())
-                    .build();
-
-            event.reply("Command registered on multiple servers. Select one:")
-                    .addActionRow(menu)
+    private void handleCustomCommand(SlashCommandInteractionEvent event, String command) {
+        var customCommand = plugin.getCommandManager().getCommand(command);
+        if (customCommand != null) {
+            commandExecutor.execute(event, customCommand);
+        } else {
+            event.reply("Command unavailable.")
                     .setEphemeral(true)
                     .queue();
         }
     }
 
+    private void sendRequestToSingleServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo) {
+        sendRequestToServer(event, serverInfo, generateRequestId());
+    }
+
+    private void sendServerSelectionMenu(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
+        String selectMenuId = generateSelectMenuId();
+        pendingSelections.put(selectMenuId, new SelectionInfo(event, servers));
+
+        StringSelectMenu menu = createServerSelectMenu(selectMenuId, servers);
+
+        event.reply("Command registered on multiple servers. Select one:")
+                .addActionRow(menu)
+                .setEphemeral(true)
+                .queue();
+    }
+
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        String customId = event.getComponentId();
-        if (customId.startsWith("select_server_")) {
-            SelectionInfo selectionInfo = pendingSelections.remove(customId);
-            if (selectionInfo == null) {
-                event.reply("Selection timeout expired.").setEphemeral(true).queue();
-                return;
-            }
+        if (!event.getComponentId().startsWith(SELECT_MENU_PREFIX)) return;
 
-            List<String> selectedValues = event.getValues();
-            if (selectedValues.isEmpty()) {
-                event.reply("No server selected.").setEphemeral(true).queue();
-                return;
-            }
+        SelectionInfo selectionInfo = pendingSelections.remove(event.getComponentId());
+        if (selectionInfo == null) {
+            replySelectionTimeout(event);
+            return;
+        }
 
-            String chosenServerName = selectedValues.get(0);
-            NettyServer.ServerInfo targetServer = selectionInfo.servers.stream()
-                    .filter(server -> server.serverName().equals(chosenServerName))
-                    .findFirst()
-                    .orElse(null);
-            if (targetServer == null) {
-                event.reply("Selected server not found.").setEphemeral(true).queue();
-                return;
-            }
+        handleSelectedServer(event, selectionInfo);
+    }
 
-            UUID requestId = UUID.randomUUID();
-            pendingRequests.put(requestId, selectionInfo.event);
-            event.deferEdit().queue();
+    private void handleSelectedServer(StringSelectInteractionEvent event, SelectionInfo selectionInfo) {
+        String chosenServerName = event.getValues().stream().findFirst().orElse(null);
+        if (chosenServerName == null) {
+            replyNoServerSelected(event);
+            return;
+        }
 
-            Map<String, String> options = new HashMap<>();
-            selectionInfo.event.getOptions().forEach(opt -> options.put(opt.getName(), opt.getAsString()));
+        NettyServer.ServerInfo targetServer = findTargetServer(selectionInfo.servers(), chosenServerName);
+        if (targetServer == null) {
+            replyServerNotFound(event);
+            return;
+        }
 
-            RequestMessage request = new RequestMessage("request", selectionInfo.event.getName(), options, requestId.toString());
-            String json = gson.toJson(request);
-            if (Settings.isDebugClientResponses()) {
-                logger.info("Sending request to selected server {}: {}", chosenServerName, json);
-            }
-            nettyServer.sendMessage(targetServer.channel(), json);
+        sendRequestToSelectedServer(selectionInfo.event(), targetServer, chosenServerName);
+    }
+
+    private NettyServer.ServerInfo findTargetServer(List<NettyServer.ServerInfo> servers, String chosenServerName) {
+        return servers.stream()
+                .filter(server -> server.serverName().equals(chosenServerName))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void sendRequestToSelectedServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo targetServer, String chosenServerName) {
+        sendRequestToServer(event, targetServer, generateRequestId());
+    }
+
+    private void sendRequestToServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo, UUID requestId) {
+        pendingRequests.put(requestId, event);
+        event.deferReply().queue();
+
+        RequestMessage request = createRequestMessage(event, requestId);
+        String json = GSON.toJson(request);
+        logDebug(json, serverInfo.serverName());
+        nettyServer.sendMessage(serverInfo.channel(), json);
+    }
+
+    private UUID generateRequestId() {
+        return UUID.randomUUID();
+    }
+
+    private String generateSelectMenuId() {
+        return SELECT_MENU_PREFIX + UUID.randomUUID();
+    }
+
+    private StringSelectMenu createServerSelectMenu(String selectMenuId, List<NettyServer.ServerInfo> servers) {
+        return StringSelectMenu.create(selectMenuId)
+                .setPlaceholder("Select a server")
+                .setRequiredRange(1, 1)
+                .addOptions(servers.stream()
+                        .map(server -> SelectOption.of(server.serverName(), server.serverName()))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    private RequestMessage createRequestMessage(SlashCommandInteractionEvent event, UUID requestId) {
+        Map<String, String> options = event.getOptions().stream()
+                .collect(Collectors.toMap(opt -> opt.getName(), opt -> opt.getAsString()));
+        return new RequestMessage("request", event.getName(), options, requestId.toString());
+    }
+
+    private void replySelectionTimeout(StringSelectInteractionEvent event) {
+        event.reply("Selection timeout expired.")
+                .setEphemeral(true)
+                .queue();
+    }
+
+    private void replyNoServerSelected(StringSelectInteractionEvent event) {
+        event.reply("No server selected.")
+                .setEphemeral(true)
+                .queue();
+    }
+
+    private void replyServerNotFound(StringSelectInteractionEvent event) {
+        event.reply("Selected server not found.")
+                .setEphemeral(true)
+                .queue();
+    }
+
+    private void logDebug(String message, String serverName) {
+        if (Settings.isDebugClientResponses()) {
+            logger.info("Sending request to server {}: {}", serverName, message);
         }
     }
 
-    public static record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {}
+    public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
+    }
 }
