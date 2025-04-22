@@ -1,6 +1,20 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'xyz.jpenilla.run-paper' version '2.3.1'
+    id 'maven-publish'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = 'com.wairesd.discordbm.bukkit'
+            artifactId = 'DiscordBMB'
+            version = '1.0'
+
+        }
+    }
 }
 
 group = 'com.wairesd.discordbm.bukkit'
@@ -8,21 +22,29 @@ version = '1.0'
 
 repositories {
     mavenCentral()
-    maven {
-        name = "papermc-repo"
-        url  = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven {
-        name = "sonatype"
-        url  = "https://oss.sonatype.org/content/groups/public/"
-    }
+    maven { name = "papermc-repo"; url  = "https://repo.papermc.io/repository/maven-public/" }
+    maven { name = "sonatype";      url  = "https://oss.sonatype.org/content/groups/public/" }
 }
 
 dependencies {
+    implementation project(':common')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'net.kyori:adventure-api:4.14.0'
+    implementation 'org.spongepowered:configurate-core:4.1.2'
+    implementation 'org.spongepowered:configurate-yaml:4.1.2'
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'io.netty:netty-all:4.2.0.Final'
-    implementation project(':common')
     compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT"
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    mergeServiceFiles()
+    // relocate 'com.wairesd.discordbm.common', 'com.wairesd.discordbm.bukkit.shaded.common'
+}
+
+tasks.build {
+    dependsOn shadowJar
 }
 
 tasks {
@@ -31,21 +53,18 @@ tasks {
     }
 }
 
-def targetJavaVersion = 17
-
 java {
-    sourceCompatibility = JavaVersion.toVersion(targetJavaVersion)
-    targetCompatibility = JavaVersion.toVersion(targetJavaVersion)
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << "-Xlint:deprecation"
     options.encoding = 'UTF-8'
-    options.release.set(targetJavaVersion)
+    options.release.set(17)
 }
 
 processResources {
     def props = [version: version]
-    inputs.properties props
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
         expand props

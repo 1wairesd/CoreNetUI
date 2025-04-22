@@ -1,10 +1,23 @@
 plugins {
+    id 'maven-publish'
     id 'java'
     id 'xyz.jpenilla.run-paper' version '2.3.1'
 }
 
 group = 'com.wairesd.discordbm'
 version = '1.0'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = 'com.wairesd.discordbm'
+            artifactId = 'DiscordBM'
+            version = '1.0'
+
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -19,6 +32,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'net.kyori:adventure-api:4.14.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.14.0'
     compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT"
 }
 
@@ -28,21 +43,17 @@ tasks {
     }
 }
 
-def targetJavaVersion = 17
-
 java {
-    sourceCompatibility = JavaVersion.toVersion(targetJavaVersion)
-    targetCompatibility = JavaVersion.toVersion(targetJavaVersion)
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.release.set(targetJavaVersion)
+    options.release.set(17)
 }
 
 processResources {
     def props = [version: version]
-    inputs.properties props
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
         expand props

@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.bukkit.config.configurators;
 
-import com.wairesd.discordbm.bukkit.utils.Color;
+import com.wairesd.discordbm.common.utils.ColorUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +64,6 @@ public class Messages {
      */
     public static String getMessage(String key) {
         String message = messagesConfig.node(key).getString("Message not found.");
-        return Color.translate(message);
+        return ColorUtils.parseString(message);
     }
 }

@@ -20,7 +20,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
+    implementation project(':common')
+    implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
     implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'io.netty:netty-all:4.2.0.Final'
@@ -36,10 +37,11 @@ tasks {
     shadowJar {
         archiveClassifier.set('')
         relocate 'net.dv8tion.jda', 'com.wairesd.shaded.jda'
+        mergeServiceFiles()
     }
 
     build {
-        dependsOn shadowJar
+        dependsOn(tasks.shadowJar)
     }
 }
 

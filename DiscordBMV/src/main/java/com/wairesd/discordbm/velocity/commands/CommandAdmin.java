@@ -2,10 +2,11 @@ package com.wairesd.discordbm.velocity.commands;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import com.wairesd.discordbm.common.utils.ColorUtils;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
-import com.wairesd.discordbm.velocity.utils.Color;
+
 
 import java.util.stream.Collectors;
 
@@ -22,29 +23,29 @@ public class CommandAdmin implements SimpleCommand {
         String[] args = invocation.arguments();
 
         if (args.length == 0) {
-            source.sendMessage(Color.parse(Messages.getMessage("usage-admin-command")));
+            source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command")));
             return;
         }
 
         switch (args[0].toLowerCase()) {
             case "reload":
                 if (!source.hasPermission("discordbotmanager.reload")) {
-                    source.sendMessage(Color.parse(Messages.getMessage("no-permission")));
+                    source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("no-permission")));
                     return;
                 }
                 ConfigManager.ConfigureReload();
                 plugin.updateActivity();
                 plugin.getCommandManager().loadAndRegisterCommands();
-                source.sendMessage(Color.parse(Messages.getMessage("reload-success")));
+                source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("reload-success")));
                 break;
             case "commands":
                 if (!source.hasPermission("discordbotmanager.commands")) {
-                    source.sendMessage(Color.parse(Messages.getMessage("no-permission")));
+                    source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("no-permission")));
                     return;
                 }
                 var commandToServers = plugin.getNettyServer().getCommandToServers();
                 if (commandToServers.isEmpty()) {
-                    source.sendMessage(Color.parse("No registered commands."));
+                    source.sendMessage(ColorUtils.parseComponent("No registered commands."));
                     return;
                 }
                 for (var entry : commandToServers.entrySet()) {
@@ -52,11 +53,11 @@ public class CommandAdmin implements SimpleCommand {
                     String serverList = entry.getValue().stream()
                             .map(server -> server.serverName())
                             .collect(Collectors.joining(", "));
-                    source.sendMessage(Color.parse("&e" + command + ": &f" + serverList));
+                    source.sendMessage(ColorUtils.parseComponent("&e" + command + ": &f" + serverList));
                 }
                 break;
             default:
-                source.sendMessage(Color.parse(Messages.getMessage("usage-admin-command")));
+                source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command")));
         }
     }
 }

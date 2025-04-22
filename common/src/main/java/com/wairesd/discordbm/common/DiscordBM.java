@@ -2,7 +2,7 @@ package com.wairesd.discordbm.common;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Common extends JavaPlugin {
+public final class DiscordBM extends JavaPlugin {
 
     @Override
     public void onEnable() {
