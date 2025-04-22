@@ -11,6 +11,13 @@ import java.util.concurrent.Executors;
 
 public class DatabaseManager {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
+    static {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            logger.error("Failed to load SQLite JDBC driver", e);
+        }
+    }
     private static final String IP_BLOCKS_TABLE = "ip_blocks";
     private static final String CREATE_TABLE_SQL = """
             CREATE TABLE IF NOT EXISTS %s (

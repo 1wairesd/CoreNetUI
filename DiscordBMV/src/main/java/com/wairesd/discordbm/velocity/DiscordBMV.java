@@ -54,7 +54,6 @@ public class DiscordBMV {
 
     private void initializeConfiguration() {
         ConfigManager.init(dataDirectory);
-        ConfigManager.ConfigureReload();
     }
 
     private void initializeDatabase() {
