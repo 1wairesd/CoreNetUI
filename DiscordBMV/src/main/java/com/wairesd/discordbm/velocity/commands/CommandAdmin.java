@@ -7,7 +7,6 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
 
-
 import java.util.stream.Collectors;
 
 public class CommandAdmin implements SimpleCommand {

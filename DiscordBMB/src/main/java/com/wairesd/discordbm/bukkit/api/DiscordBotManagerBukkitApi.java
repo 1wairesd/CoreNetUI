@@ -7,6 +7,7 @@ import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.bukkit.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
+import com.wairesd.discordbm.bukkit.models.register.UnregisterMessage;
 
 import java.util.List;
 
@@ -42,6 +43,31 @@ public class DiscordBotManagerBukkitApi {
         plugin.sendNettyMessage(json);
         if (Settings.isDebugCommandRegistrations()) {
             plugin.getLogger().info("Sent registration message for command: " + command.name);
+        }
+    }
+
+    public void unregisterCommand(String commandName, String pluginName) {
+        if (plugin.getNettyClient() != null && plugin.getNettyClient().isActive()) {
+            sendUnregistrationMessage(commandName, pluginName);
+        }
+    }
+
+    private void sendUnregistrationMessage(String commandName, String pluginName) {
+        String secretCode = Settings.getSecretCode();
+        if (secretCode == null || secretCode.isEmpty()) {
+            return;
+        }
+
+        UnregisterMessage unregisterMsg = new UnregisterMessage(
+                plugin.getServerName(),
+                pluginName,
+                commandName,
+                secretCode
+        );
+        String json = gson.toJson(unregisterMsg);
+        plugin.sendNettyMessage(json);
+        if (Settings.isDebugCommandRegistrations()) {
+            plugin.getLogger().info("Sent unregistration message for command: " + commandName);
         }
     }
 

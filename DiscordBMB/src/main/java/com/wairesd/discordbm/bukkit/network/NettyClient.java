@@ -3,7 +3,6 @@ package com.wairesd.discordbm.bukkit.network;
 import com.google.gson.Gson;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

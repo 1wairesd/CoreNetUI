@@ -112,8 +112,10 @@ public class NettyServer {
                 }
             } else {
                 commandDefinitions.put(cmd.name(), cmd);
+
                 if (jda != null) {
                     var cmdData = net.dv8tion.jda.api.interactions.commands.build.Commands.slash(cmd.name(), cmd.description());
+
                     for (var opt : cmd.options()) {
                         cmdData.addOption(
                                 net.dv8tion.jda.api.interactions.commands.OptionType.valueOf(opt.type()),
@@ -122,33 +124,32 @@ public class NettyServer {
                                 opt.required()
                         );
                     }
+
                     switch (cmd.context()) {
-                        case "both":
-                            cmdData.setGuildOnly(false);
-                            break;
-                        case "dm":
-                            cmdData.setGuildOnly(false);
-                            break;
-                        case "server":
-                            cmdData.setGuildOnly(true);
-                            break;
-                        default:
+                        case "both", "dm" -> cmdData.setGuildOnly(false);
+                        case "server" -> cmdData.setGuildOnly(true);
+                        default -> {
                             if (Settings.isDebugErrors()) {
                                 logger.warn("Unknown context '{}' for command '{}'. Defaulting to 'both'.", cmd.context(), cmd.name());
                             }
                             cmdData.setGuildOnly(false);
-                            break;
+                        }
                     }
+
                     ((net.dv8tion.jda.api.JDA) jda).upsertCommand(cmdData).queue();
+
                     if (Settings.isDebugCommandRegistrations()) {
                         logger.info("Registered command: {} with context: {}", cmd.name(), cmd.context());
                     }
                 }
             }
-            commandToServers.computeIfAbsent(cmd.name(), k -> new ArrayList<>())
-                    .add(new ServerInfo(serverName, channel));
+
+            List<ServerInfo> servers = commandToServers.computeIfAbsent(cmd.name(), k -> new ArrayList<>());
+            servers.removeIf(serverInfo -> serverInfo.serverName().equals(serverName));
+            servers.add(new ServerInfo(serverName, channel));
         }
     }
+
 
     public void removeServer(Channel channel) {
         for (var entry : commandToServers.entrySet()) {

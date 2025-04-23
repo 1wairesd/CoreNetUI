@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public class ConfigManager {
 
     public static void init(Path dataDir) {
-        Settings.init(dataDir);
+        Settings.init(dataDir.toFile());
         Messages.init(dataDir);
         Commands.init(dataDir);
     }

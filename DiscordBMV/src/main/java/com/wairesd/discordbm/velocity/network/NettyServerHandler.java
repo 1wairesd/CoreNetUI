@@ -2,6 +2,7 @@ package com.wairesd.discordbm.velocity.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.wairesd.discordbm.bukkit.models.register.UnregisterMessage;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.discord.ResponseHandler;
@@ -12,6 +13,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private final Gson gson = new Gson();
@@ -63,15 +65,44 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
         }
 
         JsonObject json = gson.fromJson(msg, JsonObject.class);
-        RegisterMessage regMsg = gson.fromJson(json, RegisterMessage.class);
+        String type = json.get("type").getAsString();
 
-        if ("register".equals(regMsg.type())) {
+        if ("register".equals(type)) {
+            RegisterMessage regMsg = gson.fromJson(json, RegisterMessage.class);
             InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = remoteAddress.getAddress().getHostAddress();
             int port = remoteAddress.getPort();
             handleRegister(ctx, regMsg, ip, port);
-        } else if ("response".equals(regMsg.type())) {
+        } else if ("unregister".equals(type)) {
+            UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
+            handleUnregister(ctx, unregMsg);
+        } else if ("response".equals(type)) {
             handleResponse(json);
+        } else {
+            logger.warn("Unknown message type: {}", type);
+        }
+    }
+
+    private void handleUnregister(ChannelHandlerContext ctx, UnregisterMessage unregMsg) {
+        if (unregMsg.secret == null || !unregMsg.secret.equals(Settings.getSecretCode())) {
+            ctx.writeAndFlush("Error: Invalid secret code");
+            return;
+        }
+
+        String serverName = unregMsg.serverName;
+        String commandName = unregMsg.commandName;
+
+        // Удаляем команду из списка серверов
+        List<NettyServer.ServerInfo> servers = nettyServer.getCommandToServers().get(commandName);
+        if (servers != null) {
+            servers.removeIf(serverInfo -> serverInfo.serverName().equals(serverName));
+            if (servers.isEmpty()) {
+                nettyServer.getCommandDefinitions().remove(commandName);
+            }
+        }
+
+        if (Settings.isDebugCommandRegistrations()) {
+            logger.info("Unregistered command {} for server {}", commandName, serverName);
         }
     }
 
@@ -91,7 +122,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             }
         }
 
-        nettyServer.setServerName(ctx.channel(), regMsg.serverName());
+        nettyServer.setServerName(ctx.channel(), regMsg.serverName()); // Устанавливаем имя сервера всегда
         if (regMsg.commands() != null && !regMsg.commands().isEmpty()) {
             if (Settings.isDebugPluginConnections()) {
                 logger.info("Plugin {} registered commands for server {}", regMsg.pluginName(), regMsg.serverName());
