@@ -91,7 +91,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             }
         }
 
-        nettyServer.setServerName(ctx.channel(), regMsg.serverName()); // Устанавливаем имя сервера всегда
+        nettyServer.setServerName(ctx.channel(), regMsg.serverName());
         if (regMsg.commands() != null && !regMsg.commands().isEmpty()) {
             if (Settings.isDebugPluginConnections()) {
                 logger.info("Plugin {} registered commands for server {}", regMsg.pluginName(), regMsg.serverName());
