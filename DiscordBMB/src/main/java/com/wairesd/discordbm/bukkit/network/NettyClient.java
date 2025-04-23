@@ -66,7 +66,6 @@ public class NettyClient {
                         logger.info("Connected to Velocity at {}:{}", address.getHostString(), address.getPort());
                     }
                     sendRegistrationMessage();
-                    plugin.sendAllAddonCommands();
                 } else {
                     if (Settings.isDebugConnections()) {
                         logger.warn("Failed to connect to Velocity at {}:{}: {}", address.getHostString(), address.getPort(), future.cause().getMessage());
@@ -115,16 +114,15 @@ public class NettyClient {
     }
 
     private void sendRegistrationMessage() {
-        String pluginName = plugin.getName();
-        List<Command> commands = plugin.getCommandHandlers().keySet().stream()
-                .map(name -> new Command(name, "Description", pluginName, "both", List.of()))
-                .toList();
         String secretCode = Settings.getSecretCode();
-        RegisterMessage registerMsg = new RegisterMessage(plugin.getServerName(), pluginName, commands, secretCode);
+        if (secretCode == null || secretCode.isEmpty()) {
+            return;
+        }
+        RegisterMessage registerMsg = new RegisterMessage(plugin.getServerName(), plugin.getName(), List.of(), secretCode);
         String json = gson.toJson(registerMsg);
         send(json);
         if (Settings.isDebugCommandRegistrations()) {
-            logger.info("Sent registration message for main plugin commands.");
+            logger.info("Sent initial registration message with no commands.");
         }
     }
 

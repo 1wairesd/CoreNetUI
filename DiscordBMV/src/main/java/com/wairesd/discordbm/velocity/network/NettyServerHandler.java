@@ -77,9 +77,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
 
     private void handleRegister(ChannelHandlerContext ctx, RegisterMessage regMsg, String ip, int port) {
         if (regMsg.secret() == null || !regMsg.secret().equals(Settings.getSecretCode())) {
-            if (Settings.isDebugAuthentication()) {
-                logger.warn("Invalid secret from {}:{}: {}", ip, port, regMsg.secret());
-            }
             ctx.writeAndFlush("Error: Invalid secret code");
             dbManager.incrementFailedAttempt(ip);
             ctx.close();
@@ -94,11 +91,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             }
         }
 
+        nettyServer.setServerName(ctx.channel(), regMsg.serverName()); // Устанавливаем имя сервера всегда
         if (regMsg.commands() != null && !regMsg.commands().isEmpty()) {
             if (Settings.isDebugPluginConnections()) {
-                logger.info("Plugin {} connected to server {}", regMsg.pluginName(), regMsg.serverName());
+                logger.info("Plugin {} registered commands for server {}", regMsg.pluginName(), regMsg.serverName());
             }
-            nettyServer.setServerName(ctx.channel(), regMsg.serverName());
             nettyServer.registerCommands(regMsg.serverName(), regMsg.commands(), ctx.channel());
         }
     }
