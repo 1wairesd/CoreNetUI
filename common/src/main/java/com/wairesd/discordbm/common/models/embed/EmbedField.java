@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.models.embed;
+package com.wairesd.discordbm.common.models.embed;
 
 public record EmbedField(
         String name,

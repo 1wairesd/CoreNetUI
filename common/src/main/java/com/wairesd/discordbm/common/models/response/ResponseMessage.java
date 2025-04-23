@@ -1,6 +1,6 @@
-package com.wairesd.discordbm.velocity.models.response;
+package com.wairesd.discordbm.common.models.response;
 
-import com.wairesd.discordbm.velocity.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 
 public record ResponseMessage(
         String type,

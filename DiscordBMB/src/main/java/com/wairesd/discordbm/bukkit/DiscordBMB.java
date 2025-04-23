@@ -7,10 +7,10 @@ import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.bukkit.models.command.Command;
-import com.wairesd.discordbm.bukkit.models.embed.EmbedDefinition;
-import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
-import com.wairesd.discordbm.bukkit.models.register.ResponseMessage;
 import com.wairesd.discordbm.bukkit.network.NettyClient;
+import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.common.models.register.RegisterMessage;
+import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.InetSocketAddress;
@@ -98,7 +98,14 @@ public class DiscordBMB extends JavaPlugin {
         synchronized (addonCommands) {
             if (addonCommands.isEmpty()) return;
             String secretCode = Settings.getSecretCode();
-            RegisterMessage registerMsg = new RegisterMessage(serverName, getName(), addonCommands, secretCode);
+
+            RegisterMessage<Command> registerMsg = new RegisterMessage<>(
+                    "register",
+                    serverName,
+                    getName(),
+                    addonCommands,
+                    secretCode
+            );
             String json = gson.toJson(registerMsg);
             sendNettyMessage(json);
             if (Settings.isDebugCommandRegistrations()) {

@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.yaml:snakeyaml:2.4")
     implementation project(':common')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'net.kyori:adventure-api:4.14.0'
@@ -40,6 +41,7 @@ dependencies {
 shadowJar {
     archiveClassifier.set('')
     mergeServiceFiles()
+    from project(':common').sourceSets.main.output
     // relocate 'com.wairesd.discordbm.common', 'com.wairesd.discordbm.bukkit.shaded.common'
 }
 

@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.models.register;
+package com.wairesd.discordbm.velocity.models.request;
 
 import java.util.Map;
 

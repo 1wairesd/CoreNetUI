@@ -2,7 +2,6 @@ package com.wairesd.discordbm.bukkit.models.command;
 
 import java.util.List;
 
-// Represents a command with name, description, and options.
 public class Command {
     public String name;
     public String description;

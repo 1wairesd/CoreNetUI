@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.models.embed;
+package com.wairesd.discordbm.common.models.embed;
 
 import java.util.List;
 

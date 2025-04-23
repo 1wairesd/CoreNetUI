@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':DiscordBMB') // зависимость от DiscordBMB
     implementation project(':common')
     implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
     implementation 'org.slf4j:slf4j-api:1.7.36'
@@ -37,11 +38,16 @@ tasks {
     shadowJar {
         archiveClassifier.set('')
         relocate 'net.dv8tion.jda', 'com.wairesd.shaded.jda'
+        from project(':common').sourceSets.main.output
         mergeServiceFiles()
     }
 
     build {
         dependsOn(tasks.shadowJar)
+    }
+
+    compileJava {
+        dependsOn ':DiscordBMB:shadowJar'
     }
 }
 

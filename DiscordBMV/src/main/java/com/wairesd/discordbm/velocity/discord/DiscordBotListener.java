@@ -5,7 +5,7 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.custom.CommandExecutor;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
-import com.wairesd.discordbm.velocity.models.register.RequestMessage;
+import com.wairesd.discordbm.velocity.models.request.RequestMessage;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;

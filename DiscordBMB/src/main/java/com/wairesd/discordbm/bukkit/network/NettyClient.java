@@ -3,7 +3,8 @@ package com.wairesd.discordbm.bukkit.network;
 import com.google.gson.Gson;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
+import com.wairesd.discordbm.bukkit.models.command.Command;
+import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -117,7 +118,14 @@ public class NettyClient {
         if (secretCode == null || secretCode.isEmpty()) {
             return;
         }
-        RegisterMessage registerMsg = new RegisterMessage(plugin.getServerName(), plugin.getName(), List.of(), secretCode);
+
+        RegisterMessage<Command> registerMsg = new RegisterMessage<>(
+                "register",
+                plugin.getServerName(),
+                plugin.getName(),
+                List.of(),
+                secretCode
+        );
         String json = gson.toJson(registerMsg);
         send(json);
         if (Settings.isDebugCommandRegistrations()) {

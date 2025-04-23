@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.models.register;
+package com.wairesd.discordbm.bukkit.models.unregister;
 
 public class UnregisterMessage {
     public String type = "unregister";

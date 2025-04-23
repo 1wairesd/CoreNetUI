@@ -1,5 +1,3 @@
 rootProject.name = 'DiscordBM'
 
-include ':common'
-include ':DiscordBMB'
-include ':DiscordBMV'
+include ':common', ':DiscordBMB', ':DiscordBMV'

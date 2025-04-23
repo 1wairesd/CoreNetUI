@@ -5,9 +5,9 @@ import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.bukkit.models.command.Command;
-import com.wairesd.discordbm.bukkit.models.embed.EmbedDefinition;
-import com.wairesd.discordbm.bukkit.models.register.RegisterMessage;
-import com.wairesd.discordbm.bukkit.models.register.UnregisterMessage;
+import com.wairesd.discordbm.bukkit.models.unregister.UnregisterMessage;
+import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.common.models.register.RegisterMessage;
 
 import java.util.List;
 
@@ -33,12 +33,14 @@ public class DiscordBotManagerBukkitApi {
             return;
         }
 
-        RegisterMessage registerMsg = new RegisterMessage(
+        RegisterMessage<Command> registerMsg = new RegisterMessage<>(
+                "register",
                 plugin.getServerName(),
                 command.pluginName,
                 List.of(command),
                 secretCode
         );
+
         String json = gson.toJson(registerMsg);
         plugin.sendNettyMessage(json);
         if (Settings.isDebugCommandRegistrations()) {
