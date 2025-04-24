@@ -11,14 +11,22 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 
 /**
- * Manages settings from settings.yml for Bukkit.
+ * Manages the loading, saving, and accessing of configuration settings
+ * stored in a settings.yml file. Provides utility methods to retrieve
+ * application settings and debug options for a Bukkit plugin.
  */
 public class Settings {
     private static final Logger logger = LoggerFactory.getLogger(Settings.class);
     private static CommentedConfigurationNode settingsConfig;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    /** Loads settings.yml asynchronously with default saving. */
+    /**
+     * Loads the "settings.yml" file from the plugin's data folder. If the file does not
+     * exist, it creates the file by saving the default resource from the plugin's jar.
+     * The method also initializes and loads the configuration data into memory.
+     *
+     * @param plugin The JavaPlugin instance representing the plugin using this class.
+     */
     public static void load(JavaPlugin plugin) {
         File settingsFile = new File(plugin.getDataFolder(), "settings.yml");
         if (!settingsFile.exists()) {
@@ -36,7 +44,6 @@ public class Settings {
         }
     }
 
-    /** Saves the current configuration to settings.yml. */
     public static void save() {
         try {
             loader.save(settingsConfig);

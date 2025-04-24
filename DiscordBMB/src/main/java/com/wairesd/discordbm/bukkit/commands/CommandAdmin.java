@@ -3,16 +3,20 @@ package com.wairesd.discordbm.bukkit.commands;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Messages;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.bukkit.network.NettyClient;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 
-// Handles the /discordbotmanager-bukkit command for reloading configurations.
+/**
+ * The CommandAdmin class implements the CommandExecutor and TabCompleter interfaces
+ * to create a command handler for administrative tasks within the DiscordBMB plugin.
+ *
+ * This class supports the execution of specific commands, such as reloading the plugin's
+ * configuration. It also provides tab completion suggestions for command arguments.
+ */
 public class CommandAdmin implements CommandExecutor, TabCompleter {
     private final DiscordBMB plugin;
 
@@ -26,6 +30,7 @@ public class CommandAdmin implements CommandExecutor, TabCompleter {
             sender.sendMessage(Messages.getMessage("usage-admin-command"));
             return true;
         }
+
         if (!sender.hasPermission("discordbotmanager.reload")) {
             sender.sendMessage(Messages.getMessage("no-permission"));
             return true;
@@ -33,19 +38,11 @@ public class CommandAdmin implements CommandExecutor, TabCompleter {
 
         plugin.getConfigManager().reloadConfigs();
 
-
-        plugin.closeNettyConnection();
-
+        plugin.getNettyService().closeNettyConnection();
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                String velocityHost = Settings.getVelocityHost();
-                int velocityPort = Settings.getVelocityPort();
-                NettyClient newClient = new NettyClient(new InetSocketAddress(velocityHost, velocityPort), plugin);
-                plugin.setNettyClient(newClient);
-                newClient.connect();
-            } catch (Exception e) {
-                plugin.getLogger().warning("Failed to recover to Netty: " + e.getMessage());
-            }
+            String host = Settings.getVelocityHost();
+            int port   = Settings.getVelocityPort();
+            plugin.getNettyService().initializeNettyClient(host, port);
         });
 
         sender.sendMessage(Messages.getMessage("reload-success"));

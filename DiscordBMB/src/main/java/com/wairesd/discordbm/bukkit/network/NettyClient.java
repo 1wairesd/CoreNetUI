@@ -22,10 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Netty-based client that connects the Bukkit plugin to the Velocity proxy,
- * handles connection lifecycle, and registers commands.
- */
 public class NettyClient {
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     private final InetSocketAddress address;
@@ -40,6 +36,24 @@ public class NettyClient {
         this.plugin = plugin;
     }
 
+    /**
+     * Initiates an asynchronous connection to a remote Velocity server using Netty.
+     * This method sets up the necessary configurations such as event loop groups,
+     * channel bootstrap options, and pipeline handlers for communication management.
+     *
+     * The connection process includes:
+     * - Configuring a Netty Bootstrap with appropriate pipeline handlers for decoding and encoding frames and strings.
+     * - Handling connection success or failure with appropriate logging and behavior.
+     * - Sending a registration message upon successful connection.
+     * - Scheduling a reconnect attempt if the connection fails or an error occurs during the attempt.
+     *
+     * Logging is contingent on debug settings, with detailed output controlled by the following flags:
+     * - `Settings.isDebugConnections()` for connection-related logs.
+     * - `Settings.isDebugErrors()` for error-specific logs.
+     *
+     * Any errors encountered during the connection attempt will result in scheduling a reconnect task,
+     * provided the client is not currently in the process of closing.
+     */
     public void connect() {
         CompletableFuture.runAsync(() -> {
             group = new NioEventLoopGroup();
@@ -87,6 +101,18 @@ public class NettyClient {
         });
     }
 
+    /**
+     * Closes the Netty client connection and releases associated resources.
+     *
+     * This method performs the following steps to safely shut down the client:
+     * - Sets the internal state to indicate that the client is closing.
+     * - Closes the network channel if it is active.
+     * - Gracefully shuts down the event loop group to release Netty resources.
+     * - Logs the closure process if debug connections are enabled in the settings.
+     *
+     * This is a safe exit method intended to ensure proper resource cleanup
+     * during the shutdown of the client.
+     */
     public void close() {
         closing = true;
         if (channel != null) channel.close();
@@ -96,10 +122,12 @@ public class NettyClient {
         }
     }
 
-    public boolean isActive() {
-        return channel != null && channel.isActive();
-    }
-
+    /**
+     * Sends a message through the active channel if the client is active.
+     * Logging behavior is controlled by specific debug settings.
+     *
+     * @param message the message to be sent through the channel
+     */
     public void send(String message) {
         if (isActive()) {
             channel.writeAndFlush(message);
@@ -113,6 +141,20 @@ public class NettyClient {
         }
     }
 
+    /**
+     * Sends the registration message to the active connection using the provided server and plugin data.
+     *
+     * The registration message contains information such as the server name, plugin name,
+     * an empty list of commands, and a secret code for authentication. The message is
+     * serialized into JSON format and sent through the active channel.
+     *
+     * If no secret code is configured in the settings, this method exits without sending
+     * the message.
+     *
+     * Logging behavior:
+     * - If debug settings for command registrations (`Settings.isDebugCommandRegistrations()`)
+     *   are enabled, an informational log is recorded upon sending the message.
+     */
     private void sendRegistrationMessage() {
         String secretCode = Settings.getSecretCode();
         if (secretCode == null || secretCode.isEmpty()) {
@@ -133,6 +175,20 @@ public class NettyClient {
         }
     }
 
+    /**
+     * Schedules a reconnect task to be executed asynchronously after a delay of 1 second
+     * if the client is not in the process of closing.
+     *
+     * This method checks the `closing` flag to determine whether the client is in the process
+     * of shutting down. If `closing` is false, a delayed task is scheduled using the server's
+     * asynchronous scheduler.
+     *
+     * The reconnect task invokes the {@code connect()} method to attempt to re-establish a
+     * connection with the server.
+     *
+     * If debug connection logging is enabled (`Settings.isDebugConnections()`), an informational
+     * log message is emitted indicating that a reconnect has been scheduled.
+     */
     private void scheduleReconnect() {
         if (!closing) {
             if (Settings.isDebugConnections()) {
@@ -140,5 +196,17 @@ public class NettyClient {
             }
             plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, this::connect, 20L);
         }
+    }
+
+    /**
+     * Checks whether the Netty client's channel is currently active.
+     *
+     * This method determines the active state of the client by verifying if
+     * the underlying Netty channel is not null and is considered active.
+     *
+     * @return true if the Netty client's channel is non-null and active, false otherwise
+     */
+    public boolean isActive() {
+        return channel != null && channel.isActive();
     }
 }

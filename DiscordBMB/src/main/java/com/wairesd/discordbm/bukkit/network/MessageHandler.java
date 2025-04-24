@@ -12,43 +12,33 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Handles incoming string messages over the Netty channel,
- * parses them as JSON requests or error notices,
- * and dispatches commands to the appropriate handler.
- */
 public class MessageHandler extends SimpleChannelInboundHandler<String> {
     private static final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
     private final DiscordBMB plugin;
     private final Gson gson = new Gson();
 
-    /**
-     * @param plugin Main plugin instance, used to access command handlers and send responses.
-     */
     public MessageHandler(DiscordBMB plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Called whenever a full String message is received.
-     * Distinguishes between error messages and JSON-formatted requests.
+     * Handles inbound messages from the channel and processes them based on their type.
+     *
+     * @param ctx     the context of the channel handler
+     * @param message the received message as a String
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String message) {
-        // Debug log of raw message if enabled
         if (Settings.isDebugClientResponses()) {
             logger.debug("Received message: {}", message);
         }
 
-        // Handle plain-text error lines first
         if (message.startsWith("Error:")) {
             handleErrorMessage(message, ctx);
             return;
         }
 
         try {
-            // Parse JSON and look for a "request" type
             JsonObject json = gson.fromJson(message, JsonObject.class);
             String type = json.get("type").getAsString();
             if ("request".equals(type)) {
@@ -57,7 +47,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 logger.warn("Unknown message type: {}", type);
             }
         } catch (Exception e) {
-            // Log parsing or handler errors if debug is enabled
             if (Settings.isDebugErrors()) {
                 logger.error("Error processing message: {}", message, e);
             }
@@ -65,8 +54,11 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     }
 
     /**
-     * Processes server-sent error messages, flags invalid authentication,
-     * and closes the connection if necessary.
+     * Handles error messages received from the server and performs appropriate actions
+     * such as logging the error and closing the channel context if necessary.
+     *
+     * @param message the error message received from the server
+     * @param ctx     the context of the channel handler
      */
     private void handleErrorMessage(String message, ChannelHandlerContext ctx) {
         if (Settings.isDebugErrors()) {
@@ -90,14 +82,16 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     }
 
     /**
-     * Parses a JSON request object, extracts command name and options,
-     * then invokes the corresponding DiscordCommandHandler.
+     * Handles a request by extracting its command, options, and request ID from the provided JSON object.
+     * Executes the corresponding command handler if available or sends a "Command not found" response.
+     *
+     * @param json the input JSON object containing the request details, including the command, request ID,
+     *             and optionally additional options
      */
     private void handleRequest(JsonObject json) {
         String command = json.get("command").getAsString();
         String requestId = json.get("requestId").getAsString();
 
-        // Build options map if provided
         Map<String, String> options = new HashMap<>();
         if (json.has("options")) {
             JsonObject optionsJson = json.get("options").getAsJsonObject();
@@ -106,7 +100,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
             }
         }
 
-        // Dispatch to the handler or send a "not found" response
         DiscordCommandHandler handler = plugin.getCommandHandlers().get(command);
         if (handler != null) {
             String[] args = options.values().toArray(new String[0]);
@@ -117,7 +110,12 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     }
 
     /**
-     * Handles unexpected exceptions on the channel by logging and closing the connection.
+     * Handles exceptions caught during the operation of the channel.
+     * Logs the error message if debug error logging is enabled in the settings
+     * and ensures that the channel context is closed to prevent further issues.
+     *
+     * @param ctx   the context of the channel handler where the exception occurred
+     * @param cause the throwable that was caught
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

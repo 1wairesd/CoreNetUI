@@ -1,5 +1,10 @@
 package com.wairesd.discordbm.bukkit.models.unregister;
 
+/**
+ * Represents a message used to unregister a command within the server system.
+ * This message contains the necessary details to identify the command and
+ * authenticate the request.
+ */
 public class UnregisterMessage {
     public String type = "unregister";
     public String serverName;

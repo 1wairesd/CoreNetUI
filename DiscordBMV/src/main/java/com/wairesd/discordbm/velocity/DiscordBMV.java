@@ -8,38 +8,33 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.commands.custom.CommandManager;
-import com.wairesd.discordbm.velocity.commands.custom.listeners.ButtonInteractionListener;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
+import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.discord.ResponseHandler;
 import com.wairesd.discordbm.velocity.network.NettyServer;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.EnumSet;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
     private final Logger logger;
     private final Path dataDirectory;
     private final ProxyServer proxy;
-    private JDA jda;
     private NettyServer nettyServer;
-    private DiscordBotListener discordBotListener;
     private DatabaseManager dbManager;
     private CommandManager commandManager;
+    private DiscordBotManager discordBotManager;
 
     @Inject
     public DiscordBMV(Logger logger, @DataDirectory Path dataDirectory, ProxyServer proxy) {
         this.logger = logger;
         this.dataDirectory = dataDirectory;
         this.proxy = proxy;
+        this.discordBotManager = new DiscordBotManager(logger);
     }
 
     @Subscribe
@@ -78,52 +73,25 @@ public class DiscordBMV {
 
     private void initializeDiscordBot() {
         String token = Settings.getBotToken();
-        if (token == null || token.isEmpty()) {
-            logger.error("Bot token is not specified in settings.yml!");
-            return;
-        }
-        try {
-            discordBotListener = new DiscordBotListener(this, nettyServer, logger);
-            ResponseHandler.init(discordBotListener, logger);
-
-            Activity activity = createActivity();
-            jda = JDABuilder.createDefault(token)
-                    .enableIntents(EnumSet.of(
-                            GatewayIntent.GUILD_MESSAGES,
-                            GatewayIntent.DIRECT_MESSAGES,
-                            GatewayIntent.MESSAGE_CONTENT
-                    ))
-                    .setActivity(activity)
-                    .addEventListeners(discordBotListener)
-                    .addEventListeners(new ButtonInteractionListener())
-                    .build()
-                    .awaitReady();
-
-            nettyServer.setJda(jda);
-            commandManager = new CommandManager(nettyServer, jda);
-            commandManager.loadAndRegisterCommands();
-            logger.info("Discord bot successfully started.");
-        } catch (Exception e) {
-            logger.error("Error initializing JDA: {}", e.getMessage(), e);
-        }
-    }
-
-    private Activity createActivity() {
-        String activityType = Settings.getActivityType().toLowerCase();
+        String activityType = Settings.getActivityType();
         String activityMessage = Settings.getActivityMessage();
-        return switch (activityType) {
-            case "playing" -> Activity.playing(activityMessage);
-            case "watching" -> Activity.watching(activityMessage);
-            case "listening" -> Activity.listening(activityMessage);
-            default -> Activity.playing(activityMessage);
-        };
+
+        discordBotManager.initializeBot(token, activityType, activityMessage);
+        nettyServer.setJda(discordBotManager.getJda());
+
+        DiscordBotListener listener = new DiscordBotListener(this, nettyServer, logger);
+        discordBotManager.getJda().addEventListener(listener);
+
+        ResponseHandler.init(listener, logger);
+
+        commandManager = new CommandManager(nettyServer, discordBotManager.getJda());
+        commandManager.loadAndRegisterCommands();
     }
 
     public void updateActivity() {
-        if (jda != null) {
-            jda.getPresence().setActivity(createActivity());
-            logger.info("Bot activity updated to: {} {}", Settings.getActivityType(), Settings.getActivityMessage());
-        }
+        String activityType = Settings.getActivityType();
+        String activityMessage = Settings.getActivityMessage();
+        discordBotManager.updateActivity(activityType, activityMessage);
     }
 
     public CommandManager getCommandManager() {

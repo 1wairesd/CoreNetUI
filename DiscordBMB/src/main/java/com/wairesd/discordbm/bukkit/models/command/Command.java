@@ -2,6 +2,11 @@ package com.wairesd.discordbm.bukkit.models.command;
 
 import java.util.List;
 
+/**
+ * Represents a command that can be registered and executed.
+ * This class contains information about the command, such as its name,
+ * description, associated plugin name, context, and a list of options.
+ */
 public class Command {
     public String name;
     public String description;

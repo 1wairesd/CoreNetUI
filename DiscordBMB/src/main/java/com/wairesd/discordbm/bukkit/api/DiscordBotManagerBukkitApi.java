@@ -11,7 +11,15 @@ import com.wairesd.discordbm.common.models.register.RegisterMessage;
 
 import java.util.List;
 
-// Provides an API for other Bukkit plugins to register commands and send responses via Netty.
+/**
+ * The DiscordBotManagerBukkitApi class provides an API for managing the integration
+ * between a Bukkit-based Minecraft server and Discord. This includes functionality
+ * for registering and unregistering commands, sending responses, and communicating
+ * with Discord using Netty.
+ *
+ * This API acts as a layer on top of the DiscordBMB plugin, leveraging its features
+ * and services for communication and command handling.
+ */
 public class DiscordBotManagerBukkitApi {
     private final DiscordBMB plugin;
     private final Gson gson = new Gson();
@@ -20,64 +28,64 @@ public class DiscordBotManagerBukkitApi {
         this.plugin = plugin;
     }
 
-    public void registerCommand(Command command, DiscordCommandHandler handler, DiscordBMB.DiscordCommandRegistrationListener listener) {
-        plugin.registerCommandHandler(command.name, handler, listener, command);
-        if (plugin.getNettyClient() != null && plugin.getNettyClient().isActive()) {
+    public void registerCommand(Command command,
+                                DiscordCommandHandler handler,
+                                DiscordBMB.DiscordCommandRegistrationListener listener) {
+        plugin.registerCommandHandler(
+                command.name, handler, listener, command
+        );
+        if (plugin.getNettyService().getNettyClient() != null
+                && plugin.getNettyService().getNettyClient().isActive()) {
             sendRegistrationMessage(command);
         }
     }
 
     private void sendRegistrationMessage(Command command) {
-        String secretCode = Settings.getSecretCode();
-        if (secretCode == null || secretCode.isEmpty()) {
-            return;
-        }
+        String secret = Settings.getSecretCode();
+        if (secret == null || secret.isEmpty()) return;
 
-        RegisterMessage<Command> registerMsg = new RegisterMessage<>(
+        RegisterMessage<Command> msg = new RegisterMessage<>(
                 "register",
                 plugin.getServerName(),
                 command.pluginName,
                 List.of(command),
-                secretCode
+                secret
         );
-
-        String json = gson.toJson(registerMsg);
-        plugin.sendNettyMessage(json);
+        plugin.getNettyService().sendNettyMessage(gson.toJson(msg));
         if (Settings.isDebugCommandRegistrations()) {
             plugin.getLogger().info("Sent registration message for command: " + command.name);
         }
     }
 
     public void unregisterCommand(String commandName, String pluginName) {
-        if (plugin.getNettyClient() != null && plugin.getNettyClient().isActive()) {
+        if (plugin.getNettyService().getNettyClient() != null
+                && plugin.getNettyService().getNettyClient().isActive()) {
             sendUnregistrationMessage(commandName, pluginName);
         }
     }
 
     private void sendUnregistrationMessage(String commandName, String pluginName) {
-        String secretCode = Settings.getSecretCode();
-        if (secretCode == null || secretCode.isEmpty()) {
-            return;
-        }
+        String secret = Settings.getSecretCode();
+        if (secret == null || secret.isEmpty()) return;
 
-        UnregisterMessage unregisterMsg = new UnregisterMessage(
+        UnregisterMessage msg = new UnregisterMessage(
                 plugin.getServerName(),
                 pluginName,
                 commandName,
-                secretCode
+                secret
         );
-        String json = gson.toJson(unregisterMsg);
-        plugin.sendNettyMessage(json);
+        plugin.getNettyService().sendNettyMessage(gson.toJson(msg));
         if (Settings.isDebugCommandRegistrations()) {
             plugin.getLogger().info("Sent unregistration message for command: " + commandName);
         }
     }
 
     public void sendResponse(String requestId, EmbedDefinition embed) {
-        plugin.sendResponse(requestId, gson.toJson(embed));
+        String embedJson = gson.toJson(embed);
+        plugin.getNettyService().sendResponse(requestId, embedJson);
     }
 
     public void sendNettyMessage(String message) {
-        plugin.sendNettyMessage(message);
+        plugin.getNettyService().sendNettyMessage(message);
     }
 }

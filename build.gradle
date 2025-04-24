@@ -22,9 +22,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
-    implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'io.netty:netty-all:4.2.0.Final'
     compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT"
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
@@ -47,16 +44,13 @@ tasks {
     }
 }
 
-def targetJavaVersion = 17
-
 java {
-    sourceCompatibility = JavaVersion.toVersion(targetJavaVersion)
-    targetCompatibility = JavaVersion.toVersion(targetJavaVersion)
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.release.set(targetJavaVersion)
+    options.release.set(17)
 }
 
 processResources {
