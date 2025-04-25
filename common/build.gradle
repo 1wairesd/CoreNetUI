@@ -7,7 +7,7 @@ plugins {
 group = 'com.wairesd.discordbm'
 version = '1.0'
 
-publishing
+publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
