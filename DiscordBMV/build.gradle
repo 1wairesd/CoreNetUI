@@ -20,12 +20,12 @@ repositories {
 }
 
 dependencies {
-    implementation project(':DiscordBMB') // зависимость от DiscordBMB
+    implementation project(':DiscordBMB')
     implementation project(':common')
     implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
     implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'io.netty:netty-all:4.2.0.Final'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 }
@@ -47,26 +47,18 @@ tasks {
     }
 
     compileJava {
-        dependsOn ':DiscordBMB:shadowJar'
+        dependsOn ':DiscordBMB:build'
     }
 }
 
-def targetJavaVersion = 17
 java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
+
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release.set(targetJavaVersion)
-    }
+    options.release.set(17)
 }
 
 processResources {
@@ -81,5 +73,5 @@ processResources {
 import org.gradle.api.file.DuplicatesStrategy
 
 tasks.withType(Jar).configureEach {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUD
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
