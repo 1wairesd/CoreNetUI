@@ -1,7 +1,7 @@
-package com.wairesd.discordbm.velocity.commands.custom.actions;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 
-import com.wairesd.discordbm.velocity.commands.custom.models.CommandAction;
-import com.wairesd.discordbm.velocity.commands.custom.models.Context;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 

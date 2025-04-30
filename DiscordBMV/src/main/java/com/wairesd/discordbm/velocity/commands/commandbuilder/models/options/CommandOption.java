@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.custom.models;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.models.options;
 
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 

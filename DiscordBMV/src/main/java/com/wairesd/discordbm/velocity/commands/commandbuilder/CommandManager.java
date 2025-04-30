@@ -1,6 +1,6 @@
-package com.wairesd.discordbm.velocity.commands.custom;
+package com.wairesd.discordbm.velocity.commands.commandbuilder;
 
-import com.wairesd.discordbm.velocity.commands.custom.models.CustomCommand;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import com.wairesd.discordbm.velocity.models.option.OptionDefinition;
@@ -19,7 +19,7 @@ import static net.dv8tion.jda.api.interactions.commands.build.Commands.slash;
 
 public class CommandManager {
     private static final Logger logger = LoggerFactory.getLogger(CommandManager.class);
-    private final Map<String, CustomCommand> customCommands = new HashMap<>();
+    private final Map<String, CommandStructured> customCommands = new HashMap<>();
     private final NettyServer nettyServer;
     private final JDA jda;
 
@@ -36,18 +36,18 @@ public class CommandManager {
         logger.info("Loaded and registered {} custom commands", customCommands.size());
     }
 
-    private void loadAndRegisterCommand(CustomCommand cmd) {
+    private void loadAndRegisterCommand(CommandStructured cmd) {
         customCommands.put(cmd.getName(), cmd);
         registerCommandWithJDA(cmd);
         registerCommandDefinition(cmd);
     }
 
-    private void registerCommandWithJDA(CustomCommand cmd) {
+    private void registerCommandWithJDA(CommandStructured cmd) {
         SlashCommandData cmdData = createSlashCommandData(cmd);
         jda.upsertCommand(cmdData).queue();
     }
 
-    private SlashCommandData createSlashCommandData(CustomCommand cmd) {
+    private SlashCommandData createSlashCommandData(CommandStructured cmd) {
         SlashCommandData cmdData = slash(cmd.getName(), cmd.getDescription());
         addOptionsToCommand(cmd, cmdData);
         setCommandContext(cmd, cmdData);
@@ -55,7 +55,7 @@ public class CommandManager {
     }
 
 
-    private void addOptionsToCommand(CustomCommand cmd, SlashCommandData cmdData) {
+    private void addOptionsToCommand(CommandStructured cmd, SlashCommandData cmdData) {
         cmd.getOptions().forEach(opt -> {
             try {
                 OptionType optionType = OptionType.valueOf(opt.getType().toUpperCase());
@@ -66,7 +66,7 @@ public class CommandManager {
         });
     }
 
-    private void setCommandContext(CustomCommand cmd, SlashCommandData cmdData) {
+    private void setCommandContext(CommandStructured cmd, SlashCommandData cmdData) {
         boolean guildOnly = switch (cmd.getContext()) {
             case "server" -> true;
             case "dm", "both" -> false;
@@ -78,7 +78,7 @@ public class CommandManager {
         cmdData.setGuildOnly(guildOnly);
     }
 
-    private void registerCommandDefinition(CustomCommand cmd) {
+    private void registerCommandDefinition(CommandStructured cmd) {
         CommandDefinition def = new CommandDefinition(
                 cmd.getName(),
                 cmd.getDescription(),
@@ -95,7 +95,7 @@ public class CommandManager {
         nettyServer.getCommandDefinitions().put(cmd.getName(), def);
     }
 
-    public CustomCommand getCommand(String name) {
+    public CommandStructured getCommand(String name) {
         return customCommands.get(name);
     }
 }

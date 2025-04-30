@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.custom.actions;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons;
 
 import java.util.concurrent.*;
 

@@ -1,7 +1,7 @@
-package com.wairesd.discordbm.velocity.commands.custom;
+package com.wairesd.discordbm.velocity.commands.commandbuilder;
 
-import com.wairesd.discordbm.velocity.commands.custom.models.Context;
-import com.wairesd.discordbm.velocity.commands.custom.models.CustomCommand;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class CommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
-    public void execute(SlashCommandInteractionEvent event, CustomCommand command) {
+    public void execute(SlashCommandInteractionEvent event, CommandStructured command) {
         if (event == null || command == null) {
             throw new IllegalArgumentException("Event and command cannot be null");
         }

@@ -1,8 +1,12 @@
-package com.wairesd.discordbm.velocity.commands.custom.models;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures;
+
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.CommandOption;
 
 import java.util.List;
 
-public class CustomCommand {
+public class CommandStructured {
     private final String name;
     private final String description;
     private final String context;
@@ -10,9 +14,9 @@ public class CustomCommand {
     private final List<CommandCondition> conditions;
     private final List<CommandAction> actions;
 
-    public CustomCommand(String name, String description, String context,
-                         List<CommandOption> options, List<CommandCondition> conditions,
-                         List<CommandAction> actions) {
+    public CommandStructured(String name, String description, String context,
+                             List<CommandOption> options, List<CommandCondition> conditions,
+                             List<CommandAction> actions) {
         validateInputs(name, description, context);
         this.name = name;
         this.description = description;
