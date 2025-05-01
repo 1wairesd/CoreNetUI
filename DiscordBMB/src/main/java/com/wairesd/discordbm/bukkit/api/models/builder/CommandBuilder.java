@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.api;
+package com.wairesd.discordbm.bukkit.api.models.builder;
 
 import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.bukkit.models.command.CommandOption;

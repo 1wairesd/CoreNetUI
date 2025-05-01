@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.bukkit;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.bukkit.api.DiscordBotManagerBukkitApi;
+import com.wairesd.discordbm.bukkit.api.DiscordBMBApi;
 import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 public class DiscordBMB extends JavaPlugin {
-    private static DiscordBotManagerBukkitApi api;
+    private static DiscordBMBApi api;
     private ConfigManager configManager;
     private final NettyService nettyService;
     private final Map<String, DiscordCommandHandler> commandHandlers = new HashMap<>();
@@ -29,7 +29,7 @@ public class DiscordBMB extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        api = new DiscordBotManagerBukkitApi(this);
+        api = new DiscordBMBApi(this);
         configManager = new ConfigManager(this);
         configManager.loadConfigs();
         serverName = Settings.getServerName();
@@ -92,7 +92,7 @@ public class DiscordBMB extends JavaPlugin {
         return serverName;
     }
 
-    public static DiscordBotManagerBukkitApi getApi() {
+    public static DiscordBMBApi getApi() {
         return api;
     }
 
