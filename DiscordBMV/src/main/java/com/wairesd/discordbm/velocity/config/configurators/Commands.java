@@ -1,12 +1,12 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
-import com.wairesd.discordbm.velocity.commands.custom.actions.ButtonAction;
-import com.wairesd.discordbm.velocity.commands.custom.actions.SendMessageAction;
-import com.wairesd.discordbm.velocity.commands.custom.conditions.PermissionCondition;
-import com.wairesd.discordbm.velocity.commands.custom.models.CommandAction;
-import com.wairesd.discordbm.velocity.commands.custom.models.CommandCondition;
-import com.wairesd.discordbm.velocity.commands.custom.models.CommandOption;
-import com.wairesd.discordbm.velocity.commands.custom.models.CustomCommand;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.PermissionCondition;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.CommandOption;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -26,7 +26,7 @@ public class Commands {
     private static final String COMMANDS_FILE_NAME = "commands.yml";
 
     private static Path dataDirectory;
-    private static List<CustomCommand> customCommands;
+    private static List<CommandStructured> customCommands;
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
@@ -60,7 +60,7 @@ public class Commands {
         }
     }
 
-    private static List<CustomCommand> loadCommandsFromFile(Path commandsPath) throws IOException {
+    private static List<CommandStructured> loadCommandsFromFile(Path commandsPath) throws IOException {
         try (InputStream in = Files.newInputStream(commandsPath)) {
             Yaml yaml = new Yaml();
             Map<String, Object> data = yaml.load(in);
@@ -75,11 +75,11 @@ public class Commands {
         loadCommands();
     }
 
-    public static List<CustomCommand> getCustomCommands() {
+    public static List<CommandStructured> getCustomCommands() {
         return customCommands != null ? customCommands : Collections.emptyList();
     }
 
-    private static CustomCommand parseCommand(Map<String, Object> cmdData) {
+    private static CommandStructured parseCommand(Map<String, Object> cmdData) {
         String name = getString(cmdData, "name");
         String description = getString(cmdData, "description");
         String context = getString(cmdData, "context", "both");
@@ -88,7 +88,7 @@ public class Commands {
         List<CommandCondition> conditions = getConditions(cmdData);
         List<CommandAction> actions = getActions(cmdData);
 
-        return new CustomCommand(
+        return new CommandStructured(
                 name,
                 description,
                 context,

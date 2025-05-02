@@ -79,7 +79,6 @@ public class DiscordBMB extends JavaPlugin {
         nettyService.sendAllAddonCommands(addonCommands, serverName);
     }
 
-
     public ConfigManager getConfigManager() {
         return configManager;
     }

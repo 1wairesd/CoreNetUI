@@ -7,7 +7,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
-import com.wairesd.discordbm.velocity.commands.custom.CommandManager;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
@@ -52,7 +52,7 @@ public class DiscordBMV {
     }
 
     private void initializeDatabase() {
-        String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db").toString();
+        String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db");
         dbManager = new DatabaseManager(dbPath);
     }
 
@@ -94,11 +94,19 @@ public class DiscordBMV {
         discordBotManager.updateActivity(activityType, activityMessage);
     }
 
+    public Path getDataDirectory() {
+        return dataDirectory;
+    }
+
     public CommandManager getCommandManager() {
         return commandManager;
     }
 
     public NettyServer getNettyServer() {
         return nettyServer;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

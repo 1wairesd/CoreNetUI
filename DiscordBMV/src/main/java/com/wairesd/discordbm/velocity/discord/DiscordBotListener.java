@@ -2,7 +2,7 @@ package com.wairesd.discordbm.velocity.discord;
 
 import com.google.gson.Gson;
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commands.custom.CommandExecutor;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandExecutor;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import com.wairesd.discordbm.velocity.models.request.RequestMessage;

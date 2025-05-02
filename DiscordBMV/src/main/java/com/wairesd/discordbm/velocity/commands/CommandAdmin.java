@@ -7,7 +7,6 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
 
-
 import java.util.stream.Collectors;
 
 public class CommandAdmin implements SimpleCommand {
@@ -56,6 +55,7 @@ public class CommandAdmin implements SimpleCommand {
                     source.sendMessage(ColorUtils.parseComponent("&e" + command + ": &f" + serverList));
                 }
                 break;
+
             default:
                 source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command")));
         }

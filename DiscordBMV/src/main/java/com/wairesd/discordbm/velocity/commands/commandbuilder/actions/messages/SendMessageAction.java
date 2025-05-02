@@ -2,11 +2,11 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.placeolders.user;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class SendMessageAction implements CommandAction {
     private static final String DEFAULT_MESSAGE = "";
@@ -39,10 +39,7 @@ public class SendMessageAction implements CommandAction {
     }
 
     private String formatMessage(SlashCommandInteractionEvent event, String template) {
-        Objects.requireNonNull(event, "Event cannot be null");
-        Objects.requireNonNull(template, "Message template cannot be null");
-
-        String result = template.replace("{user}", event.getUser().getAsTag());
+        String result = user.replace(template, event);
 
         for (OptionMapping option : event.getOptions()) {
             String placeholder = "{" + option.getName() + "}";
@@ -51,4 +48,5 @@ public class SendMessageAction implements CommandAction {
 
         return result;
     }
+
 }

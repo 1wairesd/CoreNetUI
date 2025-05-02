@@ -9,13 +9,6 @@ import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 
-/**
- * The DiscordBMBApi class provides an API for managing the interaction
- * between custom commands and a Discord bot integrated with the Bukkit server.
- * It facilitates the registration and unregistration of commands, sending responses
- * or messages over the Netty communication layer, and coordinating with the core
- * DiscordBMB plugin.
- */
 public class DiscordBMBApi {
     private final DiscordBMB plugin;
     private final CommandRegister commandRegister;
