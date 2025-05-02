@@ -35,7 +35,14 @@ public class DiscordBotListener extends ListenerAdapter {
         this.plugin = plugin;
         this.nettyServer = nettyServer;
         this.logger = logger;
-        this.commandExecutor = new CommandExecutor();
+
+        if (plugin.getDiscordBotManager().getJda() != null) {
+            this.commandExecutor = new CommandExecutor();
+            logger.info("CommandExecutor initialized successfully");
+        } else {
+            logger.error("Failed to initialize CommandExecutor - JDA is null!");
+            this.commandExecutor = null;
+        }
     }
 
     public ConcurrentHashMap<UUID, SlashCommandInteractionEvent> getPendingRequests() {
@@ -49,9 +56,11 @@ public class DiscordBotListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
+        logger.info("Received slash command: {}", command);
         List<NettyServer.ServerInfo> servers = nettyServer.getServersForCommand(command);
 
         if (servers.isEmpty()) {
+            logger.info("No servers found for command '{}', treating as custom command", command);
             handleCustomCommand(event, command);
             return;
         }
@@ -86,8 +95,17 @@ public class DiscordBotListener extends ListenerAdapter {
     private void handleCustomCommand(SlashCommandInteractionEvent event, String command) {
         var customCommand = plugin.getCommandManager().getCommand(command);
         if (customCommand != null) {
-            commandExecutor.execute(event, customCommand);
+            if (commandExecutor != null) {
+                logger.info("Executing custom command: {}", command);
+                commandExecutor.execute(event, customCommand);
+            } else {
+                logger.error("CommandExecutor is null, cannot execute command '{}'", command);
+                event.reply("Command execution failed due to internal error.")
+                        .setEphemeral(true)
+                        .queue();
+            }
         } else {
+            logger.warn("Custom command '{}' not found", command);
             event.reply("Command unavailable.")
                     .setEphemeral(true)
                     .queue();
@@ -208,6 +226,5 @@ public class DiscordBotListener extends ListenerAdapter {
         }
     }
 
-    public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
-    }
+    public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {}
 }

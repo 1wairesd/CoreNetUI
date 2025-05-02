@@ -33,8 +33,11 @@ public class CommandAdmin implements SimpleCommand {
                     return;
                 }
                 ConfigManager.ConfigureReload();
-                plugin.updateActivity();
-                plugin.getCommandManager().loadAndRegisterCommands();
+
+                if(plugin.getNettyServer() != null) {
+                    plugin.updateActivity();
+                    plugin.getCommandManager().loadAndRegisterCommands();
+                }
                 source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("reload-success")));
                 break;
             case "commands":

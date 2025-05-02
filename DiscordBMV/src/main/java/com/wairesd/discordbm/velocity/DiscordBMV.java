@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandManager;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.buttons.ButtonInteractionListener;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
@@ -15,9 +16,11 @@ import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.discord.ResponseHandler;
 import com.wairesd.discordbm.velocity.network.NettyServer;
+import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
@@ -49,19 +52,23 @@ public class DiscordBMV {
 
     private void initializeConfiguration() {
         ConfigManager.init(dataDirectory);
+        logger.info("Configuration initialized");
     }
 
     private void initializeDatabase() {
         String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db");
         dbManager = new DatabaseManager(dbPath);
+        logger.info("Database initialized at {}", dbPath);
     }
 
     private void initializeNettyServer() {
         nettyServer = new NettyServer(logger, dbManager);
+        logger.info("Netty server initialized");
     }
 
     private void startNettyServer() {
         new Thread(nettyServer::start, "Netty-Server-Thread").start();
+        logger.info("Netty server thread started");
     }
 
     private void registerCommands() {
@@ -69,6 +76,7 @@ public class DiscordBMV {
                 proxy.getCommandManager().metaBuilder("discordBMV").build(),
                 new CommandAdmin(this)
         );
+        logger.info("Proxy commands registered");
     }
 
     private void initializeDiscordBot() {
@@ -77,15 +85,32 @@ public class DiscordBMV {
         String activityMessage = Settings.getActivityMessage();
 
         discordBotManager.initializeBot(token, activityType, activityMessage);
-        nettyServer.setJda(discordBotManager.getJda());
+
+        JDA jda = discordBotManager.getJda();
+        if (jda == null) {
+            logger.error("Failed to initialize Discord bot! Aborting further initialization.");
+            return;
+        }
+
+        logger.info("Discord bot initialized, setting up listeners and commands");
+
+        jda.addEventListener(new ButtonInteractionListener());
+        nettyServer.setJda(jda);
 
         DiscordBotListener listener = new DiscordBotListener(this, nettyServer, logger);
-        discordBotManager.getJda().addEventListener(listener);
+        jda.addEventListener(listener);
 
         ResponseHandler.init(listener, logger);
 
-        commandManager = new CommandManager(nettyServer, discordBotManager.getJda());
+        commandManager = new CommandManager(nettyServer, jda);
         commandManager.loadAndRegisterCommands();
+
+        jda.retrieveCommands().queue(commands -> {
+            logger.info("Registered commands in Discord: {}",
+                    commands.stream().map(cmd -> cmd.getName()).collect(Collectors.toList()));
+        }, failure -> {
+            logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
+        });
     }
 
     public void updateActivity() {
@@ -100,6 +125,10 @@ public class DiscordBMV {
 
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    public DiscordBotManager getDiscordBotManager() {
+        return discordBotManager;
     }
 
     public NettyServer getNettyServer() {

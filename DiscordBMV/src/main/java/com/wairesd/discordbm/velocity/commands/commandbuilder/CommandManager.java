@@ -2,6 +2,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder;
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
+import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import com.wairesd.discordbm.velocity.models.option.OptionDefinition;
 import com.wairesd.discordbm.velocity.network.NettyServer;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,22 +31,49 @@ public class CommandManager {
     }
 
     public void loadAndRegisterCommands() {
+        List<CommandStructured> commands;
+        try {
+            commands = Commands.getCustomCommands();
+            if (Settings.isDebugCommandRegistrations()) {
+                logger.debug("Loading custom commands from configuration...");
+                commands.forEach(cmd -> logger.debug("Loaded command: {}", cmd.getName()));
+            }
+            logger.info("Successfully loaded {} commands", commands.size());
+        } catch (Exception e) {
+            logger.error("Failed to load custom commands", e);
+            return;
+        }
+
         customCommands.clear();
-        Commands.getCustomCommands().stream()
-                .filter(Objects::nonNull)
-                .forEach(this::loadAndRegisterCommand);
-        logger.info("Loaded and registered {} custom commands", customCommands.size());
+        int registered = 0;
+        for (CommandStructured cmd : commands) {
+            if (cmd == null) continue;
+            if (safeRegisterCommand(cmd)) registered++;
+        }
+
+        logger.info("Completed registration of {} commands", registered);
+        if (Settings.isDebugCommandRegistrations()) {
+            logger.debug("Registered commands: {}", customCommands.keySet());
+        }
     }
 
-    private void loadAndRegisterCommand(CommandStructured cmd) {
-        customCommands.put(cmd.getName(), cmd);
-        registerCommandWithJDA(cmd);
-        registerCommandDefinition(cmd);
-    }
+    private boolean safeRegisterCommand(CommandStructured cmd) {
+        try {
+            SlashCommandData cmdData = createSlashCommandData(cmd);
+            if (Settings.isDebugCommandRegistrations()) {
+                logger.debug("Registering command '{}' with options: {}", cmd.getName(), cmd.getOptions());
+            } else {
+                logger.info("Registering command: {}", cmd.getName());
+            }
 
-    private void registerCommandWithJDA(CommandStructured cmd) {
-        SlashCommandData cmdData = createSlashCommandData(cmd);
-        jda.upsertCommand(cmdData).queue();
+            jda.upsertCommand(cmdData).queue();
+            registerCommandDefinition(cmd);
+            customCommands.put(cmd.getName(), cmd);
+            return true;
+        } catch (Exception e) {
+            logger.error("Command registration failed for '{}'", cmd.getName(), e);
+            return false;
+        }
     }
 
     private SlashCommandData createSlashCommandData(CommandStructured cmd) {
@@ -54,14 +83,13 @@ public class CommandManager {
         return cmdData;
     }
 
-
     private void addOptionsToCommand(CommandStructured cmd, SlashCommandData cmdData) {
         cmd.getOptions().forEach(opt -> {
             try {
                 OptionType optionType = OptionType.valueOf(opt.getType().toUpperCase());
                 cmdData.addOption(optionType, opt.getName(), opt.getDescription(), opt.isRequired());
             } catch (IllegalArgumentException e) {
-                logger.error("Invalid option type '{}' for command '{}'", opt.getType(), cmd.getName());
+                logger.error("Invalid option type '{}' in command '{}'", opt.getType(), cmd.getName());
             }
         });
     }

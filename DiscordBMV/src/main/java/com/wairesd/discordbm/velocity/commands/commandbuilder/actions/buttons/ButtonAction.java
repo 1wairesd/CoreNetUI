@@ -36,16 +36,24 @@ public class ButtonAction implements CommandAction {
     }
 
     private void validateProps(Map<String, Object> props) {
-        if (props.get("label") == null || ((String) props.get("label")).isEmpty()) {
+        String label = (String) props.get("label");
+        if (label == null || label.isEmpty()) {
             throw new IllegalArgumentException("label is required");
         }
 
-        if (props.getOrDefault("style", DEFAULT_STYLE).equals("LINK") && (props.get("url") == null || ((String) props.get("url")).isEmpty())) {
-            throw new IllegalArgumentException("url property is required for LINK button");
-        }
+        String style = (String) props.getOrDefault("style", DEFAULT_STYLE);
+        ButtonStyle buttonStyle = ButtonStyle.valueOf(style.toUpperCase());
 
-        if (!props.getOrDefault("style", DEFAULT_STYLE).equals("LINK") && (props.get("message") == null || ((String) props.get("message")).isEmpty())) {
-            throw new IllegalArgumentException("message property is required for non-LINK button");
+        if (buttonStyle == ButtonStyle.LINK) {
+            String url = (String) props.get("url");
+            if (url == null || url.isEmpty()) {
+                throw new IllegalArgumentException("url property is required for LINK button");
+            }
+        } else {
+            String message = (String) props.get("message");
+            if (message == null || message.isEmpty()) {
+                throw new IllegalArgumentException("message property is required for non-LINK button");
+            }
         }
     }
 
@@ -65,7 +73,7 @@ public class ButtonAction implements CommandAction {
         if (style == ButtonStyle.LINK) {
             return Button.link(url, label);
         } else {
-            ButtonActionRegistry.register(customId, message, 5 * 60 * 1000);
+            ButtonActionRegistry.register(customId, message, 60 * 60 * 1000);
             return Button.of(style, customId, label);
         }
     }

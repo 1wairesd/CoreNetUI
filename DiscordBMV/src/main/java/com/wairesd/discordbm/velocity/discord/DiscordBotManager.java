@@ -11,6 +11,7 @@ import java.util.EnumSet;
 public class DiscordBotManager {
     private final Logger logger;
     private JDA jda;
+    private boolean initialized = false;
 
     public DiscordBotManager(Logger logger) {
         this.logger = logger;
@@ -21,8 +22,10 @@ public class DiscordBotManager {
             logger.error("Bot token is not specified!");
             return;
         }
-
-
+        if (initialized) {
+            logger.warn("Bot is already initialized!");
+            return;
+        }
         try {
             Activity activity = createActivity(activityType, activityMessage);
             jda = JDABuilder.createDefault(token)
@@ -34,9 +37,12 @@ public class DiscordBotManager {
                     .setActivity(activity)
                     .build()
                     .awaitReady();
-            logger.info("Discord bot successfully started.");
+            logger.info("JDA initialized successfully with token: {}", token.substring(0, 10) + "...");
+            initialized = true;
         } catch (Exception e) {
             logger.error("Error initializing JDA: {}", e.getMessage(), e);
+            jda = null;
+            initialized = false;
         }
     }
 
@@ -57,6 +63,10 @@ public class DiscordBotManager {
     }
 
     public JDA getJda() {
+        if(!initialized || jda == null) {
+            logger.warn("JDA is not initialized yet!");
+            return null;
+        }
         return jda;
     }
 }

@@ -10,6 +10,10 @@ public class Context {
     private final SlashCommandInteractionEvent event;
     private String messageText = "";
     private final List<Button> buttons = new ArrayList<>();
+    private ResponseType responseType = ResponseType.REPLY;
+    private String targetChannelId;
+    private String targetUserId;
+    private String messageIdToEdit;
 
     public Context(SlashCommandInteractionEvent event) {
         if (event == null) {
@@ -17,6 +21,18 @@ public class Context {
         }
         this.event = event;
     }
+
+    public ResponseType getResponseType() { return responseType; }
+    public void setResponseType(ResponseType type) { this.responseType = type; }
+
+    public String getTargetChannelId() { return targetChannelId; }
+    public void setTargetChannelId(String id) { this.targetChannelId = id; }
+
+    public String getTargetUserId() { return targetUserId; }
+    public void setTargetUserId(String id) { this.targetUserId = id; }
+
+    public String getMessageIdToEdit() { return messageIdToEdit; }
+    public void setMessageIdToEdit(String id) { this.messageIdToEdit = id; }
 
     public SlashCommandInteractionEvent getEvent() {
         return event;

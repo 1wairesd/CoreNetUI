@@ -9,8 +9,11 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.Com
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -18,7 +21,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class Commands {
@@ -26,27 +28,26 @@ public class Commands {
     private static final String COMMANDS_FILE_NAME = "commands.yml";
 
     private static Path dataDirectory;
-    private static List<CommandStructured> customCommands;
+    private static volatile List<CommandStructured> customCommands = Collections.emptyList();
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
         loadCommands();
     }
 
-    private static void loadCommands() {
-        CompletableFuture.runAsync(() -> {
-            try {
-                Path commandsPath = dataDirectory.resolve(COMMANDS_FILE_NAME);
-                if (!Files.exists(commandsPath)) {
-                    createDefaultCommandsFile(commandsPath);
-                }
-
-                customCommands = loadCommandsFromFile(commandsPath);
-                logger.info("{} loaded successfully with {} commands", COMMANDS_FILE_NAME, customCommands.size());
-            } catch (Exception e) {
-                logger.error("Error loading {}: {}", COMMANDS_FILE_NAME, e.getMessage(), e);
+    private static synchronized void loadCommands() {
+        try {
+            Path commandsPath = dataDirectory.resolve(COMMANDS_FILE_NAME);
+            if (!Files.exists(commandsPath)) {
+                createDefaultCommandsFile(commandsPath);
             }
-        });
+
+            List<CommandStructured> newCommands = loadCommandsFromFile(commandsPath);
+            customCommands = Collections.unmodifiableList(newCommands);
+            logger.info("{} reloaded successfully with {} commands", COMMANDS_FILE_NAME, customCommands.size());
+        } catch (Exception e) {
+            logger.error("Error loading {}: {}", COMMANDS_FILE_NAME, e.getMessage(), e);
+        }
     }
 
     private static void createDefaultCommandsFile(Path commandsPath) throws IOException {
@@ -61,13 +62,34 @@ public class Commands {
     }
 
     private static List<CommandStructured> loadCommandsFromFile(Path commandsPath) throws IOException {
+        if (!Files.exists(commandsPath)) {
+            throw new FileNotFoundException("YAML command file not found: " + commandsPath);
+        }
+
         try (InputStream in = Files.newInputStream(commandsPath)) {
-            Yaml yaml = new Yaml();
-            Map<String, Object> data = yaml.load(in);
-            List<Map<String, Object>> commandsList = (List<Map<String, Object>>) data.getOrDefault("commands", Collections.emptyList());
-            return commandsList.stream()
+            Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
+            Object loaded = yaml.load(in);
+
+            if (!(loaded instanceof Map<?, ?> map)) {
+                throw new IllegalArgumentException("Incorrect YAML format: Root Map expected");
+            }
+
+            Object rawCommands = map.get("commands");
+            if (!(rawCommands instanceof List<?> list)) {
+                return Collections.emptyList();
+            }
+
+            List<Map<String, Object>> commandMaps = list.stream()
+                    .filter(e -> e instanceof Map)
+                    .map(e -> (Map<String, Object>) e)
+                    .toList();
+
+            return commandMaps.stream()
                     .map(Commands::parseCommand)
                     .collect(Collectors.toList());
+
+        } catch (ClassCastException | IllegalArgumentException e) {
+            throw new IOException("Error when parsing a YAML file: " + e.getMessage(), e);
         }
     }
 

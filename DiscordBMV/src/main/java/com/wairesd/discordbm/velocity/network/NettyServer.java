@@ -12,6 +12,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 
 import java.nio.charset.StandardCharsets;
@@ -29,7 +30,7 @@ public class NettyServer {
     private final Map<String, CommandDefinition> commandDefinitions = new HashMap<>();
     private final Map<String, List<ServerInfo>> commandToServers = new HashMap<>();
     private final Map<Channel, String> channelToServerName = new ConcurrentHashMap<>();
-    private volatile Object jda;
+    private JDA jda;
     private final int port = Settings.getNettyPort();
     private final DatabaseManager dbManager;
 
@@ -38,7 +39,9 @@ public class NettyServer {
         this.dbManager = dbManager;
     }
 
-    public void setJda(Object jda) { this.jda = jda; }
+    public void setJda(JDA jda) {
+        this.jda = jda;
+    }
 
     public Map<String, List<ServerInfo>> getCommandToServers() { return commandToServers; }
 
@@ -101,6 +104,12 @@ public class NettyServer {
     }
 
     public void registerCommands(String serverName, List<CommandDefinition> commands, Channel channel) {
+
+        if (jda == null) {
+            logger.warn("Cannot register commands - JDA is not initialized!");
+            return;
+        }
+
         for (var cmd : commands) {
             if (commandDefinitions.containsKey(cmd.name())) {
                 CommandDefinition existing = commandDefinitions.get(cmd.name());
@@ -136,7 +145,7 @@ public class NettyServer {
                         }
                     }
 
-                    ((net.dv8tion.jda.api.JDA) jda).upsertCommand(cmdData).queue();
+                    ((JDA) jda).upsertCommand(cmdData).queue();
 
                     if (Settings.isDebugCommandRegistrations()) {
                         logger.info("Registered command: {} with context: {}", cmd.name(), cmd.context());
