@@ -25,7 +25,7 @@ public class CommandExecutor {
             throw new IllegalArgumentException("Event and command cannot be null");
         }
 
-        event.deferReply().queue(hook -> {
+        event.deferReply(true).queue(hook -> {
             Context context = new Context(event);
 
             if (!command.getConditions().stream().allMatch(condition -> condition.check(context))) {
@@ -40,11 +40,14 @@ public class CommandExecutor {
             switch (context.getResponseType()) {
                 case REPLY -> sendReply(hook, context);
                 case SPECIFIC_CHANNEL -> sendToChannel(event.getJDA(), context);
-                case DIRECT_MESSAGE -> sendDirectMessage(context);
-                case EDIT_MESSAGE -> editMessage(event.getChannel(), context);
+                case DIRECT_MESSAGE, EDIT_MESSAGE -> {
+                    sendDirectMessage(context);
+                    hook.deleteOriginal().queue();
+                }
             }
         });
     }
+
 
     private void sendReply(InteractionHook hook, Context context) {
         var messageText = context.getMessageText().isEmpty() ? " " : context.getMessageText();

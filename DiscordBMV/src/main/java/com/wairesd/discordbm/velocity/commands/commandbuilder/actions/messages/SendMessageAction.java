@@ -57,14 +57,12 @@ public class SendMessageAction implements CommandAction {
             case DIRECT_MESSAGE:
                 String userId = formattedTargetId;
                 if (userId != null && !userId.isEmpty()) {
-                    event.getJDA().retrieveUserById(userId)
-                            .flatMap(user -> user.openPrivateChannel())
-                            .flatMap(channel -> channel.sendMessage(context.getMessageText()))
-                            .queue();
+                    context.setTargetUserId(userId);
                 } else {
                     logger.warn("Target user ID is null or empty, unable to send direct message.");
                 }
                 break;
+
             case EDIT_MESSAGE:
                 context.setMessageIdToEdit(targetId);
                 break;
