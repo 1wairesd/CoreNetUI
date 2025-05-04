@@ -14,8 +14,10 @@ commands:
     actions:
       - type: "send_message"
         message: "Hello, {user}! You greeted {target}."
+
   - name: "openwebsite"
     description: "Open the website"
+    ephemeral: false
     context: "both"
     actions:
       - type: send_message

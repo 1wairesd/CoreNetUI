@@ -117,6 +117,10 @@ public class Settings {
         return (String) getConfigValue("forwarding-secret-file", DEFAULT_FORWARDING_SECRET_FILE);
     }
 
+    public static boolean isDefaultEphemeral() {
+        return (boolean) getConfigValue("commands.default-ephemeral", false);
+    }
+
     public static String getSecretCode() {
         return secretManager != null ? secretManager.getSecretCode() : null;
     }

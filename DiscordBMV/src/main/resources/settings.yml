@@ -11,6 +11,9 @@ forwarding-secret-file: "secret.complete.code"
 
 view_connected_banned_ip: false
 
+commands:
+  default-ephemeral: false
+
 debug:
   debug-connections: true          # Logue customer connection and disconnecting
   debug-client-responses: false    # Logue requests and answers from customers

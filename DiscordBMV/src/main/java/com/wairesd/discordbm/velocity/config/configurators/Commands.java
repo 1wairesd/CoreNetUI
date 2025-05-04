@@ -113,6 +113,8 @@ public class Commands {
         List<CommandOption> options = getOptions(cmdData);
         List<CommandCondition> conditions = getConditions(cmdData);
         List<CommandAction> actions = getActions(cmdData);
+        Boolean ephemeral = cmdData.containsKey("ephemeral") ?
+                (Boolean) cmdData.get("ephemeral") : null;
 
         return new CommandStructured(
                 name,
@@ -120,7 +122,8 @@ public class Commands {
                 context,
                 options,
                 conditions,
-                actions
+                actions,
+                ephemeral
         );
     }
 

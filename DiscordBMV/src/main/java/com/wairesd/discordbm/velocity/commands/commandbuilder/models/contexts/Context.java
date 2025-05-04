@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts;
 
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
@@ -15,12 +16,21 @@ public class Context {
     private String targetUserId;
     private String messageIdToEdit;
     private String resolvedMessage;
+    private MessageEmbed embed;
 
     public Context(SlashCommandInteractionEvent event) {
         if (event == null) {
             throw new IllegalArgumentException("Event cannot be null");
         }
         this.event = event;
+    }
+
+    public MessageEmbed getEmbed() {
+        return embed;
+    }
+
+    public void setEmbed(MessageEmbed embed) {
+        this.embed = embed;
     }
 
     public void setResolvedMessage(String message) { this.resolvedMessage = message; }

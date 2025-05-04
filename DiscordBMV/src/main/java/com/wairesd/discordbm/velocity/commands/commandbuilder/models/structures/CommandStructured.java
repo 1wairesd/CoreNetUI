@@ -13,10 +13,11 @@ public class CommandStructured {
     private final List<CommandOption> options;
     private final List<CommandCondition> conditions;
     private final List<CommandAction> actions;
+    private final Boolean ephemeral;
 
     public CommandStructured(String name, String description, String context,
                              List<CommandOption> options, List<CommandCondition> conditions,
-                             List<CommandAction> actions) {
+                             List<CommandAction> actions, Boolean ephemeral) {
         validateInputs(name, description, context);
         this.name = name;
         this.description = description;
@@ -24,6 +25,11 @@ public class CommandStructured {
         this.options = options != null ? List.copyOf(options) : List.of();
         this.conditions = conditions != null ? List.copyOf(conditions) : List.of();
         this.actions = actions != null ? List.copyOf(actions) : List.of();
+        this.ephemeral = ephemeral;
+    }
+
+    public Boolean getEphemeral() {
+        return ephemeral;
     }
 
     private void validateInputs(String name, String description, String context) {

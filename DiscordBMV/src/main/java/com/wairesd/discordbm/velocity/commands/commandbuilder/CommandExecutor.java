@@ -23,16 +23,20 @@ public class CommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
     public void execute(SlashCommandInteractionEvent event, CommandStructured command) {
+        boolean ephemeral = command.getEphemeral() != null ?
+                command.getEphemeral() :
+                Settings.isDefaultEphemeral();
+
+        event.deferReply(ephemeral).queue(hook -> {
+
         if (event == null || command == null) {
             throw new IllegalArgumentException("Event and command cannot be null");
         }
-
-        event.deferReply(true).queue(hook -> {
             Context context = new Context(event);
 
             if (!command.getConditions().stream().allMatch(condition -> condition.check(context))) {
-                hook.sendMessage("You don't meet the conditions to use this command.")
-                        .setEphemeral(true)
+                hook.sendMessage("You don't meet the conditions...")
+                        .setEphemeral(ephemeral)
                         .queue();
                 return;
             }
@@ -73,6 +77,9 @@ public class CommandExecutor {
             hook.sendMessage("Message content not provided.").setEphemeral(true).queue();
         } else {
             var messageAction = hook.sendMessage(messageText);
+            if (context.getEmbed() != null) {
+                messageAction.setEmbeds(context.getEmbed());
+            }
             if (!context.getButtons().isEmpty()) {
                 messageAction.addActionRow(context.getButtons());
             }
@@ -84,6 +91,9 @@ public class CommandExecutor {
         TextChannel channel = jda.getTextChannelById(context.getTargetChannelId());
         if (channel != null) {
             var messageAction = channel.sendMessage(context.getMessageText());
+            if (context.getEmbed() != null) {
+                messageAction.setEmbeds(context.getEmbed());
+            }
             if (!context.getButtons().isEmpty()) {
                 messageAction.addActionRow(context.getButtons());
             }
@@ -109,6 +119,9 @@ public class CommandExecutor {
         if (user != null) {
             user.openPrivateChannel().queue(pc -> {
                 var messageAction = pc.sendMessage(context.getMessageText());
+                if (context.getEmbed() != null) {
+                    messageAction.setEmbeds(context.getEmbed());
+                }
                 if (!context.getButtons().isEmpty()) {
                     messageAction.addActionRow(context.getButtons());
                 }
@@ -126,6 +139,7 @@ public class CommandExecutor {
 
         channel.editMessageById(context.getMessageIdToEdit(), context.getMessageText())
                 .setComponents(components)
+                .setEmbeds(context.getEmbed() != null ? List.of(context.getEmbed()) : Collections.emptyList())
                 .queue();
     }
 }
