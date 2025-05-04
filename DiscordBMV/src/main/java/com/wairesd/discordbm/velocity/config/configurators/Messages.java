@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class Messages {
     private static final Logger logger = LoggerFactory.getLogger(Messages.class);
     private static final String MESSAGES_FILE_NAME = "messages.yml";
-    private static final String DEFAULT_MESSAGE = "Message not found.";
+    public static final String DEFAULT_MESSAGE = "Message not found.";
 
     private static Path dataDirectory;
     private static CommentedConfigurationNode messagesConfig;
@@ -60,10 +60,10 @@ public class Messages {
         loadMessages();
     }
 
-    public static String getMessage(String key) {
+    public static String getMessage(String key, String defaultValue) {
         if (messagesConfig == null) {
-            return DEFAULT_MESSAGE;
+            return defaultValue != null ? defaultValue : DEFAULT_MESSAGE;
         }
-        return messagesConfig.node(key).getString(DEFAULT_MESSAGE);
+        return messagesConfig.node(key).getString(defaultValue != null ? defaultValue : DEFAULT_MESSAGE);
     }
 }

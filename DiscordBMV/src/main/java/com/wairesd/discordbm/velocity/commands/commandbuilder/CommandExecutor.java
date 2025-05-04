@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder;
 
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
@@ -14,8 +15,9 @@ import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
 public class CommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
@@ -35,27 +37,47 @@ public class CommandExecutor {
                 return;
             }
 
-            command.getActions().forEach(action -> action.execute(context));
-
-            switch (context.getResponseType()) {
-                case REPLY -> sendReply(hook, context);
-                case SPECIFIC_CHANNEL -> sendToChannel(event.getJDA(), context);
-                case DIRECT_MESSAGE, EDIT_MESSAGE -> {
-                    sendDirectMessage(context);
-                    hook.deleteOriginal().queue();
-                }
+            CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
+            for (CommandAction action : command.getActions()) {
+                chain = chain.thenCompose(voidResult -> action.execute(context));
             }
+
+            chain.thenRun(() -> {
+                switch (context.getResponseType()) {
+                    case REPLY:
+                        sendReply(hook, context);
+                        break;
+                    case SPECIFIC_CHANNEL:
+                        sendToChannel(event.getJDA(), context);
+                        break;
+                    case DIRECT_MESSAGE:
+                        sendDirectMessage(context);
+                        hook.deleteOriginal().queue();
+                        break;
+                    case EDIT_MESSAGE:
+                        editMessage(event.getChannel(), context);
+                        hook.deleteOriginal().queue();
+                        break;
+                }
+            }).exceptionally(ex -> {
+                logger.error("Error when executing command actions: {}", ex.getMessage(), ex);
+                hook.sendMessage("An error occurred while executing the command.").setEphemeral(true).queue();
+                return null;
+            });
         });
     }
 
-
     private void sendReply(InteractionHook hook, Context context) {
-        var messageText = context.getMessageText().isEmpty() ? " " : context.getMessageText();
-        var messageAction = hook.sendMessage(messageText);
-        if (!context.getButtons().isEmpty()) {
-            messageAction.addActionRow(context.getButtons());
+        String messageText = context.getMessageText();
+        if (messageText == null || messageText.trim().isEmpty()) {
+            hook.sendMessage("Message content not provided.").setEphemeral(true).queue();
+        } else {
+            var messageAction = hook.sendMessage(messageText);
+            if (!context.getButtons().isEmpty()) {
+                messageAction.addActionRow(context.getButtons());
+            }
+            messageAction.queue();
         }
-        messageAction.queue();
     }
 
     private void sendToChannel(JDA jda, Context context) {

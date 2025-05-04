@@ -3,13 +3,15 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.ResponseType;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.placeholders.PlaceholderUser;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersUser;
+import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class SendMessageAction implements CommandAction {
     private static final Logger logger = LoggerFactory.getLogger(SendMessageAction.class);
@@ -42,36 +44,37 @@ public class SendMessageAction implements CommandAction {
     }
 
     @Override
-    public void execute(Context context) {
-        validateContext(context);
-        SlashCommandInteractionEvent event = context.getEvent();
-        String formattedTargetId = formatMessage(event, this.targetId);
-        String formattedMessage = formatMessage(event, messageTemplate);
-        context.setMessageText(formattedMessage);
+    public CompletableFuture<Void> execute(Context context) {
+        return CompletableFuture.runAsync(() -> {
+            validateContext(context);
+            SlashCommandInteractionEvent event = context.getEvent();
+            String formattedTargetId = formatMessage(event, this.targetId, context);
+            String formattedMessage = formatMessage(event, messageTemplate, context);
+            context.setMessageText(formattedMessage);
 
-        context.setResponseType(responseType);
-        switch (responseType) {
-            case SPECIFIC_CHANNEL:
-                context.setTargetChannelId(formattedTargetId);
-                break;
-            case DIRECT_MESSAGE:
-                String userId = formattedTargetId;
-                if (userId != null && !userId.isEmpty()) {
-                    context.setTargetUserId(userId);
-                } else {
-                    logger.warn("Target user ID is null or empty, unable to send direct message.");
-                }
-                break;
-
-            case EDIT_MESSAGE:
-                context.setMessageIdToEdit(targetId);
-                break;
-            case REPLY:
-                break;
-            default:
-                logger.warn("Unknown Response Type: {}", responseType);
-                break;
-        }
+            context.setResponseType(responseType);
+            switch (responseType) {
+                case SPECIFIC_CHANNEL:
+                    context.setTargetChannelId(formattedTargetId);
+                    break;
+                case DIRECT_MESSAGE:
+                    String userId = formattedTargetId;
+                    if (userId != null && !userId.isEmpty()) {
+                        context.setTargetUserId(userId);
+                    } else {
+                        logger.warn("Target user ID is null or empty, unable to send direct message.");
+                    }
+                    break;
+                case EDIT_MESSAGE:
+                    context.setMessageIdToEdit(targetId);
+                    break;
+                case REPLY:
+                    break;
+                default:
+                    logger.warn("Unknown Response Type: {}", responseType);
+                    break;
+            }
+        });
     }
 
     private void validateContext(Context context) {
@@ -80,14 +83,18 @@ public class SendMessageAction implements CommandAction {
         }
     }
 
-    private String formatMessage(SlashCommandInteractionEvent event, String template) {
-        String result = PlaceholderUser.replace(template, event);
+    private String formatMessage(SlashCommandInteractionEvent event, String template, Context context) {
+        String result = PlaceholdersUser.replace(template != null ? template : "", event, context);
+
+        if (Settings.isDebugSendMessageAction()) {
+            logger.info("Resolved message in SendMessageAction: {}", context.getResolvedMessage());
+            logger.info("Formatted message in SendMessageAction: {}", result);
+        }
 
         for (OptionMapping option : event.getOptions()) {
             String placeholder = "{" + option.getName() + "}";
             result = result.replace(placeholder, option.getAsString());
         }
-
         return result;
     }
 

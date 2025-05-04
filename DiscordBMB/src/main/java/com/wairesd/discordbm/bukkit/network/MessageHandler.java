@@ -5,13 +5,27 @@ import com.google.gson.JsonObject;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
+import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
+import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
+import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * Handles communication between the Netty client and the plugin backend by processing
+ * incoming messages and sending appropriate responses.
+ *
+ * This class extends {@code SimpleChannelInboundHandler<String>} to handle string-based
+ * messages received over a Netty channel. Incoming messages are parsed, and actions
+ * such as error handling, command execution, and placeholder resolution are performed.
+ */
 public class MessageHandler extends SimpleChannelInboundHandler<String> {
     private static final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
     private final DiscordBMB plugin;
@@ -21,12 +35,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         this.plugin = plugin;
     }
 
-    /**
-     * Handles inbound messages from the channel and processes them based on their type.
-     *
-     * @param ctx     the context of the channel handler
-     * @param message the received message as a String
-     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String message) {
         if (Settings.isDebugClientResponses()) {
@@ -41,8 +49,34 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         try {
             JsonObject json = gson.fromJson(message, JsonObject.class);
             String type = json.get("type").getAsString();
+
             if ("request".equals(type)) {
                 handleRequest(json);
+            } else if ("can_handle_placeholders".equals(type)) {
+                CanHandlePlaceholdersRequest req = gson.fromJson(json, CanHandlePlaceholdersRequest.class);
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    boolean canHandle = plugin.checkIfCanHandle(req.player(), req.placeholders());
+                    CanHandleResponse resp = new CanHandleResponse(
+                            "can_handle_response",
+                            req.requestId(),
+                            canHandle
+                    );
+                    ctx.channel().writeAndFlush(gson.toJson(resp));
+                });
+            } else if ("get_placeholders".equals(type)) {
+                GetPlaceholdersRequest req = gson.fromJson(json, GetPlaceholdersRequest.class);
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    Map<String, String> values = plugin.getPlaceholderValues(req.player(), req.placeholders());
+                    if (Settings.isDebugResolvePlaceholders()) {
+                        logger.info("Resolving placeholders for player {}: {}", req.player(), values);
+                    }
+                    PlaceholdersResponse resp = new PlaceholdersResponse(
+                            "placeholders_response",
+                            req.requestId(),
+                            values
+                    );
+                    ctx.channel().writeAndFlush(gson.toJson(resp));
+                });
             } else {
                 logger.warn("Unknown message type: {}", type);
             }
@@ -53,13 +87,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         }
     }
 
-    /**
-     * Handles error messages received from the server and performs appropriate actions
-     * such as logging the error and closing the channel context if necessary.
-     *
-     * @param message the error message received from the server
-     * @param ctx     the context of the channel handler
-     */
     private void handleErrorMessage(String message, ChannelHandlerContext ctx) {
         if (Settings.isDebugErrors()) {
             logger.warn("Received error from server: {}", message);
@@ -81,20 +108,13 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         }
     }
 
-    /**
-     * Handles a request by extracting its command, options, and request ID from the provided JSON object.
-     * Executes the corresponding command handler if available or sends a "Command not found" response.
-     *
-     * @param json the input JSON object containing the request details, including the command, request ID,
-     *             and optionally additional options
-     */
     private void handleRequest(JsonObject json) {
         String command = json.get("command").getAsString();
         String requestId = json.get("requestId").getAsString();
 
         Map<String, String> options = new HashMap<>();
         if (json.has("options")) {
-            JsonObject optionsJson = json.get("options").getAsJsonObject();
+            JsonObject optionsJson = json.getAsJsonObject("options");
             for (Map.Entry<String, com.google.gson.JsonElement> entry : optionsJson.entrySet()) {
                 options.put(entry.getKey(), entry.getValue().getAsString());
             }
@@ -109,14 +129,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         }
     }
 
-    /**
-     * Handles exceptions caught during the operation of the channel.
-     * Logs the error message if debug error logging is enabled in the settings
-     * and ensures that the channel context is closed to prevent further issues.
-     *
-     * @param ctx   the context of the channel handler where the exception occurred
-     * @param cause the throwable that was caught
-     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (Settings.isDebugErrors()) {

@@ -14,6 +14,7 @@ public class Context {
     private String targetChannelId;
     private String targetUserId;
     private String messageIdToEdit;
+    private String resolvedMessage;
 
     public Context(SlashCommandInteractionEvent event) {
         if (event == null) {
@@ -21,6 +22,9 @@ public class Context {
         }
         this.event = event;
     }
+
+    public void setResolvedMessage(String message) { this.resolvedMessage = message; }
+    public String getResolvedMessage() { return resolvedMessage; }
 
     public ResponseType getResponseType() { return responseType; }
     public void setResponseType(ResponseType type) { this.responseType = type; }

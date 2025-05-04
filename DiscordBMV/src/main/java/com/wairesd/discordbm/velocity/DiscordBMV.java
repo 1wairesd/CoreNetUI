@@ -11,6 +11,7 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.buttons.ButtonInteractionListener;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
+import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
@@ -38,10 +39,12 @@ public class DiscordBMV {
         this.dataDirectory = dataDirectory;
         this.proxy = proxy;
         this.discordBotManager = new DiscordBotManager(logger);
+        Commands.plugin = this;
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        Commands.plugin = this;
         initializeConfiguration();
         initializeDatabase();
         initializeNettyServer();
@@ -105,12 +108,18 @@ public class DiscordBMV {
         commandManager = new CommandManager(nettyServer, jda);
         commandManager.loadAndRegisterCommands();
 
-        jda.retrieveCommands().queue(commands -> {
-            logger.info("Registered commands in Discord: {}",
-                    commands.stream().map(cmd -> cmd.getName()).collect(Collectors.toList()));
-        }, failure -> {
-            logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
-        });
+        if (Settings.isDebugCustomCommandRegistrations()) {
+            jda.retrieveCommands().queue(commands -> {
+                logger.info("Registered commands in Discord: {}",
+                        commands.stream().map(cmd -> cmd.getName()).collect(Collectors.toList()));
+            }, failure -> {
+                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
+            });
+        } else {
+            jda.retrieveCommands().queue(null, failure -> {
+                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
+            });
+        }
     }
 
     public void updateActivity() {
@@ -133,6 +142,10 @@ public class DiscordBMV {
 
     public NettyServer getNettyServer() {
         return nettyServer;
+    }
+
+    public ProxyServer getProxy() {
+        return proxy;
     }
 
     public Logger getLogger() {

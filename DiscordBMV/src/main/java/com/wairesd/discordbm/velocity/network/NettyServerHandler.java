@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.wairesd.discordbm.bukkit.models.unregister.UnregisterMessage;
+import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
+import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private final Gson gson = new Gson();
@@ -80,10 +83,23 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             handleUnregister(ctx, unregMsg);
         } else if ("response".equals(type)) {
             handleResponse(json);
+        } else if ("can_handle_response".equals(type)) {
+            CanHandleResponse resp = gson.fromJson(json, CanHandleResponse.class);
+            CompletableFuture<Boolean> future = nettyServer.getCanHandleFutures().remove(resp.requestId());
+            if (future != null) {
+                future.complete(resp.canHandle());
+            }
+        } else if ("placeholders_response".equals(type)) {
+            PlaceholdersResponse resp = gson.fromJson(json, PlaceholdersResponse.class);
+            CompletableFuture<PlaceholdersResponse> future = nettyServer.getPlaceholderFutures().remove(resp.requestId());
+            if (future != null) {
+                future.complete(resp);
+            }
         } else {
             logger.warn("Unknown message type: {}", type);
         }
     }
+
 
     private void handleUnregister(ChannelHandlerContext ctx, UnregisterMessage unregMsg) {
         if (unregMsg.secret == null || !unregMsg.secret.equals(Settings.getSecretCode())) {

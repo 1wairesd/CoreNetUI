@@ -20,7 +20,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
         event.deferReply(true).queue(hook -> {
             if (message == null) {
                 logger.warn("Button {} not found or expired", buttonId);
-                hook.sendMessage("⚠️ Action expired or invalid").setEphemeral(true).queue();
+                hook.sendMessage("Action expired or invalid").setEphemeral(true).queue();
             } else {
                 hook.sendMessage(message).setEphemeral(true).queue();
             }

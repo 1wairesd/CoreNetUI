@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.velocity.network;
 
+import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NettyServer {
@@ -33,6 +35,8 @@ public class NettyServer {
     private JDA jda;
     private final int port = Settings.getNettyPort();
     private final DatabaseManager dbManager;
+    private final ConcurrentHashMap<String, CompletableFuture<Boolean>> canHandleFutures = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> placeholderFutures = new ConcurrentHashMap<>();
 
     public NettyServer(Logger logger, DatabaseManager dbManager) {
         this.logger = logger;
@@ -166,6 +170,13 @@ public class NettyServer {
         }
         channelToServerName.remove(channel);
     }
+
+    public Map<Channel, String> getChannelToServerName() {
+        return channelToServerName;
+    }
+
+    public ConcurrentHashMap<String, CompletableFuture<Boolean>> getCanHandleFutures() { return canHandleFutures; }
+    public ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> getPlaceholderFutures() { return placeholderFutures; }
 
     public void setServerName(Channel channel, String serverName) {
         channelToServerName.put(channel, serverName);

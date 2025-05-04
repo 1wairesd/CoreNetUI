@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
+import com.wairesd.discordbm.velocity.DiscordBMV;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.PermissionCondition;
@@ -29,6 +31,8 @@ public class Commands {
 
     private static Path dataDirectory;
     private static volatile List<CommandStructured> customCommands = Collections.emptyList();
+
+    public static DiscordBMV plugin;
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
@@ -170,6 +174,7 @@ public class Commands {
         return switch (type) {
             case "send_message" -> new SendMessageAction(data);
             case "button" -> new ButtonAction(data);
+            case "resolve_placeholders" -> new ResolvePlaceholdersAction(data, plugin);
             default -> null;
         };
     }

@@ -22,14 +22,14 @@ public class CommandAdmin implements SimpleCommand {
         String[] args = invocation.arguments();
 
         if (args.length == 0) {
-            source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command")));
+            source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command", null)));
             return;
         }
 
         switch (args[0].toLowerCase()) {
             case "reload":
                 if (!source.hasPermission("discordbotmanager.reload")) {
-                    source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("no-permission")));
+                    source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("no-permission", null)));
                     return;
                 }
                 ConfigManager.ConfigureReload();
@@ -38,11 +38,11 @@ public class CommandAdmin implements SimpleCommand {
                     plugin.updateActivity();
                     plugin.getCommandManager().loadAndRegisterCommands();
                 }
-                source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("reload-success")));
+                source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("reload-success", null)));
                 break;
             case "commands":
                 if (!source.hasPermission("discordbotmanager.commands")) {
-                    source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("no-permission")));
+                    source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("no-permission", null)));
                     return;
                 }
                 var commandToServers = plugin.getNettyServer().getCommandToServers();
@@ -60,7 +60,7 @@ public class CommandAdmin implements SimpleCommand {
                 break;
 
             default:
-                source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command")));
+                source.sendMessage(ColorUtils.parseComponent(Messages.getMessage("usage-admin-command", null)));
         }
     }
 }

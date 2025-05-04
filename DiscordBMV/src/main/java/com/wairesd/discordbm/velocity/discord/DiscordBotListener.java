@@ -31,6 +31,7 @@ public class DiscordBotListener extends ListenerAdapter {
     private final ConcurrentHashMap<UUID, SlashCommandInteractionEvent> pendingRequests = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SelectionInfo> pendingSelections = new ConcurrentHashMap<>();
 
+
     public DiscordBotListener(DiscordBMV plugin, NettyServer nettyServer, Logger logger) {
         this.plugin = plugin;
         this.nettyServer = nettyServer;

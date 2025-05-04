@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class ButtonAction implements CommandAction {
     private static final String DEFAULT_LABEL = "Button";
@@ -58,11 +59,13 @@ public class ButtonAction implements CommandAction {
     }
 
     @Override
-    public void execute(Context context) {
-        String customId = generateCustomId();
-        Button button = createButton(customId);
-        applyEmojiAndDisabledState(button);
-        context.addButton(button);
+    public CompletableFuture<Void> execute(Context context) {
+        return CompletableFuture.runAsync(() -> {
+            String customId = generateCustomId();
+            Button button = createButton(customId);
+            applyEmojiAndDisabledState(button);
+            context.addButton(button);
+        });
     }
 
     private String generateCustomId() {

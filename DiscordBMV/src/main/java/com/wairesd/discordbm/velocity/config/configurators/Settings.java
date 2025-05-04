@@ -33,12 +33,10 @@ public class Settings {
             if (!configFile.exists()) {
                 createDefaultConfig();
             }
-
             Yaml yaml = new Yaml();
             try (FileInputStream inputStream = new FileInputStream(configFile)) {
                 config = yaml.load(inputStream);
             }
-
             validateConfig();
             logger.info("Settings loaded from {}", configFile.getPath());
         } catch (Exception e) {
@@ -71,7 +69,6 @@ public class Settings {
         }
     }
 
-    // Debug options
     private static boolean getDebugOption(String path, boolean defaultValue) {
         return (boolean) getConfigValue("debug." + path, defaultValue);
     }
@@ -92,6 +89,14 @@ public class Settings {
         return getDebugOption("debug-command-registrations", false);
     }
 
+    public static boolean isDebugCustomCommandRegistrations() {
+        return getDebugOption("debug-custom-command-registrations", false);
+    }
+
+    public static boolean isDebugSendMessageAction() {
+        return getDebugOption("debug-sendmessage-action", false);
+    }
+
     public static boolean isDebugAuthentication() {
         return getDebugOption("debug-authentication", true);
     }
@@ -100,7 +105,6 @@ public class Settings {
         return getDebugOption("debug-errors", true);
     }
 
-    // Configuration getters
     public static String getBotToken() {
         return (String) getConfigValue("Discord.Bot-token", "");
     }
@@ -129,29 +133,22 @@ public class Settings {
         return (boolean) getConfigValue("view_connected_banned_ip", false);
     }
 
-    // Utility method to get values from the config
     private static Object getConfigValue(String path, Object defaultValue) {
         String[] keys = path.split("\\.");
         Object current = config;
-
         for (int i = 0; i < keys.length; i++) {
             if (!(current instanceof Map)) {
                 return defaultValue;
             }
-
             Map<?, ?> map = (Map<?, ?>) current;
             current = map.get(keys[i]);
-
             if (current == null) {
                 return defaultValue;
             }
-
             if (i == keys.length - 1) {
                 return current;
             }
         }
-
         return defaultValue;
     }
-
 }
