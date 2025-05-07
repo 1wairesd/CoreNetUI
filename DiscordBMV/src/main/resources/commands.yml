@@ -28,3 +28,32 @@ commands:
         url: "https://example.com"
         emoji: "🔗"
         disabled: false
+
+  - name: "send-message"
+    description: "Send a message with a button"
+    context: "server"
+    actions:
+      - type: send_message
+        message: "Click the button below!"
+        response_type: reply
+        label: "welcome_message"
+      - type: button
+        label: "Click Me"
+        style: PRIMARY
+        id: "btn_click"
+        message: "You clicked the button!"
+
+  - name: "edit-button"
+    description: "Edit the button in the welcome message"
+    context: "server"
+    actions:
+      - type: send_message
+        response_type: edit_message
+        target_id: "{message_id_from_previous_command}"
+        message: "Updated message with a new button text"
+      - type: edit_component
+        target_message: "welcome_message"
+        component_id: "btn_click"
+        label: "Updated Button"
+        style: DANGER
+        disabled: false

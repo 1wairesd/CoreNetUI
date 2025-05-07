@@ -3,6 +3,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
@@ -24,6 +25,7 @@ public class ButtonAction implements CommandAction {
     private final String message;
     private final String emoji;
     private final boolean disabled;
+    private final String customId;
 
     public ButtonAction(Map<String, Object> props) {
         validateProps(props);
@@ -34,6 +36,7 @@ public class ButtonAction implements CommandAction {
         this.message = (String) props.getOrDefault("message", DEFAULT_MESSAGE);
         this.emoji = (String) props.getOrDefault("emoji", DEFAULT_EMOJI);
         this.disabled = (boolean) props.getOrDefault("disabled", DEFAULT_DISABLED);
+        this.customId = (String) props.get("id"); // Allow specifying a custom ID
     }
 
     private void validateProps(Map<String, Object> props) {
@@ -61,15 +64,15 @@ public class ButtonAction implements CommandAction {
     @Override
     public CompletableFuture<Void> execute(Context context) {
         return CompletableFuture.runAsync(() -> {
-            String customId = generateCustomId();
-            Button button = createButton(customId);
-            applyEmojiAndDisabledState(button);
-            context.addButton(button);
+            String buttonId = customId != null ? customId : generateCustomId();
+            Button button = createButton(buttonId);
+            button = applyEmojiAndDisabledState(button);
+            context.addActionRow(ActionRow.of(button));
         });
     }
 
     private String generateCustomId() {
-        return "btn-" + UUID.randomUUID();
+        return "btn-" + UUID.randomUUID().toString();
     }
 
     private Button createButton(String customId) {
@@ -81,12 +84,13 @@ public class ButtonAction implements CommandAction {
         }
     }
 
-    private void applyEmojiAndDisabledState(Button button) {
+    private Button applyEmojiAndDisabledState(Button button) {
         if (!emoji.isEmpty()) {
             button = button.withEmoji(Emoji.fromUnicode(emoji));
         }
         if (disabled) {
             button = button.asDisabled();
         }
+        return button;
     }
 }

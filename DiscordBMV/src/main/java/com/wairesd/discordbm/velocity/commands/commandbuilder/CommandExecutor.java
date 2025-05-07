@@ -3,6 +3,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
+import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
@@ -11,27 +12,23 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
     public void execute(SlashCommandInteractionEvent event, CommandStructured command) {
-        boolean ephemeral = command.getEphemeral() != null ?
-                command.getEphemeral() :
-                Settings.isDefaultEphemeral();
+        boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();
 
         event.deferReply(ephemeral).queue(hook -> {
-
-        if (event == null || command == null) {
-            throw new IllegalArgumentException("Event and command cannot be null");
-        }
+            if (event == null || command == null) {
+                throw new IllegalArgumentException("Event and command cannot be null");
+            }
             Context context = new Context(event);
 
             if (!command.getConditions().stream().allMatch(condition -> condition.check(context))) {
@@ -80,10 +77,17 @@ public class CommandExecutor {
             if (context.getEmbed() != null) {
                 messageAction.setEmbeds(context.getEmbed());
             }
-            if (!context.getButtons().isEmpty()) {
-                messageAction.addActionRow(context.getButtons());
+            if (!context.getActionRows().isEmpty()) {
+                messageAction.setComponents(context.getActionRows());
             }
-            messageAction.queue();
+            messageAction.queue(message -> {
+                String expectedLabel = context.getExpectedMessageLabel();
+                if (expectedLabel != null) {
+                    String guildId = context.getEvent().getGuild().getId();
+                    String fullLabel = guildId + "_" + expectedLabel;
+                    Commands.plugin.setGlobalMessageLabel(fullLabel, message.getId());
+                }
+            });
         }
     }
 
@@ -94,10 +98,17 @@ public class CommandExecutor {
             if (context.getEmbed() != null) {
                 messageAction.setEmbeds(context.getEmbed());
             }
-            if (!context.getButtons().isEmpty()) {
-                messageAction.addActionRow(context.getButtons());
+            if (!context.getActionRows().isEmpty()) {
+                messageAction.setComponents(context.getActionRows());
             }
-            messageAction.queue();
+            messageAction.queue(message -> {
+                String expectedLabel = context.getExpectedMessageLabel();
+                if (expectedLabel != null) {
+                    String guildId = channel.getGuild().getId();
+                    String fullLabel = guildId + "_" + expectedLabel;
+                    Commands.plugin.setGlobalMessageLabel(fullLabel, message.getId());
+                }
+            });
         } else {
             logger.warn("Target channel not found for ID: {}", context.getTargetChannelId());
         }
@@ -106,7 +117,6 @@ public class CommandExecutor {
     private void sendDirectMessage(Context context) {
         String userId = context.getTargetUserId();
         if (userId == null || userId.isEmpty()) {
-            logger.debug("Attempt to send DM with empty user ID");
             logger.warn("Direct message failed - no target user specified");
             return;
         }
@@ -122,10 +132,16 @@ public class CommandExecutor {
                 if (context.getEmbed() != null) {
                     messageAction.setEmbeds(context.getEmbed());
                 }
-                if (!context.getButtons().isEmpty()) {
-                    messageAction.addActionRow(context.getButtons());
+                if (!context.getActionRows().isEmpty()) {
+                    messageAction.setComponents(context.getActionRows());
                 }
-                messageAction.queue();
+                messageAction.queue(message -> {
+                    String expectedLabel = context.getExpectedMessageLabel();
+                    if (expectedLabel != null) {
+                        String fullLabel = "DM_" + userId + "_" + expectedLabel;
+                        Commands.plugin.setGlobalMessageLabel(fullLabel, message.getId());
+                    }
+                });
             });
         } else {
             logger.warn("Target user not found for ID: {}", userId);
@@ -133,10 +149,7 @@ public class CommandExecutor {
     }
 
     private void editMessage(MessageChannelUnion channel, Context context) {
-        List<LayoutComponent> components = context.getButtons().isEmpty()
-                ? null
-                : Collections.singletonList(ActionRow.of(context.getButtons()));
-
+        List<ActionRow> components = context.getActionRows().isEmpty() ? Collections.emptyList() : context.getActionRows();
         channel.editMessageById(context.getMessageIdToEdit(), context.getMessageText())
                 .setComponents(components)
                 .setEmbeds(context.getEmbed() != null ? List.of(context.getEmbed()) : Collections.emptyList())

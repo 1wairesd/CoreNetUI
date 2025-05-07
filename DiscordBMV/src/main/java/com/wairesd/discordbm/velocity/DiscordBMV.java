@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
@@ -32,6 +34,7 @@ public class DiscordBMV {
     private DatabaseManager dbManager;
     private CommandManager commandManager;
     private DiscordBotManager discordBotManager;
+    private Map<String, String> globalMessageLabels = new HashMap<>();
 
     @Inject
     public DiscordBMV(Logger logger, @DataDirectory Path dataDirectory, ProxyServer proxy) {
@@ -146,6 +149,14 @@ public class DiscordBMV {
 
     public ProxyServer getProxy() {
         return proxy;
+    }
+
+    public void setGlobalMessageLabel(String key, String messageId) {
+        globalMessageLabels.put(key, messageId);
+    }
+
+    public String getGlobalMessageLabel(String key) {
+        return globalMessageLabels.get(key);
     }
 
     public Logger getLogger() {

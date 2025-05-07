@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wairesd.discordbm.velocity.config.configurators.Settings.isDebugCustomCommandRegistrations;
 import static net.dv8tion.jda.api.interactions.commands.build.Commands.slash;
 
 public class CommandManager {

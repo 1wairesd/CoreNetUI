@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 
+import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.message_id;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.ResponseType;
@@ -24,16 +25,17 @@ public class SendMessageAction implements CommandAction {
     private final ResponseType responseType;
     private final String targetId;
     private final Map<String, Object> embedProperties;
+    private final String label;
 
     public SendMessageAction(Map<String, Object> properties) {
         validateProperties(properties);
         this.messageTemplate = (String) properties.getOrDefault("message", DEFAULT_MESSAGE);
         this.embedProperties = (Map<String, Object>) properties.get("embed");
-
         this.responseType = ResponseType.valueOf(
                 ((String) properties.getOrDefault("response_type", "REPLY")).toUpperCase()
         );
         this.targetId = (String) properties.get("target_id");
+        this.label = (String) properties.get("label");
 
         if ((responseType == ResponseType.SPECIFIC_CHANNEL || responseType == ResponseType.EDIT_MESSAGE)
                 && (targetId == null || targetId.isEmpty())) {
@@ -43,7 +45,9 @@ public class SendMessageAction implements CommandAction {
 
     private void validateProperties(Map<String, Object> properties) {
         boolean hasMessage = properties.containsKey("message") && !((String) properties.get("message")).isEmpty();
-        boolean hasEmbed = properties.containsKey("embed");
+        boolean
+
+                hasEmbed = properties.containsKey("embed");
         if (!hasMessage && !hasEmbed) {
             throw new IllegalArgumentException("Message or embed is required for SendMessageAction");
         }
@@ -51,38 +55,57 @@ public class SendMessageAction implements CommandAction {
 
     @Override
     public CompletableFuture<Void> execute(Context context) {
-        return CompletableFuture.runAsync(() -> {
-            validateContext(context);
-            SlashCommandInteractionEvent event = context.getEvent();
-            String formattedTargetId = formatMessage(event, this.targetId, context);
-            String formattedMessage = formatMessage(event, messageTemplate, context);
-            context.setMessageText(formattedMessage);
+        CompletableFuture<Void> resultFuture = new CompletableFuture<>();
 
-            if (embedProperties != null) {
-                MessageEmbed embed = createEmbed(embedProperties, event, context);
-                context.setEmbed(embed);
-            }
+        CompletableFuture.runAsync(() -> {
+            try {
+                validateContext(context);
+                SlashCommandInteractionEvent event = context.getEvent();
+                String formattedTargetId = resolveTargetId(event, this.targetId, context);
+                String formattedMessage = formatMessage(event, messageTemplate, context);
+                context.setMessageText(formattedMessage);
 
-            context.setResponseType(responseType);
-            switch (responseType) {
-                case SPECIFIC_CHANNEL:
-                    context.setTargetChannelId(formattedTargetId);
-                    break;
-                case DIRECT_MESSAGE:
-                    if (formattedTargetId != null && !formattedTargetId.isEmpty()) {
-                        context.setTargetUserId(formattedTargetId);
-                    } else {
-                        logger.warn("Target user ID is null or empty, unable to send direct message.");
-                    }
-                    break;
-                case EDIT_MESSAGE:
-                    context.setMessageIdToEdit(targetId);
-                    break;
-                case REPLY:
-                default:
-                    break;
+                if (embedProperties != null) {
+                    MessageEmbed embed = createEmbed(embedProperties, event, context);
+                    context.setEmbed(embed);
+                }
+
+                if (this.label != null) {
+                    context.setExpectedMessageLabel(this.label);
+                }
+
+                context.setResponseType(responseType);
+                switch (responseType) {
+                    case SPECIFIC_CHANNEL:
+                        context.setTargetChannelId(formattedTargetId);
+                        resultFuture.complete(null);
+                        break;
+                    case DIRECT_MESSAGE:
+                        if (formattedTargetId != null && !formattedTargetId.isEmpty()) {
+                            context.setTargetUserId(formattedTargetId);
+                        }
+                        resultFuture.complete(null);
+                        break;
+                    case EDIT_MESSAGE:
+                        context.setMessageIdToEdit(formattedTargetId);
+                        resultFuture.complete(null);
+                        break;
+                    case REPLY:
+                        resultFuture.complete(null);
+                        break;
+                    default:
+                        resultFuture.complete(null);
+                }
+            } catch (Throwable t) {
+                resultFuture.completeExceptionally(t);
             }
         });
+
+        return resultFuture;
+    }
+
+    private String resolveTargetId(SlashCommandInteractionEvent event, String targetId, Context context) {
+        return message_id.resolveMessageId(targetId, context);
     }
 
     private void validateContext(Context context) {
@@ -123,7 +146,6 @@ public class SendMessageAction implements CommandAction {
             }
         }
 
-        // Author
         if (embedMap.containsKey("author")) {
             Map<String, Object> author = (Map<String, Object>) embedMap.get("author");
             String name = formatMessage(event, (String) author.get("name"), context);
@@ -140,7 +162,6 @@ public class SendMessageAction implements CommandAction {
             builder.setAuthor(name, url, icon);
         }
 
-        // Footer
         if (embedMap.containsKey("footer")) {
             Map<String, Object> footer = (Map<String, Object>) embedMap.get("footer");
             String text = formatMessage(event, (String) footer.get("text"), context);
@@ -152,13 +173,11 @@ public class SendMessageAction implements CommandAction {
             builder.setFooter(text, icon);
         }
 
-        // Thumbnail
         if (embedMap.containsKey("thumbnail")) {
             String thumb = formatMessage(event, (String) embedMap.get("thumbnail"), context);
             if (isValidUrl(thumb)) builder.setThumbnail(thumb);
         }
 
-        // Image
         if (embedMap.containsKey("image")) {
             String image = formatMessage(event, (String) embedMap.get("image"), context);
             if (isValidUrl(image)) builder.setImage(image);

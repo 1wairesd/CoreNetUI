@@ -1,14 +1,13 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.ResolvePlaceholdersAction;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonAction;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.PermissionCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.CommandOption;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -173,13 +172,10 @@ public class Commands {
     }
 
     private static CommandAction createAction(Map<String, Object> data) {
-        String type = getString(data, "type");
-        return switch (type) {
-            case "send_message" -> new SendMessageAction(data);
-            case "button" -> new ButtonAction(data);
-            case "resolve_placeholders" -> new ResolvePlaceholdersAction(data, plugin);
-            default -> null;
-        };
+        if (plugin == null) {
+            throw new IllegalStateException("Plugin instance is not set");
+        }
+        return CommandParserAction.parseAction(data, plugin);
     }
 
     private static boolean getBoolean(Map<String, Object> data, String key, boolean defaultValue) {
