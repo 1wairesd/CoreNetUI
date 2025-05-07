@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 
-public class message_id {
+public class PlaceholdersMessageID {
     public static String resolveMessageId(String targetId, Context context) {
         if (targetId == null || !targetId.equals("{message_id_from_previous_command}")) {
             return targetId;

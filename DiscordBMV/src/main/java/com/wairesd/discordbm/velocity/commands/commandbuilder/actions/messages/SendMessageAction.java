@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.message_id;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersChannel;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersMessageID;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.ResponseType;
@@ -105,7 +106,8 @@ public class SendMessageAction implements CommandAction {
     }
 
     private String resolveTargetId(SlashCommandInteractionEvent event, String targetId, Context context) {
-        return message_id.resolveMessageId(targetId, context);
+        String resolved = PlaceholdersMessageID.resolveMessageId(targetId, context);
+        return PlaceholdersChannel.resolveChannelId(resolved, context);
     }
 
     private void validateContext(Context context) {

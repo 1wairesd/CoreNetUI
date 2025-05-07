@@ -56,6 +56,41 @@ public class DiscordBMV {
         startNettyServer();
     }
 
+    private void initializeDiscordBot() {
+        String token = Settings.getBotToken();
+        String activityType = Settings.getActivityType();
+        String activityMessage = Settings.getActivityMessage();
+        discordBotManager.initializeBot(token, activityType, activityMessage);
+
+        JDA jda = discordBotManager.getJda();
+        if (jda == null) {
+            logger.error("Failed to initialize Discord bot! Aborting further initialization.");
+            return;
+        }
+
+        logger.info("Discord bot initialized, setting up listeners and commands");
+        jda.addEventListener(new ButtonInteractionListener());
+        nettyServer.setJda(jda);
+        DiscordBotListener listener = new DiscordBotListener(this, nettyServer, logger);
+        jda.addEventListener(listener);
+        ResponseHandler.init(listener, logger);
+        commandManager = new CommandManager(nettyServer, jda);
+        commandManager.loadAndRegisterCommands();
+
+        if (Settings.isDebugCustomCommandRegistrations()) {
+            jda.retrieveCommands().queue(commands -> {
+                logger.info("Registered commands in Discord: {}",
+                        commands.stream().map(cmd -> cmd.getName()).collect(Collectors.toList()));
+            }, failure -> {
+                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
+            });
+        } else {
+            jda.retrieveCommands().queue(null, failure -> {
+                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
+            });
+        }
+    }
+
     private void initializeConfiguration() {
         ConfigManager.init(dataDirectory);
         logger.info("Configuration initialized");
@@ -85,46 +120,6 @@ public class DiscordBMV {
         logger.info("Proxy commands registered");
     }
 
-    private void initializeDiscordBot() {
-        String token = Settings.getBotToken();
-        String activityType = Settings.getActivityType();
-        String activityMessage = Settings.getActivityMessage();
-
-        discordBotManager.initializeBot(token, activityType, activityMessage);
-
-        JDA jda = discordBotManager.getJda();
-        if (jda == null) {
-            logger.error("Failed to initialize Discord bot! Aborting further initialization.");
-            return;
-        }
-
-        logger.info("Discord bot initialized, setting up listeners and commands");
-
-        jda.addEventListener(new ButtonInteractionListener());
-        nettyServer.setJda(jda);
-
-        DiscordBotListener listener = new DiscordBotListener(this, nettyServer, logger);
-        jda.addEventListener(listener);
-
-        ResponseHandler.init(listener, logger);
-
-        commandManager = new CommandManager(nettyServer, jda);
-        commandManager.loadAndRegisterCommands();
-
-        if (Settings.isDebugCustomCommandRegistrations()) {
-            jda.retrieveCommands().queue(commands -> {
-                logger.info("Registered commands in Discord: {}",
-                        commands.stream().map(cmd -> cmd.getName()).collect(Collectors.toList()));
-            }, failure -> {
-                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
-            });
-        } else {
-            jda.retrieveCommands().queue(null, failure -> {
-                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
-            });
-        }
-    }
-
     public void updateActivity() {
         String activityType = Settings.getActivityType();
         String activityMessage = Settings.getActivityMessage();
@@ -151,8 +146,17 @@ public class DiscordBMV {
         return proxy;
     }
 
-    public void setGlobalMessageLabel(String key, String messageId) {
-        globalMessageLabels.put(key, messageId);
+    public void setGlobalMessageLabel(String key, String channelId, String messageId) {
+        globalMessageLabels.put(key, channelId + ":" + messageId);
+    }
+
+    public String[] getMessageReference(String key) {
+        String value = globalMessageLabels.get(key);
+        if (value == null) return null;
+
+        return value.contains(":")
+                ? value.split(":", 2)
+                : new String[]{null, value};
     }
 
     public String getGlobalMessageLabel(String key) {

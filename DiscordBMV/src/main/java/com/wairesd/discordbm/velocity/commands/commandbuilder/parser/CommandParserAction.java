@@ -3,6 +3,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.parser;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.components.EditComponentAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.DeleteMessageAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
@@ -22,6 +23,7 @@ public class CommandParserAction {
             case "button" -> new ButtonAction(actionMap);
             case "edit_component" -> new EditComponentAction(actionMap);
             case "resolve_placeholders" -> new ResolvePlaceholdersAction(actionMap, plugin);
+            case "delete_message" -> new DeleteMessageAction(actionMap);
             default -> throw new IllegalArgumentException("Unknown action type: " + type);
         };
     }

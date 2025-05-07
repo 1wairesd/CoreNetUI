@@ -102,20 +102,12 @@ public class Context {
         this.actionRows.add(actionRow);
     }
 
-    public Map<String, String> getMessageLabels() {
-        return messageLabels;
-    }
-
     public void setExpectedMessageLabel(String label) {
         this.expectedMessageLabel = label;
     }
 
     public String getExpectedMessageLabel() {
         return expectedMessageLabel;
-    }
-
-    public void addMessageLabel(String label, String messageId) {
-        this.messageLabels.put(label, messageId);
     }
 
     public String getMessageIdByLabel(String label) {

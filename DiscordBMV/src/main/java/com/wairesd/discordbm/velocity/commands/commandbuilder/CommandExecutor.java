@@ -47,9 +47,11 @@ public class CommandExecutor {
                 switch (context.getResponseType()) {
                     case REPLY:
                         sendReply(hook, context);
+                        hook.deleteOriginal().queue();
                         break;
                     case SPECIFIC_CHANNEL:
                         sendToChannel(event.getJDA(), context);
+                        hook.deleteOriginal().queue();
                         break;
                     case DIRECT_MESSAGE:
                         sendDirectMessage(context);
@@ -85,7 +87,8 @@ public class CommandExecutor {
                 if (expectedLabel != null) {
                     String guildId = context.getEvent().getGuild().getId();
                     String fullLabel = guildId + "_" + expectedLabel;
-                    Commands.plugin.setGlobalMessageLabel(fullLabel, message.getId());
+                    String channelId = context.getEvent().getChannel().getId();
+                    Commands.plugin.setGlobalMessageLabel(fullLabel, channelId, message.getId());
                 }
             });
         }
@@ -106,7 +109,8 @@ public class CommandExecutor {
                 if (expectedLabel != null) {
                     String guildId = channel.getGuild().getId();
                     String fullLabel = guildId + "_" + expectedLabel;
-                    Commands.plugin.setGlobalMessageLabel(fullLabel, message.getId());
+                    String channelId = channel.getId();
+                    Commands.plugin.setGlobalMessageLabel(fullLabel, channelId, message.getId());
                 }
             });
         } else {
@@ -139,7 +143,7 @@ public class CommandExecutor {
                     String expectedLabel = context.getExpectedMessageLabel();
                     if (expectedLabel != null) {
                         String fullLabel = "DM_" + userId + "_" + expectedLabel;
-                        Commands.plugin.setGlobalMessageLabel(fullLabel, message.getId());
+                        Commands.plugin.setGlobalMessageLabel(fullLabel, pc.getId(), message.getId());
                     }
                 });
             });
@@ -153,6 +157,14 @@ public class CommandExecutor {
         channel.editMessageById(context.getMessageIdToEdit(), context.getMessageText())
                 .setComponents(components)
                 .setEmbeds(context.getEmbed() != null ? List.of(context.getEmbed()) : Collections.emptyList())
-                .queue();
+                .queue(updatedMessage -> {
+                    String expectedLabel = context.getExpectedMessageLabel();
+                    if (expectedLabel != null) {
+                        String guildId = ((TextChannel) channel).getGuild().getId();
+                        String fullLabel = guildId + "_" + expectedLabel;
+                        String channelId = channel.getId();
+                        Commands.plugin.setGlobalMessageLabel(fullLabel, channelId, updatedMessage.getId());
+                    }
+                });
     }
 }
