@@ -100,14 +100,6 @@ public class DiscordBMB extends JavaPlugin {
         nettyService.sendResponse(requestId, embedJson);
     }
 
-    public void sendNettyMessage(String message) {
-        nettyService.sendNettyMessage(message);
-    }
-
-    public void sendAllAddonCommands() {
-        nettyService.sendAllAddonCommands(addonCommands, serverName);
-    }
-
     public ConfigManager getConfigManager() {
         return configManager;
     }
