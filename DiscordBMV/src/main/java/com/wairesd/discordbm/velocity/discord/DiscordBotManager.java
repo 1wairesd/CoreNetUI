@@ -48,10 +48,11 @@ public class DiscordBotManager {
 
     private Activity createActivity(String activityType, String activityMessage) {
         return switch (activityType.toLowerCase()) {
-            case "playing" -> Activity.playing(activityMessage);
-            case "watching" -> Activity.watching(activityMessage);
+            case "playing"   -> Activity.playing(activityMessage);
+            case "watching"  -> Activity.watching(activityMessage);
             case "listening" -> Activity.listening(activityMessage);
-            default -> Activity.playing(activityMessage);
+            case "competing" -> Activity.competing(activityMessage);
+            default           -> Activity.playing(activityMessage);
         };
     }
 
@@ -59,11 +60,13 @@ public class DiscordBotManager {
         if (jda != null) {
             jda.getPresence().setActivity(createActivity(activityType, activityMessage));
             logger.info("Bot activity updated to: {} {}", activityType, activityMessage);
+        } else {
+            logger.warn("Cannot update activity — JDA not initialized");
         }
     }
 
     public JDA getJda() {
-        if(!initialized || jda == null) {
+        if (!initialized || jda == null) {
             logger.warn("JDA is not initialized yet!");
             return null;
         }
