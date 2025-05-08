@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
-import com.wairesd.discordbm.velocity.config.configurators.Messages;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.MessageFormatterUtils;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.PlaceholderUtils;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
@@ -19,8 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ResolvePlaceholdersAction implements CommandAction {
     private final String template;
@@ -43,8 +42,8 @@ public class ResolvePlaceholdersAction implements CommandAction {
             return CompletableFuture.completedFuture(null);
         }
         SlashCommandInteractionEvent event = context.getEvent();
-        String playerName = formatMessage(event, playerTemplate);
-        List<String> placeholders = extractPlaceholders(template);
+        String playerName = MessageFormatterUtils.format(playerTemplate, event, context, false);
+        List<String> placeholders = PlaceholderUtils.extractPlaceholders(template);
         var proxy = plugin.getProxy();
         var playerOpt = proxy.getPlayer(playerName);
 
@@ -63,7 +62,7 @@ public class ResolvePlaceholdersAction implements CommandAction {
                     nettyServer.getPlaceholderFutures().put(requestId, future);
                     return future.thenAccept(resp -> {
                         Map<String, String> values = resp.values();
-                        String resolved = substitutePlaceholders(template, values);
+                        String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
                         plugin.getLogger().info("Resolved message: {}", resolved);
                         context.setResolvedMessage(resolved);
                     }).exceptionally(ex -> {
@@ -118,7 +117,7 @@ public class ResolvePlaceholdersAction implements CommandAction {
                         nettyServer.getPlaceholderFutures().put(requestId, future);
                         return future.thenAccept(resp -> {
                             Map<String, String> values = resp.values();
-                            String resolved = substitutePlaceholders(template, values);
+                            String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
                             plugin.getLogger().info("Resolved message: {}", resolved);
                             context.setResolvedMessage(resolved);
                         }).exceptionally(ex -> {
@@ -133,44 +132,6 @@ public class ResolvePlaceholdersAction implements CommandAction {
             });
         }
     }
-
-    private String formatMessage(SlashCommandInteractionEvent event, String template) {
-        String result = template;
-        for (var option : event.getOptions()) {
-            String placeholder = "{" + option.getName() + "}";
-            result = result.replace(placeholder, option.getAsString());
-        }
-        return result;
-    }
-
-    private List<String> extractPlaceholders(String template) {
-        List<String> placeholders = new ArrayList<>();
-        Pattern pattern = Pattern.compile("%([^%]+)%");
-        Matcher matcher = pattern.matcher(template);
-        while (matcher.find()) {
-            placeholders.add(matcher.group());
-        }
-        return placeholders;
-    }
-
-    private String substitutePlaceholders(String template, Map<String, String> values) {
-        String result = template;
-        String offlineMessage = Messages.getMessage("offline-player", null);
-
-        for (Map.Entry<String, String> entry : values.entrySet()) {
-            String placeholder = entry.getKey();
-            String value       = entry.getValue();
-            boolean isEmptyOrUnchanged = (value == null)
-                    || value.isEmpty()
-                    || value.equals(placeholder);
-            String replacement = isEmptyOrUnchanged
-                    ? (offlineMessage != null ? offlineMessage : Messages.DEFAULT_MESSAGE)
-                    : value;
-            result = result.replace(placeholder, replacement);
-        }
-        return result;
-    }
-
 
     private Channel findChannelForServer(String serverName, NettyServer nettyServer) {
         for (var entry : nettyServer.getChannelToServerName().entrySet()) {

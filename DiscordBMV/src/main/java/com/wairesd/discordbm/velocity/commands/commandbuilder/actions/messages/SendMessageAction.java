@@ -1,20 +1,18 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersChannel;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersMessageID;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.ResponseType;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.ContextUtils;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.EmbedFactoryUtils;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.MessageFormatterUtils;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.TargetIDResolverUtils;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersUser;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -60,14 +58,14 @@ public class SendMessageAction implements CommandAction {
 
         CompletableFuture.runAsync(() -> {
             try {
-                validateContext(context);
+                ContextUtils.validate(context);
                 SlashCommandInteractionEvent event = context.getEvent();
-                String formattedTargetId = resolveTargetId(event, this.targetId, context);
-                String formattedMessage = formatMessage(event, messageTemplate, context);
+                String formattedTargetId = TargetIDResolverUtils.resolve(event, this.targetId, context);
+                String formattedMessage = MessageFormatterUtils.format(messageTemplate, event, context, Settings.isDebugSendMessageAction());
                 context.setMessageText(formattedMessage);
 
                 if (embedProperties != null) {
-                    MessageEmbed embed = createEmbed(embedProperties, event, context);
+                    MessageEmbed embed = EmbedFactoryUtils.create(embedProperties, event, context);
                     context.setEmbed(embed);
                 }
 
@@ -103,112 +101,5 @@ public class SendMessageAction implements CommandAction {
         });
 
         return resultFuture;
-    }
-
-    private String resolveTargetId(SlashCommandInteractionEvent event, String targetId, Context context) {
-        String resolved = PlaceholdersMessageID.resolveMessageId(targetId, context);
-        return PlaceholdersChannel.resolveChannelId(resolved, context);
-    }
-
-    private void validateContext(Context context) {
-        if (context == null || context.getEvent() == null) {
-            throw new NullPointerException("Context or event cannot be null");
-        }
-    }
-
-    private MessageEmbed createEmbed(Map<String, Object> embedMap, SlashCommandInteractionEvent event, Context context) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        if (embedMap.containsKey("title")) {
-            String title = formatMessage(event, (String) embedMap.get("title"), context);
-            builder.setTitle(title);
-        }
-
-        if (embedMap.containsKey("description")) {
-            String desc = formatMessage(event, (String) embedMap.get("description"), context);
-            builder.setDescription(desc);
-        }
-
-        if (embedMap.containsKey("color")) {
-            try {
-                int color = parseColor(embedMap.get("color"));
-                builder.setColor(color);
-            } catch (NumberFormatException e) {
-                logger.warn("Invalid color format: {}", embedMap.get("color"));
-            }
-        }
-
-        if (embedMap.containsKey("fields")) {
-            List<Map<String, Object>> fields = (List<Map<String, Object>>) embedMap.get("fields");
-            for (Map<String, Object> field : fields) {
-                String name = formatMessage(event, (String) field.get("name"), context);
-                String value = formatMessage(event, (String) field.get("value"), context);
-                boolean inline = (Boolean) field.getOrDefault("inline", false);
-                builder.addField(name, value, inline);
-            }
-        }
-
-        if (embedMap.containsKey("author")) {
-            Map<String, Object> author = (Map<String, Object>) embedMap.get("author");
-            String name = formatMessage(event, (String) author.get("name"), context);
-            String url = null;
-            if (author.containsKey("url")) {
-                String rawUrl = formatMessage(event, (String) author.get("url"), context);
-                if (isValidUrl(rawUrl)) url = rawUrl;
-            }
-            String icon = null;
-            if (author.containsKey("icon_url")) {
-                String rawIcon = formatMessage(event, (String) author.get("icon_url"), context);
-                if (isValidUrl(rawIcon)) icon = rawIcon;
-            }
-            builder.setAuthor(name, url, icon);
-        }
-
-        if (embedMap.containsKey("footer")) {
-            Map<String, Object> footer = (Map<String, Object>) embedMap.get("footer");
-            String text = formatMessage(event, (String) footer.get("text"), context);
-            String icon = null;
-            if (footer.containsKey("icon_url")) {
-                String rawIcon = formatMessage(event, (String) footer.get("icon_url"), context);
-                if (isValidUrl(rawIcon)) icon = rawIcon;
-            }
-            builder.setFooter(text, icon);
-        }
-
-        if (embedMap.containsKey("thumbnail")) {
-            String thumb = formatMessage(event, (String) embedMap.get("thumbnail"), context);
-            if (isValidUrl(thumb)) builder.setThumbnail(thumb);
-        }
-
-        if (embedMap.containsKey("image")) {
-            String image = formatMessage(event, (String) embedMap.get("image"), context);
-            if (isValidUrl(image)) builder.setImage(image);
-        }
-
-        return builder.build();
-    }
-
-    private boolean isValidUrl(String url) {
-        if (url == null || url.isEmpty()) return false;
-        return url.startsWith("http://") || url.startsWith("https://");
-    }
-
-    private int parseColor(Object color) throws NumberFormatException {
-        if (color instanceof Integer) return (Integer) color;
-        String str = color.toString().trim();
-        if (str.startsWith("#")) str = str.substring(1);
-        return Integer.parseInt(str, 16);
-    }
-
-    private String formatMessage(SlashCommandInteractionEvent event, String template, Context context) {
-        String result = PlaceholdersUser.replace(template != null ? template : "", event, context);
-        for (OptionMapping option : event.getOptions()) {
-            String placeholder = "{" + option.getName() + "}";
-            result = result.replace(placeholder, option.getAsString());
-        }
-        if (Settings.isDebugSendMessageAction()) {
-            logger.info("Formatted message: {}", result);
-        }
-        return result;
     }
 }
