@@ -4,7 +4,7 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.components.EditComponentAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.DeleteMessageAction;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendFormAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.forms.SendFormAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;

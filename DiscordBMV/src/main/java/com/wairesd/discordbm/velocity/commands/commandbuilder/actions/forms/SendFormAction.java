@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.forms;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
