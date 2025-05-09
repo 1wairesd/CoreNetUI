@@ -10,7 +10,7 @@ commands:
         required: true
     conditions:
       - type: "permission"
-        role: "Admin"
+        role_id: "<role_id(example: 1234567890123456789)>"
     actions:
       - type: "send_message"
         message: "Hello, {user}! You greeted {target}."

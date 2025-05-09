@@ -47,7 +47,6 @@ public class CommandExecutor {
                 switch (context.getResponseType()) {
                     case REPLY:
                         sendReply(hook, context);
-                        hook.deleteOriginal().queue();
                         break;
                     case SPECIFIC_CHANNEL:
                         sendToChannel(event.getJDA(), context);
