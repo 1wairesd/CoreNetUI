@@ -14,6 +14,9 @@ view_connected_banned_ip: false
 commands:
   default-ephemeral: false
 
+buttons:
+  timeout-ms: 900000
+
 debug:
   debug-connections: true          # Logue customer connection and disconnecting
   debug-client-responses: false    # Logue requests and answers from customers

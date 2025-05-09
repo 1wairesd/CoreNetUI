@@ -41,7 +41,7 @@ public class ResolvePlaceholdersAction implements CommandAction {
             context.setResolvedMessage("NettyServer is not initialized.");
             return CompletableFuture.completedFuture(null);
         }
-        SlashCommandInteractionEvent event = context.getEvent();
+        SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
         String playerName = MessageFormatterUtils.format(playerTemplate, event, context, false);
         List<String> placeholders = PlaceholderUtils.extractPlaceholders(template);
         var proxy = plugin.getProxy();

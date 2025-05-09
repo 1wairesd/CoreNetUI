@@ -121,6 +121,10 @@ public class Settings {
         return (boolean) getConfigValue("commands.default-ephemeral", false);
     }
 
+    public static long getButtonTimeoutMs() {
+        return ((Number) getConfigValue("buttons.timeout-ms", 900_000)).longValue();
+    }
+
     public static String getSecretCode() {
         return secretManager != null ? secretManager.getSecretCode() : null;
     }

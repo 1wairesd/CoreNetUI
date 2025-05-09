@@ -4,6 +4,7 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.components.EditComponentAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.DeleteMessageAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendFormAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
@@ -11,7 +12,6 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.Com
 import java.util.Map;
 
 public class CommandParserAction {
-
     public static CommandAction parseAction(Map<String, Object> actionMap, DiscordBMV plugin) {
         String type = (String) actionMap.get("type");
         if (type == null) {
@@ -24,6 +24,7 @@ public class CommandParserAction {
             case "edit_component" -> new EditComponentAction(actionMap);
             case "resolve_placeholders" -> new ResolvePlaceholdersAction(actionMap, plugin);
             case "delete_message" -> new DeleteMessageAction(actionMap);
+            case "send_form" -> new SendFormAction(actionMap);
             default -> throw new IllegalArgumentException("Unknown action type: " + type);
         };
     }

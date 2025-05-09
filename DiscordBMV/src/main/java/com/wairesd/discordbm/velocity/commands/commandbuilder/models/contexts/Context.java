@@ -2,6 +2,8 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.Interaction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Context {
-    private final SlashCommandInteractionEvent event;
+    private Interaction event;
     private String messageText = "";
     private ResponseType responseType = ResponseType.REPLY;
     private String targetChannelId;
@@ -21,6 +23,9 @@ public class Context {
     private final List<ActionRow> actionRows = new ArrayList<>();
     private final Map<String, String> messageLabels = new HashMap<>();
     private String expectedMessageLabel;
+    private Map<String, String> variables = new HashMap<>();
+    private InteractionHook hook;
+    private Map<String, String> formResponses;
 
     public Context(SlashCommandInteractionEvent event) {
         if (event == null) {
@@ -29,8 +34,33 @@ public class Context {
         this.event = event;
     }
 
-    public SlashCommandInteractionEvent getEvent() {
+    public String replacePlaceholders(String text) {
+        if (formResponses == null || text == null) return text;
+
+        for (Map.Entry<String, String> entry : formResponses.entrySet()) {
+            text = text.replace("{" + entry.getKey() + "}", entry.getValue());
+        }
+        return text;
+    }
+
+    public void setFormResponses(Map<String, String> responses) {
+        this.formResponses = responses;
+    }
+
+    public Interaction getEvent() {
         return event;
+    }
+
+    public InteractionHook getHook() {
+        return hook;
+    }
+
+    public void setHook(InteractionHook hook) {
+        this.hook = hook;
+    }
+
+    public void setEvent(Interaction event) {
+        this.event = event;
     }
 
     public String getMessageText() {

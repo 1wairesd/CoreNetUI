@@ -59,7 +59,7 @@ public class SendMessageAction implements CommandAction {
         CompletableFuture.runAsync(() -> {
             try {
                 ContextUtils.validate(context);
-                SlashCommandInteractionEvent event = context.getEvent();
+                SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
                 String formattedTargetId = TargetIDResolverUtils.resolve(event, this.targetId, context);
                 String formattedMessage = MessageFormatterUtils.format(messageTemplate, event, context, Settings.isDebugSendMessageAction());
                 context.setMessageText(formattedMessage);

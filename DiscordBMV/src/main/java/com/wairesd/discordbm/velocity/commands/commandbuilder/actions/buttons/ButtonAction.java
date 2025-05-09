@@ -2,6 +2,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons;
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -79,10 +80,12 @@ public class ButtonAction implements CommandAction {
         if (style == ButtonStyle.LINK) {
             return Button.link(url, label);
         } else {
-            ButtonActionRegistry.register(customId, message, 60 * 60 * 1000);
+            long timeout = Settings.getButtonTimeoutMs();
+            ButtonActionRegistry.register(customId, message, timeout);
             return Button.of(style, customId, label);
         }
     }
+
 
     private Button applyEmojiAndDisabledState(Button button) {
         if (!emoji.isEmpty()) {

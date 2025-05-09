@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures;
 
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendFormAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.CommandOption;
@@ -42,6 +43,10 @@ public class CommandStructured {
         if (!List.of("both", "dm", "server").contains(context)) {
             throw new IllegalArgumentException("Invalid context: " + context);
         }
+    }
+
+    public boolean hasFormAction() {
+        return actions.stream().anyMatch(action -> action instanceof SendFormAction);
     }
 
     public String getName() { return name; }

@@ -24,53 +24,64 @@ public class CommandExecutor {
 
     public void execute(SlashCommandInteractionEvent event, CommandStructured command) {
         boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();
+        Context context = new Context(event);
 
-        event.deferReply(ephemeral).queue(hook -> {
-            if (event == null || command == null) {
-                throw new IllegalArgumentException("Event and command cannot be null");
-            }
-            Context context = new Context(event);
-
-            if (!command.getConditions().stream().allMatch(condition -> condition.check(context))) {
-                hook.sendMessage("You don't meet the conditions...")
-                        .setEphemeral(ephemeral)
-                        .queue();
-                return;
-            }
-
+        if (command.hasFormAction()) {
             CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
             for (CommandAction action : command.getActions()) {
                 chain = chain.thenCompose(voidResult -> action.execute(context));
             }
-
             chain.thenRun(() -> {
                 switch (context.getResponseType()) {
-                    case REPLY:
-                        sendReply(hook, context);
-                        break;
-                    case SPECIFIC_CHANNEL:
-                        sendToChannel(event.getJDA(), context);
-                        hook.deleteOriginal().queue();
-                        break;
-                    case DIRECT_MESSAGE:
-                        sendDirectMessage(context);
-                        hook.deleteOriginal().queue();
-                        break;
-                    case EDIT_MESSAGE:
-                        editMessage(event.getChannel(), context);
-                        hook.deleteOriginal().queue();
-                        break;
+                    case REPLY -> sendReply(context);
+                    case SPECIFIC_CHANNEL -> sendToChannel(event.getJDA(), context);
+                    case DIRECT_MESSAGE -> sendDirectMessage(context);
+                    case EDIT_MESSAGE -> editMessage(event.getChannel(), context);
                 }
             }).exceptionally(ex -> {
                 logger.error("Error when executing command actions: {}", ex.getMessage(), ex);
-                hook.sendMessage("An error occurred while executing the command.").setEphemeral(true).queue();
+                event.reply("Произошла ошибка при выполнении команды.").setEphemeral(true).queue();
                 return null;
             });
-        });
+        } else {
+            event.deferReply(ephemeral).queue(hook -> {
+                context.setHook(hook);
+                CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
+                for (CommandAction action : command.getActions()) {
+                    chain = chain.thenCompose(voidResult -> action.execute(context));
+                }
+                chain.thenRun(() -> {
+                    switch (context.getResponseType()) {
+                        case REPLY -> sendReply(context);
+                        case SPECIFIC_CHANNEL -> {
+                            sendToChannel(event.getJDA(), context);
+                            hook.deleteOriginal().queue();
+                        }
+                        case DIRECT_MESSAGE -> {
+                            sendDirectMessage(context);
+                            hook.deleteOriginal().queue();
+                        }
+                        case EDIT_MESSAGE -> {
+                            editMessage(event.getChannel(), context);
+                            hook.deleteOriginal().queue();
+                        }
+                    }
+                }).exceptionally(ex -> {
+                    logger.error("Error when executing command actions: {}", ex.getMessage(), ex);
+                    hook.sendMessage("Произошла ошибка при выполнении команды.").setEphemeral(true).queue();
+                    return null;
+                });
+            });
+        }
     }
 
-    private void sendReply(InteractionHook hook, Context context) {
-        String messageText = context.getMessageText();
+    private void sendReply(Context context) {
+        InteractionHook hook = context.getHook();
+        if (hook == null) {
+            logger.warn("Hook is null, cannot send reply");
+            return;
+        }
+        String messageText = context.replacePlaceholders(context.getMessageText());
         if (messageText == null || messageText.trim().isEmpty()) {
             hook.sendMessage("Message content not provided.").setEphemeral(true).queue();
         } else {

@@ -2,6 +2,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.component
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -35,8 +36,8 @@ public class EditComponentAction implements CommandAction {
     public CompletableFuture<Void> execute(Context context) {
         return CompletableFuture.runAsync(() -> {
             String messageId = targetMessageLabel != null ? context.getMessageIdByLabel(targetMessageLabel) : context.getMessageIdToEdit();
-            if (messageId != null && context.getActionRows().isEmpty()) {
-                context.getEvent().getChannel().retrieveMessageById(messageId).queue(
+            if (context.getEvent().getChannel() instanceof TextChannel textChannel) {
+                textChannel.retrieveMessageById(messageId).queue(
                         message -> context.setActionRows(message.getActionRows()),
                         throwable -> {}
                 );

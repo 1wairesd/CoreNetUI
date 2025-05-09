@@ -9,6 +9,8 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.buttons.ButtonInteractionListener;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.ModalInteractionListener;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
@@ -18,12 +20,14 @@ import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.discord.ResponseHandler;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import net.dv8tion.jda.api.JDA;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
@@ -35,6 +39,8 @@ public class DiscordBMV {
     private CommandManager commandManager;
     private DiscordBotManager discordBotManager;
     private Map<String, String> globalMessageLabels = new HashMap<>();
+    private Map<String, Pair<CompletableFuture<Void>, Context>> formHandlers = new HashMap<>();
+    public static DiscordBMV plugin;
 
     @Inject
     public DiscordBMV(Logger logger, @DataDirectory Path dataDirectory, ProxyServer proxy) {
@@ -47,6 +53,7 @@ public class DiscordBMV {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        plugin = this;
         Commands.plugin = this;
         initializeConfiguration();
         initializeDatabase();
@@ -70,6 +77,7 @@ public class DiscordBMV {
 
         logger.info("Discord bot initialized, setting up listeners and commands");
         jda.addEventListener(new ButtonInteractionListener());
+        jda.addEventListener(new ModalInteractionListener());
         nettyServer.setJda(jda);
         DiscordBotListener listener = new DiscordBotListener(this, nettyServer, logger);
         jda.addEventListener(listener);
@@ -153,14 +161,19 @@ public class DiscordBMV {
     public String[] getMessageReference(String key) {
         String value = globalMessageLabels.get(key);
         if (value == null) return null;
-
-        return value.contains(":")
-                ? value.split(":", 2)
-                : new String[]{null, value};
+        return value.contains(":") ? value.split(":", 2) : new String[]{null, value};
     }
 
     public String getGlobalMessageLabel(String key) {
         return globalMessageLabels.get(key);
+    }
+
+    public Map<String, Pair<CompletableFuture<Void>, Context>> getFormHandlers() {
+        return formHandlers;
+    }
+
+    public static DiscordBMV getPluginInstance() {
+        return plugin;
     }
 
     public Logger getLogger() {
