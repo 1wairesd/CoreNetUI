@@ -125,6 +125,14 @@ public class Settings {
         return ((Number) getConfigValue("buttons.timeout-ms", 900_000)).longValue();
     }
 
+    public static boolean isDebugButtonData() {
+        return getDebugOption("debug-button-data", false);
+    }
+
+    public static boolean isDebugButtonRegister() {
+        return getDebugOption("debug-button-register", false);
+    }
+
     public static String getSecretCode() {
         return secretManager != null ? secretManager.getSecretCode() : null;
     }

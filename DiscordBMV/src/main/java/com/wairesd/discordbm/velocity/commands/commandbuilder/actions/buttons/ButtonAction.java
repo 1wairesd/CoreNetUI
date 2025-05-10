@@ -27,6 +27,9 @@ public class ButtonAction implements CommandAction {
     private final String emoji;
     private final boolean disabled;
     private final String customId;
+    private final String formName;
+    private final String requiredRoleId;
+    private final long timeoutMs;
 
     public ButtonAction(Map<String, Object> props) {
         validateProps(props);
@@ -37,7 +40,10 @@ public class ButtonAction implements CommandAction {
         this.message = (String) props.getOrDefault("message", DEFAULT_MESSAGE);
         this.emoji = (String) props.getOrDefault("emoji", DEFAULT_EMOJI);
         this.disabled = (boolean) props.getOrDefault("disabled", DEFAULT_DISABLED);
-        this.customId = (String) props.get("id"); // Allow specifying a custom ID
+        this.customId = (String) props.get("id");
+        this.formName = (String) props.get("form_name");
+        this.requiredRoleId = (String) props.get("required_role");
+        this.timeoutMs = parseTimeout(props.get("timeout"));
     }
 
     private void validateProps(Map<String, Object> props) {
@@ -54,12 +60,31 @@ public class ButtonAction implements CommandAction {
             if (url == null || url.isEmpty()) {
                 throw new IllegalArgumentException("url property is required for LINK button");
             }
-        } else {
-            String message = (String) props.get("message");
-            if (message == null || message.isEmpty()) {
-                throw new IllegalArgumentException("message property is required for non-LINK button");
-            }
+        } else if (!props.containsKey("form_name") && ((String) props.getOrDefault("message", "")).isEmpty()) {
+            throw new IllegalArgumentException("message or form_name is required for non-LINK button");
         }
+    }
+
+    private long parseTimeout(Object timeoutObj) {
+        if (timeoutObj == null) {
+            return Settings.getButtonTimeoutMs();
+        }
+
+        if (timeoutObj instanceof String str) {
+            if (str.equalsIgnoreCase("infinite")) {
+                return Long.MAX_VALUE;
+            } else {
+                try {
+                    return Long.parseLong(str) * 60_000;
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid timeout format: " + str);
+                }
+            }
+        } else if (timeoutObj instanceof Number number) {
+            return number.longValue() * 60_000;
+        }
+
+        throw new IllegalArgumentException("Unsupported timeout value: " + timeoutObj);
     }
 
     @Override
@@ -73,19 +98,20 @@ public class ButtonAction implements CommandAction {
     }
 
     private String generateCustomId() {
-        return "btn-" + UUID.randomUUID().toString();
+        return "btn-" + UUID.randomUUID();
     }
 
-    private Button createButton(String customId) {
+    private Button createButton(String buttonId) {
         if (style == ButtonStyle.LINK) {
             return Button.link(url, label);
+        } else if (formName != null) {
+            ButtonActionRegistry.registerFormButton(buttonId, formName, message, requiredRoleId, timeoutMs);
+            return Button.of(style, buttonId, label);
         } else {
-            long timeout = Settings.getButtonTimeoutMs();
-            ButtonActionRegistry.register(customId, message, timeout);
-            return Button.of(style, customId, label);
+            ButtonActionRegistry.register(buttonId, message, timeoutMs);
+            return Button.of(style, buttonId, label);
         }
     }
-
 
     private Button applyEmojiAndDisabledState(Button button) {
         if (!emoji.isEmpty()) {

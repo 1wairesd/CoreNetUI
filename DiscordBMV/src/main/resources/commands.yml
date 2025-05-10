@@ -98,73 +98,49 @@ commands:
 
   - name: "feedback"
     description: "Leave feedback about the server"
+    conditions:
+      - type: "permission"
+        role_id: "<ID>"
     actions:
       - type: "send_form"
         form_name: "feedback-form"
-        title: "Feedback"
-        fields:
-          - label: "What is your nickname?"
-            placeholder: "wairesd"
-            type: "SHORT"
-            required: true
-            variable: "username"
-          - label: "Rate the server from 1 to 10"
-            placeholder: "10"
-            type: "SHORT"
-            required: true
-            variable: "rating"
-          - label: "What did you like or dislike?"
-            placeholder: "You can be detailed"
-            type: "PARAGRAPH"
-            required: false
-            variable: "review"
       - type: "send_message"
         message: "Thanks for your feedback, {username}! You rated us {rating}/10. We'll consider your input: {review}"
         response_type: "REPLY"
 
   - name: "register"
     description: "Register a new player"
-    actions:
-      - type: "send_form"
-        form_name: "register-form"
-        title: "Registration"
-        fields:
-          - label: "Your Minecraft nickname"
-            placeholder: "For example, wairesd"
-            type: "SHORT"
-            required: true
-            variable: "nick"
-          - label: "Your Telegram (optional)"
-            placeholder: "@username"
-            type: "SHORT"
-            required: false
-            variable: "telegram"
-          - label: "Do you accept the rules?"
-            placeholder: "Type 'yes'"
-            type: "SHORT"
-            required: true
-            variable: "accept"
-      - type: "send_message"
-        message: "Hi {nick}! Thanks for registering. Telegram: {telegram}, Accepted rules: {accept}"
-        response_type: "REPLY"
+    conditions:
+       - type: "not_have_role"
+         role_id: "<ID>"
+         actions:
+            - type: "send_form"
+              form_name: "register-form"
+            - type: "add_role"
+              role_id: "<ID>"
+            - type: "send_message"
+              message: "Hi {nick}! Thanks for registering. Telegram: {telegram}, Accepted rules: {accept}"
+              response_type: "REPLY"
 
   - name: "poll"
     description: "Simple poll"
     actions:
       - type: "send_form"
         form_name: "poll-form"
-        title: "Poll"
-        fields:
-          - label: "Which game mode do you like more?"
-            placeholder: "Survival, SkyBlock, Anarchy..."
-            type: "SHORT"
-            required: true
-            variable: "mode"
-          - label: "Would you recommend our server to a friend?"
-            placeholder: "Yes / No"
-            type: "SHORT"
-            required: true
-            variable: "recommend"
       - type: "send_message"
         message: "Thanks! Favorite mode: {mode}. Would recommend: {recommend}."
+        response_type: "REPLY"
+
+  - name: "feedback_button"
+    description: "Get a button to leave feedback"
+    actions:
+      - type: "button"
+        label: "Leave Feedback"
+        style: "PRIMARY"
+        form_name: "feedback-form"
+        required_role: "<ID>"
+        message: "Thanks for your feedback, {username}! You rated us {rating}/10. We'll consider your input: {review}"
+        timeout: infinite
+      - type: "send_message"
+        message: "Click the button to leave feedback"
         response_type: "REPLY"

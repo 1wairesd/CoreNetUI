@@ -26,3 +26,5 @@ debug:
   debug-sendmessage-action: false
   debug-authentication: true       # Log in authentication attempts and their results
   debug-errors: true               # Log in errors and exceptions
+  debug-button-data: false
+  debug-button-register: false

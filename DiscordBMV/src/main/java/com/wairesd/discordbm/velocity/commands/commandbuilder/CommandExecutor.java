@@ -23,8 +23,14 @@ public class CommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
     public void execute(SlashCommandInteractionEvent event, CommandStructured command) {
-        boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();
         Context context = new Context(event);
+
+        if (!command.getConditions().stream().allMatch(condition -> condition.check(context))) {
+            event.reply("You don't have permission to run this command.").setEphemeral(true).queue();
+            return;
+        }
+
+        boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();
 
         if (command.hasFormAction()) {
             CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
@@ -40,7 +46,7 @@ public class CommandExecutor {
                 }
             }).exceptionally(ex -> {
                 logger.error("Error when executing command actions: {}", ex.getMessage(), ex);
-                event.reply("Произошла ошибка при выполнении команды.").setEphemeral(true).queue();
+                event.reply("An error occurred while executing the command.").setEphemeral(true).queue();
                 return null;
             });
         } else {
@@ -68,7 +74,7 @@ public class CommandExecutor {
                     }
                 }).exceptionally(ex -> {
                     logger.error("Error when executing command actions: {}", ex.getMessage(), ex);
-                    hook.sendMessage("Произошла ошибка при выполнении команды.").setEphemeral(true).queue();
+                    hook.sendMessage("An error occurred while executing the command.").setEphemeral(true).queue();
                     return null;
                 });
             });
