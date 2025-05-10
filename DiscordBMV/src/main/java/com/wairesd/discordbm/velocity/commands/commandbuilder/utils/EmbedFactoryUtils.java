@@ -1,11 +1,9 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.utils;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersUser;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +17,11 @@ public class EmbedFactoryUtils {
         EmbedBuilder builder = new EmbedBuilder();
 
         if (embedMap.containsKey("title")) {
-            builder.setTitle(format((String) embedMap.get("title"), event, context));
+            builder.setTitle(MessageFormatterUtils.format((String) embedMap.get("title"), event, context, false));
         }
 
         if (embedMap.containsKey("description")) {
-            builder.setDescription(format((String) embedMap.get("description"), event, context));
+            builder.setDescription(MessageFormatterUtils.format((String) embedMap.get("description"), event, context, false));
         }
 
         if (embedMap.containsKey("color")) {
@@ -38,8 +36,8 @@ public class EmbedFactoryUtils {
         if (embedMap.containsKey("fields")) {
             List<Map<String, Object>> fields = (List<Map<String, Object>>) embedMap.get("fields");
             for (Map<String, Object> field : fields) {
-                String name = format((String) field.get("name"), event, context);
-                String value = format((String) field.get("value"), event, context);
+                String name = MessageFormatterUtils.format((String) field.get("name"), event, context, false);
+                String value = MessageFormatterUtils.format((String) field.get("value"), event, context, false);
                 boolean inline = (Boolean) field.getOrDefault("inline", false);
                 builder.addField(name, value, inline);
             }
@@ -47,7 +45,7 @@ public class EmbedFactoryUtils {
 
         if (embedMap.containsKey("author")) {
             Map<String, Object> author = (Map<String, Object>) embedMap.get("author");
-            String name = format((String) author.get("name"), event, context);
+            String name = MessageFormatterUtils.format((String) author.get("name"), event, context, false);
             String url = getSafeUrl(author.get("url"), event, context);
             String icon = getSafeUrl(author.get("icon_url"), event, context);
             builder.setAuthor(name, url, icon);
@@ -55,30 +53,22 @@ public class EmbedFactoryUtils {
 
         if (embedMap.containsKey("footer")) {
             Map<String, Object> footer = (Map<String, Object>) embedMap.get("footer");
-            String text = format((String) footer.get("text"), event, context);
+            String text = MessageFormatterUtils.format((String) footer.get("text"), event, context, false);
             String icon = getSafeUrl(footer.get("icon_url"), event, context);
             builder.setFooter(text, icon);
         }
 
         if (embedMap.containsKey("thumbnail")) {
-            String thumb = format((String) embedMap.get("thumbnail"), event, context);
+            String thumb = MessageFormatterUtils.format((String) embedMap.get("thumbnail"), event, context, false);
             if (isValidUrl(thumb)) builder.setThumbnail(thumb);
         }
 
         if (embedMap.containsKey("image")) {
-            String image = format((String) embedMap.get("image"), event, context);
+            String image = MessageFormatterUtils.format((String) embedMap.get("image"), event, context, false);
             if (isValidUrl(image)) builder.setImage(image);
         }
 
         return builder.build();
-    }
-
-    private static String format(String template, SlashCommandInteractionEvent event, Context context) {
-        String result = PlaceholdersUser.replace(template != null ? template : "", event, context);
-        for (OptionMapping option : event.getOptions()) {
-            result = result.replace("{" + option.getName() + "}", option.getAsString());
-        }
-        return result;
     }
 
     private static boolean isValidUrl(String url) {
@@ -87,7 +77,7 @@ public class EmbedFactoryUtils {
 
     private static String getSafeUrl(Object raw, SlashCommandInteractionEvent event, Context context) {
         if (raw == null) return null;
-        String formatted = format(raw.toString(), event, context);
+        String formatted = MessageFormatterUtils.format(raw.toString(), event, context, false);
         return isValidUrl(formatted) ? formatted : null;
     }
 

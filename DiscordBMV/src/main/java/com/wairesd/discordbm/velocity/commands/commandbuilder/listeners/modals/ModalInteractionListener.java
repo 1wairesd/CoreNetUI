@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.commandbuilder.listeners;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.modals;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;

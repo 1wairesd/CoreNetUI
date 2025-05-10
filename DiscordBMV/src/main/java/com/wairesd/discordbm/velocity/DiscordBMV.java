@@ -9,7 +9,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.buttons.ButtonInteractionListener;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.ModalInteractionListener;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.modals.ModalInteractionListener;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
