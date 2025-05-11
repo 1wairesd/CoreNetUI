@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.common.utils.color;
 
+import com.wairesd.discordbm.common.utils.color.transform.BukkitColorTranslator;
+import com.wairesd.discordbm.common.utils.color.transform.ColorParser;
 import net.kyori.adventure.text.Component;
 
 public final class ColorUtils {

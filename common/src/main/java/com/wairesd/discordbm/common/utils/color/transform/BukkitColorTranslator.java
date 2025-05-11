@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.common.utils.color;
+package com.wairesd.discordbm.common.utils.color.transform;
 
 public final class BukkitColorTranslator {
 
