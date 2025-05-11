@@ -129,7 +129,7 @@ public class DiscordBMB extends JavaPlugin {
     }
 
     public boolean checkIfCanHandle(String playerName, List<String> placeholders) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(playerName));
         boolean canHandle = false;
         for (String placeholder : placeholders) {
             String key = player.getUniqueId() + ":" + placeholder;
@@ -149,7 +149,7 @@ public class DiscordBMB extends JavaPlugin {
     }
 
     public Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(playerName));
         Future<Map<String, String>> future = Bukkit.getScheduler().callSyncMethod(this, () -> {
             Map<String, String> values = new HashMap<>();
             for (String placeholder : placeholders) {

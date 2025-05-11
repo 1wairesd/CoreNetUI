@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.bukkit.config.configurators;
 
-import com.wairesd.discordbm.common.utils.ColorUtils;
+import com.wairesd.discordbm.common.utils.color.ColorUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,14 +56,6 @@ public class Messages {
             messagesConfig = loader.load();
         } catch (ConfigurateException e) {
             logger.error("Failed to load messages.yml", e);
-        }
-    }
-
-    public static void save() {
-        try {
-            loader.save(messagesConfig);
-        } catch (ConfigurateException e) {
-            logger.error("Failed to save messages.yml", e);
         }
     }
 
