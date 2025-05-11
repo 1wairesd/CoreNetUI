@@ -29,24 +29,24 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.github.placeholderapi:placeholderapi:2.11.6'
-    compileOnly 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly ("com.github.placeholderapi:placeholderapi:2.11.6")
+    compileOnly ("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
 
-    implementation 'org.yaml:snakeyaml:2.4'
+    implementation("org.yaml:snakeyaml:2.4")
     implementation project(':common')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'net.kyori:adventure-api:4.14.0'
-    implementation 'org.spongepowered:configurate-core:4.1.2'
-    implementation 'org.spongepowered:configurate-yaml:4.1.2'
-    implementation 'org.slf4j:slf4j-api:2.0.17'
-    implementation 'io.netty:netty-all:4.2.0.Final'
+    implementation("net.kyori:adventure-api:4.14.0")
+    implementation("org.spongepowered:configurate-core:4.1.2")
+    implementation("org.spongepowered:configurate-yaml:4.1.2")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("io.netty:netty-all:4.2.0.Final")
 }
 
 shadowJar {
     archiveClassifier.set('')
     mergeServiceFiles()
     from project(':common').sourceSets.main.output
-    // relocate 'com.wairesd.discordbm.common', 'com.wairesd.discordbm.bukkit.shaded.common'
+    relocate 'com.wairesd.discordbm.common', 'com.wairesd.discordbm.bukkit.shaded.common'
 }
 
 tasks.build {
