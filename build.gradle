@@ -34,8 +34,6 @@ tasks {
 
     shadowJar {
         archiveClassifier.set('')
-        relocate 'net.dv8tion.jda', 'com.wairesd.shaded.jda'
-        relocate 'org.sqlite', 'com.wairesd.shaded.sqlite'
         mergeServiceFiles()
     }
 

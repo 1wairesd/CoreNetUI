@@ -23,13 +23,11 @@ dependencies {
     implementation project(':DiscordBMB')
     implementation project(':common')
 
-    implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'org.json:json:20240303'
     implementation 'net.sf.trove4j:trove4j:3.0.3'
     implementation 'com.neovisionaries:nv-websocket-client:2.14'
     implementation 'org.yaml:snakeyaml:2.4'
-    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.3'
@@ -55,9 +53,6 @@ tasks {
         relocate 'net.dv8tion.jda', 'com.wairesd.shaded.jda'
         relocate 'okhttp3', 'com.wairesd.shaded.okhttp3'
         relocate 'gnu.trove', 'com.wairesd.shaded.gnu.trove'
-        relocate 'org.json', 'com.wairesd.shaded.org.json'
-        relocate 'com.neovisionaries', 'com.wairesd.shaded.com.neovisionaries'
-        relocate 'com.fasterxml.jackson', 'com.wairesd.shaded.jackson'
         relocate 'org.apache.commons.collections4', 'com.wairesd.shaded.org.apache.commons.collections4'
 
         from project(':common').sourceSets.main.output
