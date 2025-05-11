@@ -1,5 +1,8 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
+import com.wairesd.discordbm.common.utils.color.ColorUtils;
+import net.kyori.adventure.text.ComponentLike;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -58,6 +61,11 @@ public class Messages {
 
     public static void reload() {
         loadMessages();
+    }
+
+    public static @NotNull ComponentLike getParsedMessage(String key, String defaultValue) {
+        String message = getMessage(key, defaultValue);
+        return ColorUtils.parseComponent(message);
     }
 
     public static String getMessage(String key, String defaultValue) {
