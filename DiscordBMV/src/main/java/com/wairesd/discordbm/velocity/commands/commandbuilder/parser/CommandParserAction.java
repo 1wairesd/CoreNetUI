@@ -6,7 +6,7 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.components
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.DeleteMessageAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.forms.SendFormAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages.SendMessageAction;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.ResolvePlaceholdersAction;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.placeholders.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.roles.AddRoleAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.roles.RemoveRoleAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
