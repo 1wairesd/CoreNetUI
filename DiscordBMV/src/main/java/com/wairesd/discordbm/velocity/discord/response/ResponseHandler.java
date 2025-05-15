@@ -23,7 +23,7 @@ public class ResponseHandler {
     public static void handleResponse(ResponseMessage respMsg) {
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
-            var event = listener.getPendingRequests().remove(requestId);
+            var event = listener.getRequestSender().getPendingRequests().remove(requestId);
             if (event == null) {
                 logRequestNotFound(requestId);
                 return;

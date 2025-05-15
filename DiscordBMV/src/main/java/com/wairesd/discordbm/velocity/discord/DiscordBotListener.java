@@ -57,6 +57,10 @@ public class DiscordBotListener extends ListenerAdapter {
         }
     }
 
+    public RequestSender getRequestSender() {
+        return requestSender;
+    }
+
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         if (!serverSelector.isValidSelectMenu(event)) return;
