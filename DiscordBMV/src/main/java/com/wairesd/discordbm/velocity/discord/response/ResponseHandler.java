@@ -1,8 +1,9 @@
-package com.wairesd.discordbm.velocity.discord;
+package com.wairesd.discordbm.velocity.discord.response;
 
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
+import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;

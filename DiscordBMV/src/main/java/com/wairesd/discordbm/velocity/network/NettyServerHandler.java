@@ -10,7 +10,7 @@ import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
-import com.wairesd.discordbm.velocity.discord.ResponseHandler;
+import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

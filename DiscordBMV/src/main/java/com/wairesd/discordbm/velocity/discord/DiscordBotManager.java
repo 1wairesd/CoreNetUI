@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.discord;
 
+import com.wairesd.discordbm.velocity.discord.activity.ActivityFactory;
+import com.wairesd.discordbm.velocity.discord.activity.ActivityUpdater;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -26,8 +28,11 @@ public class DiscordBotManager {
             logger.warn("Bot is already initialized!");
             return;
         }
+
         try {
-            Activity activity = createActivity(activityType, activityMessage);
+            ActivityFactory activityFactory = new ActivityFactory();
+            Activity activity = activityFactory.createActivity(activityType, activityMessage);
+
             jda = JDABuilder.createDefault(token)
                     .enableIntents(EnumSet.of(
                             GatewayIntent.GUILD_MESSAGES,
@@ -37,6 +42,7 @@ public class DiscordBotManager {
                     .setActivity(activity)
                     .build()
                     .awaitReady();
+
             logger.info("JDA initialized successfully with token: {}", token.substring(0, 10) + "...");
             initialized = true;
         } catch (Exception e) {
@@ -46,23 +52,14 @@ public class DiscordBotManager {
         }
     }
 
-    private Activity createActivity(String activityType, String activityMessage) {
-        return switch (activityType.toLowerCase()) {
-            case "playing"   -> Activity.playing(activityMessage);
-            case "watching"  -> Activity.watching(activityMessage);
-            case "listening" -> Activity.listening(activityMessage);
-            case "competing" -> Activity.competing(activityMessage);
-            default           -> Activity.playing(activityMessage);
-        };
-    }
-
     public void updateActivity(String activityType, String activityMessage) {
-        if (jda != null) {
-            jda.getPresence().setActivity(createActivity(activityType, activityMessage));
-            logger.info("Bot activity updated to: {} {}", activityType, activityMessage);
-        } else {
-            logger.warn("Cannot update activity — JDA not initialized");
+        if (!initialized || jda == null) {
+            logger.warn("JDA is not initialized — cannot update activity");
+            return;
         }
+        ActivityFactory activityFactory = new ActivityFactory();
+        ActivityUpdater activityUpdater = new ActivityUpdater(jda, activityFactory, logger);
+        activityUpdater.updateActivity(activityType, activityMessage);
     }
 
     public JDA getJda() {
