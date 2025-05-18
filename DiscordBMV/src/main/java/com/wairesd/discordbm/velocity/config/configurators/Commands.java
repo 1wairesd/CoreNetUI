@@ -1,14 +1,13 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.NotHaveRoleCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserAction;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.HaveRoleCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.CommandOption;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 
+import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -165,12 +164,7 @@ public class Commands {
     }
 
     private static CommandCondition createCondition(Map<String, Object> data) {
-        String type = getString(data, "type");
-        return switch (type) {
-            case "permission" -> new HaveRoleCondition(data);
-            case "not_have_role" -> new NotHaveRoleCondition(data);
-            default -> throw new IllegalArgumentException("Unknown condition type: " + type);
-        };
+        return CommandParserCondition.parseCondition(data);
     }
 
     private static CommandAction createAction(Map<String, Object> data) {

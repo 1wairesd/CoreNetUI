@@ -97,6 +97,7 @@ commands:
         label: specific_message
 
   - name: "feedback"
+    context: server
     description: "Leave feedback about the server"
     conditions:
       - type: "permission"
@@ -109,6 +110,7 @@ commands:
         response_type: "REPLY"
 
   - name: "register"
+    context: server
     description: "Register a new player"
     conditions:
        - type: "not_have_role"
@@ -123,6 +125,7 @@ commands:
               response_type: "REPLY"
 
   - name: "poll"
+    context: server
     description: "Simple poll"
     actions:
       - type: "send_form"
@@ -132,6 +135,7 @@ commands:
         response_type: "REPLY"
 
   - name: "feedback_button"
+    context: server
     description: "Get a button to leave feedback"
     actions:
       - type: "button"
@@ -144,3 +148,13 @@ commands:
       - type: "send_message"
         message: "Click the button to leave feedback"
         response_type: "REPLY"
+
+  - name: "test_4"
+    context: both
+    description: "An example command with chance condition"
+    conditions:
+     - type: "chance"
+       percent: "10"
+    actions:
+      - type: "send_message"
+        message: "You got lucky!"
