@@ -149,12 +149,15 @@ commands:
         message: "Click the button to leave feedback"
         response_type: "REPLY"
 
-  - name: "test_4"
+  - name: test_4
     context: both
-    description: "An example command with chance condition"
+    description: An example command with chance condition
     conditions:
-     - type: "chance"
-       percent: "10"
+      - type: chance
+        percent: 10
     actions:
-      - type: "send_message"
+      - type: send_message
         message: "You got lucky!"
+    fail-actions:
+      - type: send_message
+        message: "You're out of luck"

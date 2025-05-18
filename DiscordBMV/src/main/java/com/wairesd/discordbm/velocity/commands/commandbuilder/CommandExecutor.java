@@ -26,7 +26,27 @@ public class CommandExecutor {
         Context context = new Context(event);
 
         if (!command.getConditions().stream().allMatch(condition -> condition.check(context))) {
-            event.reply("You don't have permission to run this command.").setEphemeral(true).queue();
+            List<CommandAction> failActions = command.getFailActions();
+            if (!failActions.isEmpty()) {
+                event.deferReply(true).queue(hook -> {
+                    context.setHook(hook);
+                    CompletableFuture<Void> chain = CompletableFuture.completedFuture(null);
+                    for (CommandAction action : failActions) {
+                        chain = chain.thenCompose(voidResult -> action.execute(context));
+                    }
+                    chain.thenRun(() -> {
+                        if (context.getMessageText() != null && !context.getMessageText().isEmpty()) {
+                            hook.sendMessage(context.getMessageText()).setEphemeral(true).queue();
+                        }
+                    }).exceptionally(ex -> {
+                        logger.error("Error when executing fail actions: {}", ex.getMessage(), ex);
+                        hook.sendMessage("An error occurred while processing fail actions.").setEphemeral(true).queue();
+                        return null;
+                    });
+                });
+            } else {
+                event.reply("You're out of luck").setEphemeral(true).queue();
+            }
             return;
         }
 

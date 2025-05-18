@@ -8,6 +8,7 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.models.options.Com
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserCondition;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserFailAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -112,6 +113,7 @@ public class Commands {
         List<CommandOption> options = getOptions(cmdData);
         List<CommandCondition> conditions = getConditions(cmdData);
         List<CommandAction> actions = getActions(cmdData);
+        List<CommandAction> failActions = CommandParserFailAction.parse(cmdData, plugin);
         Boolean ephemeral = cmdData.containsKey("ephemeral") ?
                 (Boolean) cmdData.get("ephemeral") : null;
 
@@ -122,6 +124,7 @@ public class Commands {
                 options,
                 conditions,
                 actions,
+                failActions,
                 ephemeral
         );
     }
