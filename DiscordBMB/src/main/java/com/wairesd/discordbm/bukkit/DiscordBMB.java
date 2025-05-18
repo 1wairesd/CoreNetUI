@@ -69,6 +69,15 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
+    public boolean checkIfCanHandle(String playerName, List<String> placeholders) {
+        return placeholderService.checkIfCanHandle(playerName, placeholders);
+    }
+
+    public Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders) {
+        return placeholderService.getPlaceholderValues(playerName, placeholders);
+    }
+
+
     public void sendResponse(String requestId, String embedJson) {
         nettyService.sendResponse(requestId, embedJson);
     }
