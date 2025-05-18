@@ -45,7 +45,7 @@ public class CommandExecutor {
                     });
                 });
             } else {
-                event.reply("You're out of luck").setEphemeral(true).queue();
+                event.reply("Command conditions not met").setEphemeral(true).queue();
             }
             return;
         }
@@ -100,6 +100,7 @@ public class CommandExecutor {
             });
         }
     }
+
 
     private void sendReply(Context context) {
         InteractionHook hook = context.getHook();
