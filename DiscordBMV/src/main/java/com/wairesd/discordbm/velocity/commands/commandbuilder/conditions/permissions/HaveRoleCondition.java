@@ -5,10 +5,10 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Co
 
 import java.util.Map;
 
-public class PermissionCondition implements CommandCondition {
+public class HaveRoleCondition implements CommandCondition {
     private final String requiredRoleId;
 
-    public PermissionCondition(Map<String, Object> properties) {
+    public HaveRoleCondition(Map<String, Object> properties) {
         this.requiredRoleId = (String) properties.getOrDefault("role_id", "");
         if (this.requiredRoleId.isEmpty()) {
             throw new IllegalArgumentException("Role ID property is required for PermissionCondition");

@@ -3,9 +3,9 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.buttons
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonActionService;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.builder.FormModalBuilder;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.checker.PermissionChecker;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.checker.RoleChecker;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.data.buttons.FormButtonData;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.handler.ButtonResponseHandler;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.handler.buttons.ButtonResponseHandler;
 import com.wairesd.discordbm.velocity.config.configurators.Forms;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ButtonInteractionListener extends ListenerAdapter {
     private final ButtonActionService actionService = new ButtonActionService();
-    private final PermissionChecker permissionChecker = new PermissionChecker();
+    private final RoleChecker permissionChecker = new RoleChecker();
     private final FormModalBuilder modalBuilder = new FormModalBuilder();
     private final ButtonResponseHandler responseHandler = new ButtonResponseHandler();
 
