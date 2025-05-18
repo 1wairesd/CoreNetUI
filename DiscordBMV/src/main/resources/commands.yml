@@ -14,6 +14,9 @@ commands:
     actions:
       - type: "send_message"
         message: "Hello, {user}! You greeted {target}."
+    fail-actions:
+      - type: send_message
+        message: "No Permission"
 
   - name: "openwebsite"
     description: "Open the website"
@@ -113,16 +116,16 @@ commands:
     context: server
     description: "Register a new player"
     conditions:
-       - type: "not_have_role"
-         role_id: "<ID>"
-         actions:
-            - type: "send_form"
-              form_name: "register-form"
-            - type: "add_role"
-              role_id: "<ID>"
-            - type: "send_message"
-              message: "Hi {nick}! Thanks for registering. Telegram: {telegram}, Accepted rules: {accept}"
-              response_type: "REPLY"
+      - type: "not_have_role"
+        role_id: "<ID>"
+        actions:
+          - type: "send_form"
+            form_name: "register-form"
+          - type: "add_role"
+            role_id: "<ID>"
+          - type: "send_message"
+            message: "Hi {nick}! Thanks for registering. Telegram: {telegram}, Accepted rules: {accept}"
+            response_type: "REPLY"
 
   - name: "poll"
     context: server
