@@ -16,8 +16,6 @@ import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
-import com.wairesd.discordbm.velocity.discord.activity.ActivityFactory;
-import com.wairesd.discordbm.velocity.discord.activity.ActivityUpdater;
 import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import net.dv8tion.jda.api.JDA;
