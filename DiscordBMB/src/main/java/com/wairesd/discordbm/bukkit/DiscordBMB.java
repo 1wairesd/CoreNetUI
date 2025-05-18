@@ -24,16 +24,6 @@ public class DiscordBMB extends JavaPlugin {
     private PlaceholderService placeholderService;
     private boolean invalidSecret = false;
 
-    private static class CachedValue {
-        String value;
-        long timestamp;
-
-        public CachedValue(String value) {
-            this.value = value;
-            this.timestamp = System.currentTimeMillis();
-        }
-    }
-
     public DiscordBMB() {
         this.nettyService = new NettyService(this);
     }
