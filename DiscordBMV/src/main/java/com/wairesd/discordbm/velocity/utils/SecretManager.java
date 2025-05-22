@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 
 public class SecretManager {
-    private static final Logger logger = LoggerFactory.getLogger(SecretManager.class);
+    private final Logger logger;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom random = new SecureRandom();
 
@@ -17,6 +17,7 @@ public class SecretManager {
     private final String secretCode;
 
     public SecretManager(Path dataDirectory, String secretFileName) {
+        this.logger = LoggerFactory.getLogger(getClass());
         this.secretFilePath = dataDirectory.resolve(secretFileName);
         this.secretCode = loadOrGenerateSecretCode();
     }
