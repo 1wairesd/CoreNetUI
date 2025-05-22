@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.models.placeholders;
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;

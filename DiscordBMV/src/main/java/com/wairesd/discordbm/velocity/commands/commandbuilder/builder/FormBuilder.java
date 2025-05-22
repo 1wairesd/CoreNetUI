@@ -1,9 +1,9 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.builder;
 
 import com.wairesd.discordbm.velocity.config.configurators.Forms;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 
 public class FormBuilder {
 

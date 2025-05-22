@@ -37,7 +37,9 @@ public class DiscordBotManager {
                     .enableIntents(EnumSet.of(
                             GatewayIntent.GUILD_MESSAGES,
                             GatewayIntent.DIRECT_MESSAGES,
-                            GatewayIntent.MESSAGE_CONTENT
+                            GatewayIntent.MESSAGE_CONTENT,
+                            GatewayIntent.GUILD_PRESENCES,
+                            GatewayIntent.GUILD_MEMBERS
                     ))
                     .setActivity(activity)
                     .build()

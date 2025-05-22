@@ -4,8 +4,10 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons.ButtonActionService;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.builder.FormModalBuilder;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.checker.RoleChecker;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.buttons.FormButtonData;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.buttons.FormButtonData;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.handler.buttons.ButtonResponseHandler;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.MessageFormatterUtils;
 import com.wairesd.discordbm.velocity.config.configurators.Forms;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -40,7 +42,14 @@ public class ButtonInteractionListener extends ListenerAdapter {
             return;
         }
 
-        String message = actionService.getMessage(buttonId);
-        responseHandler.replyMessageOrExpired(event, message);
+        String messageTemplate = actionService.getMessage(buttonId);
+        if (messageTemplate != null) {
+            Context context = new Context(event);
+            MessageFormatterUtils.format(messageTemplate, event, context, false)
+                    .thenAccept(formattedMessage -> responseHandler.replyMessageOrExpired(event, formattedMessage));
+        } else {
+            responseHandler.replyMessageOrExpired(event, null);
+        }
     }
+
 }

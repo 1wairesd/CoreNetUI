@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.commandbuilder.data.buttons;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.models.buttons;
 
 public class ButtonData {
     private final String message;

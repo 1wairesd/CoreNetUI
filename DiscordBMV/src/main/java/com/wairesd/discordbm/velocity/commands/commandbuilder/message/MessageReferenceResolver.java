@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.message;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersResolved;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.placeholders.PlaceholdersResolved;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 
@@ -25,8 +25,8 @@ public class MessageReferenceResolver {
                 throw new IllegalArgumentException("Either label or both channel_id and message_id must be provided");
             }
 
-            String resolvedChannelId = PlaceholdersResolved.replace(channelId, context);
-            String resolvedMessageId = PlaceholdersResolved.replace(messageId, context);
+            String resolvedChannelId = PlaceholdersResolved.replaceSync(channelId, context);
+            String resolvedMessageId = PlaceholdersResolved.replaceSync(messageId, context);
             return new MessageReference(resolvedChannelId, resolvedMessageId);
         }
     }

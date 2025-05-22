@@ -1,7 +1,10 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -26,6 +29,21 @@ public class Context {
     private Map<String, String> variables = new HashMap<>();
     private InteractionHook hook;
     private Map<String, String> formResponses;
+    private User targetUser;
+
+    public Context(ModalInteractionEvent event) {
+        if (event == null) {
+            throw new IllegalArgumentException("Event cannot be null");
+        }
+        this.event = event;
+    }
+
+    public Context(ButtonInteractionEvent event) {
+        if (event == null) {
+            throw new IllegalArgumentException("Event cannot be null");
+        }
+        this.event = event;
+    }
 
     public Context(SlashCommandInteractionEvent event) {
         if (event == null) {
@@ -41,6 +59,14 @@ public class Context {
             text = text.replace("{" + entry.getKey() + "}", entry.getValue());
         }
         return text;
+    }
+
+    public User getTargetUser() {
+        return targetUser;
+    }
+
+    public void setTargetUser(User targetUser) {
+        this.targetUser = targetUser;
     }
 
     public void setFormResponses(Map<String, String> responses) {

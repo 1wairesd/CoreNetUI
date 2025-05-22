@@ -12,9 +12,9 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.TargetIDReso
 import com.wairesd.discordbm.velocity.commands.commandbuilder.validator.SendMessageValidator;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,26 +39,32 @@ public class SendMessageAction implements CommandAction {
 
     @Override
     public CompletableFuture<Void> execute(Context context) {
-        return CompletableFuture.runAsync(() -> {
-            ContextUtils.validate(context);
-            SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
+        ContextUtils.validate(context);
+        SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
 
-            String formattedTargetId = TargetIDResolverUtils.resolve(event, this.targetId, context);
-            String formattedMessage = MessageFormatterUtils.format(messageTemplate, event, context, Settings.isDebugSendMessageAction());
+        OptionMapping targetOption = event.getOption("target");
+        if (targetOption != null && targetOption.getAsUser() != null) {
+            context.setTargetUser(targetOption.getAsUser());
+        }
 
-            context.setMessageText(formattedMessage);
-            context.setResponseType(responseType);
+        String formattedTargetId = TargetIDResolverUtils.resolve(event, this.targetId, context);
 
-            if (embedProperties != null) {
-                context.setEmbed(EmbedFactoryUtils.create(embedProperties, event, context));
-            }
+        return MessageFormatterUtils.format(messageTemplate, event, context, Settings.isDebugSendMessageAction())
+                .thenAccept(formattedMessage -> {
+                    context.setMessageText(formattedMessage);
+                    context.setResponseType(responseType);
 
-            if (this.label != null) {
-                context.setExpectedMessageLabel(this.label);
-            }
+                    if (embedProperties != null) {
+                        EmbedFactoryUtils.create(embedProperties, event, context)
+                                .thenAccept(context::setEmbed);
+                    }
 
-            ResponseStrategy strategy = ResponseStrategyFactory.getStrategy(responseType);
-            strategy.apply(context, formattedTargetId);
-        });
+                    if (this.label != null) {
+                        context.setExpectedMessageLabel(this.label);
+                    }
+
+                    ResponseStrategy strategy = ResponseStrategyFactory.getStrategy(responseType);
+                    strategy.apply(context, formattedTargetId);
+                });
     }
 }

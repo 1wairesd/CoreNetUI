@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.buttons.FormButtonData;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.buttons.FormButtonData;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.registry.buttons.ButtonRegistry;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.registry.buttons.FormButtonRegistry;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;

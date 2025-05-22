@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.registry.buttons;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.buttons.ButtonData;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.buttons.ButtonData;
 
 import java.util.concurrent.*;
 

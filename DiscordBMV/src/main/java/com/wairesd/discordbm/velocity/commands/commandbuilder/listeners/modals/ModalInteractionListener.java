@@ -2,6 +2,7 @@ package com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.modals;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,8 +40,10 @@ public class ModalInteractionListener extends ListenerAdapter {
                 pair.getLeft().complete(null);
             } else if (handler instanceof String) {
                 String messageTemplate = (String) handler;
-                String message = replacePlaceholders(messageTemplate, responses);
-                event.reply(message).setEphemeral(true).queue();
+                String messageWithFormPlaceholders = replacePlaceholders(messageTemplate, responses);
+                Context context = new Context(event);
+                MessageFormatterUtils.format(messageWithFormPlaceholders, event, context, false)
+                        .thenAccept(formatted -> event.reply(formatted).setEphemeral(true).queue());
             }
         } catch (Exception e) {
             logger.error("Modal Window Processing Error", e);

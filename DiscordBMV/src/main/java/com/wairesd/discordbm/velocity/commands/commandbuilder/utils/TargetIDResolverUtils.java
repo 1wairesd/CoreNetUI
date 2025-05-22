@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.utils;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersChannel;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.data.placeholders.PlaceholdersMessageID;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.placeholders.PlaceholdersChannel;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.models.placeholders.PlaceholdersMessageID;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 

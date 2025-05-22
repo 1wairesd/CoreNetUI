@@ -23,8 +23,10 @@ public class ResolvePlaceholdersAction implements CommandAction {
     @Override
     public CompletableFuture<Void> execute(Context context) {
         SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
-        String playerName = MessageFormatterUtils.format(playerTemplate, event, context, false);
-        PlaceholdersResolver resolver = new PlaceholdersResolver(plugin);
-        return resolver.resolvePlaceholders(template, playerName, context);
+        return MessageFormatterUtils.format(playerTemplate, event, context, false)
+                .thenCompose(playerName -> {
+                    PlaceholdersResolver resolver = new PlaceholdersResolver(plugin);
+                    return resolver.resolvePlaceholders(template, playerName, context);
+                });
     }
 }

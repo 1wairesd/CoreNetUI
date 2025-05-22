@@ -152,15 +152,50 @@ commands:
         message: "Click the button to leave feedback"
         response_type: "REPLY"
 
-  - name: test_4
+  - name: "test_4"
     context: both
     description: An example command with chance condition
     conditions:
-      - type: chance
-        percent: 10
+      - type: "chance"
+        percent: "10"
     actions:
-      - type: send_message
+      - type: "send_message"
         message: "You got lucky!"
     fail-actions:
-      - type: send_message
+      - type: "send_message"
         message: "You're out of luck"
+
+  - name: "saynick"
+    description: "Displays a message with the player's nickname"
+    context: server
+    options:
+      - name: "player"
+        type: "STRING"
+        description: "Player's nickname"
+        required: true
+    actions:
+      - type: "resolve_placeholders"
+        template: "Hello, {player}! You entered a player's nickname. hearts %player_health%"
+        player: "{player}"
+      - type: "send_message"
+        message: "{resolved_message}"
+
+  - name: "user-info"
+    description: "Shows information about a player"
+    context: server
+    options:
+      - name: "target"
+        type: USER
+        description: "Select a player"
+        required: true
+    actions:
+      - type: send_message
+        message: |
+          👤 Name: **{user_display_name}**
+          🏷️ Tag: **{user_tag}**
+          🆔 ID: `{user_id}`
+          📆 Created: {user_create_at}
+          🟢 Status: {user_status}
+          👋 Joined: {user_joined}
+          🖼️ Avatar: {user_icon}
+        response_type: REPLY
