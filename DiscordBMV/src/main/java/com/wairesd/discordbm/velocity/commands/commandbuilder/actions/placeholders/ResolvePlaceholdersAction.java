@@ -12,18 +12,19 @@ import java.util.concurrent.CompletableFuture;
 public class ResolvePlaceholdersAction implements CommandAction {
     private final String template;
     private final String playerTemplate;
-    private final PlaceholdersResolver resolver;
+    private final DiscordBMV plugin;
 
     public ResolvePlaceholdersAction(Map<String, Object> properties, DiscordBMV plugin) {
         this.template = (String) properties.get("template");
         this.playerTemplate = (String) properties.get("player");
-        this.resolver = new PlaceholdersResolver(plugin);
+        this.plugin = plugin;
     }
 
     @Override
     public CompletableFuture<Void> execute(Context context) {
         SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
         String playerName = MessageFormatterUtils.format(playerTemplate, event, context, false);
+        PlaceholdersResolver resolver = new PlaceholdersResolver(plugin);
         return resolver.resolvePlaceholders(template, playerName, context);
     }
 }
