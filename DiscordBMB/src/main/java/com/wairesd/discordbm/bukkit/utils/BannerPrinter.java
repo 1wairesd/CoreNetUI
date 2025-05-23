@@ -17,7 +17,7 @@ public class BannerPrinter {
         logger.info(ANSI_PURPLE + "|____/  " + ANSI_RED + "|_|  |_|" + ANSI_RESET);
         logger.info("");
         logger.info(ANSI_WHITE + "    DiscordBMV v1.0" + ANSI_RESET);
-        logger.info(ANSI_WHITE + "    Running on Velocity" + ANSI_RESET);
+        logger.info(ANSI_WHITE + "    Running on Bukkit" + ANSI_RESET);
         logger.info("");
     }
 }
