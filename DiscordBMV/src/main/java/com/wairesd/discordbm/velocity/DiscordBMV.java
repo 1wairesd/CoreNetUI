@@ -114,7 +114,6 @@ public class DiscordBMV {
                 proxy.getCommandManager().metaBuilder("discordBMV").build(),
                 new CommandAdmin(this)
         );
-        logger.info("Proxy commands registered");
     }
 
     public void updateActivity() {

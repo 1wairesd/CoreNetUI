@@ -134,10 +134,7 @@ public class NettyClient {
 
     private void scheduleReconnect() {
         if (!closing) {
-            if (Settings.isDebugConnections()) {
-                pluginLogger.info("Scheduling reconnect in 1 second...");
-            }
-            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, this::connect, 20L);
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, this::connect, 300L);
         }
     }
 

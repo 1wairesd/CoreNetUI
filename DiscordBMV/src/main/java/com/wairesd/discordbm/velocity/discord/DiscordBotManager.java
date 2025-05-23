@@ -46,7 +46,7 @@ public class DiscordBotManager {
                     .build()
                     .awaitReady();
 
-            logger.info("JDA initialized successfully");
+            logger.info("JDA initialized");
             initialized = true;
         } catch (Exception e) {
             logger.error("Error initializing JDA: {}", e.getMessage(), e);

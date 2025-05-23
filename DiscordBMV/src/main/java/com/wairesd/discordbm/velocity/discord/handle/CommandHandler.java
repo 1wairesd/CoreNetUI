@@ -25,7 +25,7 @@ public class CommandHandler {
 
         if (plugin.getDiscordBotManager().getJda() != null) {
             this.commandExecutorFacade = new CommandExecutorFacade();
-            logger.info("CommandExecutor initialized successfully");
+            logger.info("CommandExecutor initialized");
         } else {
             logger.error("Failed to initialize CommandExecutor - JDA is null!");
             this.commandExecutorFacade = null;
