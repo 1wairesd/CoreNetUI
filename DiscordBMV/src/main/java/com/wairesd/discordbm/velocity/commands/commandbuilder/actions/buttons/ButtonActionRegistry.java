@@ -1,16 +1,17 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.buttons;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.buttons.FormButtonData;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.registry.buttons.ButtonRegistry;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.registry.buttons.FormButtonRegistry;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
 public class ButtonActionRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(ButtonActionRegistry.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private final ButtonRegistry buttonRegistry = new ButtonRegistry();

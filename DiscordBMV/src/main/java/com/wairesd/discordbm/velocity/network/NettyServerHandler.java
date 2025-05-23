@@ -3,34 +3,35 @@ package com.wairesd.discordbm.velocity.network;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.wairesd.discordbm.bukkit.models.unregister.UnregisterMessage;
+import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final Gson gson = new Gson();
-    private final Logger logger;
     private final Object jda;
     private final DatabaseManager dbManager;
     private final NettyServer nettyServer;
     private boolean authenticated = false;
 
-    public NettyServerHandler(NettyServer nettyServer, Logger logger, Object jda, DatabaseManager dbManager) {
+    public NettyServerHandler(NettyServer nettyServer, Object jda, DatabaseManager dbManager) {
         this.nettyServer = nettyServer;
-        this.logger = logger;
         this.jda = jda;
         this.dbManager = dbManager;
     }

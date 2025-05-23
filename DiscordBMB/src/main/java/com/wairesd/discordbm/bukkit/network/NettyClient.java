@@ -5,6 +5,8 @@ import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
+import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -14,13 +16,13 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import static org.bukkit.Bukkit.getLogger;
 
 /**
  * Represents a Netty-based client used to establish and manage a connection to a Velocity server.
@@ -28,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
  * receiving messages, and handling reconnection logic.
  */
 public class NettyClient {
-    private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
+    private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private final InetSocketAddress address;
     private final DiscordBMB plugin;
     private EventLoopGroup group;
@@ -64,24 +66,24 @@ public class NettyClient {
                 if (future.isSuccess()) {
                     channel = future.channel();
                     if (Settings.isDebugConnections()) {
-                        logger.info("Connected to Velocity at {}:{}", address.getHostString(), address.getPort());
+                        pluginLogger.info("Connected to Velocity at {}:{}", address.getHostString(), address.getPort());
                     }
                     sendRegistrationMessage();
                 } else {
                     if (Settings.isDebugConnections()) {
-                        logger.warn("Failed to connect to Velocity at {}:{}: {}", address.getHostString(), address.getPort(), future.cause().getMessage());
+                        pluginLogger.warn("Failed to connect to Velocity at {}:{}: {}", address.getHostString(), address.getPort(), future.cause().getMessage());
                     }
                     scheduleReconnect();
                 }
             } catch (InterruptedException e) {
                 if (Settings.isDebugErrors()) {
-                    logger.error("Connection interrupted", e);
+                    pluginLogger.error("Connection interrupted", e);
                 }
                 Thread.currentThread().interrupt();
             }
         }).exceptionally(throwable -> {
             if (Settings.isDebugErrors()) {
-                logger.error("Error connecting to Velocity: {}", throwable.getMessage());
+                pluginLogger.error("Error connecting to Velocity: {}", throwable.getMessage());
             }
             scheduleReconnect();
             return null;
@@ -93,7 +95,7 @@ public class NettyClient {
         if (channel != null) channel.close();
         if (group != null) group.shutdownGracefully();
         if (Settings.isDebugConnections()) {
-            logger.info("Netty client connection closed");
+            pluginLogger.info("Netty client connection closed");
         }
     }
 
@@ -101,11 +103,11 @@ public class NettyClient {
         if (isActive()) {
             channel.writeAndFlush(message);
             if (Settings.isDebugClientResponses()) {
-                logger.debug("Sent message: {}", message);
+                pluginLogger.info("Sent message: {}", message);
             }
         } else {
             if (Settings.isDebugErrors()) {
-                logger.warn("Cannot send message, channel inactive");
+                pluginLogger.warn("Cannot send message, channel inactive");
             }
         }
     }
@@ -126,14 +128,14 @@ public class NettyClient {
         String json = gson.toJson(registerMsg);
         send(json);
         if (Settings.isDebugCommandRegistrations()) {
-            logger.info("Sent initial registration message with no commands.");
+            pluginLogger.info("Sent initial registration message with no commands.");
         }
     }
 
     private void scheduleReconnect() {
         if (!closing) {
             if (Settings.isDebugConnections()) {
-                logger.info("Scheduling reconnect in 1 second...");
+                pluginLogger.info("Scheduling reconnect in 1 second...");
             }
             plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, this::connect, 20L);
         }

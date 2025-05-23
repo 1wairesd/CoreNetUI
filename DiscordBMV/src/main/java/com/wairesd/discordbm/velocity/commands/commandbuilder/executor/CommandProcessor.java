@@ -1,17 +1,18 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.executor;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
 public class CommandProcessor {
-    private static final Logger logger = LoggerFactory.getLogger(CommandProcessor.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
     public void process(CommandStructured command, Context context, SlashCommandInteractionEvent event, CommandResponder responder) {
         boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();

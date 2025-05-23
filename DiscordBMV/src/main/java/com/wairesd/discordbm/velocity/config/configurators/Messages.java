@@ -1,9 +1,10 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
 import com.wairesd.discordbm.common.utils.color.ColorUtils;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import net.kyori.adventure.text.ComponentLike;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -15,7 +16,7 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 public class Messages {
-    private static final Logger logger = LoggerFactory.getLogger(Messages.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String MESSAGES_FILE_NAME = "messages.yml";
     public static final String DEFAULT_MESSAGE = "Message not found.";
 
@@ -41,7 +42,6 @@ public class Messages {
                         .build();
 
                 messagesConfig = loader.load();
-                logger.info("{} loaded successfully", MESSAGES_FILE_NAME);
             } catch (Exception e) {
                 logger.error("Error loading {}: {}", MESSAGES_FILE_NAME, e.getMessage(), e);
             }
@@ -60,8 +60,11 @@ public class Messages {
     }
 
     public static void reload() {
-        loadMessages();
+        CompletableFuture.runAsync(() -> {
+            logger.info("{} reloaded successfully", MESSAGES_FILE_NAME);
+        });
     }
+
 
     public static @NotNull ComponentLike getParsedMessage(String key, String defaultValue) {
         String message = getMessage(key, defaultValue);

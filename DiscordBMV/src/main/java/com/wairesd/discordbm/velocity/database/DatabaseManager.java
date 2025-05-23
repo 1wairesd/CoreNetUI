@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.velocity.database;
 
-import org.slf4j.Logger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
@@ -10,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DatabaseManager {
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     static {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -39,7 +40,6 @@ public class DatabaseManager {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(CREATE_TABLE_SQL);
-            logger.info("{} table created or already exists", IP_BLOCKS_TABLE);
         } catch (SQLException e) {
             logger.error("Error initializing database", e);
         }

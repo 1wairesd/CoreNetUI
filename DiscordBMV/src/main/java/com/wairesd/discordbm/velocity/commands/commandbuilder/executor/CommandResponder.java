@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.executor;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
@@ -11,7 +13,6 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CommandResponder {
-    private static final Logger logger = LoggerFactory.getLogger(CommandResponder.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
     public void handleFailedValidation(SlashCommandInteractionEvent event, CommandStructured command, Context context) {
         List<CommandAction> failActions = command.getFailActions();

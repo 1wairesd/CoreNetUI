@@ -1,10 +1,12 @@
 package com.wairesd.discordbm.velocity.discord.request;
 
 import com.google.gson.Gson;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.models.request.RequestMessage;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,16 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class RequestSender {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final Gson GSON = new Gson();
 
     private final NettyServer nettyServer;
-    private final Logger logger;
 
     private final ConcurrentHashMap<UUID, SlashCommandInteractionEvent> pendingRequests = new ConcurrentHashMap<>();
 
-    public RequestSender(NettyServer nettyServer, Logger logger) {
+    public RequestSender(NettyServer nettyServer, PluginLogger logger) {
         this.nettyServer = nettyServer;
-        this.logger = logger;
     }
 
     public void sendRequestToServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo) {

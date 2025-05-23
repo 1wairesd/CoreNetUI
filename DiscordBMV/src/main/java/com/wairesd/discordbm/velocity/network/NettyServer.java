@@ -1,6 +1,8 @@
 package com.wairesd.discordbm.velocity.network;
 
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
@@ -14,7 +16,7 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import net.dv8tion.jda.api.JDA;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NettyServer {
-    private final Logger logger;
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private Channel serverChannel;
@@ -38,8 +40,7 @@ public class NettyServer {
     private final ConcurrentHashMap<String, CompletableFuture<Boolean>> canHandleFutures = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> placeholderFutures = new ConcurrentHashMap<>();
 
-    public NettyServer(Logger logger, DatabaseManager dbManager) {
-        this.logger = logger;
+    public NettyServer(DatabaseManager dbManager) {
         this.dbManager = dbManager;
     }
 
@@ -71,7 +72,7 @@ public class NettyServer {
                             ch.pipeline().addLast("stringDecoder", new StringDecoder(StandardCharsets.UTF_8));
                             ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(2));
                             ch.pipeline().addLast("stringEncoder", new StringEncoder(StandardCharsets.UTF_8));
-                            ch.pipeline().addLast("handler", new NettyServerHandler(NettyServer.this, logger, jda, dbManager));
+                            ch.pipeline().addLast("handler", new NettyServerHandler(NettyServer.this, jda, dbManager));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -79,7 +80,7 @@ public class NettyServer {
 
             ChannelFuture future = bootstrap.bind(port).sync();
             serverChannel = future.channel();
-            if (Settings.isDebugConnections()) {
+            if (Settings.isDebugNettyStart()) {
                 logger.info("Netty server started on port {}", port);
             }
             serverChannel.closeFuture().sync();

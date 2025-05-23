@@ -4,22 +4,23 @@ import com.google.gson.Gson;
 import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import io.netty.channel.Channel;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlaceholderRequestSender {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final NettyServer nettyServer;
-    private final Logger logger;
     private final Gson gson = new Gson();
 
-    public PlaceholderRequestSender(NettyServer nettyServer, Logger logger) {
+    public PlaceholderRequestSender(NettyServer nettyServer) {
         this.nettyServer = nettyServer;
-        this.logger = logger;
     }
 
     public CompletableFuture<Boolean> sendCanHandlePlaceholdersRequest(Channel channel, String playerName, List<String> placeholders) {

@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.velocity.utils;
 
-import org.slf4j.Logger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 
 public class SecretManager {
-    private final Logger logger;
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom random = new SecureRandom();
 
@@ -17,7 +18,6 @@ public class SecretManager {
     private final String secretCode;
 
     public SecretManager(Path dataDirectory, String secretFileName) {
-        this.logger = LoggerFactory.getLogger(getClass());
         this.secretFilePath = dataDirectory.resolve(secretFileName);
         this.secretCode = loadOrGenerateSecretCode();
     }
@@ -26,7 +26,6 @@ public class SecretManager {
         try {
             if (Files.exists(secretFilePath)) {
                 String loadedCode = Files.readString(secretFilePath).trim();
-                logger.info("Loaded secret code from {}", secretFilePath.getFileName());
                 return loadedCode;
             } else {
                 String generatedCode = generateSecretCode();

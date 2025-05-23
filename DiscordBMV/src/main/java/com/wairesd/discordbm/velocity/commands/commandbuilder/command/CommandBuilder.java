@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.command;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -9,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import static net.dv8tion.jda.api.interactions.commands.build.Commands.slash;
 
 public class CommandBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(CommandBuilder.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
     public SlashCommandData build(CommandStructured cmd) {
         SlashCommandData cmdData = slash(cmd.getName(), cmd.getDescription());

@@ -5,10 +5,15 @@ import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
+import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 
 import java.util.List;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class CommandRegister {
+    private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private final DiscordBMB plugin;
     private final Gson gson;
 
@@ -31,7 +36,7 @@ public class CommandRegister {
         plugin.getNettyService().sendNettyMessage(gson.toJson(msg));
 
         if (Settings.isDebugCommandRegistrations()) {
-            plugin.getLogger().info("Sent registration message for command: " + command.name);
+            pluginLogger.info("Sent registration message for command: " + command.name);
         }
     }
 }

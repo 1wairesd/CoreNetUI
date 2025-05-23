@@ -7,9 +7,13 @@ import com.wairesd.discordbm.bukkit.models.command.Command;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
+import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+
+import static org.bukkit.Bukkit.getLogger;
 
 /**
  * The NettyService class provides functionality for interacting with a Netty server,
@@ -18,6 +22,7 @@ import java.util.List;
  * messages, and provides connection lifecycle management.
  */
 public class NettyService {
+    private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private final DiscordBMB plugin;
     private final Gson gson = new Gson();
     private NettyClient nettyClient;
@@ -32,7 +37,7 @@ public class NettyService {
             nettyClient.connect();
         } catch (Exception e) {
             if (Settings.isDebugErrors()) {
-                plugin.getLogger().warning("Failed to connect to Velocity Netty server: " + e.getMessage());
+                pluginLogger.warn("Failed to connect to Velocity Netty server: " + e.getMessage());
             }
         }
     }
@@ -42,7 +47,7 @@ public class NettyService {
             nettyClient.close();
             nettyClient = null;
             if (Settings.isDebugConnections()) {
-                plugin.getLogger().info("Netty connection closed.");
+                pluginLogger.info("Netty connection closed.");
             }
         }
     }
@@ -60,7 +65,7 @@ public class NettyService {
             nettyClient.send(message);
         } else {
             if (Settings.isDebugErrors()) {
-                plugin.getLogger().warning("Netty connection not active. Message not sent: " + message);
+                pluginLogger.warn("Netty connection not active. Message not sent: " + message);
             }
         }
     }
@@ -73,7 +78,7 @@ public class NettyService {
             );
             nettyClient.send(gson.toJson(msg));
             if (Settings.isDebugCommandRegistrations()) {
-                plugin.getLogger().info(
+                pluginLogger.info(
                         "Sent registration message for " + addonCommands.size() + " addon commands."
                 );
             }

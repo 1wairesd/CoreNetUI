@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
@@ -9,7 +11,6 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.parser.CommandParserFailAction;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Commands {
-    private static final Logger logger = LoggerFactory.getLogger(Commands.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String COMMANDS_FILE_NAME = "commands.yml";
 
     private static Path dataDirectory;
@@ -39,7 +40,7 @@ public class Commands {
         loadCommands();
     }
 
-    private static synchronized void loadCommands() {
+    private static synchronized List<CommandStructured> loadCommands() {
         try {
             Path commandsPath = dataDirectory.resolve(COMMANDS_FILE_NAME);
             if (!Files.exists(commandsPath)) {
@@ -48,9 +49,10 @@ public class Commands {
 
             List<CommandStructured> newCommands = loadCommandsFromFile(commandsPath);
             customCommands = Collections.unmodifiableList(newCommands);
-            logger.info("{} reloaded successfully with {} commands", COMMANDS_FILE_NAME, customCommands.size());
+            return customCommands;
         } catch (Exception e) {
             logger.error("Error loading {}: {}", COMMANDS_FILE_NAME, e.getMessage(), e);
+            return Collections.emptyList();
         }
     }
 
@@ -98,7 +100,8 @@ public class Commands {
     }
 
     public static void reload() {
-        loadCommands();
+        List<CommandStructured> reloadedCommands = loadCommands();
+        logger.info("{} reloaded successfully with {} commands", COMMANDS_FILE_NAME, reloadedCommands.size());
     }
 
     public static List<CommandStructured> getCustomCommands() {

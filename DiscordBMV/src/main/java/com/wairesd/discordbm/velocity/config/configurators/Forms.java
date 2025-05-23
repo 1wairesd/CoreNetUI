@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
-import org.slf4j.Logger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
@@ -10,7 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Forms {
-    private static final Logger logger = LoggerFactory.getLogger(Forms.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String FORMS_FILE_NAME = "forms.yml";
     private static Path dataDirectory;
     private static Map<String, FormStructured> forms = new HashMap<>();
@@ -25,10 +26,11 @@ public class Forms {
     }
 
     public static void reload() {
-        loadForms();
+        Map<String, FormStructured> reloadedForms = loadForms();
+        logger.info("{} reloaded successfully with {} forms", FORMS_FILE_NAME, reloadedForms.size());
     }
 
-    private static synchronized void loadForms() {
+    private static synchronized Map<String, FormStructured> loadForms() {
         try {
             Path formsPath = dataDirectory.resolve(FORMS_FILE_NAME);
             if (!Files.exists(formsPath)) {
@@ -37,9 +39,10 @@ public class Forms {
 
             Map<String, FormStructured> newForms = loadFormsFromFile(formsPath);
             forms = Collections.unmodifiableMap(newForms);
-            logger.info("{} reloaded successfully with {} forms", FORMS_FILE_NAME, forms.size());
+            return forms;
         } catch (Exception e) {
             logger.error("Error loading {}: {}", FORMS_FILE_NAME, e.getMessage(), e);
+            return Collections.emptyMap();
         }
     }
 

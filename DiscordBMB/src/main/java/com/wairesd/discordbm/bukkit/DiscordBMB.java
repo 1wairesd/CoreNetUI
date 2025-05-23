@@ -8,12 +8,15 @@ import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.bukkit.network.NettyService;
 import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
+import com.wairesd.discordbm.bukkit.utils.BannerPrinter;
+import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.*;
 
 public class DiscordBMB extends JavaPlugin {
+    private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private static DiscordBMBApi api;
     private ConfigManager configManager;
     private final NettyService nettyService;
@@ -30,6 +33,7 @@ public class DiscordBMB extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        BannerPrinter.printBanner(pluginLogger);
         api = new DiscordBMBApi(this);
         configManager = new ConfigManager(this);
         configManager.loadConfigs();

@@ -9,14 +9,16 @@ import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceho
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
+import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.bukkit.Bukkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.bukkit.Bukkit.getLogger;
 
 /**
  * Handles communication between the Netty client and the plugin backend by processing
@@ -27,7 +29,8 @@ import java.util.Map;
  * such as error handling, command execution, and placeholder resolution are performed.
  */
 public class MessageHandler extends SimpleChannelInboundHandler<String> {
-    private static final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
+    private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
+
     private final DiscordBMB plugin;
     private final Gson gson = new Gson();
 
@@ -38,7 +41,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String message) {
         if (Settings.isDebugClientResponses()) {
-            logger.debug("Received message: {}", message);
+            pluginLogger.info("Received message: {}", message);
         }
 
         if (message.startsWith("Error:")) {
@@ -68,7 +71,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     Map<String, String> values = plugin.getPlaceholderValues(req.player(), req.placeholders());
                     if (Settings.isDebugResolvePlaceholders()) {
-                        logger.info("Resolving placeholders for player {}: {}", req.player(), values);
+                        pluginLogger.info("Resolving placeholders for player {}: {}", req.player(), values);
                     }
                     PlaceholdersResponse resp = new PlaceholdersResponse(
                             "placeholders_response",
@@ -78,18 +81,18 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                     ctx.channel().writeAndFlush(gson.toJson(resp));
                 });
             } else {
-                logger.warn("Unknown message type: {}", type);
+                pluginLogger.warn("Unknown message type: {}", type);
             }
         } catch (Exception e) {
             if (Settings.isDebugErrors()) {
-                logger.error("Error processing message: {}", message, e);
+                pluginLogger.error("Error processing message: {}", message, e);
             }
         }
     }
 
     private void handleErrorMessage(String message, ChannelHandlerContext ctx) {
         if (Settings.isDebugErrors()) {
-            logger.warn("Received error from server: {}", message);
+            pluginLogger.warn("Received error from server: {}", message);
         }
         switch (message) {
             case "Error: Invalid secret code":
@@ -99,7 +102,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 break;
             case "Error: Authentication timeout":
                 if (Settings.isDebugAuthentication()) {
-                    logger.warn("Authentication timeout occurred");
+                    pluginLogger.warn("Authentication timeout occurred");
                 }
                 ctx.close();
                 break;
@@ -132,7 +135,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (Settings.isDebugErrors()) {
-            logger.error("Connection error: {}", cause.getMessage(), cause);
+            pluginLogger.error("Connection error: {}", cause.getMessage(), cause);
         }
         ctx.close();
     }

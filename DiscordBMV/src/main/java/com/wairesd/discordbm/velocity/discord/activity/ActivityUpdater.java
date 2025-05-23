@@ -1,18 +1,19 @@
 package com.wairesd.discordbm.velocity.discord.activity;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActivityUpdater {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final JDA jda;
     private final ActivityFactory activityFactory;
-    private final Logger logger;
 
-    public ActivityUpdater(JDA jda, ActivityFactory activityFactory, Logger logger) {
+    public ActivityUpdater(JDA jda, ActivityFactory activityFactory) {
         this.jda = jda;
         this.activityFactory = activityFactory;
-        this.logger = logger;
     }
 
     public void updateActivity(String activityType, String activityMessage) {

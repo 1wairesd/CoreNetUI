@@ -6,6 +6,8 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.listeners.buttons.ButtonInteractionListener;
@@ -18,8 +20,9 @@ import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
 import com.wairesd.discordbm.velocity.network.NettyServer;
+import com.wairesd.discordbm.velocity.utils.BannerPrinter;
 import net.dv8tion.jda.api.JDA;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -29,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
-    private final Logger logger;
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final Path dataDirectory;
     private final ProxyServer proxy;
     private NettyServer nettyServer;
@@ -41,11 +44,10 @@ public class DiscordBMV {
     public static DiscordBMV plugin;
 
     @Inject
-    public DiscordBMV(Logger logger, @DataDirectory Path dataDirectory, ProxyServer proxy) {
-        this.logger = logger;
+    public DiscordBMV(@DataDirectory Path dataDirectory, ProxyServer proxy) {
         this.dataDirectory = dataDirectory;
         this.proxy = proxy;
-        this.discordBotManager = new DiscordBotManager(logger);
+        this.discordBotManager = new DiscordBotManager();
         Commands.plugin = this;
     }
 
@@ -53,6 +55,9 @@ public class DiscordBMV {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         plugin = this;
         Commands.plugin = this;
+
+        BannerPrinter.printBanner(logger);
+
         initializeConfiguration();
         initializeDatabase();
         initializeNettyServer();
@@ -73,28 +78,15 @@ public class DiscordBMV {
             return;
         }
 
-        logger.info("Discord bot initialized, setting up listeners and commands");
+        logger.info("Discord bot initialized");
         jda.addEventListener(new ButtonInteractionListener());
         jda.addEventListener(new ModalInteractionListener());
         nettyServer.setJda(jda);
         DiscordBotListener listener = new DiscordBotListener(this, nettyServer, logger);
         jda.addEventListener(listener);
-        ResponseHandler.init(listener, logger);
+        ResponseHandler.init(listener);
         commandManager = new CommandManager(nettyServer, jda);
         commandManager.loadAndRegisterCommands();
-
-        if (Settings.isDebugCustomCommandRegistrations()) {
-            jda.retrieveCommands().queue(commands -> {
-                logger.info("Registered commands in Discord: {}",
-                        commands.stream().map(cmd -> cmd.getName()).collect(Collectors.toList()));
-            }, failure -> {
-                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
-            });
-        } else {
-            jda.retrieveCommands().queue(null, failure -> {
-                logger.error("Failed to retrieve registered commands: {}", failure.getMessage());
-            });
-        }
     }
 
     private void initializeConfiguration() {
@@ -105,17 +97,16 @@ public class DiscordBMV {
     private void initializeDatabase() {
         String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db");
         dbManager = new DatabaseManager(dbPath);
-        logger.info("Database initialized at {}", dbPath);
+        logger.info("Database initialized");
     }
 
     private void initializeNettyServer() {
-        nettyServer = new NettyServer(logger, dbManager);
+        nettyServer = new NettyServer(dbManager);
         logger.info("Netty server initialized");
     }
 
     private void startNettyServer() {
         new Thread(nettyServer::start, "Netty-Server-Thread").start();
-        logger.info("Netty server thread started");
     }
 
     private void registerCommands() {
@@ -174,7 +165,7 @@ public class DiscordBMV {
         return plugin;
     }
 
-    public Logger getLogger() {
+    public PluginLogger getLogger() {
         return logger;
     }
 }

@@ -1,15 +1,16 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.command;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommandRegistrar {
     private final JDA jda;
     private final CommandBuilder builder;
-    private final Logger logger = LoggerFactory.getLogger(CommandRegistrar.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
     public CommandRegistrar(JDA jda, CommandBuilder builder) {
         this.jda = jda;

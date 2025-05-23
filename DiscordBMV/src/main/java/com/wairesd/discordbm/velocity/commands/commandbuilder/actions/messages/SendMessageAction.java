@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.messages;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.ResponseType;
@@ -13,13 +15,12 @@ import com.wairesd.discordbm.velocity.commands.commandbuilder.validator.SendMess
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class SendMessageAction implements CommandAction {
-    private static final Logger logger = LoggerFactory.getLogger(SendMessageAction.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String DEFAULT_MESSAGE = "";
 
     private final String messageTemplate;

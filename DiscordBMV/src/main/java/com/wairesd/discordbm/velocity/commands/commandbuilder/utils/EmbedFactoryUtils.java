@@ -1,10 +1,11 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.utils;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class EmbedFactoryUtils {
-    private static final Logger logger = LoggerFactory.getLogger(EmbedFactoryUtils.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
     public static CompletableFuture<MessageEmbed> create(Map<String, Object> embedMap, SlashCommandInteractionEvent event, Context context) {
         EmbedBuilder builder = new EmbedBuilder();

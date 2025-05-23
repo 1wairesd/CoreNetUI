@@ -1,22 +1,23 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.command;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.structures.CommandStructured;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class CommandLoader {
-    private static final Logger logger = LoggerFactory.getLogger(CommandLoader.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
     public List<CommandStructured> load() {
         try {
             List<CommandStructured> commands = Commands.getCustomCommands();
             if (Settings.isDebugCommandRegistrations()) {
-                logger.debug("Loaded commands:");
-                commands.forEach(cmd -> logger.debug(" - {}", cmd.getName()));
+                logger.info("Loaded commands:");
+                commands.forEach(cmd -> logger.info(" - {}", cmd.getName()));
             }
             return commands;
         } catch (Exception e) {

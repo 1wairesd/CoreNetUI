@@ -1,11 +1,14 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.actions.placeholders;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.channel.ChannelFinder;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.utils.PlaceholderUtils;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import io.netty.channel.Channel;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class PlaceholdersResolver {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final DiscordBMV plugin;
     private final NettyServer nettyServer;
     private final ChannelFinder channelFinder;
@@ -24,7 +28,7 @@ public class PlaceholdersResolver {
         this.plugin = plugin;
         this.nettyServer = plugin.getNettyServer();
         this.channelFinder = new ChannelFinder(nettyServer);
-        this.requestSender = new PlaceholderRequestSender(nettyServer, plugin.getLogger());
+        this.requestSender = new PlaceholderRequestSender(nettyServer);
     }
 
     public CompletableFuture<Void> resolvePlaceholders(String template, String playerName, Context context) {
@@ -54,7 +58,7 @@ public class PlaceholdersResolver {
             return requestSender.sendGetPlaceholdersRequest(channel, playerName, placeholders)
                     .thenAccept(values -> {
                         String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
-                        plugin.getLogger().info("Resolved message: {}", resolved);
+                        logger.info("Resolved message: {}", resolved);
                         context.setResolvedMessage(resolved);
                     }).exceptionally(ex -> {
                         context.setResolvedMessage("Error getting placeholders: " + ex.getMessage());
@@ -94,7 +98,7 @@ public class PlaceholdersResolver {
                 return requestSender.sendGetPlaceholdersRequest(channel, playerName, placeholders)
                         .thenAccept(values -> {
                             String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
-                            plugin.getLogger().info("Resolved message: {}", resolved);
+                            logger.info("Resolved message: {}", resolved);
                             context.setResolvedMessage(resolved);
                         }).exceptionally(ex -> {
                             context.setResolvedMessage("Error getting placeholders: " + ex.getMessage());

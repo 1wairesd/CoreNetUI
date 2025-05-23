@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.discord.handle;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.CommandExecutorFacade;
 
@@ -7,18 +9,17 @@ import com.wairesd.discordbm.velocity.discord.response.ResponseHelper;
 import com.wairesd.discordbm.velocity.discord.request.RequestSender;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandHandler {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final DiscordBMV plugin;
-    private final Logger logger;
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
     private final CommandExecutorFacade commandExecutorFacade;
 
-    public CommandHandler(DiscordBMV plugin, Logger logger, RequestSender requestSender, ResponseHelper responseHelper) {
+    public CommandHandler(DiscordBMV plugin, RequestSender requestSender, ResponseHelper responseHelper) {
         this.plugin = plugin;
-        this.logger = logger;
         this.requestSender = requestSender;
         this.responseHelper = responseHelper;
 

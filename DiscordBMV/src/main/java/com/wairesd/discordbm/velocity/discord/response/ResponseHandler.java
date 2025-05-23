@@ -2,22 +2,23 @@ package com.wairesd.discordbm.velocity.discord.response;
 
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.UUID;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
-    private static Logger logger;
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
-    public static void init(DiscordBotListener discordBotListener, Logger log) {
+    public static void init(DiscordBotListener discordBotListener) {
         listener = discordBotListener;
-        logger = log;
     }
 
     public static void handleResponse(ResponseMessage respMsg) {

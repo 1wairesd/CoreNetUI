@@ -1,7 +1,8 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.utils.SecretManager;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
@@ -14,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 public class Settings {
-    private static final Logger logger = LoggerFactory.getLogger(Settings.class);
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String CONFIG_FILE_NAME = "settings.yml";
     private static final String DEFAULT_FORWARDING_SECRET_FILE = "secret.complete.code";
 
@@ -38,7 +39,6 @@ public class Settings {
                 config = yaml.load(inputStream);
             }
             validateConfig();
-            logger.info("Settings loaded from {}", configFile.getPath());
         } catch (Exception e) {
             logger.error("Error loading settings.yml: {}", e.getMessage(), e);
         }
@@ -61,6 +61,7 @@ public class Settings {
         loadConfig();
         secretManager = new SecretManager(configFile.getParentFile().toPath(), getForwardingSecretFile());
         Messages.reload();
+        logger.info("settings.yml reloaded successfully");
     }
 
     private static void validateConfig() {
@@ -89,8 +90,8 @@ public class Settings {
         return getDebugOption("debug-command-registrations", false);
     }
 
-    public static boolean isDebugCustomCommandRegistrations() {
-        return getDebugOption("debug-custom-command-registrations", false);
+    public static boolean isDebugNettyStart() {
+        return getDebugOption("debug-netty-start", false);
     }
 
     public static boolean isDebugSendMessageAction() {
@@ -123,10 +124,6 @@ public class Settings {
 
     public static long getButtonTimeoutMs() {
         return ((Number) getConfigValue("buttons.timeout-ms", 900_000)).longValue();
-    }
-
-    public static boolean isDebugButtonData() {
-        return getDebugOption("debug-button-data", false);
     }
 
     public static boolean isDebugButtonRegister() {

@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.discord;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.discord.handle.CommandHandler;
 import com.wairesd.discordbm.velocity.discord.request.RequestSender;
@@ -9,26 +11,25 @@ import com.wairesd.discordbm.velocity.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DiscordBotListener extends ListenerAdapter {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final DiscordBMV plugin;
     private final NettyServer nettyServer;
-    private final Logger logger;
 
     private final CommandHandler commandHandler;
     private final ServerSelector serverSelector;
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
 
-    public DiscordBotListener(DiscordBMV plugin, NettyServer nettyServer, Logger logger) {
+    public DiscordBotListener(DiscordBMV plugin, NettyServer nettyServer, PluginLogger logger) {
         this.plugin = plugin;
         this.nettyServer = nettyServer;
-        this.logger = logger;
 
         this.requestSender = new RequestSender(nettyServer, logger);
         this.responseHelper = new ResponseHelper();
-        this.commandHandler = new CommandHandler(plugin, logger, requestSender, responseHelper);
+        this.commandHandler = new CommandHandler(plugin, requestSender, responseHelper);
         this.serverSelector = new ServerSelector(requestSender, responseHelper);
     }
 

@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.bukkit.config.configurators;
 
+import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
@@ -10,13 +10,15 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 
+import static org.bukkit.Bukkit.getLogger;
+
 /**
  * Manages the loading, saving, and accessing of configuration settings
  * stored in a settings.yml file. Provides utility methods to retrieve
  * application settings and debug options for a Bukkit plugin.
  */
 public class Settings {
-    private static final Logger logger = LoggerFactory.getLogger(Settings.class);
+    private static final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private static CommentedConfigurationNode settingsConfig;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
 
@@ -40,7 +42,7 @@ public class Settings {
         try {
             settingsConfig = loader.load();
         } catch (ConfigurateException e) {
-            logger.error("Failed to load settings.yml", e);
+            pluginLogger.error("Failed to load settings.yml", e);
         }
     }
 
@@ -48,7 +50,7 @@ public class Settings {
         try {
             loader.save(settingsConfig);
         } catch (ConfigurateException e) {
-            logger.error("Failed to save settings.yml", e);
+            pluginLogger.error("Failed to save settings.yml", e);
         }
     }
 

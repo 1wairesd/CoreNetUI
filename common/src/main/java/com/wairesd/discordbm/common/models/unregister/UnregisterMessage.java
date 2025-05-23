@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.models.unregister;
+package com.wairesd.discordbm.common.models.unregister;
 
 /**
  * Represents a message used to unregister a command within the server system.
