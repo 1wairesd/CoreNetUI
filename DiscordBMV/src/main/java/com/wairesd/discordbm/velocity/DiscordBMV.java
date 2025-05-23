@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
