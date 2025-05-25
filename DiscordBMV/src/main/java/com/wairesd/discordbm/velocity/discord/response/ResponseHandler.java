@@ -22,6 +22,7 @@ public class ResponseHandler {
     }
 
     public static void handleResponse(ResponseMessage respMsg) {
+        logger.info("Получен ответ для запроса " + respMsg.requestId() + ": " + respMsg.toString());
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
             var event = listener.getRequestSender().getPendingRequests().remove(requestId);

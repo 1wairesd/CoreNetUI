@@ -1,46 +1,32 @@
-package com.wairesd.discordbm.bukkit.network;
+package com.wairesd.discordbm.api.handle;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.wairesd.discordbm.bukkit.DiscordBMB;
-import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.bukkit.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.api.platform.Platform;
 import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
-import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bukkit.Bukkit.getLogger;
-
-/**
- * Handles communication between the Netty client and the plugin backend by processing
- * incoming messages and sending appropriate responses.
- *
- * This class extends {@code SimpleChannelInboundHandler<String>} to handle string-based
- * messages received over a Netty channel. Incoming messages are parsed, and actions
- * such as error handling, command execution, and placeholder resolution are performed.
- */
 public class MessageHandler extends SimpleChannelInboundHandler<String> {
-    private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
-
-    private final DiscordBMB plugin;
+    private final Platform platform;
     private final Gson gson = new Gson();
+    private final PluginLogger pluginLogger;
 
-    public MessageHandler(DiscordBMB plugin) {
-        this.plugin = plugin;
+    public MessageHandler(Platform platform, PluginLogger pluginLogger) {
+        this.platform = platform;
+        this.pluginLogger = pluginLogger;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String message) {
-        if (Settings.isDebugClientResponses()) {
+        if (platform.isDebugClientResponses()) {
             pluginLogger.info("Received message: {}", message);
         }
 
@@ -57,8 +43,8 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 handleRequest(json);
             } else if ("can_handle_placeholders".equals(type)) {
                 CanHandlePlaceholdersRequest req = gson.fromJson(json, CanHandlePlaceholdersRequest.class);
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                    boolean canHandle = plugin.checkIfCanHandle(req.player(), req.placeholders());
+                platform.runTaskAsynchronously(() -> {
+                    boolean canHandle = platform.checkIfCanHandle(req.player(), req.placeholders());
                     CanHandleResponse resp = new CanHandleResponse(
                             "can_handle_response",
                             req.requestId(),
@@ -68,11 +54,8 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 });
             } else if ("get_placeholders".equals(type)) {
                 GetPlaceholdersRequest req = gson.fromJson(json, GetPlaceholdersRequest.class);
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                    Map<String, String> values = plugin.getPlaceholderValues(req.player(), req.placeholders());
-                    if (Settings.isDebugResolvePlaceholders()) {
-                        pluginLogger.info("Resolving placeholders for player {}: {}", req.player(), values);
-                    }
+                platform.runTaskAsynchronously(() -> {
+                    Map<String, String> values = platform.getPlaceholderValues(req.player(), req.placeholders());
                     PlaceholdersResponse resp = new PlaceholdersResponse(
                             "placeholders_response",
                             req.requestId(),
@@ -84,26 +67,20 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 pluginLogger.warn("Unknown message type: {}", type);
             }
         } catch (Exception e) {
-            if (Settings.isDebugErrors()) {
+            if (platform.isDebugErrors()) {
                 pluginLogger.error("Error processing message: {}", message, e);
             }
         }
     }
 
     private void handleErrorMessage(String message, ChannelHandlerContext ctx) {
-        if (Settings.isDebugErrors()) {
+        if (platform.isDebugErrors()) {
             pluginLogger.warn("Received error from server: {}", message);
         }
         switch (message) {
             case "Error: Invalid secret code":
             case "Error: No secret code provided":
-                plugin.setInvalidSecret(true);
-                ctx.close();
-                break;
             case "Error: Authentication timeout":
-                if (Settings.isDebugAuthentication()) {
-                    pluginLogger.warn("Authentication timeout occurred");
-                }
                 ctx.close();
                 break;
             default:
@@ -123,18 +100,25 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
             }
         }
 
-        DiscordCommandHandler handler = plugin.getCommandHandlers().get(command);
+        DiscordCommandHandler handler = platform.getCommandHandlers().get(command);
         if (handler != null) {
             String[] args = options.values().toArray(new String[0]);
-            handler.handleCommand(command, args, requestId);
+            platform.runTaskAsynchronously(() -> {
+                try {
+                    handler.handleCommand(command, args, requestId);
+                } catch (Exception e) {
+                    platform.getNettyService().sendResponse(requestId,
+                            "{\"error\":\"Internal server error\"}");
+                }
+            });
         } else {
-            plugin.sendResponse(requestId, "Command not found.");
+            platform.getNettyService().sendResponse(requestId, "{\"error\":\"Command handler not found\"}");
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (Settings.isDebugErrors()) {
+        if (platform.isDebugErrors()) {
             pluginLogger.error("Connection error: {}", cause.getMessage(), cause);
         }
         ctx.close();

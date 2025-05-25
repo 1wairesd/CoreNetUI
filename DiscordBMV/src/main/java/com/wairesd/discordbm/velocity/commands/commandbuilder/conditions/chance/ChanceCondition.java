@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions;
+package com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.chance;
 
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.contexts.Context;

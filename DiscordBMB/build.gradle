@@ -5,20 +5,20 @@ plugins {
     id 'maven-publish'
 }
 
+group = 'com.wairesd.discordbm.bukkit'
+version = '1.0'
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            groupId = 'com.wairesd.discordbm.bukkit'
+            groupId = 'com.wairesd.discordbm'
             artifactId = 'DiscordBMB'
             version = '1.0'
 
         }
     }
 }
-
-group = 'com.wairesd.discordbm.bukkit'
-version = '1.0'
 
 repositories {
     mavenCentral()
@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
     implementation project(':common')
+    implementation project(':api')
 
     compileOnly ("com.github.placeholderapi:placeholderapi:2.11.6")
     compileOnly ("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
@@ -43,10 +44,11 @@ dependencies {
 }
 
 shadowJar {
+    dependsOn ':common:build', ':api:build'
     archiveClassifier.set('')
     mergeServiceFiles()
     from project(':common').sourceSets.main.output
-    relocate 'com.wairesd.discordbm.common', 'com.wairesd.discordbm.bukkit.shaded.common'
+
 }
 
 tasks.build {
@@ -69,10 +71,22 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set(17)
 }
 
+compileJava {
+    dependsOn ':common:build'
+}
+
 processResources {
     def props = [version: version]
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+tasks.named('compileJava') {
+    dependsOn ':common:build'
+}
+
+tasks.named('shadowJar') {
+    dependsOn ':common:build'
 }

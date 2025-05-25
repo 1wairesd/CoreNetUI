@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.models.command;
+package com.wairesd.discordbm.api.models.command;
 
 /**
  * Represents an option or parameter for a command.

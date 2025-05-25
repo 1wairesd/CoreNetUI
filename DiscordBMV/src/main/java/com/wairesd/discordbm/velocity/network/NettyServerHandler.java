@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
@@ -59,7 +60,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
                         dbManager.incrementFailedAttempt(ip);
                         ctx.close();
                     }
-                }, 30, java.util.concurrent.TimeUnit.SECONDS);
+                }, 30, TimeUnit.SECONDS);
             }
         }, ctx.executor());
     }
@@ -159,15 +160,17 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        String serverName = nettyServer.getServerName(ctx.channel());
-        nettyServer.removeServer(ctx.channel());
-        if (Settings.isDebugConnections()) {
-            if (serverName != null) {
-                logger.info("Connection closed: {} ({})", serverName, ctx.channel().remoteAddress());
-            } else {
-                logger.info("Connection closed: {}", ctx.channel().remoteAddress());
+        ctx.executor().schedule(() -> {
+            String serverName = nettyServer.getServerName(ctx.channel());
+            nettyServer.removeServer(ctx.channel());
+            if (Settings.isDebugConnections()) {
+                if (serverName != null) {
+                    logger.info("Connection closed: {} ({})", serverName, ctx.channel().remoteAddress());
+                } else {
+                    logger.info("Connection closed: {}", ctx.channel().remoteAddress());
+                }
             }
-        }
+        }, 5, TimeUnit.SECONDS);
     }
 
     @Override

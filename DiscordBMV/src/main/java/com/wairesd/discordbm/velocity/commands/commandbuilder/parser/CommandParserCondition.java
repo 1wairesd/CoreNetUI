@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commands.commandbuilder.parser;
 
-import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.ChanceCondition;
+import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.chance.ChanceCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.HaveRoleCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.conditions.permissions.NotHaveRoleCondition;
 import com.wairesd.discordbm.velocity.commands.commandbuilder.models.codinations.CommandCondition;
