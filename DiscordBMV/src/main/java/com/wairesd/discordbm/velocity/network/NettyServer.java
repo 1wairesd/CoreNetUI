@@ -39,6 +39,7 @@ public class NettyServer {
     private final DatabaseManager dbManager;
     private final ConcurrentHashMap<String, CompletableFuture<Boolean>> canHandleFutures = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> placeholderFutures = new ConcurrentHashMap<>();
+    private final String ip = Settings.getNettyIp();
 
     public NettyServer(DatabaseManager dbManager) {
         this.dbManager = dbManager;
@@ -64,10 +65,16 @@ public class NettyServer {
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            ChannelFuture future = bootstrap.bind(port).sync();
+            ChannelFuture future;
+            if (ip == null || ip.isEmpty()) {
+                future = bootstrap.bind(port).sync();
+            } else {
+                future = bootstrap.bind(ip, port).sync();
+            }
             serverChannel = future.channel();
+
             if (Settings.isDebugNettyStart()) {
-                logger.info("Netty server started on port {}", port);
+                logger.info("Netty server started on {}:{}", ip == null || ip.isEmpty() ? "0.0.0.0" : ip, port);
             }
             serverChannel.closeFuture().sync();
         } catch (InterruptedException e) {

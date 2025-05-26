@@ -111,8 +111,13 @@ public class Settings {
     }
 
     public static int getNettyPort() {
-        return (int) getConfigValue("netty.port", 0);
+        return (int) getConfigValue("netty.port", 8080);
     }
+
+    public static String getNettyIp() {
+        return (String) getConfigValue("netty.ip", "");
+    }
+
 
     public static String getForwardingSecretFile() {
         return (String) getConfigValue("forwarding-secret-file", DEFAULT_FORWARDING_SECRET_FILE);

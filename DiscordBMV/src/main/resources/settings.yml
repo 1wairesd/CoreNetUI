@@ -5,6 +5,7 @@ Discord:
     message: "Velocity Server"
 
 netty:
+  ip : "127.0.0.1"
   port: 8080
 
 forwarding-secret-file: "secret.complete.code"
