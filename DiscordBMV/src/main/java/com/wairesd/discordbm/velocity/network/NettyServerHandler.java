@@ -2,24 +2,22 @@ package com.wairesd.discordbm.velocity.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
-import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
-import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
-import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
+import com.wairesd.discordbm.velocity.handler.RegisterHandle;
+import com.wairesd.discordbm.velocity.handler.ResponseHandle;
+import com.wairesd.discordbm.velocity.handler.UnregisterHandle;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -30,11 +28,17 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private final DatabaseManager dbManager;
     private final NettyServer nettyServer;
     private boolean authenticated = false;
+    private final RegisterHandle registerHandler;
+    private final UnregisterHandle unregisterHandler;
+    private final ResponseHandle responseHandle;
 
     public NettyServerHandler(NettyServer nettyServer, Object jda, DatabaseManager dbManager) {
         this.nettyServer = nettyServer;
         this.jda = jda;
         this.dbManager = dbManager;
+        this.registerHandler = new RegisterHandle(dbManager, nettyServer);
+        this.unregisterHandler = new UnregisterHandle(nettyServer);
+        this.responseHandle = new ResponseHandle();
     }
 
     @Override
@@ -79,12 +83,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = remoteAddress.getAddress().getHostAddress();
             int port = remoteAddress.getPort();
-            handleRegister(ctx, regMsg, ip, port);
+            registerHandler.handleRegister(ctx, regMsg, ip, port);
         } else if ("unregister".equals(type)) {
             UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
-            handleUnregister(ctx, unregMsg);
+            unregisterHandler.handleUnregister(ctx, unregMsg);
         } else if ("response".equals(type)) {
-            handleResponse(json);
+            responseHandle.handleResponse(json);
         } else if ("can_handle_response".equals(type)) {
             CanHandleResponse resp = gson.fromJson(json, CanHandleResponse.class);
             CompletableFuture<Boolean> future = nettyServer.getCanHandleFutures().remove(resp.requestId());
@@ -100,62 +104,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
         } else {
             logger.warn("Unknown message type: {}", type);
         }
-    }
-
-
-    private void handleUnregister(ChannelHandlerContext ctx, UnregisterMessage unregMsg) {
-        if (unregMsg.secret == null || !unregMsg.secret.equals(Settings.getSecretCode())) {
-            ctx.writeAndFlush("Error: Invalid secret code");
-            return;
-        }
-
-        String serverName = unregMsg.serverName;
-        String commandName = unregMsg.commandName;
-
-        List<NettyServer.ServerInfo> servers = nettyServer.getCommandToServers().get(commandName);
-        if (servers != null) {
-            servers.removeIf(serverInfo -> serverInfo.serverName().equals(serverName));
-            if (servers.isEmpty()) {
-                nettyServer.getCommandDefinitions().remove(commandName);
-            }
-        }
-
-        if (Settings.isDebugCommandRegistrations()) {
-            logger.info("Unregistered command {} for server {}", commandName, serverName);
-        }
-    }
-
-    private void handleRegister(ChannelHandlerContext ctx, RegisterMessage regMsg, String ip, int port) {
-        if (regMsg.secret() == null || !regMsg.secret().equals(Settings.getSecretCode())) {
-            ctx.writeAndFlush("Error: Invalid secret code");
-            dbManager.incrementFailedAttempt(ip);
-            ctx.close();
-            return;
-        }
-
-        if (!authenticated) {
-            authenticated = true;
-            dbManager.resetAttempts(ip);
-            if (Settings.isDebugAuthentication()) {
-                logger.info("Client {} IP - {} Port - {} authenticated successfully", regMsg.serverName(), ip, port);
-            }
-        }
-
-        nettyServer.setServerName(ctx.channel(), regMsg.serverName());
-        if (regMsg.commands() != null && !regMsg.commands().isEmpty()) {
-            if (Settings.isDebugPluginConnections()) {
-                logger.info("Plugin {} registered commands for server {}", regMsg.pluginName(), regMsg.serverName());
-            }
-            com.google.gson.JsonElement commandsElement = gson.toJsonTree(regMsg.commands());
-            List<CommandDefinition> commandDefinitions = gson.fromJson(commandsElement, new TypeToken<List<CommandDefinition>>() {}.getType());
-            nettyServer.registerCommands(regMsg.serverName(), commandDefinitions, ctx.channel());
-        }
-    }
-
-    private void handleResponse(JsonObject json) {
-        if (!authenticated) return;
-        ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
-        ResponseHandler.handleResponse(respMsg);
     }
 
     @Override

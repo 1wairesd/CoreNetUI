@@ -41,7 +41,12 @@ public class PlaceholderService {
         if (isValidUUID(playerName)) {
             player = Bukkit.getOfflinePlayer(UUID.fromString(playerName));
         } else {
-            player = Bukkit.getOfflinePlayer(playerName);
+            var onlinePlayer = Bukkit.getPlayerExact(playerName);
+            if (onlinePlayer != null) {
+                player = onlinePlayer;
+            } else {
+                return false;
+            }
         }
 
         for (String placeholder : placeholders) {
@@ -61,6 +66,7 @@ public class PlaceholderService {
         return false;
     }
 
+
     private boolean isValidUUID(String str) {
         try {
             UUID.fromString(str);
@@ -75,7 +81,12 @@ public class PlaceholderService {
         if (isValidUUID(playerName)) {
             player = Bukkit.getOfflinePlayer(UUID.fromString(playerName));
         } else {
-            player = Bukkit.getOfflinePlayer(playerName);
+            var onlinePlayer = Bukkit.getPlayerExact(playerName);
+            if (onlinePlayer != null) {
+                player = onlinePlayer;
+            } else {
+                return new HashMap<>();
+            }
         }
 
         Future<Map<String, String>> future = Bukkit.getScheduler().callSyncMethod(plugin, () -> {
@@ -101,4 +112,5 @@ public class PlaceholderService {
             return new HashMap<>();
         }
     }
+
 }

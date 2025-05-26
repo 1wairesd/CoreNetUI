@@ -83,16 +83,6 @@ public class Settings {
         return settingsConfig.node("debug", "debug-command-registrations").getBoolean(false);
     }
 
-    public static boolean isDebugResolvePlaceholders() {
-        return settingsConfig
-                .node("debug", "debug-resolve-placeholders")
-                .getBoolean(false);
-    }
-
-    public static boolean isDebugAuthentication() {
-        return settingsConfig.node("debug", "debug-authentication").getBoolean(true);
-    }
-
     public static boolean isDebugErrors() {
         return settingsConfig.node("debug", "debug-errors").getBoolean(true);
     }

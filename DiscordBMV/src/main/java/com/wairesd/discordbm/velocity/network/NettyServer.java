@@ -44,20 +44,6 @@ public class NettyServer {
         this.dbManager = dbManager;
     }
 
-    public void setJda(JDA jda) {
-        this.jda = jda;
-    }
-
-    public Map<String, List<ServerInfo>> getCommandToServers() { return commandToServers; }
-
-    public List<ServerInfo> getServersForCommand(String command) {
-        return commandToServers.getOrDefault(command, new ArrayList<>());
-    }
-
-    public Map<String, CommandDefinition> getCommandDefinitions() { return commandDefinitions; }
-
-    public record ServerInfo(String serverName, Channel channel) {}
-
     public void start() {
         bossGroup = new NioEventLoopGroup(1);
         workerGroup = new NioEventLoopGroup();
@@ -108,63 +94,6 @@ public class NettyServer {
         }
     }
 
-    public void registerCommands(String serverName, List<CommandDefinition> commands, Channel channel) {
-
-        if (jda == null) {
-            logger.warn("Cannot register commands - JDA is not initialized!");
-            return;
-        }
-
-        for (var cmd : commands) {
-            if (commandDefinitions.containsKey(cmd.name())) {
-                CommandDefinition existing = commandDefinitions.get(cmd.name());
-                if (!existing.equals(cmd)) {
-                    if (Settings.isDebugErrors()) {
-                        logger.error("Command {} from server {} has different definition", cmd.name(), serverName);
-                    }
-                    continue;
-                }
-            } else {
-                commandDefinitions.put(cmd.name(), cmd);
-
-                if (jda != null) {
-                    var cmdData = net.dv8tion.jda.api.interactions.commands.build.Commands.slash(cmd.name(), cmd.description());
-
-                    for (var opt : cmd.options()) {
-                        cmdData.addOption(
-                                net.dv8tion.jda.api.interactions.commands.OptionType.valueOf(opt.type()),
-                                opt.name(),
-                                opt.description(),
-                                opt.required()
-                        );
-                    }
-
-                    switch (cmd.context()) {
-                        case "both", "dm" -> cmdData.setGuildOnly(false);
-                        case "server" -> cmdData.setGuildOnly(true);
-                        default -> {
-                            if (Settings.isDebugErrors()) {
-                                logger.warn("Unknown context '{}' for command '{}'. Defaulting to 'both'.", cmd.context(), cmd.name());
-                            }
-                            cmdData.setGuildOnly(false);
-                        }
-                    }
-
-                    ((JDA) jda).upsertCommand(cmdData).queue();
-
-                    if (Settings.isDebugCommandRegistrations()) {
-                        logger.info("Registered command: {} with context: {}", cmd.name(), cmd.context());
-                    }
-                }
-            }
-
-            List<ServerInfo> servers = commandToServers.computeIfAbsent(cmd.name(), k -> new ArrayList<>());
-            servers.removeIf(serverInfo -> serverInfo.serverName().equals(serverName));
-            servers.add(new ServerInfo(serverName, channel));
-        }
-    }
-
-
     public void removeServer(Channel channel) {
         for (var entry : commandToServers.entrySet()) {
             entry.getValue().removeIf(serverInfo -> serverInfo.channel() == channel);
@@ -176,8 +105,13 @@ public class NettyServer {
         return channelToServerName;
     }
 
-    public ConcurrentHashMap<String, CompletableFuture<Boolean>> getCanHandleFutures() { return canHandleFutures; }
-    public ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> getPlaceholderFutures() { return placeholderFutures; }
+    public ConcurrentHashMap<String, CompletableFuture<Boolean>> getCanHandleFutures() {
+        return this.canHandleFutures;
+    }
+
+    public ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> getPlaceholderFutures() {
+        return this.placeholderFutures;
+    }
 
     public void setServerName(Channel channel, String serverName) {
         channelToServerName.put(channel, serverName);
@@ -185,5 +119,24 @@ public class NettyServer {
 
     public String getServerName(Channel channel) {
         return channelToServerName.get(channel);
+    }
+
+    public Map<String, List<ServerInfo>> getCommandToServers() {
+        return commandToServers;
+    }
+
+    public List<ServerInfo> getServersForCommand(String command) {
+        return commandToServers.getOrDefault(command, new ArrayList<>());
+    }
+
+    public Map<String, CommandDefinition> getCommandDefinitions() {
+        return commandDefinitions;
+    }
+
+    public record ServerInfo(String serverName, Channel channel) {
+    }
+
+    public void setJda(JDA jda) {
+        this.jda = jda;
     }
 }
