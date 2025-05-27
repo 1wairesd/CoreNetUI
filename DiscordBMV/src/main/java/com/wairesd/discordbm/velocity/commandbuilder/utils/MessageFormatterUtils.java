@@ -6,7 +6,6 @@ import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.Placeho
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersResolved;
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersServer;
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersUser;
-import com.wairesd.discordbm.velocity.commands.commandbuilder.models.placeholders.*;
 import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
