@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import java.util.ArrayList;
@@ -59,6 +60,15 @@ public class Context {
             text = text.replace("{" + entry.getKey() + "}", entry.getValue());
         }
         return text;
+    }
+
+    public String getOption(String name) {
+        if (event instanceof SlashCommandInteractionEvent) {
+            SlashCommandInteractionEvent slashEvent = (SlashCommandInteractionEvent) event;
+            OptionMapping option = slashEvent.getOption(name);
+            return option != null ? option.getAsString() : null;
+        }
+        return null;
     }
 
     public User getTargetUser() {

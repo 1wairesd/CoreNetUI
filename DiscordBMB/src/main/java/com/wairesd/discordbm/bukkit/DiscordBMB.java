@@ -38,7 +38,7 @@ public class DiscordBMB extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        BannerPrinter.printBanner(pluginLogger);
+        BannerPrinter.printBanner();
         configManager = new ConfigManager(this);
         configManager.loadConfigs();
         platform = new BukkitPlatform(this);

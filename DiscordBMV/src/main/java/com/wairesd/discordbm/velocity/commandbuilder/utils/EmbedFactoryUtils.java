@@ -6,6 +6,7 @@ import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.Interaction;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class EmbedFactoryUtils {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
-    public static CompletableFuture<MessageEmbed> create(Map<String, Object> embedMap, SlashCommandInteractionEvent event, Context context) {
+    public static CompletableFuture<MessageEmbed> create(Map<String, Object> embedMap, Interaction event, Context context) {
         EmbedBuilder builder = new EmbedBuilder();
 
         List<CompletableFuture<?>> futures = new ArrayList<>();
@@ -101,7 +102,7 @@ public class EmbedFactoryUtils {
         return url != null && (url.startsWith("http://") || url.startsWith("https://"));
     }
 
-    private static CompletableFuture<String> getSafeUrl(Object raw, SlashCommandInteractionEvent event, Context context) {
+    private static CompletableFuture<String> getSafeUrl(Object raw, Interaction event, Context context) {
         if (raw == null) return CompletableFuture.completedFuture(null);
         return MessageFormatterUtils.format(raw.toString(), event, context, false)
                 .thenApply(formatted -> isValidUrl(formatted) ? formatted : null);
@@ -113,5 +114,4 @@ public class EmbedFactoryUtils {
         if (str.startsWith("#")) str = str.substring(1);
         return Integer.parseInt(str, 16);
     }
-
 }

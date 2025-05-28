@@ -199,3 +199,27 @@ commands:
           👋 Joined: {user_joined}
           🖼️ Avatar: {user_icon}
         response_type: REPLY
+
+  - name: "page-embed"
+    description: "pages"
+    context: server
+    options:
+      - name: "page"
+        type: STRING
+        description: "Specify a page"
+        required: false
+    actions:
+      - type: "send_page"
+        page_id: "{option:page|1-embed}"
+
+  - name: "page-content"
+    description: "pages"
+    context: server
+    options:
+      - name: "page"
+        type: STRING
+        description: "Specify a page"
+        required: false
+    actions:
+      - type: "send_page"
+        page_id: "{option:page|1-content}"

@@ -8,11 +8,13 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.velocity.commandbuilder.models.pages.Page;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.commandbuilder.listeners.buttons.ButtonInteractionListener;
 import com.wairesd.discordbm.velocity.commandbuilder.listeners.modals.ModalInteractionListener;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
+import com.wairesd.discordbm.velocity.config.configurators.Pages;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
@@ -41,6 +43,7 @@ public class DiscordBMV {
     private Map<String, String> globalMessageLabels = new HashMap<>();
     private final Map<String, Object> formHandlers = new ConcurrentHashMap<>();
     public static DiscordBMV plugin;
+    public static Map<String, Page> pageMap = Pages.pageMap;
 
     @Inject
     public DiscordBMV(@DataDirectory Path dataDirectory, ProxyServer proxy) {
@@ -55,7 +58,7 @@ public class DiscordBMV {
         plugin = this;
         Commands.plugin = this;
 
-        BannerPrinter.printBanner(logger);
+        BannerPrinter.printBanner();
 
         initializeConfiguration();
         initializeDatabase();
@@ -121,6 +124,16 @@ public class DiscordBMV {
         discordBotManager.updateActivity(activityType, activityMessage);
     }
 
+    public void setGlobalMessageLabel(String key, String channelId, String messageId) {
+        globalMessageLabels.put(key, channelId + ":" + messageId);
+    }
+
+    public String[] getMessageReference(String key) {
+        String value = globalMessageLabels.get(key);
+        if (value == null) return null;
+        return value.contains(":") ? value.split(":", 2) : new String[]{null, value};
+    }
+
     public Path getDataDirectory() {
         return dataDirectory;
     }
@@ -139,16 +152,6 @@ public class DiscordBMV {
 
     public ProxyServer getProxy() {
         return proxy;
-    }
-
-    public void setGlobalMessageLabel(String key, String channelId, String messageId) {
-        globalMessageLabels.put(key, channelId + ":" + messageId);
-    }
-
-    public String[] getMessageReference(String key) {
-        String value = globalMessageLabels.get(key);
-        if (value == null) return null;
-        return value.contains(":") ? value.split(":", 2) : new String[]{null, value};
     }
 
     public String getGlobalMessageLabel(String key) {

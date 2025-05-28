@@ -8,21 +8,33 @@ import java.util.concurrent.CompletableFuture;
 public class PlaceholdersResolved implements Placeholder {
     @Override
     public CompletableFuture<String> replace(String template, Interaction event, Context context) {
-        if (template == null) return CompletableFuture.completedFuture("");
-        if (context != null && template.contains("{resolved_message}")) {
-            String resolved = context.getResolvedMessage();
-            String result = template.replace("{resolved_message}", resolved != null ? resolved : "");
-            return CompletableFuture.completedFuture(result);
-        }
-        return CompletableFuture.completedFuture(template);
+        String result = replaceSync(template, context);
+        return CompletableFuture.completedFuture(result);
     }
 
     public static String replaceSync(String template, Context context) {
         if (template == null) return "";
-        if (context != null && template.contains("{resolved_message}")) {
+        String result = template;
+
+        if (context != null && result.contains("{resolved_message}")) {
             String resolved = context.getResolvedMessage();
-            return template.replace("{resolved_message}", resolved != null ? resolved : "");
+            result = result.replace("{resolved_message}", resolved != null ? resolved : "");
         }
-        return template;
+
+        if (result.contains("{option:")) {
+            int start = result.indexOf("{option:");
+            int end = result.indexOf("}", start);
+            if (end != -1) {
+                String placeholder = result.substring(start + 8, end);
+                String[] parts = placeholder.split("\\|");
+                String optionName = parts[0];
+                String defaultValue = parts.length > 1 ? parts[1] : "";
+                String optionValue = context.getOption(optionName);
+                String replacement = (optionValue != null && !optionValue.isBlank()) ? optionValue : defaultValue;
+                result = result.replace("{option:" + placeholder + "}", replacement);
+            }
+        }
+
+        return result;
     }
 }

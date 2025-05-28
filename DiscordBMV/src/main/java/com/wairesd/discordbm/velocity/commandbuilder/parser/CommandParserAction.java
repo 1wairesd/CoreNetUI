@@ -6,6 +6,7 @@ import com.wairesd.discordbm.velocity.commandbuilder.actions.components.EditComp
 import com.wairesd.discordbm.velocity.commandbuilder.actions.messages.DeleteMessageAction;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.forms.SendFormAction;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.messages.SendMessageAction;
+import com.wairesd.discordbm.velocity.commandbuilder.actions.page.SendPageAction;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.placeholders.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.roles.AddRoleAction;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.roles.RemoveRoleAction;
@@ -28,6 +29,7 @@ public class CommandParserAction {
             case "send_form" -> new SendFormAction(actionMap);
             case "add_role" -> new AddRoleAction(actionMap);
             case "remove_role" -> new RemoveRoleAction(actionMap);
+            case "send_page" -> new SendPageAction(actionMap);
             default -> throw new IllegalArgumentException("Unknown action type: " + type);
         };
     }
