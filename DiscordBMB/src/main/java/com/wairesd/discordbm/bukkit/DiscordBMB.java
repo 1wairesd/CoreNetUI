@@ -7,21 +7,14 @@ import com.wairesd.discordbm.api.listener.DiscordCommandRegistrationListener;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
 import com.wairesd.discordbm.api.platform.Platform;
-import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
-import com.wairesd.discordbm.bukkit.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DiscordBMB extends JavaPlugin {
     private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
@@ -36,22 +29,19 @@ public class DiscordBMB extends JavaPlugin {
     private NettyService nettyService;
     private PlaceholderService placeholderService;
 
+    private BootstrapServiceBMB bootstrapService;
+
     @Override
     public void onEnable() {
-        BannerPrinter.printBanner();
-        configManager = new ConfigManager(this);
-        configManager.loadConfigs();
-        platform = new BukkitPlatform(this);
-        api = new DiscordBMAPI(platform, pluginLogger);
-        serverName = Settings.getServerName();
-        getCommand("discordBMB").setExecutor(new CommandAdmin(this));
-        getCommand("discordBMB").setTabCompleter(new CommandAdmin(this));
-        Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> platform.getNettyService().initializeNettyClient());
+        bootstrapService = new BootstrapServiceBMB(this, pluginLogger);
+        bootstrapService.initialize();
     }
 
     @Override
     public void onDisable() {
-        platform.getNettyService().closeNettyConnection();
+        if (platform != null && platform.getNettyService() != null) {
+            platform.getNettyService().closeNettyConnection();
+        }
     }
 
     public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCommandRegistrationListener listener, Command addonCommand) {
@@ -87,12 +77,32 @@ public class DiscordBMB extends JavaPlugin {
         return configManager;
     }
 
+    public void setConfigManager(ConfigManager configManager) {
+        this.configManager = configManager;
+    }
+
     public String getServerName() {
         return serverName;
     }
 
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
+
     public static DiscordBMAPI getApi() {
         return api;
+    }
+
+    public static void setApi(DiscordBMAPI apiInstance) {
+        api = apiInstance;
     }
 
     public void setInvalidSecret(boolean invalid) {
@@ -109,5 +119,9 @@ public class DiscordBMB extends JavaPlugin {
 
     public NettyService getNettyService() {
         return nettyService;
+    }
+
+    public void setNettyService(NettyService nettyService) {
+        this.nettyService = nettyService;
     }
 }
