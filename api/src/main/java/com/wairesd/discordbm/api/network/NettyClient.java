@@ -97,18 +97,12 @@ public class NettyClient {
 
     public void send(String message) {
         if (isActive()) {
-            try {
-                ChannelFuture future = channel.writeAndFlush(message).sync();
-                if (!future.isSuccess() && platform.isDebugErrors()) {
-                    pluginLogger.error("Failed to send message: {}", future.cause().getMessage());
+            ChannelFuture future = channel.writeAndFlush(message);
+            future.addListener(f -> {
+                if (!f.isSuccess() && platform.isDebugErrors()) {
+                    pluginLogger.error("Failed to send message: {}", f.cause().getMessage());
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                if (platform.isDebugErrors()) {
-                    pluginLogger.error("Error sending message: {}", e.getMessage());
-                }
-            }
+            });
         }
     }
 

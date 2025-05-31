@@ -50,7 +50,7 @@ public class NettyServer {
 
     public void start() {
         bossGroup = new NioEventLoopGroup(1);
-        workerGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)

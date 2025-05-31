@@ -1,7 +1,10 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.commandbuilder.models.buttons.ButtonConfig;
 import com.wairesd.discordbm.velocity.commandbuilder.models.pages.Page;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Pages {
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final String CONFIG_FILE_NAME = "pages.yml";
     private static File configFile;
     private static Map<String, Object> rawConfig;
@@ -38,7 +42,7 @@ public class Pages {
             }
             parsePages();
         } catch (Exception e) {
-            System.err.println("Error loading pages.yml: " + e.getMessage());
+            logger.info("Error loading pages.yml: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -48,7 +52,7 @@ public class Pages {
         try (InputStream inputStream = Pages.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME)) {
             if (inputStream != null) {
                 Files.copy(inputStream, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("Default pages.yml loaded from resources to " + configFile.getPath());
+                logger.info("Default pages.yml loaded from resources to " + configFile.getPath());
             } else {
                 throw new IOException(CONFIG_FILE_NAME + " not found in resources");
             }
@@ -82,6 +86,6 @@ public class Pages {
 
     public static void reload() {
         loadPages();
-        System.out.println("pages.yml reloaded successfully");
+        logger.info("pages.yml reloaded successfully");
     }
 }

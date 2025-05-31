@@ -9,15 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandRegistrationService {
     private static final Logger logger = LoggerFactory.getLogger("DiscordBMV");
     private final NettyServer nettyServer;
     private JDA jda;
-    private final Map<String, CommandDefinition> commandDefinitions = new HashMap<>();
+    private final ConcurrentHashMap<String, CommandDefinition> commandDefinitions = new ConcurrentHashMap<>();
 
     public CommandRegistrationService(JDA jda, NettyServer nettyServer) {
         this.jda = jda;

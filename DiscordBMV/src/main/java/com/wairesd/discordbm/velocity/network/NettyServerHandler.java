@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final Gson gson = new Gson();
+    private static final Gson gson = new Gson();
     private final Object jda;
     private final DatabaseManager dbManager;
     private final NettyServer nettyServer;
