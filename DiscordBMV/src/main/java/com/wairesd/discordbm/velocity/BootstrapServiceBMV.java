@@ -113,8 +113,4 @@ public class BootstrapServiceBMV {
     public NettyServer getNettyServer() {
         return nettyServer;
     }
-
-    public DatabaseManager getDatabaseManager() {
-        return dbManager;
-    }
 }

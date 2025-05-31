@@ -8,6 +8,7 @@ import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import com.wairesd.discordbm.velocity.network.NettyServer;
+import com.wairesd.discordbm.velocity.network.NettyServerHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +17,18 @@ import java.util.List;
 
 public class RegisterHandle {
     private static final Logger logger = LoggerFactory.getLogger("DiscordBMV");
+    private final NettyServerHandler handler;
     private final DatabaseManager dbManager;
     private final NettyServer nettyServer;
     private final Gson gson = new Gson();
     private boolean authenticated = false;
     private final CommandRegistrationService commandRegisterService;
 
-    public RegisterHandle(DatabaseManager dbManager, NettyServer nettyServer) {
+    public RegisterHandle(NettyServerHandler handler, DatabaseManager dbManager, NettyServer nettyServer) {
+        this.handler = handler;
         this.dbManager = dbManager;
         this.nettyServer = nettyServer;
-        this.commandRegisterService = new CommandRegistrationService(nettyServer);
+        this.commandRegisterService = nettyServer.getCommandRegistrationService();
     }
 
     public void handleRegister(ChannelHandlerContext ctx, RegisterMessage regMsg, String ip, int port) {
@@ -36,8 +39,8 @@ public class RegisterHandle {
             return;
         }
 
-        if (!authenticated) {
-            authenticated = true;
+        if (!handler.isAuthenticated()) {
+            handler.setAuthenticated(true);
             dbManager.resetAttempts(ip);
             if (Settings.isDebugAuthentication()) {
                 logger.info("Client {} IP - {} Port - {} authenticated successfully", regMsg.serverName(), ip, port);

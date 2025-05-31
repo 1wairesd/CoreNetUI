@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
+import net.kyori.adventure.text.Component;
 
 import java.util.stream.Collectors;
 
@@ -54,7 +55,7 @@ public class CommandAdmin implements SimpleCommand {
                     String serverList = entry.getValue().stream()
                             .map(server -> server.serverName())
                             .collect(Collectors.joining(", "));
-                    source.sendMessage(Messages.getParsedMessage(command + ": " + serverList, null));
+                    source.sendMessage(Component.text(command + ": " + serverList));
                 }
                 break;
 

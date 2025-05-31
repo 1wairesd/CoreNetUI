@@ -65,24 +65,12 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public boolean checkIfCanHandle(String playerName, List<String> placeholders) {
-        return false;
-    }
-
-    public Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders) {
-        return Collections.emptyMap();
-    }
-
     public ConfigManager getConfigManager() {
         return configManager;
     }
 
     public void setConfigManager(ConfigManager configManager) {
         this.configManager = configManager;
-    }
-
-    public String getServerName() {
-        return serverName;
     }
 
     public void setServerName(String serverName) {
@@ -103,14 +91,6 @@ public class DiscordBMB extends JavaPlugin {
 
     public static void setApi(DiscordBMAPI apiInstance) {
         api = apiInstance;
-    }
-
-    public void setInvalidSecret(boolean invalid) {
-        this.invalidSecret = invalid;
-    }
-
-    public boolean isInvalidSecret() {
-        return invalidSecret;
     }
 
     public Map<String, DiscordCommandHandler> getCommandHandlers() {

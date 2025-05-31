@@ -5,7 +5,6 @@ import com.wairesd.discordbm.api.platform.Platform;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-
 import java.net.InetSocketAddress;
 
 public class NettyService {
@@ -45,7 +44,7 @@ public class NettyService {
     public void sendResponse(String requestId, String embedJson) {
         if (nettyClient != null && nettyClient.isActive()) {
             EmbedDefinition embedObj = gson.fromJson(embedJson, EmbedDefinition.class);
-            ResponseMessage respMsg = new ResponseMessage("response", requestId, null, embedObj);
+            ResponseMessage respMsg = new ResponseMessage("response", requestId, null, embedObj, null);
             nettyClient.send(gson.toJson(respMsg));
         }
     }

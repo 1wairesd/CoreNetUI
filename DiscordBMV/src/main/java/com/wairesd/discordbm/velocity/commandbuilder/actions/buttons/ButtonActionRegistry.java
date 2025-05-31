@@ -47,8 +47,4 @@ public class ButtonActionRegistry {
     public FormButtonData getFormButtonData(String id) {
         return formButtonRegistry.getFormButtonData(id);
     }
-
-    public void shutdown() {
-        scheduler.shutdown();
-    }
 }

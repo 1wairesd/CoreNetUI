@@ -68,14 +68,6 @@ public class DiscordBMV {
         return value.contains(":") ? value.split(":", 2) : new String[]{null, value};
     }
 
-    public Path getDataDirectory() {
-        return dataDirectory;
-    }
-
-    public BootstrapServiceBMV getBootstrapService() {
-        return bootstrapService;
-    }
-
     public ProxyServer getProxy() {
         return proxy;
     }
@@ -86,10 +78,6 @@ public class DiscordBMV {
 
     public Map<String, Object> getFormHandlers() {
         return formHandlers;
-    }
-
-    public static DiscordBMV getPluginInstance() {
-        return plugin;
     }
 
     public PluginLogger getLogger() {
@@ -107,5 +95,4 @@ public class DiscordBMV {
     public CommandManager getCommandManager() {
         return bootstrapService.getCommandManager();
     }
-
 }

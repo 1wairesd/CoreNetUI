@@ -36,7 +36,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
         this.nettyServer = nettyServer;
         this.jda = jda;
         this.dbManager = dbManager;
-        this.registerHandler = new RegisterHandle(dbManager, nettyServer);
+        this.registerHandler = new RegisterHandle(this, dbManager, nettyServer);
         this.unregisterHandler = new UnregisterHandle(nettyServer);
         this.responseHandle = new ResponseHandle();
     }
@@ -108,14 +108,15 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        String serverName = nettyServer.getServerName(ctx.channel());
+        if (serverName != null) {
+            logger.info("Channel inactive for server: {}", serverName);
+        }
         ctx.executor().schedule(() -> {
-            String serverName = nettyServer.getServerName(ctx.channel());
             nettyServer.removeServer(ctx.channel());
             if (Settings.isDebugConnections()) {
                 if (serverName != null) {
-                    logger.info("Connection closed: {} ({})", serverName, ctx.channel().remoteAddress());
-                } else {
-                    logger.info("Connection closed: {}", ctx.channel().remoteAddress());
+                    logger.info("Removed server: {} due to inactive channel", serverName);
                 }
             }
         }, 5, TimeUnit.SECONDS);
@@ -127,5 +128,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             logger.error("Exception in Netty channel: {}", ctx.channel().remoteAddress(), cause);
         }
         ctx.close();
+    }
+
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public void setAuthenticated(boolean value) {
+        this.authenticated = value;
     }
 }

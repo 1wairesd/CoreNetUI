@@ -3,6 +3,7 @@ package com.wairesd.discordbm.velocity.network;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.velocity.commands.models.CommandRegistrationService;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
@@ -40,9 +41,11 @@ public class NettyServer {
     private final ConcurrentHashMap<String, CompletableFuture<Boolean>> canHandleFutures = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> placeholderFutures = new ConcurrentHashMap<>();
     private final String ip = Settings.getNettyIp();
+    private final CommandRegistrationService commandRegistrationService;
 
     public NettyServer(DatabaseManager dbManager) {
         this.dbManager = dbManager;
+        this.commandRegistrationService = new CommandRegistrationService(null, this); // JDA пока null
     }
 
     public void start() {
@@ -145,5 +148,14 @@ public class NettyServer {
 
     public void setJda(JDA jda) {
         this.jda = jda;
+        this.commandRegistrationService.setJda(jda);
+    }
+
+    public CommandRegistrationService getCommandRegistrationService() {
+        return commandRegistrationService;
+    }
+
+    public JDA getJda() {
+        return this.jda;
     }
 }

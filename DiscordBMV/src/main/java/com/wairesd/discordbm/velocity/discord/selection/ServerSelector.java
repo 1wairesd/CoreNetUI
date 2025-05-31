@@ -86,5 +86,6 @@ public class ServerSelector {
                 .build();
     }
 
-    public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {}
+    public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
+    }
 }

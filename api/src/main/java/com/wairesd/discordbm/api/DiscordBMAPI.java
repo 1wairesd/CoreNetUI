@@ -8,13 +8,19 @@ import com.wairesd.discordbm.api.listener.DiscordCommandRegistrationListener;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
 import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
+import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+
+import java.util.List;
 
 public class DiscordBMAPI {
     private final Platform platform;
     private final CommandRegister commandRegister;
     private final CommandUnregister commandUnregister;
+    private final Gson gson = new Gson();
 
     public DiscordBMAPI(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -27,6 +33,16 @@ public class DiscordBMAPI {
         if (platform.getNettyService().getNettyClient() != null && platform.getNettyService().getNettyClient().isActive()) {
             commandRegister.register(command);
         }
+    }
+
+    public void sendResponseWithButtons(String requestId, EmbedDefinition embed, List<ButtonDefinition> buttons) {
+        ResponseMessage respMsg = new ResponseMessage("response", requestId, null, embed, buttons);
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    public ButtonDefinition createButton(String label, String customId, ButtonStyle style) {
+        return new ButtonDefinition(label, customId, style, null, false);
     }
 
     public void unregisterCommand(String commandName, String pluginName) {
@@ -47,5 +63,4 @@ public class DiscordBMAPI {
     public NettyService getNettyService() {
         return platform.getNettyService();
     }
-
 }
