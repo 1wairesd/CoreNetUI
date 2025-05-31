@@ -4,7 +4,6 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commandbuilder.CommandExecutorFacade;
-
 import com.wairesd.discordbm.velocity.discord.response.ResponseHelper;
 import com.wairesd.discordbm.velocity.discord.request.RequestSender;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
