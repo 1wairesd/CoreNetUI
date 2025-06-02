@@ -45,7 +45,7 @@ public class NettyServer {
 
     public NettyServer(DatabaseManager dbManager) {
         this.dbManager = dbManager;
-        this.commandRegistrationService = new CommandRegistrationService(null, this); // JDA пока null
+        this.commandRegistrationService = new CommandRegistrationService(null, this);
     }
 
     public void start() {
