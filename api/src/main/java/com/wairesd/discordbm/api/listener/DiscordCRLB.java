@@ -1,5 +1,5 @@
 package com.wairesd.discordbm.api.listener;
 
-public interface DiscordCommandRegistrationListener {
+public interface DiscordCRLB {
     void onNettyConnected();
 }

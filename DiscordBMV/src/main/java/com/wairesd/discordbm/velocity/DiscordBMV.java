@@ -27,7 +27,7 @@ public class DiscordBMV {
     private final Path dataDirectory;
     private final ProxyServer proxy;
 
-    private BootstrapServiceBMV bootstrapService;
+    private BootstrapDBMV bootstrapService;
 
     private final Map<String, String> globalMessageLabels = new HashMap<>();
     private final Map<String, Object> formHandlers = new ConcurrentHashMap<>();
@@ -47,7 +47,7 @@ public class DiscordBMV {
         plugin = this;
         Commands.plugin = this;
 
-        bootstrapService = new BootstrapServiceBMV(this, dataDirectory, proxy, logger);
+        bootstrapService = new BootstrapDBMV(this, dataDirectory, proxy, logger);
         bootstrapService.initialize();
     }
 

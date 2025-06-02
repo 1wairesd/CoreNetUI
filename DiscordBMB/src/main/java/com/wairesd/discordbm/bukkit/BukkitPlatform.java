@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.bukkit;
 
 import com.wairesd.discordbm.api.handle.DiscordCommandHandler;
-import com.wairesd.discordbm.api.listener.DiscordCommandRegistrationListener;
+import com.wairesd.discordbm.api.listener.DiscordCRLB;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
 import com.wairesd.discordbm.api.platform.Platform;
@@ -19,7 +19,7 @@ public class BukkitPlatform implements Platform {
     private final Map<String, DiscordCommandHandler> commandHandlers = new HashMap<>();
     private final PlaceholderService placeholderService;
     private final PluginLogger pluginLogger;
-    private final Set<DiscordCommandRegistrationListener> listeners = new HashSet<>();
+    private final Set<DiscordCRLB> listeners = new HashSet<>();
 
     public BukkitPlatform(DiscordBMB plugin) {
         this.plugin = plugin;
@@ -74,7 +74,7 @@ public class BukkitPlatform implements Platform {
     }
 
     @Override
-    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCommandRegistrationListener listener, Command addonCommand) {
+    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCRLB listener, Command addonCommand) {
         commandHandlers.put(command, handler);
         if (addonCommand != null) {
             plugin.addAddonCommand(addonCommand);
@@ -86,10 +86,16 @@ public class BukkitPlatform implements Platform {
         }
     }
 
+    // BukkitPlatform.java
     @Override
     public void onNettyConnected() {
-        for (DiscordCommandRegistrationListener listener : listeners) {
+        for (DiscordCRLB listener : listeners) {
             listener.onNettyConnected();
+        }
+
+        List<Command> commands = plugin.getAddonCommands();
+        if (!commands.isEmpty() && nettyService.getNettyClient() != null) {
+            nettyService.registerCommands(commands);
         }
     }
 

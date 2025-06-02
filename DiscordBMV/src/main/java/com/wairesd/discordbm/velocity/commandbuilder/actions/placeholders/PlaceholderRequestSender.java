@@ -25,7 +25,12 @@ public class PlaceholderRequestSender {
 
     public CompletableFuture<Boolean> sendCanHandlePlaceholdersRequest(Channel channel, String playerName, List<String> placeholders) {
         String requestId = UUID.randomUUID().toString();
-        CanHandlePlaceholdersRequest req = new CanHandlePlaceholdersRequest("can_handle_placeholders", playerName, placeholders, requestId);
+        CanHandlePlaceholdersRequest req = new CanHandlePlaceholdersRequest.Builder()
+                .type("can_handle_placeholders")
+                .player(playerName)
+                .placeholders(placeholders)
+                .requestId(requestId)
+                .build();
         String json = gson.toJson(req);
 
         nettyServer.sendMessage(channel, json);
@@ -37,7 +42,12 @@ public class PlaceholderRequestSender {
 
     public CompletableFuture<Map<String, String>> sendGetPlaceholdersRequest(Channel channel, String playerName, List<String> placeholders) {
         String requestId = UUID.randomUUID().toString();
-        GetPlaceholdersRequest req = new GetPlaceholdersRequest("get_placeholders", playerName, placeholders, requestId);
+        GetPlaceholdersRequest req = new GetPlaceholdersRequest.Builder()
+                .type("get_placeholders")
+                .player(playerName)
+                .placeholders(placeholders)
+                .requestId(requestId)
+                .build();
         String json = gson.toJson(req);
 
         nettyServer.sendMessage(channel, json);

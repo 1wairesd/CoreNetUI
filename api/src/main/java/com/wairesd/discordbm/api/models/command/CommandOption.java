@@ -1,23 +1,51 @@
 package com.wairesd.discordbm.api.models.command;
 
-/**
- * Represents an option or parameter for a command.
- * This class is used to define attributes of a command option, including its
- * name, type, description, and whether it is required.
- *
- * The {@code CommandOption} objects are typically part of a command structure,
- * enabling commands to include configurable options.
- */
 public class CommandOption {
-    public String name;
-    public String type;
-    public String description;
-    public boolean required;
+    private final String name;
+    private final String type;
+    private final String description;
+    private final boolean required;
 
-    public CommandOption(String name, String type, String description, boolean required) {
-        this.name = name;
-        this.type = type;
-        this.description = description;
-        this.required = required;
+    private CommandOption(Builder builder) {
+        this.name = builder.name;
+        this.type = builder.type;
+        this.description = builder.description;
+        this.required = builder.required;
+    }
+
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public String getDescription() { return description; }
+    public boolean isRequired() { return required; }
+
+    public static class Builder {
+        private String name;
+        private String type;
+        private String description;
+        private boolean required;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder required(boolean required) {
+            this.required = required;
+            return this;
+        }
+
+        public CommandOption build() {
+            return new CommandOption(this);
+        }
     }
 }

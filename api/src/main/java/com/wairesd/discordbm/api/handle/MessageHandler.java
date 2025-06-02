@@ -45,22 +45,22 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 CanHandlePlaceholdersRequest req = gson.fromJson(json, CanHandlePlaceholdersRequest.class);
                 platform.runTaskAsynchronously(() -> {
                     boolean canHandle = platform.checkIfCanHandle(req.player(), req.placeholders());
-                    CanHandleResponse resp = new CanHandleResponse(
-                            "can_handle_response",
-                            req.requestId(),
-                            canHandle
-                    );
+                    CanHandleResponse resp = new CanHandleResponse.Builder()
+                            .type("can_handle_response")
+                            .requestId(req.requestId())
+                            .canHandle(canHandle)
+                            .build();
                     ctx.channel().writeAndFlush(gson.toJson(resp));
                 });
             } else if ("get_placeholders".equals(type)) {
                 GetPlaceholdersRequest req = gson.fromJson(json, GetPlaceholdersRequest.class);
                 platform.runTaskAsynchronously(() -> {
                     Map<String, String> values = platform.getPlaceholderValues(req.player(), req.placeholders());
-                    PlaceholdersResponse resp = new PlaceholdersResponse(
-                            "placeholders_response",
-                            req.requestId(),
-                            values
-                    );
+                    PlaceholdersResponse resp = new PlaceholdersResponse.Builder()
+                            .type("placeholders_response")
+                            .requestId(req.requestId())
+                            .values(values)
+                            .build();
                     ctx.channel().writeAndFlush(gson.toJson(resp));
                 });
             } else {

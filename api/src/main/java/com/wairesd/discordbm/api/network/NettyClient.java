@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 import com.wairesd.discordbm.api.platform.Platform;
 import com.wairesd.discordbm.api.handle.MessageHandler;
 import com.wairesd.discordbm.api.models.command.Command;
+import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.Channel;
-
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -20,8 +20,9 @@ import io.netty.handler.codec.string.StringEncoder;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class NettyClient {
     private final PluginLogger pluginLogger;
@@ -63,7 +64,7 @@ public class NettyClient {
                     if (platform.isDebugConnections()) {
                         pluginLogger.info("Connected to Velocity at {}:{}", address.getHostString(), address.getPort());
                     }
-                    sendRegistrationMessage();
+                    registerClient();
                     platform.onNettyConnected();
                 } else {
                     if (platform.isDebugConnections()) {
@@ -95,38 +96,49 @@ public class NettyClient {
         }
     }
 
-    public void send(String message) {
-        if (isActive()) {
-            ChannelFuture future = channel.writeAndFlush(message);
-            future.addListener(f -> {
-                if (!f.isSuccess() && platform.isDebugErrors()) {
-                    pluginLogger.error("Failed to send message: {}", f.cause().getMessage());
-                }
-            });
-        }
-    }
-
-    private void sendRegistrationMessage() {
+    private void registerClient() {
         String secretCode = platform.getSecretCode();
         if (secretCode == null || secretCode.isEmpty()) return;
 
-        RegisterMessage<Command> registerMsg = new RegisterMessage<>(
-                "register",
-                platform.getServerName(),
-                "DiscordBMB",
-                Collections.emptyList(),
-                secretCode
-        );
+        ClientRegisterMessage clientRegisterMsg = new ClientRegisterMessage(platform.getServerName(), secretCode);
+        String json = gson.toJson(clientRegisterMsg);
+        send(json);
+
+        if (platform.isDebugCommandRegistrations()) {
+            pluginLogger.info("Sent client registration message.");
+        }
+    }
+
+    public void registerCommands(List<Command> commands) {
+        if (commands == null || commands.isEmpty()) {
+            return;
+        }
+
+        String secret = platform.getSecretCode();
+        RegisterMessage<Command> registerMsg = new RegisterMessage.Builder<Command>()
+                .type("register")
+                .serverName(platform.getServerName())
+                .pluginName("DiscordBMB")
+                .commands(commands)
+                .secret(secret)
+                .build();
         String json = gson.toJson(registerMsg);
         send(json);
+
         if (platform.isDebugCommandRegistrations()) {
-            pluginLogger.info("Sent initial registration message with no commands.");
+            pluginLogger.info("Sent register message with commands: " + commands.stream().map(Command::getName).collect(Collectors.joining(", ")));
         }
     }
 
     private void scheduleReconnect() {
         if (!closing) {
             platform.runTaskAsynchronously(() -> connect());
+        }
+    }
+
+    public void send(String message) {
+        if (isActive()) {
+            channel.writeAndFlush(message);
         }
     }
 

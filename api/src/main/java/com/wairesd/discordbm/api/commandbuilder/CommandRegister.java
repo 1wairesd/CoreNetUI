@@ -26,17 +26,17 @@ public class CommandRegister {
             return;
         }
 
-        RegisterMessage<Command> msg = new RegisterMessage<>(
-                "register",
-                platform.getServerName(),
-                command.pluginName,
-                List.of(command),
-                secret
-        );
+        RegisterMessage<Command> msg = new RegisterMessage.Builder<Command>()
+                .type("register")
+                .serverName(platform.getServerName())
+                .pluginName(command.getPluginName())
+                .commands(List.of(command))
+                .secret(secret)
+                .build();
         platform.getNettyService().sendNettyMessage(gson.toJson(msg));
 
         if (platform.isDebugCommandRegistrations()) {
-            pluginLogger.info("Sent registration message for command: " + command.name);
+            pluginLogger.info("Sent registration message for command: " + command.getName());
         }
     }
 }

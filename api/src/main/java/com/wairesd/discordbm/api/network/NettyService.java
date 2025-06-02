@@ -1,11 +1,13 @@
 package com.wairesd.discordbm.api.network;
 
 import com.google.gson.Gson;
+import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.platform.Platform;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import java.net.InetSocketAddress;
+import java.util.List;
 
 public class NettyService {
     private final Platform platform;
@@ -44,7 +46,13 @@ public class NettyService {
     public void sendResponse(String requestId, String embedJson) {
         if (nettyClient != null && nettyClient.isActive()) {
             EmbedDefinition embedObj = gson.fromJson(embedJson, EmbedDefinition.class);
-            ResponseMessage respMsg = new ResponseMessage("response", requestId, null, embedObj, null);
+            ResponseMessage respMsg = new ResponseMessage.Builder()
+                    .type("response")
+                    .requestId(requestId)
+                    .response(null)
+                    .embed(embedObj)
+                    .buttons(null)
+                    .build();
             nettyClient.send(gson.toJson(respMsg));
         }
     }
@@ -54,6 +62,12 @@ public class NettyService {
             nettyClient.send(message);
         } else if (platform.isDebugErrors()) {
             pluginLogger.warn("Netty connection not active. Message not sent: " + message);
+        }
+    }
+
+    public void registerCommands(List<Command> commands) {
+        if (nettyClient != null && nettyClient.isActive()) {
+            nettyClient.registerCommands(commands);
         }
     }
 

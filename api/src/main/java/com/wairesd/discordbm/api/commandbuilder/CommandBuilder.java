@@ -42,13 +42,24 @@ public class CommandBuilder {
     }
 
     public CommandBuilder addOption(String name, String type, String description, boolean required) {
-        options.add(new CommandOption(name.toLowerCase().trim(), type, description, required));
+        options.add(new CommandOption.Builder()
+                .name(name.toLowerCase().trim())
+                .type(type)
+                .description(description)
+                .required(required)
+                .build());
         return this;
     }
 
     public Command build() {
         validate();
-        return new Command(name, description, pluginName, context, Collections.unmodifiableList(options));
+        return new Command.Builder()
+                .name(name)
+                .description(description)
+                .pluginName(pluginName)
+                .context(context)
+                .options(Collections.unmodifiableList(options))
+                .build();
     }
 
     private void validate() {

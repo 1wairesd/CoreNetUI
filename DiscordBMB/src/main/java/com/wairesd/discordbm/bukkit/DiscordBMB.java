@@ -3,7 +3,7 @@ package com.wairesd.discordbm.bukkit;
 import com.google.gson.Gson;
 import com.wairesd.discordbm.api.*;
 import com.wairesd.discordbm.api.handle.DiscordCommandHandler;
-import com.wairesd.discordbm.api.listener.DiscordCommandRegistrationListener;
+import com.wairesd.discordbm.api.listener.DiscordCRLB;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
 import com.wairesd.discordbm.api.platform.Platform;
@@ -29,11 +29,11 @@ public class DiscordBMB extends JavaPlugin {
     private NettyService nettyService;
     private PlaceholderService placeholderService;
 
-    private BootstrapServiceBMB bootstrapService;
+    private BootstrapDBMB bootstrapService;
 
     @Override
     public void onEnable() {
-        bootstrapService = new BootstrapServiceBMB(this, pluginLogger);
+        bootstrapService = new BootstrapDBMB(this, pluginLogger);
         bootstrapService.initialize();
     }
 
@@ -44,13 +44,13 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCommandRegistrationListener listener, Command addonCommand) {
+    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCRLB listener, Command addonCommand) {
         commandHandlers.put(command, handler);
         if (addonCommand != null) {
             synchronized (addonCommands) {
                 addonCommands.add(addonCommand);
                 if (Settings.isDebugCommandRegistrations()) {
-                    getLogger().info("Registered addon command: " + addonCommand.name);
+                    getLogger().info("Registered addon command: " + addonCommand.getName());
                 }
             }
         }
@@ -62,6 +62,15 @@ public class DiscordBMB extends JavaPlugin {
     public void addAddonCommand(Command command) {
         synchronized (addonCommands) {
             addonCommands.add(command);
+            if (Settings.isDebugCommandRegistrations()) {
+                getLogger().info("Registered addon command: " + command.getName());
+            }
+        }
+    }
+
+    public List<Command> getAddonCommands() {
+        synchronized (addonCommands) {
+            return new ArrayList<>(addonCommands);
         }
     }
 
@@ -81,12 +90,12 @@ public class DiscordBMB extends JavaPlugin {
         return platform;
     }
 
-    public void setPlatform(Platform platform) {
-        this.platform = platform;
-    }
-
     public static DiscordBMAPI getApi() {
         return api;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
     }
 
     public static void setApi(DiscordBMAPI apiInstance) {

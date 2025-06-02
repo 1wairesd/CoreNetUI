@@ -2,6 +2,7 @@ package com.wairesd.discordbm.velocity.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
@@ -78,7 +79,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
         JsonObject json = gson.fromJson(msg, JsonObject.class);
         String type = json.get("type").getAsString();
 
-        if ("register".equals(type)) {
+        if ("client_register".equals(type)) {
+            ClientRegisterMessage regMsg = gson.fromJson(json, ClientRegisterMessage.class);
+            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            String ip = remoteAddress.getAddress().getHostAddress();
+            int port = remoteAddress.getPort();
+            handleClientRegister(ctx, regMsg, ip, port);
+        } else if ("register".equals(type)) {
             RegisterMessage regMsg = gson.fromJson(json, RegisterMessage.class);
             InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = remoteAddress.getAddress().getHostAddress();
@@ -103,6 +110,24 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             }
         } else {
             logger.warn("Unknown message type: {}", type);
+        }
+    }
+
+    private void handleClientRegister(ChannelHandlerContext ctx, ClientRegisterMessage regMsg, String ip, int port) {
+        if (regMsg.getSecret() == null || !regMsg.getSecret().equals(Settings.getSecretCode())) {
+            ctx.writeAndFlush("Error: Invalid secret code");
+            dbManager.incrementFailedAttempt(ip);
+            ctx.close();
+            return;
+        }
+
+        if (!this.isAuthenticated()) {
+            this.setAuthenticated(true);
+            dbManager.resetAttempts(ip);
+            nettyServer.setServerName(ctx.channel(), regMsg.getServerName());
+            if (Settings.isDebugAuthentication()) {
+                logger.info("Client {} IP - {} Port - {} authenticated successfully", regMsg.getServerName(), ip, port);
+            }
         }
     }
 
