@@ -11,6 +11,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
+import com.wairesd.discordbm.velocity.handler.ClientRegisterHandle;
 import com.wairesd.discordbm.velocity.handler.RegisterHandle;
 import com.wairesd.discordbm.velocity.handler.ResponseHandle;
 import com.wairesd.discordbm.velocity.handler.UnregisterHandle;
@@ -22,7 +23,8 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
+public class NettyServerHandler extends SimpleChannelInboundHandler<String>
+        implements ClientRegisterHandle.NettyServerHandlerContext {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final Gson gson = new Gson();
     private final Object jda;
@@ -32,6 +34,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     private final RegisterHandle registerHandler;
     private final UnregisterHandle unregisterHandler;
     private final ResponseHandle responseHandle;
+    private final ClientRegisterHandle clientRegisterHandle;
 
     public NettyServerHandler(NettyServer nettyServer, Object jda, DatabaseManager dbManager) {
         this.nettyServer = nettyServer;
@@ -40,6 +43,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
         this.registerHandler = new RegisterHandle(this, dbManager, nettyServer);
         this.unregisterHandler = new UnregisterHandle(nettyServer);
         this.responseHandle = new ResponseHandle();
+        this.clientRegisterHandle = new ClientRegisterHandle(dbManager, nettyServer, this);
     }
 
     @Override
@@ -84,7 +88,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
             String ip = remoteAddress.getAddress().getHostAddress();
             int port = remoteAddress.getPort();
-            handleClientRegister(ctx, regMsg, ip, port);
+            clientRegisterHandle.handleClientRegister(ctx, regMsg, ip, port);
         } else if ("register".equals(type)) {
             RegisterMessage regMsg = gson.fromJson(json, RegisterMessage.class);
             InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
@@ -110,24 +114,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             }
         } else {
             logger.warn("Unknown message type: {}", type);
-        }
-    }
-
-    private void handleClientRegister(ChannelHandlerContext ctx, ClientRegisterMessage regMsg, String ip, int port) {
-        if (regMsg.getSecret() == null || !regMsg.getSecret().equals(Settings.getSecretCode())) {
-            ctx.writeAndFlush("Error: Invalid secret code");
-            dbManager.incrementFailedAttempt(ip);
-            ctx.close();
-            return;
-        }
-
-        if (!this.isAuthenticated()) {
-            this.setAuthenticated(true);
-            dbManager.resetAttempts(ip);
-            nettyServer.setServerName(ctx.channel(), regMsg.getServerName());
-            if (Settings.isDebugAuthentication()) {
-                logger.info("Client {} IP - {} Port - {} authenticated successfully", regMsg.getServerName(), ip, port);
-            }
         }
     }
 
