@@ -49,9 +49,6 @@ public class RegisterHandle {
 
         nettyServer.setServerName(ctx.channel(), regMsg.serverName());
         if (regMsg.commands() != null && !regMsg.commands().isEmpty()) {
-            if (Settings.isDebugPluginConnections()) {
-                logger.info("Plugin {} registered commands for server {}", regMsg.pluginName(), regMsg.serverName());
-            }
             var commandsElement = gson.toJsonTree(regMsg.commands());
             List<CommandDefinition> commandDefinitions = gson.fromJson(commandsElement, new TypeToken<List<CommandDefinition>>() {}.getType());
             commandRegisterService.registerCommands(regMsg.serverName(), commandDefinitions, ctx.channel());

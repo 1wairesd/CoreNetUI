@@ -59,23 +59,32 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
                 }
                 ctx.writeAndFlush("Error: IP blocked due to multiple failed attempts");
                 ctx.close();
-            } else {
-                ctx.executor().schedule(() -> {
-                    if (!authenticated) {
-                        if (Settings.isDebugAuthentication()) {
-                            logger.warn("Client {} did not authenticate in time. Closing connection.", ip);
-                        }
-                        ctx.writeAndFlush("Error: Authentication timeout");
-                        dbManager.incrementFailedAttempt(ip);
-                        ctx.close();
-                    }
-                }, 30, TimeUnit.SECONDS);
             }
         }, ctx.executor());
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) {
+        String ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
+        int port = ((InetSocketAddress) ctx.channel().remoteAddress()).getPort();
+
+        if (!authenticated) {
+            JsonObject json = gson.fromJson(msg, JsonObject.class);
+            String type = json.get("type").getAsString();
+
+            if ("client_register".equals(type)) {
+                ClientRegisterMessage regMsg = gson.fromJson(json, ClientRegisterMessage.class);
+                clientRegisterHandle.handleClientRegister(ctx, regMsg, ip, port);
+            } else {
+                if (Settings.isDebugAuthentication()) {
+                    logger.warn("Client {}:{} was disconnected due to invalid authentication key.", ip, port);
+                }
+                dbManager.incrementFailedAttempt(ip);
+                ctx.close();
+            }
+            return;
+        }
+
         if (Settings.isDebugClientResponses()) {
             logger.info("Received message from client: {}", msg);
         }
@@ -83,17 +92,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         JsonObject json = gson.fromJson(msg, JsonObject.class);
         String type = json.get("type").getAsString();
 
-        if ("client_register".equals(type)) {
-            ClientRegisterMessage regMsg = gson.fromJson(json, ClientRegisterMessage.class);
-            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-            String ip = remoteAddress.getAddress().getHostAddress();
-            int port = remoteAddress.getPort();
-            clientRegisterHandle.handleClientRegister(ctx, regMsg, ip, port);
-        } else if ("register".equals(type)) {
+        if ("register".equals(type)) {
             RegisterMessage regMsg = gson.fromJson(json, RegisterMessage.class);
-            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-            String ip = remoteAddress.getAddress().getHostAddress();
-            int port = remoteAddress.getPort();
             registerHandler.handleRegister(ctx, regMsg, ip, port);
         } else if ("unregister".equals(type)) {
             UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
@@ -119,26 +119,26 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        String serverName = nettyServer.getServerName(ctx.channel());
-        if (serverName != null) {
-            logger.info("Channel inactive for server: {}", serverName);
-        }
         ctx.executor().schedule(() -> {
             nettyServer.removeServer(ctx.channel());
-            if (Settings.isDebugConnections()) {
-                if (serverName != null) {
-                    logger.info("Removed server: {} due to inactive channel", serverName);
-                }
-            }
         }, 5, TimeUnit.SECONDS);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (Settings.isDebugErrors()) {
+        if (cause instanceof java.net.SocketException && cause.getMessage().equals("Connection reset")) {
+            String serverName = nettyServer.getServerName(ctx.channel());
+            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            String ip = remoteAddress.getAddress().getHostAddress();
+            int port = remoteAddress.getPort();
+            if (Settings.isDebugConnections()) {
+                logger.warn("Disconnected from server: {}, IP: {}, Port: {}",
+                        serverName != null ? serverName : "Unknown", ip, port);
+            }
+        } else if (Settings.isDebugErrors()) {
             logger.error("Exception in Netty channel: {}", ctx.channel().remoteAddress(), cause);
+            ctx.close();
         }
-        ctx.close();
     }
 
     public boolean isAuthenticated() {

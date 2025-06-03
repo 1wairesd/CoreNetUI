@@ -9,17 +9,13 @@ import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.Channel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -50,9 +46,9 @@ public class NettyClient {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2));
-                            ch.pipeline().addLast("stringDecoder", new StringDecoder(StandardCharsets.UTF_8));
+                            ch.pipeline().addLast("byteBufDecoder", new ByteBufDecoder());
                             ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(2));
-                            ch.pipeline().addLast("stringEncoder", new StringEncoder(StandardCharsets.UTF_8));
+                            ch.pipeline().addLast("byteBufEncoder", new ByteBufEncoder());
                             ch.pipeline().addLast("handler", new MessageHandler(platform, pluginLogger));
                         }
                     });

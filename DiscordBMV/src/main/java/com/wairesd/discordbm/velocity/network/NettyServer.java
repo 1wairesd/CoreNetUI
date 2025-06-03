@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.velocity.network;
 
+import com.wairesd.discordbm.api.network.ByteBufDecoder;
+import com.wairesd.discordbm.api.network.ByteBufEncoder;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
@@ -14,12 +16,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +49,7 @@ public class NettyServer {
 
     public void start() {
         bossGroup = new NioEventLoopGroup(1);
-        workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
+        workerGroup = new NioEventLoopGroup(4 * Runtime.getRuntime().availableProcessors());
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
@@ -59,9 +58,9 @@ public class NettyServer {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2));
-                            ch.pipeline().addLast("stringDecoder", new StringDecoder(StandardCharsets.UTF_8));
+                            ch.pipeline().addLast("byteBufDecoder", new ByteBufDecoder());
                             ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(2));
-                            ch.pipeline().addLast("stringEncoder", new StringEncoder(StandardCharsets.UTF_8));
+                            ch.pipeline().addLast("byteBufEncoder", new ByteBufEncoder());
                             ch.pipeline().addLast("handler", new NettyServerHandler(NettyServer.this, jda, dbManager));
                         }
                     })

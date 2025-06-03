@@ -60,8 +60,6 @@ public class CommandRegistrationService {
                     }
                 }
                 jda.upsertCommand(cmdData).queue(
-                        success -> logger.info("Successfully registered command '{}' in Discord", cmd.name()),
-                        failure -> logger.error("Failed to register command '{}': {}", cmd.name(), failure.getMessage())
                 );
                 if (Settings.isDebugCommandRegistrations()) {
                     logger.info("Registered command: {} with context: {}", cmd.name(), cmd.context());
