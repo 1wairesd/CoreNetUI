@@ -2,7 +2,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.actions.page;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.buttons.ButtonConfig;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.models.pages.Page;
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersResolved;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.EmbedFactoryUtils;

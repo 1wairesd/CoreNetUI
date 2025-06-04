@@ -4,7 +4,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commandbuilder.channel.ChannelFinder;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.PlaceholderUtils;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import io.netty.channel.Channel;

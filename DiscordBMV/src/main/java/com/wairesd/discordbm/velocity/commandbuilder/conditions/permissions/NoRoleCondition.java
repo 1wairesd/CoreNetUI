@@ -1,14 +1,14 @@
 package com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 
 import java.util.Map;
 
-public class NotHaveRoleCondition implements CommandCondition {
+public class NoRoleCondition implements CommandCondition {
     private final String roleId;
 
-    public NotHaveRoleCondition(Map<String, Object> properties) {
+    public NoRoleCondition(Map<String, Object> properties) {
         this.roleId = (String) properties.get("role_id");
         if (this.roleId == null || this.roleId.isEmpty()) {
             throw new IllegalArgumentException("role_id is required for NotHaveRoleCondition");

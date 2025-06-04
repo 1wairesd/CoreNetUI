@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.network;
 
-import com.wairesd.discordbm.api.network.ByteBufDecoder;
-import com.wairesd.discordbm.api.network.ByteBufEncoder;
+import com.wairesd.discordbm.api.network.codec.ByteBufDecoder;
+import com.wairesd.discordbm.api.network.codec.ByteBufEncoder;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;

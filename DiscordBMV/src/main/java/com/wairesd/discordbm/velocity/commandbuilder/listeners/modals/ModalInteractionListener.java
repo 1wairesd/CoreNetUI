@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.listeners.modals;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

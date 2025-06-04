@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.actions.forms;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commandbuilder.builder.FormBuilder;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.repository.FormRepository;
 import com.wairesd.discordbm.velocity.commandbuilder.sender.ModalSender;
 import com.wairesd.discordbm.velocity.config.configurators.Forms;

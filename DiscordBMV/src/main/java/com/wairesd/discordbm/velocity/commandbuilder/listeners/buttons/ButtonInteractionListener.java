@@ -7,7 +7,7 @@ import com.wairesd.discordbm.velocity.commandbuilder.checker.RoleChecker;
 import com.wairesd.discordbm.velocity.commandbuilder.models.buttons.ButtonConfig;
 import com.wairesd.discordbm.velocity.commandbuilder.models.buttons.FormButtonData;
 import com.wairesd.discordbm.velocity.commandbuilder.handler.buttons.ButtonResponseHandler;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.models.pages.Page;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.EmbedFactoryUtils;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.MessageFormatterUtils;

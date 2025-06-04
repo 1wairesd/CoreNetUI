@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.discord.handle;
+package com.wairesd.discordbm.velocity.discord.handler;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;

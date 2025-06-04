@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.executor;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.structures.CommandStructured;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class CommandExecutor {

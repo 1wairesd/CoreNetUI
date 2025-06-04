@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.strategy;
 
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.ResponseType;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.ResponseType;
 import com.wairesd.discordbm.velocity.commandbuilder.responses.DirectMessageResponse;
 import com.wairesd.discordbm.velocity.commandbuilder.responses.EditMessageResponse;
 import com.wairesd.discordbm.velocity.commandbuilder.responses.ReplyResponse;

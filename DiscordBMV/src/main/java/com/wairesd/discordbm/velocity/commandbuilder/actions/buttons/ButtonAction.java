@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.actions.buttons;
 import com.wairesd.discordbm.velocity.commandbuilder.validator.ButtonActionValidator;
 import com.wairesd.discordbm.velocity.commandbuilder.factory.buttons.ButtonFactory;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.parser.TimeoutParser;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;

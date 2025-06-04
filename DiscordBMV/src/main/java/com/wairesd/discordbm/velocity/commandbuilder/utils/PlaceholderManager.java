@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.utils;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.Placeholder;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import net.dv8tion.jda.api.interactions.Interaction;
 import java.util.ArrayList;
 import java.util.List;

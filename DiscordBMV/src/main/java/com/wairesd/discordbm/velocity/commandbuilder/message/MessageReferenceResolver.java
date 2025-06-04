@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.message;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersResolved;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 
 public class MessageReferenceResolver {

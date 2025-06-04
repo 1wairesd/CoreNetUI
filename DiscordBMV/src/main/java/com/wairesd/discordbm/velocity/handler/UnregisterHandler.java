@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class UnregisterHandle {
+public class UnregisterHandler {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final NettyServer nettyServer;
 
-    public UnregisterHandle(NettyServer nettyServer) {
+    public UnregisterHandler(NettyServer nettyServer) {
         this.nettyServer = nettyServer;
     }
 

@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.models.actions;
 
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 
 import java.util.concurrent.CompletableFuture;
 

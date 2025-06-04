@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commandbuilder.models.contexts;
+package com.wairesd.discordbm.velocity.commandbuilder.models.context;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;

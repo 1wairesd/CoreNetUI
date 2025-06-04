@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.models.structures;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.forms.SendFormAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
-import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOption;
+import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOptions;
 
 import java.util.List;
 
@@ -11,14 +11,14 @@ public class CommandStructured {
     private final String name;
     private final String description;
     private final String context;
-    private final List<CommandOption> options;
+    private final List<CommandOptions> options;
     private final List<CommandCondition> conditions;
     private final List<CommandAction> actions;
     private final List<CommandAction> failActions;
     private final Boolean ephemeral;
 
     public CommandStructured(String name, String description, String context,
-                             List<CommandOption> options, List<CommandCondition> conditions,
+                             List<CommandOptions> options, List<CommandCondition> conditions,
                              List<CommandAction> actions, List<CommandAction> failActions, Boolean ephemeral) {
         validateInputs(name, description, context);
         this.name = name;
@@ -58,7 +58,7 @@ public class CommandStructured {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public String getContext() { return context; }
-    public List<CommandOption> getOptions() { return options; }
+    public List<CommandOptions> getOptions() { return options; }
     public List<CommandCondition> getConditions() { return conditions; }
     public List<CommandAction> getActions() { return actions; }
 }

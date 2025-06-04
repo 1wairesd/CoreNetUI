@@ -4,7 +4,7 @@ import com.wairesd.discordbm.velocity.commandbuilder.channel.ChannelFetcher;
 import com.wairesd.discordbm.velocity.commandbuilder.message.MessageDeleter;
 import com.wairesd.discordbm.velocity.commandbuilder.message.MessageReferenceResolver;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.Map;

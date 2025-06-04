@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class RegisterHandle {
+public class RegisterHandler {
     private static final Logger logger = LoggerFactory.getLogger("DiscordBMV");
     private final NettyServerHandler handler;
     private final DatabaseManager dbManager;
@@ -24,7 +24,7 @@ public class RegisterHandle {
     private boolean authenticated = false;
     private final CommandRegistrationService commandRegisterService;
 
-    public RegisterHandle(NettyServerHandler handler, DatabaseManager dbManager, NettyServer nettyServer) {
+    public RegisterHandler(NettyServerHandler handler, DatabaseManager dbManager, NettyServer nettyServer) {
         this.handler = handler;
         this.dbManager = dbManager;
         this.nettyServer = nettyServer;

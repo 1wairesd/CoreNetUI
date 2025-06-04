@@ -18,8 +18,19 @@ public class Page {
         this.buttons = buttons;
     }
 
-    public String getId() { return id; }
-    public String getContent() { return content; }
-    public Map<String, Object> getEmbedConfig() { return embedConfig; }
-    public List<ButtonConfig> getButtons() { return buttons; }
+    public String getId() {
+        return id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Map<String, Object> getEmbedConfig() {
+        return embedConfig;
+    }
+
+    public List<ButtonConfig> getButtons() {
+        return buttons;
+    }
 }

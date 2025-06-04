@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.api.handle.DiscordCommandHandler;
+import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.api.listener.DiscordCRLB;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;

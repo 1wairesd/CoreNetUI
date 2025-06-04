@@ -9,6 +9,11 @@ public class ButtonConfig {
         this.targetPage = targetPage;
     }
 
-    public String getLabel() { return label; }
-    public String getTargetPage() { return targetPage; }
+    public String getLabel() {
+        return label;
+    }
+
+    public String getTargetPage() {
+        return targetPage;
+    }
 }

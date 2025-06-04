@@ -2,13 +2,13 @@ package com.wairesd.discordbm.velocity.commandbuilder.models.options;
 
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
-public class CommandOption {
+public class CommandOptions {
     private final String name;
     private final String type;
     private final String description;
     private final boolean required;
 
-    public CommandOption(String name, String type, String description, boolean required) {
+    public CommandOptions(String name, String type, String description, boolean required) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Option name cannot be null or empty");
         }
@@ -30,8 +30,19 @@ public class CommandOption {
         }
     }
 
-    public String getName() { return name; }
-    public String getType() { return type; }
-    public String getDescription() { return description; }
-    public boolean isRequired() { return required; }
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
 }

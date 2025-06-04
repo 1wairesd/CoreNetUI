@@ -11,10 +11,10 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
-import com.wairesd.discordbm.velocity.handler.ClientRegisterHandle;
-import com.wairesd.discordbm.velocity.handler.RegisterHandle;
-import com.wairesd.discordbm.velocity.handler.ResponseHandle;
-import com.wairesd.discordbm.velocity.handler.UnregisterHandle;
+import com.wairesd.discordbm.velocity.handler.ClientRegisterHandler;
+import com.wairesd.discordbm.velocity.handler.RegisterHandler;
+import com.wairesd.discordbm.velocity.handler.ResponseHandler;
+import com.wairesd.discordbm.velocity.handler.UnregisterHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.LoggerFactory;
@@ -24,26 +24,26 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
-        implements ClientRegisterHandle.NettyServerHandlerContext {
+        implements ClientRegisterHandler.NettyServerHandlerContext {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final Gson gson = new Gson();
     private final Object jda;
     private final DatabaseManager dbManager;
     private final NettyServer nettyServer;
     private boolean authenticated = false;
-    private final RegisterHandle registerHandler;
-    private final UnregisterHandle unregisterHandler;
-    private final ResponseHandle responseHandle;
-    private final ClientRegisterHandle clientRegisterHandle;
+    private final RegisterHandler registerHandler;
+    private final UnregisterHandler unregisterHandler;
+    private final ResponseHandler responseHandle;
+    private final ClientRegisterHandler clientRegisterHandle;
 
     public NettyServerHandler(NettyServer nettyServer, Object jda, DatabaseManager dbManager) {
         this.nettyServer = nettyServer;
         this.jda = jda;
         this.dbManager = dbManager;
-        this.registerHandler = new RegisterHandle(this, dbManager, nettyServer);
-        this.unregisterHandler = new UnregisterHandle(nettyServer);
-        this.responseHandle = new ResponseHandle();
-        this.clientRegisterHandle = new ClientRegisterHandle(dbManager, nettyServer, this);
+        this.registerHandler = new RegisterHandler(this, dbManager, nettyServer);
+        this.unregisterHandler = new UnregisterHandler(nettyServer);
+        this.responseHandle = new ResponseHandler();
+        this.clientRegisterHandle = new ClientRegisterHandler(dbManager, nettyServer, this);
     }
 
     @Override

@@ -9,13 +9,13 @@ import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.LoggerFactory;
 
-public class ClientRegisterHandle {
+public class ClientRegisterHandler {
     private final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final DatabaseManager dbManager;
     private final NettyServer nettyServer;
     private final NettyServerHandlerContext nettyContext;
 
-    public ClientRegisterHandle(DatabaseManager dbManager, NettyServer nettyServer, NettyServerHandlerContext nettyContext) {
+    public ClientRegisterHandler(DatabaseManager dbManager, NettyServer nettyServer, NettyServerHandlerContext nettyContext) {
         this.dbManager = dbManager;
         this.nettyServer = nettyServer;
         this.nettyContext = nettyContext;

@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commandbuilder.models.contexts;
+package com.wairesd.discordbm.velocity.commandbuilder.models.context;
 
 public enum ResponseType {
     REPLY,

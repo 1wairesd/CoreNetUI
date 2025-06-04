@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.velocity.commandbuilder.parser;
 
 import com.wairesd.discordbm.velocity.commandbuilder.conditions.chance.ChanceCondition;
-import com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions.HaveRoleCondition;
-import com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions.NotHaveRoleCondition;
+import com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions.RoleCondition;
+import com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions.NoRoleCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
 
 import java.util.Map;
@@ -14,8 +14,8 @@ public class CommandParserCondition {
             throw new IllegalArgumentException("Condition type is required");
         }
         return switch (type.toLowerCase()) {
-            case "permission" -> new HaveRoleCondition(conditionMap);
-            case "not_have_role" -> new NotHaveRoleCondition(conditionMap);
+            case "permission" -> new RoleCondition(conditionMap);
+            case "not_have_role" -> new NoRoleCondition(conditionMap);
             case "chance" -> new ChanceCondition(conditionMap);
             default -> throw new IllegalArgumentException("Unknown condition type: " + type);
         };

@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.actions.components;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.components.ButtonEditor;
 import com.wairesd.discordbm.velocity.commandbuilder.message.MessageComponentFetcher;
 import com.wairesd.discordbm.velocity.commandbuilder.message.MessageUpdater;

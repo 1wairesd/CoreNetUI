@@ -6,7 +6,7 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commandbuilder.parser.CommandParserAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
-import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOption;
+import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOptions;
 import com.wairesd.discordbm.velocity.commandbuilder.models.structures.CommandStructured;
 
 import com.wairesd.discordbm.velocity.commandbuilder.parser.CommandParserCondition;
@@ -113,7 +113,7 @@ public class Commands {
         String description = getString(cmdData, "description");
         String context = getString(cmdData, "context", "both");
 
-        List<CommandOption> options = getOptions(cmdData);
+        List<CommandOptions> options = getOptions(cmdData);
         List<CommandCondition> conditions = getConditions(cmdData);
         List<CommandAction> actions = getActions(cmdData);
         List<CommandAction> failActions = CommandParserFailAction.parse(cmdData, plugin);
@@ -140,7 +140,7 @@ public class Commands {
         return (String) data.getOrDefault(key, defaultValue);
     }
 
-    private static List<CommandOption> getOptions(Map<String, Object> cmdData) {
+    private static List<CommandOptions> getOptions(Map<String, Object> cmdData) {
         return getList(cmdData, "options", Commands::createOption);
     }
 
@@ -160,8 +160,8 @@ public class Commands {
                 .collect(Collectors.toList());
     }
 
-    private static CommandOption createOption(Map<String, Object> data) {
-        return new CommandOption(
+    private static CommandOptions createOption(Map<String, Object> data) {
+        return new CommandOptions(
                 getString(data, "name"),
                 getString(data, "type"),
                 getString(data, "description"),

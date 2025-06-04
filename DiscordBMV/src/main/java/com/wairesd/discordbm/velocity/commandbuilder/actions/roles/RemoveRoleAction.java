@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.actions.roles;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.contexts.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
