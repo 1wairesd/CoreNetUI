@@ -95,4 +95,8 @@ public class DiscordBMAPI {
     public NettyService getNettyService() {
         return platform.getNettyService();
     }
+
+    public String getServerName() {
+        return platform.getServerName();
+    }
 }

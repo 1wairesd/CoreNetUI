@@ -14,16 +14,19 @@ import com.wairesd.discordbm.velocity.config.configurators.Pages;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.network.NettyServer;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    public static final ConcurrentHashMap<UUID, InteractionHook> pendingButtonRequests = new ConcurrentHashMap<>();
     private final Path dataDirectory;
     private final ProxyServer proxy;
 

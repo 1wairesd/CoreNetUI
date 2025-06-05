@@ -86,7 +86,7 @@ public class BootstrapDBMV {
         }
 
         logger.info("Discord bot initialized");
-        jda.addEventListener(new ButtonInteractionListener());
+        jda.addEventListener(new ButtonInteractionListener(nettyServer));
         jda.addEventListener(new ModalInteractionListener());
 
         nettyServer.setJda(jda);

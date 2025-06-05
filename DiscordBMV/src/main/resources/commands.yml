@@ -116,7 +116,7 @@ commands:
     context: server
     description: "Register a new player"
     conditions:
-      - type: "not_have_role"
+      - type: "no_permission"
         role_id: "<ID>"
         actions:
           - type: "send_form"

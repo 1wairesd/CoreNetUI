@@ -15,7 +15,7 @@ public class CommandParserCondition {
         }
         return switch (type.toLowerCase()) {
             case "permission" -> new RoleCondition(conditionMap);
-            case "not_have_role" -> new NoRoleCondition(conditionMap);
+            case "no_permission" -> new NoRoleCondition(conditionMap);
             case "chance" -> new ChanceCondition(conditionMap);
             default -> throw new IllegalArgumentException("Unknown condition type: " + type);
         };

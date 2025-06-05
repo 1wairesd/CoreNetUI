@@ -89,6 +89,15 @@ public class NettyServer {
         }
     }
 
+    public Channel getChannelByServerName(String serverName) {
+        for (Map.Entry<Channel, String> entry : channelToServerName.entrySet()) {
+            if (entry.getValue().equals(serverName)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public void shutdown() {
         if (bossGroup != null) bossGroup.shutdownGracefully();
         if (workerGroup != null) workerGroup.shutdownGracefully();

@@ -6,10 +6,12 @@ import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.slf4j.LoggerFactory;
 import java.awt.*;
@@ -29,8 +31,28 @@ public class ResponseHandler {
         logger.info("Response received for request " + respMsg.requestId() + ": " + respMsg.toString());
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
-            var event = listener.getRequestSender().getPendingRequests().remove(requestId);
 
+            InteractionHook buttonHook = DiscordBMV.pendingButtonRequests.remove(requestId);
+            if (buttonHook != null) {
+                var embedBuilder = new EmbedBuilder();
+                if (respMsg.embed() != null) {
+                    embedBuilder.setTitle(respMsg.embed().title())
+                            .setDescription(respMsg.embed().description())
+                            .setColor(new Color(respMsg.embed().color()));
+                }
+                var embed = embedBuilder.build();
+
+                List<Button> jdaButtons = respMsg.buttons().stream()
+                        .map(btn -> Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()))
+                        .collect(Collectors.toList());
+
+                buttonHook.editOriginalEmbeds(embed)
+                        .setActionRow(jdaButtons)
+                        .queue();
+                return;
+            }
+
+            var event = listener.getRequestSender().getPendingRequests().remove(requestId);
             if (event == null) {
                 logger.warn("No event found for requestId: {}, retrying in 100ms", requestId);
                 new java.util.Timer().schedule(new java.util.TimerTask() {
@@ -53,6 +75,7 @@ public class ResponseHandler {
             logInvalidUUID(respMsg.requestId(), e);
         }
     }
+
 
     private static void sendResponse(SlashCommandInteractionEvent event, ResponseMessage respMsg) {
         if (respMsg.embed() != null) {
