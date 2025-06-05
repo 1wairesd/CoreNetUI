@@ -15,10 +15,20 @@ public class EmbedDefinition {
         this.fields = builder.fields;
     }
 
-    public String title() { return title; }
-    public String description() { return description; }
-    public Integer color() { return color; }
-    public List<EmbedField> fields() { return fields; }
+    public String title() {
+        return title;
+    }
+
+    public String description() {
+        return description;
+    }
+    public Integer color() {
+        return color;
+    }
+
+    public List<EmbedField> fields() {
+        return fields;
+    }
 
     public static class Builder {
         private String title;

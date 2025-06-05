@@ -11,9 +11,17 @@ public class CanHandleResponse {
         this.canHandle = builder.canHandle;
     }
 
-    public String type() { return type; }
-    public String requestId() { return requestId; }
-    public boolean canHandle() { return canHandle; }
+    public String type() {
+        return type;
+    }
+
+    public String requestId() {
+        return requestId;
+    }
+
+    public boolean canHandle() {
+        return canHandle;
+    }
 
     public static class Builder {
         private String type;

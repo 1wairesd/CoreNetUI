@@ -15,10 +15,21 @@ public class GetPlaceholdersRequest {
         this.requestId = builder.requestId;
     }
 
-    public String type() { return type; }
-    public String player() { return player; }
-    public List<String> placeholders() { return placeholders; }
-    public String requestId() { return requestId; }
+    public String type() {
+        return type;
+    }
+
+    public String player() {
+        return player;
+    }
+
+    public List<String> placeholders() {
+        return placeholders;
+    }
+
+    public String requestId() {
+        return requestId;
+    }
 
     public static class Builder {
         private String type;

@@ -15,11 +15,25 @@ public class ButtonDefinition {
         this.disabled = builder.disabled;
     }
 
-    public String label() { return label; }
-    public String customId() { return customId; }
-    public ButtonStyle style() { return style; }
-    public String url() { return url; }
-    public boolean disabled() { return disabled; }
+    public String label() {
+        return label;
+    }
+
+    public String customId() {
+        return customId;
+    }
+
+    public ButtonStyle style() {
+        return style;
+    }
+
+    public String url() {
+        return url;
+    }
+
+    public boolean disabled() {
+        return disabled;
+    }
 
     public static class Builder {
         private String label;

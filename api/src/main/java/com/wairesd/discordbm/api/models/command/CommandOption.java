@@ -13,10 +13,21 @@ public class CommandOption {
         this.required = builder.required;
     }
 
-    public String getName() { return name; }
-    public String getType() { return type; }
-    public String getDescription() { return description; }
-    public boolean isRequired() { return required; }
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
 
     public static class Builder {
         private String name;

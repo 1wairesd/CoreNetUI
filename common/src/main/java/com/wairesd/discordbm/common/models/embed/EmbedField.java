@@ -11,9 +11,17 @@ public class EmbedField {
         this.inline = builder.inline;
     }
 
-    public String name() { return name; }
-    public String value() { return value; }
-    public boolean inline() { return inline; }
+    public String name() {
+        return name;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public boolean inline() {
+        return inline;
+    }
 
     public static class Builder {
         private String name;

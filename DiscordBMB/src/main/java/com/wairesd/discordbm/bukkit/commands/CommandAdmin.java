@@ -10,13 +10,6 @@ import org.bukkit.command.TabCompleter;
 
 import java.util.List;
 
-/**
- * The CommandAdmin class implements the CommandExecutor and TabCompleter interfaces
- * to create a command handler for administrative tasks within the DiscordBMB plugin.
- *
- * This class supports the execution of specific commands, such as reloading the plugin's
- * configuration. It also provides tab completion suggestions for command arguments.
- */
 public class CommandAdmin implements CommandExecutor, TabCompleter {
     private final DiscordBMB plugin;
 

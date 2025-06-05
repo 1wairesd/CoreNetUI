@@ -16,26 +16,11 @@ import java.nio.file.StandardCopyOption;
 
 import static org.bukkit.Bukkit.getLogger;
 
-/**
- * The Messages class handles the loading, saving, and retrieval of text messages
- * from a YAML configuration file. This is intended for managing configurable message
- * strings that can be used in a Bukkit plugin.
- *
- * This class ensures that the "messages.yml" configuration file is created, loaded,
- * and accessed properly. Messages are color-coded using the ColorUtils class when retrieved.
- */
 public class Messages {
     private static final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private static CommentedConfigurationNode messagesConfig;
     private static YamlConfigurationLoader loader;
 
-    /**
-     * Loads the "messages.yml" file from the plugin's data folder. If the file does not
-     * exist, it attempts to create it by copying the default resource from the plugin's
-     * jar. The method also loads the configuration data into memory for further use.
-     *
-     * @param plugin The JavaPlugin instance representing the plugin using this class.
-     */
     public static void load(JavaPlugin plugin) {
         File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         if (!messagesFile.exists()) {

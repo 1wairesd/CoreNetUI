@@ -17,11 +17,25 @@ public class Command {
         this.options = builder.options;
     }
 
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public String getPluginName() { return pluginName; }
-    public String getContext() { return context; }
-    public List<CommandOption> getOptions() { return options; }
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public List<CommandOption> getOptions() {
+        return options;
+    }
 
     public static class Builder {
         private String name;

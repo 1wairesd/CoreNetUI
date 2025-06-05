@@ -86,7 +86,6 @@ public class BukkitPlatform implements Platform {
         }
     }
 
-    // BukkitPlatform.java
     @Override
     public void onNettyConnected() {
         for (DiscordCRLB listener : listeners) {

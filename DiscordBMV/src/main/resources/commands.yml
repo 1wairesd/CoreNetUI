@@ -10,7 +10,7 @@ commands:
         required: true
     conditions:
       - type: "permission"
-        role_id: "<role_id(example: 1234567890123456789)>"
+        role_id: "1234567890123456789" # example role ID
     actions:
       - type: "send_message"
         message: "Hello, {user}! You greeted {target}."
@@ -104,7 +104,7 @@ commands:
     description: "Leave feedback about the server"
     conditions:
       - type: "permission"
-        role_id: "<ID>"
+        role_id: "1234567890123456789" # example role ID
     actions:
       - type: "send_form"
         form_name: "feedback-form"
@@ -117,12 +117,12 @@ commands:
     description: "Register a new player"
     conditions:
       - type: "no_permission"
-        role_id: "<ID>"
+        role_id: "1234567890123456789" # example role ID
         actions:
           - type: "send_form"
             form_name: "register-form"
           - type: "add_role"
-            role_id: "<ID>"
+            role_id: "1234567890123456789" # example role ID
           - type: "send_message"
             message: "Hi {nick}! Thanks for registering. Telegram: {telegram}, Accepted rules: {accept}"
             response_type: "REPLY"
@@ -145,7 +145,7 @@ commands:
         label: "Leave Feedback"
         style: "PRIMARY"
         form_name: "feedback-form"
-        required_role: "<ID>"
+        required_role: "1234567890123456789" # example role ID
         message: "Thanks for your feedback, {username}! You rated us {rating}/10. We'll consider your input: {review}"
         timeout: infinite
       - type: "send_message"

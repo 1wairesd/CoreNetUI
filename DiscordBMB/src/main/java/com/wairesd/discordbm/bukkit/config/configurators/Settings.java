@@ -70,7 +70,6 @@ public class Settings {
         return settingsConfig.node("velocity", "secret").getString("");
     }
 
-    // Debug settings from the query
     public static boolean isDebugConnections() {
         return settingsConfig.node("debug", "debug-connections").getBoolean(true);
     }

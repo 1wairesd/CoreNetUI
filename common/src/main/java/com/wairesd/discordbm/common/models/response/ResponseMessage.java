@@ -20,11 +20,25 @@ public class ResponseMessage {
         this.buttons = builder.buttons;
     }
 
-    public String type() { return type; }
-    public String requestId() { return requestId; }
-    public String response() { return response; }
-    public EmbedDefinition embed() { return embed; }
-    public List<ButtonDefinition> buttons() { return buttons; }
+    public String type() {
+        return type;
+    }
+
+    public String requestId() {
+        return requestId;
+    }
+
+    public String response() {
+        return response;
+    }
+
+    public EmbedDefinition embed() {
+        return embed;
+    }
+
+    public List<ButtonDefinition> buttons() {
+        return buttons;
+    }
 
     public static class Builder {
         private String type;

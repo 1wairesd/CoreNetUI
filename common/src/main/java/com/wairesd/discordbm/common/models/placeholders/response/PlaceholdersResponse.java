@@ -13,9 +13,17 @@ public class PlaceholdersResponse {
         this.values = builder.values;
     }
 
-    public String type() { return type; }
-    public String requestId() { return requestId; }
-    public Map<String, String> values() { return values; }
+    public String type() {
+        return type;
+    }
+
+    public String requestId() {
+        return requestId;
+    }
+
+    public Map<String, String> values() {
+        return values;
+    }
 
     public static class Builder {
         private String type;

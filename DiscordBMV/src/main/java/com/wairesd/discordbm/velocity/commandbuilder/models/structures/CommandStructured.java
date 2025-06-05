@@ -55,10 +55,27 @@ public class CommandStructured {
         return actions.stream().anyMatch(action -> action instanceof SendFormAction);
     }
 
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public String getContext() { return context; }
-    public List<CommandOptions> getOptions() { return options; }
-    public List<CommandCondition> getConditions() { return conditions; }
-    public List<CommandAction> getActions() { return actions; }
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public List<CommandOptions> getOptions() {
+        return options;
+    }
+
+    public List<CommandCondition> getConditions() {
+        return conditions;
+    }
+
+    public List<CommandAction> getActions() {
+        return actions;
+    }
 }

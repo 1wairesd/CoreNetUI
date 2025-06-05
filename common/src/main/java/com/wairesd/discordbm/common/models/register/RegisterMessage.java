@@ -17,11 +17,25 @@ public class RegisterMessage<T> {
         this.secret = builder.secret;
     }
 
-    public String type() { return type; }
-    public String serverName() { return serverName; }
-    public String pluginName() { return pluginName; }
-    public List<T> commands() { return commands; }
-    public String secret() { return secret; }
+    public String type() {
+        return type;
+    }
+
+    public String serverName() {
+        return serverName;
+    }
+
+    public String pluginName() {
+        return pluginName;
+    }
+
+    public List<T> commands() {
+        return commands;
+    }
+
+    public String secret() {
+        return secret;
+    }
 
     public static class Builder<T> {
         private String type;
