@@ -49,7 +49,7 @@ public class NettyServer {
 
     public void start() {
         bossGroup = new NioEventLoopGroup(1);
-        workerGroup = new NioEventLoopGroup(4 * Runtime.getRuntime().availableProcessors());
+        workerGroup = new NioEventLoopGroup(2 * Runtime.getRuntime().availableProcessors());
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
@@ -65,7 +65,12 @@ public class NettyServer {
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(ChannelOption.SO_REUSEADDR, true)
+                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    .childOption(ChannelOption.SO_RCVBUF, 128 * 1024)
+                    .childOption(ChannelOption.SO_SNDBUF, 128 * 1024);
 
             ChannelFuture future;
             if (ip == null || ip.isEmpty()) {
@@ -99,8 +104,16 @@ public class NettyServer {
     }
 
     public void shutdown() {
-        if (bossGroup != null) bossGroup.shutdownGracefully();
-        if (workerGroup != null) workerGroup.shutdownGracefully();
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully();
+        }
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully();
+        }
+        if (serverChannel != null) {
+            serverChannel.close().syncUninterruptibly();
+        }
+        NettyServerHandler.shutdown();
         if (Settings.isDebugConnections()) {
             logger.info("Netty server shutdown complete");
         }

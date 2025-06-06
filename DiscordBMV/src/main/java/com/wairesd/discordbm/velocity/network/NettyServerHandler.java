@@ -20,8 +20,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         implements ClientRegisterHandler.NettyServerHandlerContext {
@@ -35,6 +34,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
     private final UnregisterHandler unregisterHandler;
     private final ResponseHandler responseHandle;
     private final ClientRegisterHandler clientRegisterHandle;
+    private static final ExecutorService messageExecutor = 
+        new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(),
+            Runtime.getRuntime().availableProcessors() * 2,
+            60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(1000),
+            new ThreadPoolExecutor.CallerRunsPolicy()
+        );
 
     public NettyServerHandler(NettyServer nettyServer, Object jda, DatabaseManager dbManager) {
         this.nettyServer = nettyServer;
@@ -65,6 +72,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) {
+        messageExecutor.execute(() -> processMessage(ctx, msg));
+    }
+
+    private void processMessage(ChannelHandlerContext ctx, String msg) {
         String ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
         int port = ((InetSocketAddress) ctx.channel().remoteAddress()).getPort();
 
@@ -147,5 +158,17 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
 
     public void setAuthenticated(boolean value) {
         this.authenticated = value;
+    }
+
+    public static void shutdown() {
+        messageExecutor.shutdown();
+        try {
+            if (!messageExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
+                messageExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            messageExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }
