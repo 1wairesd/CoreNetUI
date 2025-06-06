@@ -30,7 +30,7 @@ public class SendPageAction implements CommandAction {
 
         Page page = pageMap.get(pageId);
         if (page == null) {
-            context.setMessageText("Страница не найдена. (ID=" + pageId + ")");
+            context.setMessageText("Page not found. (ID=" + pageId + ")");
             return CompletableFuture.completedFuture(null);
         }
 
