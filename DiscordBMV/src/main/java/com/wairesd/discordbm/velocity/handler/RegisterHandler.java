@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.handler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
-import com.wairesd.discordbm.velocity.commands.models.CommandRegistrationService;
+import com.wairesd.discordbm.velocity.models.command.CommandRegistrationService;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;

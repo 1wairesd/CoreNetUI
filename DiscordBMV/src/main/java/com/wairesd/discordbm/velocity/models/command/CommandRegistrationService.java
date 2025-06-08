@@ -1,7 +1,6 @@
-package com.wairesd.discordbm.velocity.commands.models;
+package com.wairesd.discordbm.velocity.models.command;
 
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
-import com.wairesd.discordbm.velocity.models.command.CommandDefinition;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import io.netty.channel.Channel;
 import net.dv8tion.jda.api.JDA;

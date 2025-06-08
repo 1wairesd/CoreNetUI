@@ -5,7 +5,7 @@ import com.wairesd.discordbm.api.network.codec.ByteBufEncoder;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.velocity.commands.models.CommandRegistrationService;
+import com.wairesd.discordbm.velocity.models.command.CommandRegistrationService;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
 import com.wairesd.discordbm.velocity.database.DatabaseManager;
 import com.wairesd.discordbm.velocity.models.command.CommandDefinition;

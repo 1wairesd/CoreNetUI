@@ -89,3 +89,4 @@ public class Pages {
         logger.info("pages.yml reloaded successfully");
     }
 }
+
