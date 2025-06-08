@@ -3,7 +3,7 @@ package com.wairesd.discordbm.bukkit;
 import com.google.gson.Gson;
 import com.wairesd.discordbm.api.*;
 import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.api.listener.DiscordCRLB;
+import com.wairesd.discordbm.api.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
 import com.wairesd.discordbm.api.platform.Platform;
@@ -44,7 +44,7 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCRLB listener, Command addonCommand) {
+    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordBMCRLB listener, Command addonCommand) {
         commandHandlers.put(command, handler);
         if (addonCommand != null) {
             synchronized (addonCommands) {

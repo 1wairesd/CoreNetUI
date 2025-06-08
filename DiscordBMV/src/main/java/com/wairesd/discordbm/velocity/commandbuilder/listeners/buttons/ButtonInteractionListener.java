@@ -48,7 +48,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
         if (buttonId.startsWith("refresh:")) {
             String[] parts = buttonId.split(":", 4);
             if (parts.length < 4) {
-                event.reply("The button format is incorrect.").setEphemeral(true).queue();
+                event.reply("Неверный формат кнопки.").setEphemeral(true).queue();
                 return;
             }
 
@@ -64,7 +64,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
 
                 Channel channel = nettyServer.getChannelByServerName(serverName);
                 if (channel == null) {
-                    hook.editOriginal("Server not found.").queue();
+                    hook.editOriginal("Сервер не найден.").queue();
                     return;
                 }
 
@@ -77,38 +77,41 @@ public class ButtonInteractionListener extends ListenerAdapter {
             Page page = pageMap.get(targetPageId);
 
             if (page == null) {
-                event.reply("Page not found.").setEphemeral(true).queue();
+                event.reply("Страница не найдена.").setEphemeral(true).queue();
                 return;
             }
 
             event.deferEdit().queue();
 
-            List<Button> buttons = new ArrayList<>();
-            for (ButtonConfig buttonConfig : page.getButtons()) {
-                String label = buttonConfig.getLabel();
-                String targetPage = buttonConfig.getTargetPage();
-                String newButtonId = "goto:" + targetPage;
-                buttons.add(Button.primary(newButtonId, label));
-            }
-
             if (page.getEmbedConfig() != null) {
                 EmbedFactoryUtils.create(page.getEmbedConfig(), event, new Context(event))
                         .thenAccept(embed -> {
+                            List<Button> buttons = new ArrayList<>();
+                            for (ButtonConfig buttonConfig : page.getButtons()) {
+                                String label = buttonConfig.getLabel();
+                                String targetPage = buttonConfig.getTargetPage();
+                                String newButtonId = "goto:" + targetPage;
+                                buttons.add(Button.primary(newButtonId, label));
+                            }
                             event.getHook().editOriginalEmbeds(embed)
                                     .setComponents(ActionRow.of(buttons))
                                     .queue();
                         })
                         .exceptionally(e -> {
-                            event.getHook().editOriginal("Error creating embed").queue();
+                            event.getHook().editOriginal("Ошибка создания embed").queue();
                             return null;
                         });
-            } else if (page.getContent() != null) {
-                event.getHook().editOriginal(page.getContent())
-                        .setComponents(ActionRow.of(buttons))
-                        .queue();
             } else {
-                event.getHook().editOriginal("Error: Page contains no content")
-                        .setComponents()
+                String content = page.getContent();
+                List<Button> buttons = new ArrayList<>();
+                for (ButtonConfig buttonConfig : page.getButtons()) {
+                    String label = buttonConfig.getLabel();
+                    String targetPage = buttonConfig.getTargetPage();
+                    String newButtonId = "goto:" + targetPage;
+                    buttons.add(Button.primary(newButtonId, label));
+                }
+                event.getHook().editOriginal(content)
+                        .setComponents(ActionRow.of(buttons))
                         .queue();
             }
             return;

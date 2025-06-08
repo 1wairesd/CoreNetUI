@@ -1,8 +1,9 @@
 package com.wairesd.discordbm.bukkit.commands.sub;
 
+import com.wairesd.discordbm.api.event.EventBus;
+import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Messages;
-import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import org.bukkit.command.CommandSender;
 
 public class ReloadCommand {
@@ -19,13 +20,15 @@ public class ReloadCommand {
         }
 
         plugin.getConfigManager().reloadConfigs();
-        plugin.getNettyService().closeNettyConnection();
+        EventBus.post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG));
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            String host = Settings.getVelocityHost();
-            int port = Settings.getVelocityPort();
-            plugin.getNettyService().initializeNettyClient();
-        });
+        if (plugin.getPlatform() != null && plugin.getNettyService() != null 
+            && plugin.getNettyService().getNettyClient() != null 
+            && plugin.getNettyService().getNettyClient().isActive()) {
+            
+            EventBus.post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETTY));
+            EventBus.post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
+        }
 
         sender.sendMessage(Messages.getMessage("reload-success"));
         return true;

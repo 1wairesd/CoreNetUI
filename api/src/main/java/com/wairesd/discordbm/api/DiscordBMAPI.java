@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.wairesd.discordbm.api.commandbuilder.CommandRegister;
 import com.wairesd.discordbm.api.commandbuilder.CommandUnregister;
 import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.api.listener.DiscordCRLB;
+import com.wairesd.discordbm.api.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
 import com.wairesd.discordbm.api.platform.Platform;
@@ -40,7 +40,7 @@ public class DiscordBMAPI {
         }
     }
 
-    public void registerCommand(Command command, DiscordCommandHandler handler, DiscordCRLB listener) {
+    public void registerCommand(Command command, DiscordCommandHandler handler, DiscordBMCRLB listener) {
         platform.registerCommandHandler(command.getName(), handler, listener, command);
         if (platform.getNettyService().getNettyClient() != null && platform.getNettyService().getNettyClient().isActive()) {
             commandRegister.register(command);

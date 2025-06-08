@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.api.platform;
 
-import com.wairesd.discordbm.api.listener.DiscordCRLB;
+import com.wairesd.discordbm.api.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
 import com.wairesd.discordbm.api.models.command.Command;
 import com.wairesd.discordbm.api.network.NettyService;
@@ -18,7 +18,7 @@ public interface Platform {
     boolean isDebugConnections();
     boolean isDebugErrors();
     NettyService getNettyService();
-    void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordCRLB listener, Command addonCommand);
+    void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordBMCRLB listener, Command addonCommand);
     Map<String, DiscordCommandHandler> getCommandHandlers();
     boolean checkIfCanHandle(String playerName, List<String> placeholders);
     Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders);

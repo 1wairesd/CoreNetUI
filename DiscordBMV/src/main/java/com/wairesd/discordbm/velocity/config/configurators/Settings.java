@@ -60,7 +60,6 @@ public class Settings {
     public static void reload() {
         loadConfig();
         secretManager = new SecretManager(configFile.getParentFile().toPath(), getForwardingSecretFile());
-        Messages.reload();
         logger.info("settings.yml reloaded successfully");
     }
 

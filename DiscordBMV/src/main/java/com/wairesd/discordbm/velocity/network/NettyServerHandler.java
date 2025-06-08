@@ -130,9 +130,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        ctx.executor().schedule(() -> {
-            nettyServer.removeServer(ctx.channel());
-        }, 5, TimeUnit.SECONDS);
+        nettyServer.removeServer(ctx.channel());
     }
 
     @Override
