@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.utils;
+package com.wairesd.discordbm.common.utils;
 
 public class BannerPrinter {
 
@@ -7,15 +7,19 @@ public class BannerPrinter {
     private static final String ANSI_RED    = "\u001B[31m";
     private static final String ANSI_WHITE  = "\u001B[37m";
 
-    public static void printBanner() {
+    public enum Platform {
+        BUKKIT, VELOCITY
+    }
+
+    public static void printBanner(Platform platform) {
         System.out.println(ANSI_PURPLE + " ____    " + ANSI_RED + " __  __ " + ANSI_RESET);
         System.out.println(ANSI_PURPLE + "| __ )  " + ANSI_RED + "|  \\/  |" + ANSI_RESET);
         System.out.println(ANSI_PURPLE + "|  _ \\  " + ANSI_RED + "| |\\/| |" + ANSI_RESET);
         System.out.println(ANSI_PURPLE + "| |_) | " + ANSI_RED + "| |  | |" + ANSI_RESET);
         System.out.println(ANSI_PURPLE + "|____/  " + ANSI_RED + "|_|  |_|" + ANSI_RESET);
-        System.out.println("");
+        System.out.println();
         System.out.println(ANSI_WHITE + "    DiscordBMV v1.0" + ANSI_RESET);
-        System.out.println(ANSI_WHITE + "    Running on Bukkit" + ANSI_RESET);
-        System.out.println("");
+        System.out.println(ANSI_WHITE + "    Running on " + platform.name().charAt(0) + platform.name().substring(1).toLowerCase() + ANSI_RESET);
+        System.out.println();
     }
 }

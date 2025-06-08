@@ -5,7 +5,7 @@ import com.wairesd.discordbm.api.platform.Platform;
 import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.bukkit.utils.BannerPrinter;
+import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
 
@@ -19,7 +19,7 @@ public class BootstrapDBMB {
     }
 
     public void initialize() {
-        BannerPrinter.printBanner();
+        BannerPrinter.printBanner(BannerPrinter.Platform.BUKKIT);
 
         initConfig();
         initPlatform();

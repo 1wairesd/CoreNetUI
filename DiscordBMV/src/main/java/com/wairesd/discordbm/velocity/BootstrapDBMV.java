@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.velocity;
 
+import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.velocity.commandbuilder.CommandManager;
 import com.wairesd.discordbm.velocity.commandbuilder.listeners.buttons.ButtonInteractionListener;
@@ -13,7 +14,6 @@ import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
 import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
 import com.wairesd.discordbm.velocity.network.NettyServer;
-import com.wairesd.discordbm.velocity.utils.BannerPrinter;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.dv8tion.jda.api.JDA;
 
@@ -40,7 +40,7 @@ public class BootstrapDBMV {
 
     public void initialize() {
         Commands.plugin = plugin;
-        BannerPrinter.printBanner();
+        BannerPrinter.printBanner(BannerPrinter.Platform.VELOCITY);
 
         initConfig();
         initDatabase();
