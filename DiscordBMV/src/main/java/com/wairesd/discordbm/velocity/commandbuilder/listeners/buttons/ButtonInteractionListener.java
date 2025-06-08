@@ -48,7 +48,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
         if (buttonId.startsWith("refresh:")) {
             String[] parts = buttonId.split(":", 4);
             if (parts.length < 4) {
-                event.reply("Неверный формат кнопки.").setEphemeral(true).queue();
+                event.reply("The button format is incorrect.").setEphemeral(true).queue();
                 return;
             }
 
@@ -64,7 +64,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
 
                 Channel channel = nettyServer.getChannelByServerName(serverName);
                 if (channel == null) {
-                    hook.editOriginal("Сервер не найден.").queue();
+                    hook.editOriginal("Server not found.").queue();
                     return;
                 }
 
@@ -77,7 +77,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
             Page page = pageMap.get(targetPageId);
 
             if (page == null) {
-                event.reply("Страница не найдена.").setEphemeral(true).queue();
+                event.reply("Page not found.").setEphemeral(true).queue();
                 return;
             }
 
@@ -98,7 +98,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
                                     .queue();
                         })
                         .exceptionally(e -> {
-                            event.getHook().editOriginal("Ошибка создания embed").queue();
+                            event.getHook().editOriginal("Error creating embed").queue();
                             return null;
                         });
             } else {
