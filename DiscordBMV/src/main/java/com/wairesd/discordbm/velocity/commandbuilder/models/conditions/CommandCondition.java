@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.velocity.commandbuilder.models.codinations;
+package com.wairesd.discordbm.velocity.commandbuilder.models.conditions;
 
 import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 

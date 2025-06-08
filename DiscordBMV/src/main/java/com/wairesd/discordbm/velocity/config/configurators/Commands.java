@@ -5,7 +5,7 @@ import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commandbuilder.parser.CommandParserAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
+import com.wairesd.discordbm.velocity.commandbuilder.models.conditions.CommandCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOptions;
 import com.wairesd.discordbm.velocity.commandbuilder.models.structures.CommandStructured;
 

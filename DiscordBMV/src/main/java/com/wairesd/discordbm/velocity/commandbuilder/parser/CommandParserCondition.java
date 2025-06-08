@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.parser;
 import com.wairesd.discordbm.velocity.commandbuilder.conditions.chance.ChanceCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions.RoleCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.conditions.permissions.NoRoleCondition;
-import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
+import com.wairesd.discordbm.velocity.commandbuilder.models.conditions.CommandCondition;
 
 import java.util.Map;
 

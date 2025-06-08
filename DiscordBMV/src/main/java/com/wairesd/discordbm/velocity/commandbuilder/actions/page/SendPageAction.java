@@ -45,8 +45,13 @@ public class SendPageAction implements CommandAction {
                     .create(page.getEmbedConfig(), context.getEvent(), context)
                     .thenAccept(context::setEmbed);
         }
-
-        context.setMessageText(page.getContent());
-        return CompletableFuture.completedFuture(null);
+        else if (page.getContent() != null) {
+            context.setMessageText(page.getContent());
+            return CompletableFuture.completedFuture(null);
+        }
+        else {
+            context.setMessageText("Invalid page configuration - no content or embed found. (ID=" + pageId + ")");
+            return CompletableFuture.completedFuture(null);
+        }
     }
 }

@@ -12,12 +12,12 @@ public class ConfigManager {
     }
 
     public void loadConfigs() {
-        Settings.load(plugin);
-        Messages.load(plugin);
+        Settings.init(plugin);
+        Messages.init(plugin);
     }
 
     public void reloadConfigs() {
-        Settings.load(plugin);
-        Messages.load(plugin);
+        Settings.reload(plugin);
+        Messages.reload(plugin);
     }
 }

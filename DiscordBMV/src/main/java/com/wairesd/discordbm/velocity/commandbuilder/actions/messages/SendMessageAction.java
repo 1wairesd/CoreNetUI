@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import net.dv8tion.jda.api.entities.User;
 
 public class SendMessageAction implements CommandAction {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
@@ -44,8 +45,15 @@ public class SendMessageAction implements CommandAction {
         SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
 
         OptionMapping targetOption = event.getOption("target");
-        if (targetOption != null && targetOption.getAsUser() != null) {
-            context.setTargetUser(targetOption.getAsUser());
+        if (targetOption != null) {
+            try {
+                User targetUser = targetOption.getAsUser();
+                if (targetUser != null) {
+                    context.setTargetUser(targetUser);
+                }
+            } catch (IllegalStateException e) {
+                logger.warn("Failed to resolve user from target option: {}", e.getMessage());
+            }
         }
 
         String formattedTargetId = TargetIDResolverUtils.resolve(event, this.targetId, context);

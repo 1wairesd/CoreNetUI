@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.conditions.chance;
 
-import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
+import com.wairesd.discordbm.velocity.commandbuilder.models.conditions.CommandCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 
 import java.util.Map;

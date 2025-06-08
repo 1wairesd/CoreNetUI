@@ -12,24 +12,12 @@ import java.io.File;
 
 import static org.bukkit.Bukkit.getLogger;
 
-/**
- * Manages the loading, saving, and accessing of configuration settings
- * stored in a settings.yml file. Provides utility methods to retrieve
- * application settings and debug options for a Bukkit plugin.
- */
 public class Settings {
     private static final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private static CommentedConfigurationNode settingsConfig;
     private static ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    /**
-     * Loads the "settings.yml" file from the plugin's data folder. If the file does not
-     * exist, it creates the file by saving the default resource from the plugin's jar.
-     * The method also initializes and loads the configuration data into memory.
-     *
-     * @param plugin The JavaPlugin instance representing the plugin using this class.
-     */
-    public static void load(JavaPlugin plugin) {
+    public static void init(JavaPlugin plugin) {
         File settingsFile = new File(plugin.getDataFolder(), "settings.yml");
         if (!settingsFile.exists()) {
             plugin.saveResource("settings.yml", false);
@@ -46,11 +34,17 @@ public class Settings {
         }
     }
 
-    public static void save() {
+    public static void reload(JavaPlugin plugin) {
+        File settingsFile = new File(plugin.getDataFolder(), "settings.yml");
+        if (!settingsFile.exists()) {
+            plugin.saveResource("settings.yml", false);
+        }
+
         try {
-            loader.save(settingsConfig);
+            settingsConfig = loader.load();
+            pluginLogger.info("settings.yml reloaded successfully");
         } catch (ConfigurateException e) {
-            pluginLogger.error("Failed to save settings.yml", e);
+            pluginLogger.error("Failed to reload settings.yml", e);
         }
     }
 

@@ -6,6 +6,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
@@ -19,14 +20,15 @@ import static org.bukkit.Bukkit.getLogger;
 public class Messages {
     private static final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private static CommentedConfigurationNode messagesConfig;
-    private static YamlConfigurationLoader loader;
+    private static ConfigurationLoader<CommentedConfigurationNode> loader;
 
-    public static void load(JavaPlugin plugin) {
+    public static void init(JavaPlugin plugin) {
         File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         if (!messagesFile.exists()) {
             try (InputStream in = plugin.getResource("messages.yml")) {
                 if (in != null) {
                     Files.copy(in, messagesFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    pluginLogger.info("Default messages.yml saved to {}", messagesFile.getPath());
                 } else {
                     pluginLogger.warn("messages.yml not found in resources");
                 }
@@ -39,10 +41,15 @@ public class Messages {
                 .file(messagesFile)
                 .build();
 
+        reload(plugin);
+    }
+
+    public static void reload(JavaPlugin plugin) {
         try {
             messagesConfig = loader.load();
+            pluginLogger.info("messages.yml reloaded successfully");
         } catch (ConfigurateException e) {
-            pluginLogger.error("Failed to load messages.yml", e);
+            pluginLogger.error("Failed to reload messages.yml", e);
         }
     }
 

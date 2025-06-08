@@ -65,24 +65,22 @@ public class NettyServer {
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
-                    .option(ChannelOption.TCP_NODELAY, true)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childOption(ChannelOption.SO_REUSEADDR, true)
-                    .childOption(ChannelOption.TCP_NODELAY, true)
                     .childOption(ChannelOption.SO_RCVBUF, 128 * 1024)
-                    .childOption(ChannelOption.SO_SNDBUF, 128 * 1024);
+                    .childOption(ChannelOption.SO_SNDBUF, 128 * 1024)
+                    .childOption(ChannelOption.TCP_NODELAY, true);
 
-            ChannelFuture future;
-            if (ip == null || ip.isEmpty()) {
-                future = bootstrap.bind(port).sync();
-            } else {
-                future = bootstrap.bind(ip, port).sync();
-            }
+            ChannelFuture future = (ip == null || ip.isEmpty())
+                    ? bootstrap.bind(port).sync()
+                    : bootstrap.bind(ip, port).sync();
+
             serverChannel = future.channel();
 
             if (Settings.isDebugNettyStart()) {
                 logger.info("Netty server started on {}:{}", ip == null || ip.isEmpty() ? "0.0.0.0" : ip, port);
             }
+
             serverChannel.closeFuture().sync();
         } catch (InterruptedException e) {
             if (Settings.isDebugErrors()) {

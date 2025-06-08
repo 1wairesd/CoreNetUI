@@ -2,7 +2,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.models.structures;
 
 import com.wairesd.discordbm.velocity.commandbuilder.actions.forms.SendFormAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.models.codinations.CommandCondition;
+import com.wairesd.discordbm.velocity.commandbuilder.models.conditions.CommandCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOptions;
 
 import java.util.List;

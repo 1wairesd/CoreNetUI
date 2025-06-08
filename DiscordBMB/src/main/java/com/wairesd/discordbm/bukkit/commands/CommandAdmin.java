@@ -2,7 +2,7 @@ package com.wairesd.discordbm.bukkit.commands;
 
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.configurators.Messages;
-import com.wairesd.discordbm.bukkit.config.configurators.Settings;
+import com.wairesd.discordbm.bukkit.commands.sub.ReloadCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,9 +12,11 @@ import java.util.List;
 
 public class CommandAdmin implements CommandExecutor, TabCompleter {
     private final DiscordBMB plugin;
+    private final ReloadCommand reloadCommand;
 
     public CommandAdmin(DiscordBMB plugin) {
         this.plugin = plugin;
+        this.reloadCommand = new ReloadCommand(plugin);
     }
 
     @Override
@@ -24,22 +26,7 @@ public class CommandAdmin implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (!sender.hasPermission("discordbotmanager.reload")) {
-            sender.sendMessage(Messages.getMessage("no-permission"));
-            return true;
-        }
-
-        plugin.getConfigManager().reloadConfigs();
-
-        plugin.getNettyService().closeNettyConnection();
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            String host = Settings.getVelocityHost();
-            int port   = Settings.getVelocityPort();
-            plugin.getNettyService().initializeNettyClient();
-        });
-
-        sender.sendMessage(Messages.getMessage("reload-success"));
-        return true;
+        return reloadCommand.execute(sender);
     }
 
     @Override

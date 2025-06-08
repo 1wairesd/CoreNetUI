@@ -22,15 +22,21 @@ public class EmbedFactoryUtils {
         List<CompletableFuture<?>> futures = new ArrayList<>();
 
         if (embedMap.containsKey("title")) {
-            CompletableFuture<Void> f = MessageFormatterUtils.format((String) embedMap.get("title"), event, context, false)
-                    .thenAccept(builder::setTitle);
-            futures.add(f);
+            Object titleObj = embedMap.get("title");
+            if (titleObj != null) {
+                CompletableFuture<Void> f = MessageFormatterUtils.format(titleObj.toString(), event, context, false)
+                        .thenAccept(builder::setTitle);
+                futures.add(f);
+            }
         }
 
         if (embedMap.containsKey("description")) {
-            CompletableFuture<Void> f = MessageFormatterUtils.format((String) embedMap.get("description"), event, context, false)
-                    .thenAccept(builder::setDescription);
-            futures.add(f);
+            Object descObj = embedMap.get("description");
+            if (descObj != null) {
+                CompletableFuture<Void> f = MessageFormatterUtils.format(descObj.toString(), event, context, false)
+                        .thenAccept(builder::setDescription);
+                futures.add(f);
+            }
         }
 
         if (embedMap.containsKey("color")) {
@@ -46,51 +52,65 @@ public class EmbedFactoryUtils {
             List<Map<String, Object>> fields = (List<Map<String, Object>>) embedMap.get("fields");
 
             for (Map<String, Object> field : fields) {
-                CompletableFuture<String> nameFuture = MessageFormatterUtils.format((String) field.get("name"), event, context, false);
-                CompletableFuture<String> valueFuture = MessageFormatterUtils.format((String) field.get("value"), event, context, false);
-                boolean inline = (Boolean) field.getOrDefault("inline", false);
+                Object nameObj = field.get("name");
+                Object valueObj = field.get("value");
+                if (nameObj != null && valueObj != null) {
+                    CompletableFuture<String> nameFuture = MessageFormatterUtils.format(nameObj.toString(), event, context, false);
+                    CompletableFuture<String> valueFuture = MessageFormatterUtils.format(valueObj.toString(), event, context, false);
+                    boolean inline = (Boolean) field.getOrDefault("inline", false);
 
-                CompletableFuture<Void> fieldFuture = nameFuture.thenCombine(valueFuture, (name, value) -> {
-                    builder.addField(name, value, inline);
-                    return null;
-                });
-                futures.add(fieldFuture);
+                    CompletableFuture<Void> fieldFuture = nameFuture.thenCombine(valueFuture, (name, value) -> {
+                        builder.addField(name, value, inline);
+                        return null;
+                    });
+                    futures.add(fieldFuture);
+                }
             }
         }
 
         if (embedMap.containsKey("author")) {
             Map<String, Object> author = (Map<String, Object>) embedMap.get("author");
-
-            CompletableFuture<Void> f = MessageFormatterUtils.format((String) author.get("name"), event, context, false)
-                    .thenCompose(name -> getSafeUrl(author.get("url"), event, context)
-                            .thenCompose(url -> getSafeUrl(author.get("icon_url"), event, context)
-                                    .thenAccept(icon -> builder.setAuthor(name, url, icon))));
-            futures.add(f);
+            Object nameObj = author.get("name");
+            if (nameObj != null) {
+                CompletableFuture<Void> f = MessageFormatterUtils.format(nameObj.toString(), event, context, false)
+                        .thenCompose(name -> getSafeUrl(author.get("url"), event, context)
+                                .thenCompose(url -> getSafeUrl(author.get("icon_url"), event, context)
+                                        .thenAccept(icon -> builder.setAuthor(name, url, icon))));
+                futures.add(f);
+            }
         }
 
         if (embedMap.containsKey("footer")) {
             Map<String, Object> footer = (Map<String, Object>) embedMap.get("footer");
-
-            CompletableFuture<Void> f = MessageFormatterUtils.format((String) footer.get("text"), event, context, false)
-                    .thenCompose(text -> getSafeUrl(footer.get("icon_url"), event, context)
-                            .thenAccept(icon -> builder.setFooter(text, icon)));
-            futures.add(f);
+            Object textObj = footer.get("text");
+            if (textObj != null) {
+                CompletableFuture<Void> f = MessageFormatterUtils.format(textObj.toString(), event, context, false)
+                        .thenCompose(text -> getSafeUrl(footer.get("icon_url"), event, context)
+                                .thenAccept(icon -> builder.setFooter(text, icon)));
+                futures.add(f);
+            }
         }
 
         if (embedMap.containsKey("thumbnail")) {
-            CompletableFuture<Void> f = MessageFormatterUtils.format((String) embedMap.get("thumbnail"), event, context, false)
-                    .thenAccept(thumb -> {
-                        if (isValidUrl(thumb)) builder.setThumbnail(thumb);
-                    });
-            futures.add(f);
+            Object thumbObj = embedMap.get("thumbnail");
+            if (thumbObj != null) {
+                CompletableFuture<Void> f = MessageFormatterUtils.format(thumbObj.toString(), event, context, false)
+                        .thenAccept(thumb -> {
+                            if (isValidUrl(thumb)) builder.setThumbnail(thumb);
+                        });
+                futures.add(f);
+            }
         }
 
         if (embedMap.containsKey("image")) {
-            CompletableFuture<Void> f = MessageFormatterUtils.format((String) embedMap.get("image"), event, context, false)
-                    .thenAccept(image -> {
-                        if (isValidUrl(image)) builder.setImage(image);
-                    });
-            futures.add(f);
+            Object imageObj = embedMap.get("image");
+            if (imageObj != null) {
+                CompletableFuture<Void> f = MessageFormatterUtils.format(imageObj.toString(), event, context, false)
+                        .thenAccept(image -> {
+                            if (isValidUrl(image)) builder.setImage(image);
+                        });
+                futures.add(f);
+            }
         }
 
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
