@@ -8,7 +8,6 @@ import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandActio
 import com.wairesd.discordbm.velocity.commandbuilder.models.conditions.CommandCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.models.options.CommandOptions;
 import com.wairesd.discordbm.velocity.commandbuilder.models.structures.CommandStructured;
-
 import com.wairesd.discordbm.velocity.commandbuilder.parser.CommandParserCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.parser.CommandParserFailAction;
 import org.slf4j.LoggerFactory;

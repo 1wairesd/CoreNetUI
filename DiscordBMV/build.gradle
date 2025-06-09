@@ -44,6 +44,7 @@ dependencies {
     implementation("io.netty:netty-all:4.2.1.Final")
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':DiscordBMB')
 
     compileOnly 'org.projectlombok:lombok:1.18.38'
     annotationProcessor 'org.projectlombok:lombok:1.18.38'

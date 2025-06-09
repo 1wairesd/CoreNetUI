@@ -60,6 +60,7 @@ public class PlaceholdersResolver {
                         String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
                         logger.info("Resolved message: {}", resolved);
                         context.setResolvedMessage(resolved);
+                        context.setResolvedPlaceholders(values);
                     }).exceptionally(ex -> {
                         context.setResolvedMessage("Error getting placeholders: " + ex.getMessage());
                         return null;
@@ -100,6 +101,7 @@ public class PlaceholdersResolver {
                             String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
                             logger.info("Resolved message: {}", resolved);
                             context.setResolvedMessage(resolved);
+                            context.setResolvedPlaceholders(values);
                         }).exceptionally(ex -> {
                             context.setResolvedMessage("Error getting placeholders: " + ex.getMessage());
                             return null;

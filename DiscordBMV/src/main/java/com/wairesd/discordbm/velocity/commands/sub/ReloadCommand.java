@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.sub;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.wairesd.discordbm.common.utils.color.MessageContext;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
@@ -13,9 +14,9 @@ public class ReloadCommand {
         this.plugin = plugin;
     }
 
-    public void execute(CommandSource source) {
+    public void execute(CommandSource source, MessageContext context) {
         if (!source.hasPermission("discordbotmanager.reload")) {
-            source.sendMessage(Messages.getParsedMessage("no-permission", null));
+            source.sendMessage(Messages.getComponent(Messages.Keys.NO_PERMISSION, context));
             return;
         }
 
@@ -26,6 +27,6 @@ public class ReloadCommand {
             plugin.getCommandManager().loadAndRegisterCommands();
         }
 
-        source.sendMessage(Messages.getParsedMessage("reload-success", null));
+        source.sendMessage(Messages.getComponent(Messages.Keys.RELOAD_SUCCESS, context));
     }
 }

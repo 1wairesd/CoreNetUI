@@ -16,6 +16,7 @@ import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
 import com.wairesd.discordbm.velocity.network.NettyServer;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.slf4j.LoggerFactory;
+import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class DiscordBMV {
     private final ProxyServer proxy;
 
     private BootstrapDBMV bootstrapService;
+    private DiscordBMThreadPool threadPool;
 
     private final Map<String, String> globalMessageLabels = new HashMap<>();
     private final Map<String, Object> formHandlers = new ConcurrentHashMap<>();
@@ -49,6 +51,13 @@ public class DiscordBMV {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         plugin = this;
         Commands.plugin = this;
+
+        threadPool = new DiscordBMThreadPool(4);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (threadPool != null) {
+                threadPool.shutdown();
+            }
+        }));
 
         bootstrapService = new BootstrapDBMV(this, dataDirectory, proxy, logger);
         bootstrapService.initialize();
@@ -97,5 +106,9 @@ public class DiscordBMV {
 
     public CommandManager getCommandManager() {
         return bootstrapService.getCommandManager();
+    }
+
+    public DiscordBMThreadPool getThreadPool() {
+        return threadPool;
     }
 }

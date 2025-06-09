@@ -41,6 +41,7 @@ public class NettyServer {
     private final ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> placeholderFutures = new ConcurrentHashMap<>();
     private final String ip = Settings.getNettyIp();
     private final CommandRegistrationService commandRegistrationService;
+    private final Map<String, String> commandToPlugin = new ConcurrentHashMap<>();
 
     public NettyServer(DatabaseManager dbManager) {
         this.dbManager = dbManager;
@@ -176,5 +177,17 @@ public class NettyServer {
 
     public JDA getJda() {
         return this.jda;
+    }
+
+    public void registerAddonCommand(String commandName, String pluginName) {
+        commandToPlugin.put(commandName, pluginName);
+    }
+
+    public String getPluginForCommand(String commandName) {
+        return commandToPlugin.getOrDefault(commandName, "Unknown");
+    }
+
+    public Map<String, String> getCommandToPlugin() {
+        return commandToPlugin;
     }
 }

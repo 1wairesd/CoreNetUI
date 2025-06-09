@@ -73,4 +73,4 @@ public class CommandBuilder {
             throw new IllegalStateException("Plugin name must be set");
         }
     }
-}
+} 

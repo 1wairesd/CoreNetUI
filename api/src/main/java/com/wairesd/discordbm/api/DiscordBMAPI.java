@@ -13,6 +13,8 @@ import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.common.utils.color.ColorUtils;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +25,11 @@ public class DiscordBMAPI {
     private final CommandUnregister commandUnregister;
     private final Gson gson = new Gson();
     private final List<Command> addonCommands = new ArrayList<>();
+    private final PluginLogger pluginLogger;
 
     public DiscordBMAPI(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
+        this.pluginLogger = pluginLogger;
         this.commandRegister = new CommandRegister(platform, pluginLogger);
         this.commandUnregister = new CommandUnregister(platform, pluginLogger);
     }
@@ -98,5 +102,57 @@ public class DiscordBMAPI {
 
     public String getServerName() {
         return platform.getServerName();
+    }
+
+    public PluginLogger getLogger() {
+        return pluginLogger;
+    }
+
+    public void info(String message) {
+        pluginLogger.info(message);
+    }
+
+    public void info(String message, Throwable t) {
+        pluginLogger.info(message, t);
+    }
+
+    public void info(String message, Object... args) {
+        pluginLogger.info(message, args);
+    }
+
+    public void warn(String message) {
+        pluginLogger.warn(message);
+    }
+
+    public void warn(String message, Throwable t) {
+        pluginLogger.warn(message, t);
+    }
+
+    public void warn(String message, Object... args) {
+        pluginLogger.warn(message, args);
+    }
+
+    public void error(String message) {
+        pluginLogger.error(message);
+    }
+
+    public void error(String message, Throwable t) {
+        pluginLogger.error(message, t);
+    }
+
+    public void error(String message, Object... args) {
+        pluginLogger.error(message, args);
+    }
+
+    public String parseColorString(String message) {
+        return ColorUtils.parseString(message);
+    }
+
+    public Component parseColorComponent(String message) {
+        return ColorUtils.parseComponent(message);
+    }
+
+    public String autoParseColor(String message, boolean isConsole) {
+        return ColorUtils.autoParse(message, isConsole);
     }
 }

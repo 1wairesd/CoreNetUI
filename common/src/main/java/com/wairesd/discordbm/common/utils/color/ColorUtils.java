@@ -2,6 +2,8 @@ package com.wairesd.discordbm.common.utils.color;
 
 import com.wairesd.discordbm.common.utils.color.transform.BukkitColorTranslator;
 import com.wairesd.discordbm.common.utils.color.transform.ColorParser;
+import com.wairesd.discordbm.common.utils.color.transform.VelocityColorTranslator;
+import com.wairesd.discordbm.common.utils.color.transform.AnsiColorTranslator;
 import net.kyori.adventure.text.Component;
 
 public final class ColorUtils {
@@ -21,6 +23,14 @@ public final class ColorUtils {
 
         return BUKKIT_AVAILABLE
                 ? BukkitColorTranslator.translate(message)
-                : message;
+                : VelocityColorTranslator.translate(message);
+    }
+
+    public static String autoParse(String message, boolean isConsole) {
+        if (isConsole) {
+            return AnsiColorTranslator.translate(message);
+        } else {
+            return parseString(message);
+        }
     }
 }

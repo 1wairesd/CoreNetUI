@@ -10,6 +10,7 @@ import com.wairesd.discordbm.api.platform.Platform;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
+import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,15 +31,20 @@ public class DiscordBMB extends JavaPlugin {
     private PlaceholderService placeholderService;
 
     private BootstrapDBMB bootstrapService;
+    private DiscordBMThreadPool threadPool;
 
     @Override
     public void onEnable() {
+        threadPool = new DiscordBMThreadPool(4);
         bootstrapService = new BootstrapDBMB(this, pluginLogger);
         bootstrapService.initialize();
     }
 
     @Override
     public void onDisable() {
+        if (threadPool != null) {
+            threadPool.shutdown();
+        }
         if (platform != null && platform.getNettyService() != null) {
             platform.getNettyService().closeNettyConnection();
         }
@@ -112,5 +118,9 @@ public class DiscordBMB extends JavaPlugin {
 
     public void setNettyService(NettyService nettyService) {
         this.nettyService = nettyService;
+    }
+
+    public DiscordBMThreadPool getThreadPool() {
+        return threadPool;
     }
 }

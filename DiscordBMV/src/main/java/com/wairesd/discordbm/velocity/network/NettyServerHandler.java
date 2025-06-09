@@ -6,7 +6,6 @@ import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
-import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
@@ -104,8 +103,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         String type = json.get("type").getAsString();
 
         if ("register".equals(type)) {
-            RegisterMessage regMsg = gson.fromJson(json, RegisterMessage.class);
-            registerHandler.handleRegister(ctx, regMsg, ip, port);
+            registerHandler.handleRegister(ctx, msg, ip, port);
         } else if ("unregister".equals(type)) {
             UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
             unregisterHandler.handleUnregister(ctx, unregMsg);

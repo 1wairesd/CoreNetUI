@@ -31,8 +31,13 @@ public class RegisterHandler {
         this.commandRegisterService = nettyServer.getCommandRegistrationService();
     }
 
-    public void handleRegister(ChannelHandlerContext ctx, RegisterMessage regMsg, String ip, int port) {
-        if (regMsg.secret() == null || !regMsg.secret().equals(Settings.getSecretCode())) {
+    public void handleRegister(ChannelHandlerContext ctx, String message, String ip, int port) {
+        RegisterMessage<CommandDefinition> registerMessage = gson.fromJson(
+            message,
+            new TypeToken<RegisterMessage<CommandDefinition>>(){}.getType()
+        );
+
+        if (registerMessage.secret() == null || !registerMessage.secret().equals(Settings.getSecretCode())) {
             ctx.writeAndFlush("Error: Invalid secret code");
             dbManager.incrementFailedAttempt(ip);
             ctx.close();
@@ -43,15 +48,30 @@ public class RegisterHandler {
             handler.setAuthenticated(true);
             dbManager.resetAttempts(ip);
             if (Settings.isDebugAuthentication()) {
-                logger.info("Client {} IP - {} Port - {} authenticated successfully", regMsg.serverName(), ip, port);
+                logger.info("Client {} IP - {} Port - {} authenticated successfully", 
+                    registerMessage.serverName(), ip, port);
             }
         }
 
-        nettyServer.setServerName(ctx.channel(), regMsg.serverName());
-        if (regMsg.commands() != null && !regMsg.commands().isEmpty()) {
-            var commandsElement = gson.toJsonTree(regMsg.commands());
-            List<CommandDefinition> commandDefinitions = gson.fromJson(commandsElement, new TypeToken<List<CommandDefinition>>() {}.getType());
-            commandRegisterService.registerCommands(regMsg.serverName(), commandDefinitions, ctx.channel());
+        String serverName = registerMessage.serverName();
+        String pluginName = registerMessage.pluginName();
+        List<CommandDefinition> commands = registerMessage.commands();
+
+        nettyServer.setServerName(ctx.channel(), serverName);
+
+        if (commands != null && !commands.isEmpty()) {
+            for (CommandDefinition cmd : commands) {
+                commandRegisterService.registerCommands(serverName, List.of(cmd), ctx.channel());
+                
+                if (pluginName != null && !pluginName.isEmpty()) {
+                    nettyServer.registerAddonCommand(cmd.name(), pluginName);
+                }
+                
+                if (Settings.isDebugCommandRegistrations()) {
+                    logger.info("Registered command '{}' from plugin '{}' for server '{}'",
+                            cmd.name(), pluginName, serverName);
+                }
+            }
         }
     }
 }

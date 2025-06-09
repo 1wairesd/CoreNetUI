@@ -20,7 +20,7 @@ public class PlaceholderUtils {
 
     public static String substitutePlaceholders(String template, Map<String, String> values) {
         String result = template;
-        String offlineMessage = Messages.getMessage("offline-player", null);
+        String offlineMessage = Messages.getMessage(Messages.Keys.OFFLINE_PLAYER, null);
 
         for (Map.Entry<String, String> entry : values.entrySet()) {
             String placeholder = entry.getKey();

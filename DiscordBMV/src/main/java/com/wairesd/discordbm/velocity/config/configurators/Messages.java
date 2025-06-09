@@ -1,28 +1,37 @@
 package com.wairesd.discordbm.velocity.config.configurators;
 
-import com.wairesd.discordbm.common.utils.color.ColorUtils;
-import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import net.kyori.adventure.text.ComponentLike;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
-import org.spongepowered.configurate.CommentedConfigurationNode;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import com.wairesd.discordbm.common.utils.color.MessageContext;
+import net.kyori.adventure.text.Component;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
 
 public class Messages {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static Path dataDirectory;
     private static final String MESSAGES_FILE_NAME = "messages.yml";
     public static final String DEFAULT_MESSAGE = "Message not found.";
 
-    private static Path dataDirectory;
-    private static CommentedConfigurationNode messagesConfig;
-    private static YamlConfigurationLoader loader;
+    public static final class Keys {
+        public static final String NO_PERMISSION = "no-permission";
+        public static final String RELOAD_SUCCESS = "reload-success";
+        public static final String COMMAND_UNAVAILABLE = "command-unavailable";
+        public static final String OFFLINE_PLAYER = "offline-player";
+
+        public static final String HELP_HEADER = "help-header";
+        public static final String HELP_RELOAD = "help-reload";
+        public static final String HELP_CUSTOM_COMMANDS = "help-custom-commands";
+        public static final String HELP_ADDONS_COMMANDS = "help-addons-commands";
+
+        public static final String CUSTOM_COMMANDS_EMPTY = "custom-commands-empty";
+        public static final String CUSTOM_COMMANDS_HEADER = "custom-commands-header";
+        public static final String CUSTOM_COMMANDS_ENTRY = "custom-commands-entry";
+
+        public static final String ADDONS_COMMANDS_EMPTY = "addons-commands-empty";
+        public static final String ADDONS_COMMANDS_HEADER = "addons-commands-header";
+        public static final String ADDONS_COMMANDS_PLUGIN = "addons-commands-plugin";
+        public static final String ADDONS_COMMANDS_ENTRY = "addons-commands-entry";
+    }
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
@@ -30,51 +39,35 @@ public class Messages {
     }
 
     private static void loadMessages() {
-        CompletableFuture.runAsync(() -> {
-            try {
-                Path messagesPath = dataDirectory.resolve(MESSAGES_FILE_NAME);
-                if (!Files.exists(messagesPath)) {
-                    createDefaultMessagesFile(messagesPath);
-                }
-
-                loader = YamlConfigurationLoader.builder()
-                        .path(messagesPath)
-                        .build();
-
-                messagesConfig = loader.load();
-            } catch (Exception e) {
-                logger.error("Error loading {}: {}", MESSAGES_FILE_NAME, e.getMessage(), e);
-            }
-        });
-    }
-
-    private static void createDefaultMessagesFile(Path messagesPath) throws IOException {
-        Files.createDirectories(dataDirectory);
-        try (InputStream in = Messages.class.getClassLoader().getResourceAsStream(MESSAGES_FILE_NAME)) {
-            if (in != null) {
-                Files.copy(in, messagesPath);
-            } else {
-                logger.error("{} not found in resources!", MESSAGES_FILE_NAME);
-            }
+        try {
+            com.wairesd.discordbm.common.utils.MessagesUN.load(new File(dataDirectory.toFile(), MESSAGES_FILE_NAME));
+        } catch (IOException e) {
+            System.err.println("Error loading messages.yml: " + e.getMessage());
         }
     }
 
     public static void reload() {
-        CompletableFuture.runAsync(() -> {
-            logger.info("{} reloaded successfully", MESSAGES_FILE_NAME);
-        });
+        loadMessages();
     }
 
+    public static String get(String key, Object... args) {
+        return com.wairesd.discordbm.common.utils.MessagesUN.get(key, args);
+    }
 
-    public static @NotNull ComponentLike getParsedMessage(String key, String defaultValue) {
-        String message = getMessage(key, defaultValue);
-        return ColorUtils.parseComponent(message);
+    public static String getFormatted(String key, MessageContext context, Object... args) {
+        return com.wairesd.discordbm.common.utils.MessagesUN.getFormatted(key, context, args);
+    }
+
+    public static Component getComponent(String key, MessageContext context, Object... args) {
+        return com.wairesd.discordbm.common.utils.MessagesUN.getComponent(key, context, args);
+    }
+
+    public static String getMessage(String key) {
+        return getMessage(key, DEFAULT_MESSAGE);
     }
 
     public static String getMessage(String key, String defaultValue) {
-        if (messagesConfig == null) {
-            return defaultValue != null ? defaultValue : DEFAULT_MESSAGE;
-        }
-        return messagesConfig.node(key).getString(defaultValue != null ? defaultValue : DEFAULT_MESSAGE);
+        String value = com.wairesd.discordbm.common.utils.MessagesUN.get(key);
+        return (value != null && !value.equals(key)) ? value : defaultValue;
     }
 }
