@@ -6,6 +6,7 @@ import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.models.pages.Page;
 import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersResolved;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.EmbedFactoryUtils;
+import com.wairesd.discordbm.velocity.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
@@ -46,8 +47,8 @@ public class SendPageAction implements CommandAction {
                     .thenAccept(context::setEmbed);
         }
         else if (page.getContent() != null) {
-            context.setMessageText(page.getContent());
-            return CompletableFuture.completedFuture(null);
+            return MessageFormatterUtils.format(page.getContent(), context.getEvent(), context, false)
+                    .thenAccept(context::setMessageText);
         }
         else {
             context.setMessageText("Invalid page configuration - no content or embed found. (ID=" + pageId + ")");
