@@ -103,16 +103,20 @@ public class ButtonInteractionListener extends ListenerAdapter {
                         });
             } else {
                 String content = page.getContent();
-                List<Button> buttons = new ArrayList<>();
-                for (ButtonConfig buttonConfig : page.getButtons()) {
-                    String label = buttonConfig.getLabel();
-                    String targetPage = buttonConfig.getTargetPage();
-                    String newButtonId = "goto:" + targetPage;
-                    buttons.add(Button.primary(newButtonId, label));
-                }
-                event.getHook().editOriginal(content)
-                        .setComponents(ActionRow.of(buttons))
-                        .queue();
+                Context context = new Context(event);
+                MessageFormatterUtils.format(content, event, context, false)
+                        .thenAccept(formattedContent -> {
+                            List<Button> buttons = new ArrayList<>();
+                            for (ButtonConfig buttonConfig : page.getButtons()) {
+                                String label = buttonConfig.getLabel();
+                                String targetPage = buttonConfig.getTargetPage();
+                                String newButtonId = "goto:" + targetPage;
+                                buttons.add(Button.primary(newButtonId, label));
+                            }
+                            event.getHook().editOriginal(formattedContent)
+                                    .setComponents(ActionRow.of(buttons))
+                                    .queue();
+                        });
             }
             return;
         }
