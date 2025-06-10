@@ -49,8 +49,8 @@ public class BootstrapDBMB {
     }
 
     private void registerCommands() {
-        plugin.getCommand("discordBMB").setExecutor(new CommandAdmin(plugin));
-        plugin.getCommand("discordBMB").setTabCompleter(new CommandAdmin(plugin));
+        plugin.getCommand("DiscordBMB").setExecutor(new CommandAdmin(plugin));
+        plugin.getCommand("DiscordBMB").setTabCompleter(new CommandAdmin(plugin));
         logger.info("Commands registered");
     }
 

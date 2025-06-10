@@ -6,16 +6,19 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.sub.ReloadCommand;
 import com.wairesd.discordbm.velocity.commands.sub.CommandsCommand;
+import com.wairesd.discordbm.velocity.commands.sub.HelpCommand;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
     private final CommandsCommand commandsCommand;
+    private final HelpCommand helpCommand;
 
     public CommandAdmin(DiscordBMV plugin) {
         this.reloadCommand = new ReloadCommand(plugin);
         this.commandsCommand = new CommandsCommand(plugin);
+        this.helpCommand = new HelpCommand();
     }
 
     @Override
@@ -32,6 +35,7 @@ public class CommandAdmin implements SimpleCommand {
         switch (args[0].toLowerCase()) {
             case "reload" -> reloadCommand.execute(source, context);
             case "commands" -> commandsCommand.execute(source, args, context);
+            case "help" -> helpCommand.execute(source, context);
             default -> showHelp(source, context);
         }
     }
