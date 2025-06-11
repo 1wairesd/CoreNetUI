@@ -2,7 +2,7 @@ package com.wairesd.discordbm.velocity.config.configurators;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.velocity.commandbuilder.buttons.model.ButtonConfig;
+import com.wairesd.discordbm.velocity.commandbuilder.components.buttons.model.ButtonConfig;
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.pages.Page;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;

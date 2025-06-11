@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.core.models.context;
 
-import com.wairesd.discordbm.velocity.commandbuilder.buttons.model.ButtonData;
+import com.wairesd.discordbm.velocity.commandbuilder.components.buttons.model.ButtonData;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;

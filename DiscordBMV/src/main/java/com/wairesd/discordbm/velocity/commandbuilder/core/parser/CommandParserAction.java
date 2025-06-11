@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.core.parser;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commandbuilder.buttons.action.ButtonAction;
+import com.wairesd.discordbm.velocity.commandbuilder.components.buttons.action.ButtonAction;
 import com.wairesd.discordbm.velocity.commandbuilder.interaction.components.EditComponentAction;
 import com.wairesd.discordbm.velocity.commandbuilder.interaction.messages.DeleteMessageAction;
 import com.wairesd.discordbm.velocity.commandbuilder.interaction.messages.SendMessageAction;
@@ -10,7 +10,7 @@ import com.wairesd.discordbm.velocity.commandbuilder.interaction.placeholders.Re
 import com.wairesd.discordbm.velocity.commandbuilder.interaction.roles.AddRoleAction;
 import com.wairesd.discordbm.velocity.commandbuilder.interaction.roles.RemoveRoleAction;
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.actions.CommandAction;
-import com.wairesd.discordbm.velocity.commandbuilder.forms.action.SendFormAction;
+import com.wairesd.discordbm.velocity.commandbuilder.components.forms.action.SendFormAction;
 
 import java.util.Map;
 

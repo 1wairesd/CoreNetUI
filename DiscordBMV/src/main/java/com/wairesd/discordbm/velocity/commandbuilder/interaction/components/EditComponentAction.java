@@ -2,7 +2,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.interaction.components;
 
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.context.Context;
-import com.wairesd.discordbm.velocity.commandbuilder.buttons.component.ButtonEditor;
+import com.wairesd.discordbm.velocity.commandbuilder.components.buttons.component.ButtonEditor;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.message.MessageComponentFetcher;
 import com.wairesd.discordbm.velocity.commandbuilder.utils.message.MessageUpdater;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;

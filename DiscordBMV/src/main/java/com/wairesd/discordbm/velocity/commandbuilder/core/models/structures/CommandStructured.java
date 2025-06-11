@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.core.models.structures;
 
-import com.wairesd.discordbm.velocity.commandbuilder.forms.action.SendFormAction;
+import com.wairesd.discordbm.velocity.commandbuilder.components.forms.action.SendFormAction;
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.conditions.CommandCondition;
 import com.wairesd.discordbm.velocity.commandbuilder.core.models.options.CommandOptions;

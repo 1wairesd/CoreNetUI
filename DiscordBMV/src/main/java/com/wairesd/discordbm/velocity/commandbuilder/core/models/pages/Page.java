@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.core.models.pages;
 
-import com.wairesd.discordbm.velocity.commandbuilder.buttons.model.ButtonConfig;
+import com.wairesd.discordbm.velocity.commandbuilder.components.buttons.model.ButtonConfig;
 
 import java.util.List;
 import java.util.Map;
