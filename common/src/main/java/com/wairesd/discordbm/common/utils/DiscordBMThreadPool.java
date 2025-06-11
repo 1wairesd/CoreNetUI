@@ -30,13 +30,23 @@ public class DiscordBMThreadPool {
         }
     }
 
+    public boolean isShutdown() {
+        return executor.isShutdown();
+    }
+
+    public boolean isTerminated() {
+        return executor.isTerminated();
+    }
+
     private static class DiscordBMThreadFactory implements ThreadFactory {
         private final AtomicInteger count = new AtomicInteger(1);
+
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setName("DiscordBM-Pool-" + count.getAndIncrement());
+            t.setDaemon(true);
             return t;
         }
     }
-} 
+}

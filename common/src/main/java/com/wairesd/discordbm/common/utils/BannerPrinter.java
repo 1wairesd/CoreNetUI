@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.common.utils;
 
-public class BannerPrinter {
+public final class BannerPrinter {
 
     private static final String ANSI_RESET  = "\u001B[0m";
     private static final String ANSI_PURPLE = "\u001B[35m";
@@ -8,7 +8,12 @@ public class BannerPrinter {
     private static final String ANSI_WHITE  = "\u001B[37m";
 
     public enum Platform {
-        BUKKIT, VELOCITY
+        BUKKIT, VELOCITY;
+
+        @Override
+        public String toString() {
+            return name().charAt(0) + name().substring(1).toLowerCase();
+        }
     }
 
     public static void printBanner(Platform platform) {
@@ -19,7 +24,7 @@ public class BannerPrinter {
         System.out.println(ANSI_PURPLE + "|____/  " + ANSI_RED + "|_|  |_|" + ANSI_RESET);
         System.out.println();
         System.out.println(ANSI_WHITE + "    DiscordBMV v1.0" + ANSI_RESET);
-        System.out.println(ANSI_WHITE + "    Running on " + platform.name().charAt(0) + platform.name().substring(1).toLowerCase() + ANSI_RESET);
+        System.out.println(ANSI_WHITE + "    Running on " + platform + ANSI_RESET);
         System.out.println();
     }
 }
