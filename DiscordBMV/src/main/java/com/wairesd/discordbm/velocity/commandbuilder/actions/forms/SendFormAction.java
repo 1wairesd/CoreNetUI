@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commandbuilder.actions.forms;
 
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commandbuilder.builder.FormBuilder;
+import com.wairesd.discordbm.velocity.commandbuilder.builder.CommandFormBuilder;
 import com.wairesd.discordbm.velocity.commandbuilder.models.actions.CommandAction;
 import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
 import com.wairesd.discordbm.velocity.commandbuilder.repository.FormRepository;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class SendFormAction implements CommandAction {
     private final String formName;
     private final FormRepository formRepository = new FormRepository();
-    private final FormBuilder formBuilder = new FormBuilder();
+    private final CommandFormBuilder formBuilder = new CommandFormBuilder();
     private final ModalSender modalSender = new ModalSender();
 
     public SendFormAction(Map<String, Object> properties) {

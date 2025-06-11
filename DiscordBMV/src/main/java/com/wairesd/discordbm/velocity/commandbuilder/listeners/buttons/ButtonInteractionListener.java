@@ -3,7 +3,7 @@ package com.wairesd.discordbm.velocity.commandbuilder.listeners.buttons;
 import com.google.gson.Gson;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commandbuilder.actions.buttons.ButtonActionService;
-import com.wairesd.discordbm.velocity.commandbuilder.builder.FormModalBuilder;
+import com.wairesd.discordbm.velocity.commandbuilder.builder.ButtonFormBuilder;
 import com.wairesd.discordbm.velocity.commandbuilder.checker.RoleChecker;
 import com.wairesd.discordbm.velocity.commandbuilder.models.buttons.ButtonConfig;
 import com.wairesd.discordbm.velocity.commandbuilder.models.buttons.FormButtonData;
@@ -33,7 +33,7 @@ import static com.wairesd.discordbm.velocity.DiscordBMV.pageMap;
 public class ButtonInteractionListener extends ListenerAdapter {
     private final ButtonActionService actionService = new ButtonActionService();
     private final RoleChecker permissionChecker = new RoleChecker();
-    private final FormModalBuilder modalBuilder = new FormModalBuilder();
+    private final ButtonFormBuilder modalBuilder = new ButtonFormBuilder();
     private final ButtonResponseHandler responseHandler = new ButtonResponseHandler();
     private final NettyServer nettyServer;
 
@@ -105,18 +105,18 @@ public class ButtonInteractionListener extends ListenerAdapter {
                 String content = page.getContent();
                 Context context = new Context(event);
                 MessageFormatterUtils.format(content, event, context, false)
-                        .thenAccept(formattedContent -> {
-                            List<Button> buttons = new ArrayList<>();
-                            for (ButtonConfig buttonConfig : page.getButtons()) {
-                                String label = buttonConfig.getLabel();
-                                String targetPage = buttonConfig.getTargetPage();
-                                String newButtonId = "goto:" + targetPage;
-                                buttons.add(Button.primary(newButtonId, label));
-                            }
-                            event.getHook().editOriginal(formattedContent)
-                                    .setComponents(ActionRow.of(buttons))
-                                    .queue();
-                        });
+                    .thenAccept(formattedContent -> {
+                        List<Button> buttons = new ArrayList<>();
+                        for (ButtonConfig buttonConfig : page.getButtons()) {
+                            String label = buttonConfig.getLabel();
+                            String targetPage = buttonConfig.getTargetPage();
+                            String newButtonId = "goto:" + targetPage;
+                            buttons.add(Button.primary(newButtonId, label));
+                        }
+                        event.getHook().editOriginal(formattedContent)
+                                .setComponents(ActionRow.of(buttons))
+                                .queue();
+                    });
             }
             return;
         }
