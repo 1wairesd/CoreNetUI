@@ -2,11 +2,11 @@ package com.wairesd.discordbm.velocity.commandbuilder.utils;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersChannel;
-import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersResolved;
-import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersServer;
-import com.wairesd.discordbm.velocity.commandbuilder.models.placeholders.PlaceholdersUser;
-import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.placeholders.PlaceholdersChannel;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.placeholders.PlaceholdersResolved;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.placeholders.PlaceholdersServer;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.placeholders.PlaceholdersUser;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.context.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.velocity.commandbuilder.utils;
 
-import com.wairesd.discordbm.velocity.commandbuilder.models.context.Context;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.context.Context;
 
 public class ContextUtils {
     public static void validate(Context context) {

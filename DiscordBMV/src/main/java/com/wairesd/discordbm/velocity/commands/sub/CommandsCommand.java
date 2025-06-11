@@ -2,7 +2,7 @@ package com.wairesd.discordbm.velocity.commands.sub;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.wairesd.discordbm.velocity.DiscordBMV;
-import com.wairesd.discordbm.velocity.commandbuilder.models.structures.CommandStructured;
+import com.wairesd.discordbm.velocity.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.velocity.config.configurators.Commands;
 import com.wairesd.discordbm.velocity.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;

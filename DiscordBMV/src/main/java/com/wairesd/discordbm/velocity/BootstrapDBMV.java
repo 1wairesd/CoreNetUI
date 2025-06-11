@@ -2,9 +2,9 @@ package com.wairesd.discordbm.velocity;
 
 import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-import com.wairesd.discordbm.velocity.commandbuilder.CommandManager;
-import com.wairesd.discordbm.velocity.commandbuilder.listeners.buttons.ButtonInteractionListener;
-import com.wairesd.discordbm.velocity.commandbuilder.listeners.modals.ModalInteractionListener;
+import com.wairesd.discordbm.velocity.commandbuilder.commands.core.CommandManager;
+import com.wairesd.discordbm.velocity.commandbuilder.buttons.listener.ButtonInteractionListener;
+import com.wairesd.discordbm.velocity.commandbuilder.forms.listener.FormInteractionListener;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.velocity.config.ConfigManager;
 import com.wairesd.discordbm.velocity.config.configurators.Settings;
@@ -87,7 +87,7 @@ public class BootstrapDBMV {
 
         logger.info("Discord bot initialized");
         jda.addEventListener(new ButtonInteractionListener(nettyServer));
-        jda.addEventListener(new ModalInteractionListener());
+        jda.addEventListener(new FormInteractionListener());
 
         nettyServer.setJda(jda);
         DiscordBotListener listener = new DiscordBotListener(plugin, nettyServer, logger);
