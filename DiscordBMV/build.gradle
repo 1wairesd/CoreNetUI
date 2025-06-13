@@ -27,7 +27,6 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':api')
-    implementation project(':DiscordBMB')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
