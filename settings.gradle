@@ -3,6 +3,17 @@ pluginManagement {
         id 'org.jetbrains.kotlin.jvm' version '2.1.20'
     }
 }
+
 rootProject.name = 'DiscordBM'
 
-include ':common', ':DiscordBMB', ':DiscordBMV', ':api'
+include(
+        ':api',
+        ':api:client-api',
+        ':api:host-api',
+        ':common',
+        ':common:api-common',
+        ':common:client-common',
+        ':common:host-common',
+        ':DiscordBMB',
+        ':DiscordBMV'
+)

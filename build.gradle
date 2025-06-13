@@ -41,21 +41,23 @@ subprojects {
         options.release.set(17)
     }
 
-    tasks.shadowJar {
-        archiveClassifier.set('')
-        mergeServiceFiles()
-    }
+    if (project.name in ['DiscordBMB', 'DiscordBMV']) {
+        tasks.shadowJar {
+            archiveClassifier.set('')
+            mergeServiceFiles()
+        }
 
-    tasks.build {
-        dependsOn(tasks.shadowJar)
-    }
+        tasks.build {
+            dependsOn(tasks.shadowJar)
+        }
 
-    processResources {
-        def props = [version: version]
-        inputs.properties props
-        filteringCharset 'UTF-8'
-        filesMatching('plugin.yml') {
-            expand props
+        processResources {
+            def props = [version: version]
+            inputs.properties props
+            filteringCharset 'UTF-8'
+            filesMatching(['plugin.yml', 'velocity-plugin.json']) {
+                expand props
+            }
         }
     }
 }
