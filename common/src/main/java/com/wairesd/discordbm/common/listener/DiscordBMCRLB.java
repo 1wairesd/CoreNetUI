@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.api.listener;
+package com.wairesd.discordbm.common.listener;
 
 // Class name: Discord Bot Manager Command Registration Listener Bukkit
 public interface DiscordBMCRLB {

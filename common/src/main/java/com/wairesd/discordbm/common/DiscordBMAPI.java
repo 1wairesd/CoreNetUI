@@ -1,13 +1,13 @@
-package com.wairesd.discordbm.api;
+package com.wairesd.discordbm.common;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.api.commandbuilder.CommandRegister;
-import com.wairesd.discordbm.api.commandbuilder.CommandUnregister;
-import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.api.listener.DiscordBMCRLB;
-import com.wairesd.discordbm.api.models.command.Command;
-import com.wairesd.discordbm.api.network.NettyService;
-import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.commandbuilder.CommandRegister;
+import com.wairesd.discordbm.common.commandbuilder.CommandUnregister;
+import com.wairesd.discordbm.common.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.common.listener.DiscordBMCRLB;
+import com.wairesd.discordbm.common.models.command.Command;
+import com.wairesd.discordbm.common.network.NettyService;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;

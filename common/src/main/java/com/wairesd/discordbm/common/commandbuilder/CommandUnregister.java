@@ -1,7 +1,7 @@
-package com.wairesd.discordbm.api.commandbuilder;
+package com.wairesd.discordbm.common.commandbuilder;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 

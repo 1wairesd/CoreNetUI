@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
-import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.DiscordBMAPI;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;

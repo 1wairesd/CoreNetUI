@@ -1,7 +1,7 @@
-package com.wairesd.discordbm.api.commandbuilder;
+package com.wairesd.discordbm.common.commandbuilder;
 
-import com.wairesd.discordbm.api.models.command.Command;
-import com.wairesd.discordbm.api.models.command.CommandOption;
+import com.wairesd.discordbm.common.models.command.Command;
+import com.wairesd.discordbm.common.models.command.CommandOption;
 
 import java.util.ArrayList;
 import java.util.Collections;

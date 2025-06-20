@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.api.models.request;
+package com.wairesd.discordbm.common.models.request;
 
 import java.util.Map;
 

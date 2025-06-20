@@ -21,6 +21,9 @@ repositories {
 }
 
 dependencies {
+    implementation project(':api')
+
+    implementation("io.netty:netty-all:4.2.1.Final")
     implementation("org.apache.logging.log4j:log4j-core:2.24.3")
     implementation("org.apache.logging.log4j:log4j-api:2.24.3")
     implementation("org.slf4j:slf4j-api:2.0.17")

@@ -1,10 +1,10 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.api.listener.DiscordBMCRLB;
-import com.wairesd.discordbm.api.models.command.Command;
-import com.wairesd.discordbm.api.network.NettyService;
-import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.common.listener.DiscordBMCRLB;
+import com.wairesd.discordbm.common.models.command.Command;
+import com.wairesd.discordbm.common.network.NettyService;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;

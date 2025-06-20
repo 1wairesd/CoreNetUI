@@ -1,8 +1,8 @@
-package com.wairesd.discordbm.api.network;
+package com.wairesd.discordbm.common.network;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.api.models.command.Command;
-import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.models.command.Command;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;

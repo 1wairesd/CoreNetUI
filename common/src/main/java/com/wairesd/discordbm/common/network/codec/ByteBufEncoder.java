@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.api.network.codec;
+package com.wairesd.discordbm.common.network.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,8 +1,8 @@
-package com.wairesd.discordbm.api.commandbuilder;
+package com.wairesd.discordbm.common.commandbuilder;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.api.platform.Platform;
-import com.wairesd.discordbm.api.models.command.Command;
+import com.wairesd.discordbm.common.platform.Platform;
+import com.wairesd.discordbm.common.models.command.Command;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 

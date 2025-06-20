@@ -21,9 +21,6 @@ repositories {
 }
 
 dependencies {
-    api project(':common')
-
-    implementation("io.netty:netty-all:4.2.1.Final")
     implementation("org.jetbrains:annotations:15.0")
     implementation("net.kyori:adventure-api:4.21.0")
 

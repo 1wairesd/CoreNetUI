@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.api.models.command;
+package com.wairesd.discordbm.common.models.command;
 
 public class CommandOption {
     private final String name;

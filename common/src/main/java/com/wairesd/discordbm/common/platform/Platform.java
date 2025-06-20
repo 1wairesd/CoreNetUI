@@ -1,9 +1,9 @@
-package com.wairesd.discordbm.api.platform;
+package com.wairesd.discordbm.common.platform;
 
-import com.wairesd.discordbm.api.listener.DiscordBMCRLB;
-import com.wairesd.discordbm.api.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.api.models.command.Command;
-import com.wairesd.discordbm.api.network.NettyService;
+import com.wairesd.discordbm.common.listener.DiscordBMCRLB;
+import com.wairesd.discordbm.common.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.common.models.command.Command;
+import com.wairesd.discordbm.common.network.NettyService;
 
 import java.util.List;
 import java.util.Map;

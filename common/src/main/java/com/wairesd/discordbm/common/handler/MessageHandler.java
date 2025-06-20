@@ -1,8 +1,8 @@
-package com.wairesd.discordbm.api.handler;
+package com.wairesd.discordbm.common.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.wairesd.discordbm.api.platform.Platform;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;

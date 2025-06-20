@@ -1,11 +1,11 @@
-package com.wairesd.discordbm.api.network;
+package com.wairesd.discordbm.common.network;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.api.network.codec.ByteBufDecoder;
-import com.wairesd.discordbm.api.network.codec.ByteBufEncoder;
-import com.wairesd.discordbm.api.platform.Platform;
-import com.wairesd.discordbm.api.handler.MessageHandler;
-import com.wairesd.discordbm.api.models.command.Command;
+import com.wairesd.discordbm.common.network.codec.ByteBufDecoder;
+import com.wairesd.discordbm.common.network.codec.ByteBufEncoder;
+import com.wairesd.discordbm.common.platform.Platform;
+import com.wairesd.discordbm.common.handler.MessageHandler;
+import com.wairesd.discordbm.common.models.command.Command;
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
