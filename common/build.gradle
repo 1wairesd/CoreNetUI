@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'maven-publish'
 }
 
 group = 'com.wairesd.discordbm'
@@ -13,32 +12,23 @@ repositories {
 dependencies {
     implementation project(':api')
 
-    implementation("io.netty:netty-all:4.1.86.Final")
+    implementation("io.netty:netty-all:4.2.2.Final")
     implementation("org.yaml:snakeyaml:2.0")
-    implementation("org.apache.logging.log4j:log4j-api:2.20.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.apache.logging.log4j:log4j-api:2.25.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
+    implementation("net.kyori:adventure-text-minimessage:4.23.0")
+    implementation("net.kyori:adventure-api:4.23.0")
+    implementation("com.google.code.gson:gson:2.13.1")
     implementation("org.slf4j:slf4j-api:1.7.36")
-    implementation("net.kyori:adventure-api:4.14.0")
-    implementation project(':api')
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
 }
 
 tasks.withType(JavaCompile) {
