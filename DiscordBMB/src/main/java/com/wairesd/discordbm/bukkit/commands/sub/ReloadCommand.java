@@ -1,6 +1,5 @@
 package com.wairesd.discordbm.bukkit.commands.sub;
 
-import com.wairesd.discordbm.api.event.EventBus;
 import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
@@ -23,12 +22,24 @@ public class ReloadCommand {
         ConfigManager configManager = new ConfigManager(plugin);
         configManager.reloadConfigs();
 
-        if (plugin.getPlatform() != null && plugin.getNettyService() != null 
-            && plugin.getNettyService().getNettyClient() != null 
-            && plugin.getNettyService().getNettyClient().isActive()) {
+        if (plugin.getPlatform() != null && 
+            plugin.getPlatform().getNettyService() != null &&
+            plugin.getPlatform().getNettyService().getNettyClient() != null && 
+            plugin.getPlatform().getNettyService().getNettyClient().isActive()) {
             
-            EventBus.post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETTY));
-            EventBus.post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
+            // Fire reload event using the new API
+            if (DiscordBMB.getApi() != null) {
+                // Fire reload events
+                DiscordBMReloadEvent configEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG);
+                DiscordBMReloadEvent networkEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK);
+                DiscordBMReloadEvent commandsEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS);
+                
+                DiscordBMB.getApi().getEventRegistry().fireEvent(configEvent);
+                DiscordBMB.getApi().getEventRegistry().fireEvent(networkEvent);
+                DiscordBMB.getApi().getEventRegistry().fireEvent(commandsEvent);
+                
+                plugin.getPluginLogger().info("Fired reload events");
+            }
         }
 
         sender.sendMessage(Messages.getMessage(Messages.Keys.RELOAD_SUCCESS));

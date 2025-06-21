@@ -6,7 +6,7 @@ public class EmbedDefinition {
     private final String title;
     private final String description;
     private final Integer color;
-    private final List<EmbedField> fields;
+    private final List<EmbedFieldd> fields;
 
     private EmbedDefinition(Builder builder) {
         this.title = builder.title;
@@ -26,7 +26,7 @@ public class EmbedDefinition {
         return color;
     }
 
-    public List<EmbedField> fields() {
+    public List<EmbedFieldd> fields() {
         return fields;
     }
 
@@ -34,7 +34,7 @@ public class EmbedDefinition {
         private String title;
         private String description;
         private Integer color;
-        private List<EmbedField> fields;
+        private List<EmbedFieldd> fields;
 
         public Builder title(String title) {
             this.title = title;
@@ -51,7 +51,7 @@ public class EmbedDefinition {
             return this;
         }
 
-        public Builder fields(List<EmbedField> fields) {
+        public Builder fields(List<EmbedFieldd> fields) {
             this.fields = fields;
             return this;
         }

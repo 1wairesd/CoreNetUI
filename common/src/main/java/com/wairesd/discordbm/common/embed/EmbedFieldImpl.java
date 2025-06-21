@@ -1,50 +1,60 @@
-package com.wairesd.discordbm.common.models.embed;
+package com.wairesd.discordbm.common.embed;
 
-public class EmbedField {
+import com.wairesd.discordbm.api.embed.EmbedField;
+
+public class EmbedFieldImpl implements EmbedField {
+    
     private final String name;
     private final String value;
     private final boolean inline;
-
-    private EmbedField(Builder builder) {
+    
+    private EmbedFieldImpl(Builder builder) {
         this.name = builder.name;
         this.value = builder.value;
         this.inline = builder.inline;
     }
-
-    public String name() {
+    
+    @Override
+    public String getName() {
         return name;
     }
-
-    public String value() {
+    
+    @Override
+    public String getValue() {
         return value;
     }
-
-    public boolean inline() {
+    
+    @Override
+    public boolean isInline() {
         return inline;
     }
 
-    public static class Builder {
+    public static class Builder implements EmbedField.Builder {
         private String name;
         private String value;
         private boolean inline;
-
+        
+        @Override
         public Builder name(String name) {
             this.name = name;
             return this;
         }
-
+        
+        @Override
         public Builder value(String value) {
             this.value = value;
             return this;
         }
-
+        
+        @Override
         public Builder inline(boolean inline) {
             this.inline = inline;
             return this;
         }
-
+        
+        @Override
         public EmbedField build() {
-            return new EmbedField(this);
+            return new EmbedFieldImpl(this);
         }
     }
-}
+} 

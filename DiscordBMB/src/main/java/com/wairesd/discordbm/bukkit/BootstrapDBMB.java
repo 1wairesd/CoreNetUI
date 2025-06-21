@@ -1,13 +1,15 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.common.DiscordBMAPI;
-import com.wairesd.discordbm.common.platform.Platform;
+import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
 import com.wairesd.discordbm.bukkit.config.configurators.Settings;
+import com.wairesd.discordbm.common.DiscordBMAPIImpl;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
+
 
 public class BootstrapDBMB {
     private final DiscordBMB plugin;
@@ -43,8 +45,15 @@ public class BootstrapDBMB {
     }
 
     private void initApi() {
-        DiscordBMAPI api = new DiscordBMAPI(plugin.getPlatform(), logger);
+        DiscordBMAPI api = new DiscordBMAPIImpl(plugin.getPlatform(), logger);
         DiscordBMB.setApi(api);
+
+        Bukkit.getServicesManager().register(DiscordBMAPI.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
+
+        if (plugin.getPlatform() instanceof BukkitPlatform) {
+            ((BukkitPlatform) plugin.getPlatform()).logAllRegisteredServices();
+        }
+        
         logger.info("DiscordBM API initialized");
     }
 
@@ -57,7 +66,6 @@ public class BootstrapDBMB {
     private void initNettyAsync() {
         Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getPlatform().getNettyService().initializeNettyClient();
-            plugin.setNettyService(plugin.getPlatform().getNettyService());
             logger.info("Netty client initialized asynchronously");
         });
     }

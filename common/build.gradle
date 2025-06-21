@@ -1,44 +1,50 @@
 plugins {
-    id 'java-library'
+    id 'java'
     id 'maven-publish'
 }
 
 group = 'com.wairesd.discordbm'
-version = '1.0'
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId = 'common'
-        }
-    }
-}
+version = '1.0.0'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.papermc.io/repository/maven-public/' }
 }
 
 dependencies {
     implementation project(':api')
 
-    implementation("io.netty:netty-all:4.2.1.Final")
-    implementation("org.apache.logging.log4j:log4j-core:2.24.3")
-    implementation("org.apache.logging.log4j:log4j-api:2.24.3")
-    implementation("org.slf4j:slf4j-api:2.0.17")
-    implementation("net.kyori:adventure-api:4.21.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.21.0")
-    implementation("net.kyori:adventure-text-minimessage:4.21.0")
+    implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.14.0'
+    implementation 'net.kyori:adventure-text-minimessage:4.14.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'io.netty:netty-all:4.1.86.Final'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'net.kyori:adventure-api:4.14.0'
+    implementation project(':api')
 
-    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.withType(JavaCompile).configureEach {
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.release.set(17)
+}
+
+test {
+    useJUnitPlatform()
 }

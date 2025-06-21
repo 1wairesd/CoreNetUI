@@ -1,33 +1,22 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.google.gson.Gson;
-import com.wairesd.discordbm.common.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.common.listener.DiscordBMCRLB;
-import com.wairesd.discordbm.common.models.command.Command;
-import com.wairesd.discordbm.common.network.NettyService;
-import com.wairesd.discordbm.common.platform.Platform;
+import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.bukkit.config.ConfigManager;
-import com.wairesd.discordbm.bukkit.config.configurators.Settings;
 import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
-import com.wairesd.discordbm.common.DiscordBMAPI;
+import com.wairesd.discordbm.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
 
 public class DiscordBMB extends JavaPlugin {
     private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
     private static DiscordBMAPI api;
     private ConfigManager configManager;
     private Platform platform;
-    private final Map<String, DiscordCommandHandler> commandHandlers = new HashMap<>();
-    private final List<Command> addonCommands = new ArrayList<>();
     private String serverName;
-    private final Gson gson = new Gson();
     private boolean invalidSecret = false;
-    private NettyService nettyService;
     private PlaceholderService placeholderService;
 
     private BootstrapDBMB bootstrapService;
@@ -50,34 +39,10 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordBMCRLB listener, Command addonCommand) {
-        commandHandlers.put(command, handler);
-        if (addonCommand != null) {
-            synchronized (addonCommands) {
-                addonCommands.add(addonCommand);
-                if (Settings.isDebugCommandRegistrations()) {
-                    getLogger().info("Registered addon command: " + addonCommand.getName());
-                }
-            }
-        }
-        if (listener != null && platform.getNettyService().getNettyClient() != null && platform.getNettyService().getNettyClient().isActive()) {
-            listener.onNettyConnected();
-        }
-    }
-
-    public void addAddonCommand(Command command) {
-        synchronized (addonCommands) {
-            addonCommands.add(command);
-            if (Settings.isDebugCommandRegistrations()) {
-                getLogger().info("Registered addon command: " + command.getName());
-            }
-        }
-    }
-
-    public List<Command> getAddonCommands() {
-        synchronized (addonCommands) {
-            return new ArrayList<>(addonCommands);
-        }
+    public void registerCommandHandler(String command, com.wairesd.discordbm.common.handler.DiscordCommandHandler handler, 
+                                      com.wairesd.discordbm.common.listener.DiscordBMCRLB listener, 
+                                      com.wairesd.discordbm.common.models.command.Command internalCommand) {
+        platform.registerCommandHandler(command, handler, listener, internalCommand);
     }
 
     public ConfigManager getConfigManager() {
@@ -108,19 +73,11 @@ public class DiscordBMB extends JavaPlugin {
         api = apiInstance;
     }
 
-    public Map<String, DiscordCommandHandler> getCommandHandlers() {
-        return Collections.unmodifiableMap(commandHandlers);
-    }
-
-    public NettyService getNettyService() {
-        return nettyService;
-    }
-
-    public void setNettyService(NettyService nettyService) {
-        this.nettyService = nettyService;
-    }
-
     public DiscordBMThreadPool getThreadPool() {
         return threadPool;
+    }
+
+    public PluginLogger getPluginLogger() {
+        return pluginLogger;
     }
 }

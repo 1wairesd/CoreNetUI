@@ -11,7 +11,17 @@ public final class BukkitColorTranslator {
     }
 
     public static String translate(String message) {
-        return org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
+        if (!PRESENT) {
+            return message;
+        }
+        try {
+            Class<?> chatColorClass = Class.forName("org.bukkit.ChatColor");
+            return (String) chatColorClass
+                    .getMethod("translateAlternateColorCodes", char.class, String.class)
+                    .invoke(null, '&', message);
+        } catch (Exception e) {
+            return message;
+        }
     }
 
     private static boolean isBukkitPresentInternal() {

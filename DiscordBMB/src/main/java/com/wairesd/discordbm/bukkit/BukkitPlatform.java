@@ -10,6 +10,7 @@ import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.*;
 
@@ -20,6 +21,7 @@ public class BukkitPlatform implements Platform {
     private final PlaceholderService placeholderService;
     private final PluginLogger pluginLogger;
     private final Set<DiscordBMCRLB> listeners = new HashSet<>();
+    private final List<Command> addonCommands = new ArrayList<>();
 
     public BukkitPlatform(DiscordBMB plugin) {
         this.plugin = plugin;
@@ -77,7 +79,12 @@ public class BukkitPlatform implements Platform {
     public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordBMCRLB listener, Command addonCommand) {
         commandHandlers.put(command, handler);
         if (addonCommand != null) {
-            plugin.addAddonCommand(addonCommand);
+            synchronized (addonCommands) {
+                addonCommands.add(addonCommand);
+                if (Settings.isDebugCommandRegistrations()) {
+                    pluginLogger.info("Registered addon command: " + addonCommand.getName());
+                }
+            }
         }
         if (listener != null && listeners.add(listener)) {
             if (nettyService.getNettyClient() != null && nettyService.getNettyClient().isActive()) {
@@ -93,7 +100,7 @@ public class BukkitPlatform implements Platform {
         }
 
         if (listeners.isEmpty()) {
-            List<Command> commands = plugin.getAddonCommands();
+            List<Command> commands = getAddonCommands();
             if (!commands.isEmpty() && nettyService.getNettyClient() != null) {
                 nettyService.registerCommands(commands);
             }
@@ -118,5 +125,32 @@ public class BukkitPlatform implements Platform {
     @Override
     public void runTaskAsynchronously(Runnable task) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task);
+    }
+
+    public List<Command> getAddonCommands() {
+        synchronized (addonCommands) {
+            return new ArrayList<>(addonCommands);
+        }
+    }
+
+    public void logAllRegisteredServices() {
+        pluginLogger.info("=== Listing all registered services ===");
+        for (Class<?> service : Bukkit.getServicesManager().getKnownServices()) {
+            @SuppressWarnings("unchecked")
+            Collection<RegisteredServiceProvider<?>> providers = 
+                (Collection<RegisteredServiceProvider<?>>) Bukkit.getServicesManager().getRegistrations(service);
+            
+            pluginLogger.info("Service: " + service.getName());
+            if (providers != null) {
+                for (RegisteredServiceProvider<?> provider : providers) {
+                    pluginLogger.info("  - Provider: " + provider.getService().getName() + 
+                                   ", Plugin: " + provider.getPlugin().getName() +
+                                   ", Priority: " + provider.getPriority());
+                }
+            } else {
+                pluginLogger.info("  - No providers registered");
+            }
+        }
+        pluginLogger.info("=== End of service listing ===");
     }
 }
