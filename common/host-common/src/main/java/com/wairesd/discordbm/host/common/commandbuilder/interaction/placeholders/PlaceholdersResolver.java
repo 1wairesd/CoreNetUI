@@ -6,6 +6,7 @@ import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFinder;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.PlaceholderUtils;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import io.netty.channel.Channel;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,20 @@ public class PlaceholdersResolver {
     }
 
     public CompletableFuture<Void> resolvePlaceholders(String template, String playerName, Context context) {
+        if (context == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        if (Settings.isDebugResolvedMessages()) {
+            logger.info("Resolving placeholders for template: {} with player: {}", template, playerName);
+        }
+
+        List<String> placeholders = PlaceholderUtils.extractPlaceholders(template);
+        if (placeholders.isEmpty()) {
+            context.setResolvedMessage(template);
+            return CompletableFuture.completedFuture(null);
+        }
+
         if (nettyServer == null) {
             context.setResolvedMessage("NettyServer is not initialized.");
             return CompletableFuture.completedFuture(null);
@@ -39,8 +54,6 @@ public class PlaceholdersResolver {
 
         var proxy = discordHost.getVelocityProxy();
         var playerOpt = proxy.getPlayer(playerName);
-
-        List<String> placeholders = PlaceholderUtils.extractPlaceholders(template);
 
         if (playerOpt.isPresent()) {
             var player = playerOpt.get();
@@ -58,7 +71,9 @@ public class PlaceholdersResolver {
             return requestSender.sendGetPlaceholdersRequest(channel, playerName, placeholders)
                     .thenAccept(values -> {
                         String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
-                        logger.info("Resolved message: {}", resolved);
+                        if (Settings.isDebugResolvedMessages()) {
+                            logger.info("Resolved message: {}", resolved);
+                        }
                         context.setResolvedMessage(resolved);
                         context.setResolvedPlaceholders(values);
                     }).exceptionally(ex -> {
@@ -99,7 +114,9 @@ public class PlaceholdersResolver {
                 return requestSender.sendGetPlaceholdersRequest(channel, playerName, placeholders)
                         .thenAccept(values -> {
                             String resolved = PlaceholderUtils.substitutePlaceholders(template, values);
-                            logger.info("Resolved message: {}", resolved);
+                            if (Settings.isDebugResolvedMessages()) {
+                                logger.info("Resolved message: {}", resolved);
+                            }
                             context.setResolvedMessage(resolved);
                             context.setResolvedPlaceholders(values);
                         }).exceptionally(ex -> {

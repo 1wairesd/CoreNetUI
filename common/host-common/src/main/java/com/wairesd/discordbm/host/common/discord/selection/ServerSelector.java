@@ -1,7 +1,10 @@
 package com.wairesd.discordbm.host.common.discord.selection;
 
+import com.google.gson.Gson;
+import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
+import com.wairesd.discordbm.host.common.models.request.RequestMessage;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -9,7 +12,10 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 public class ServerSelector {
@@ -31,7 +37,7 @@ public class ServerSelector {
 
         StringSelectMenu menu = createServerSelectMenu(selectMenuId, servers);
 
-        event.reply("Command registered on multiple servers. Select one:")
+        event.reply(Messages.get(Messages.Keys.SERVER_SELECTION_PROMPT))
                 .addActionRow(menu)
                 .setEphemeral(true)
                 .queue();
@@ -60,7 +66,24 @@ public class ServerSelector {
             return;
         }
 
-        requestSender.sendRequestToServer(selectionInfo.event(), targetServer);
+        event.deferEdit().queue(hook -> {
+            SlashCommandInteractionEvent originalEvent = selectionInfo.event();
+            String commandName = originalEvent.getName();
+
+            UUID requestId = UUID.randomUUID();
+            Map<String, String> options = originalEvent.getOptions().stream()
+                    .collect(Collectors.toMap(opt -> opt.getName(), opt -> opt.getAsString()));
+            
+            RequestMessage request = new RequestMessage("request", commandName, options, requestId.toString());
+            String json = new Gson().toJson(request);
+            
+            requestSender.storeInteractionHook(requestId, hook);
+            requestSender.storeServerNameForRequest(requestId, chosenServerName);
+            
+            targetServer.channel().writeAndFlush(json);
+            
+            hook.editOriginal(Messages.get(Messages.Keys.SERVER_PROCESSING, chosenServerName)).queue();
+        });
     }
 
     private NettyServer.ServerInfo findTargetServer(List<NettyServer.ServerInfo> servers, String chosenServerName) {
@@ -71,7 +94,7 @@ public class ServerSelector {
     }
 
     private String generateSelectMenuId() {
-        return SELECT_MENU_PREFIX + java.util.UUID.randomUUID();
+        return SELECT_MENU_PREFIX + UUID.randomUUID();
     }
 
     private StringSelectMenu createServerSelectMenu(String selectMenuId, List<NettyServer.ServerInfo> servers) {
@@ -80,7 +103,7 @@ public class ServerSelector {
                 .collect(Collectors.toList());
 
         return StringSelectMenu.create(selectMenuId)
-                .setPlaceholder("Select a server")
+                .setPlaceholder(Messages.get(Messages.Keys.SERVER_SELECTION_PLACEHOLDER))
                 .setRequiredRange(1, 1)
                 .addOptions(options)
                 .build();
@@ -88,4 +111,4 @@ public class ServerSelector {
 
     public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
     }
-}
+} 

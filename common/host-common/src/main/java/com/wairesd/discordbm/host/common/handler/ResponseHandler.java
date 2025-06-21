@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import org.slf4j.LoggerFactory;
 
 public class ResponseHandler {
@@ -14,7 +15,9 @@ public class ResponseHandler {
 
     public void handleResponse(JsonObject json) {
         String requestId = json.get("requestId").getAsString();
-        logger.info("Processing response with requestId: {}", requestId);
+        if (Settings.isDebugRequestProcessing()) {
+            logger.info("Processing response with requestId: {}", requestId);
+        }
         ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
         com.wairesd.discordbm.host.common.discord.response.ResponseHandler.handleResponse(respMsg);
     }

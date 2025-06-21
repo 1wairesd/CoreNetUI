@@ -3,6 +3,7 @@ package com.wairesd.discordbm.host.common.discord;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.handler.CommandHandler;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
@@ -38,9 +39,13 @@ public class DiscordBotListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
-        logger.info("Received slash command: {}", command);
+        if (Settings.isDebugCommandReceived()) {
+            logger.info("Received slash command: {}", command);
+        }
 
-        logger.info("Checking servers for command '{}': {}", command, nettyServer.getServersForCommand(command).stream().map(NettyServer.ServerInfo::serverName).collect(Collectors.toList()));
+        if (Settings.isDebugCommandReceived()) {
+            logger.info("Checking servers for command '{}': {}", command, nettyServer.getServersForCommand(command).stream().map(NettyServer.ServerInfo::serverName).collect(Collectors.toList()));
+        }
 
         var servers = nettyServer.getServersForCommand(command);
 

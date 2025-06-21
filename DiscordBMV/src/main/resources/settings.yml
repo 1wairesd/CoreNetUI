@@ -23,6 +23,11 @@ debug:
   debug-client-responses: false    # Logue requests and answers from customers
   debug-plugin-connections: true   # Login connecting plugins to customers
   debug-command-registrations: false # Log in the registration events of the teams
+  debug-command-received: false     # Log received slash commands
+  debug-command-execution: false    # Log custom command execution
+  debug-resolved-messages: false    # Log resolved messages from placeholders
+  debug-request-processing: false   # Log request/response processing with hook tracking
+  debug-command-not-found: false    # Log warnings when commands are not found
   debug-sendmessage-action: false
   debug-sendmessage-to-channel: false
   debug-authentication: true       # Log in authentication attempts and their results

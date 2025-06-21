@@ -31,6 +31,13 @@ public class Messages {
         public static final String ADDONS_COMMANDS_HEADER = "addons-commands-header";
         public static final String ADDONS_COMMANDS_PLUGIN = "addons-commands-plugin";
         public static final String ADDONS_COMMANDS_ENTRY = "addons-commands-entry";
+
+        public static final String SERVER_SELECTION_PROMPT = "server-selection-prompt";
+        public static final String SERVER_SELECTION_PLACEHOLDER = "server-selection-placeholder";
+        public static final String SERVER_PROCESSING = "server-processing";
+        public static final String SERVER_SELECTION_TIMEOUT = "server-selection-timeout";
+        public static final String SERVER_SELECTION_NO_SERVER = "server-selection-no-server";
+        public static final String SERVER_SELECTION_NOT_FOUND = "server-selection-not-found";
     }
 
     public static void init(Path dataDir) {

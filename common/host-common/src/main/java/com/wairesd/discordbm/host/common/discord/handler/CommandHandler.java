@@ -4,6 +4,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandExecutorFacade;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
@@ -39,7 +40,9 @@ public class CommandHandler {
         var customCommand = discordHost.getCommandManager().getCommand(command);
         if (customCommand != null) {
             if (commandExecutorFacade != null) {
-                logger.info("Executing custom command: {}", command);
+                if (Settings.isDebugCommandExecution()) {
+                    logger.info("Executing custom command: {}", command);
+                }
                 commandExecutorFacade.execute(event, customCommand);
             } else {
                 logger.error("CommandExecutor is null, cannot execute command '{}'", command);
@@ -48,7 +51,9 @@ public class CommandHandler {
                         .queue();
             }
         } else {
-            logger.warn("Custom command '{}' not found", command);
+            if (Settings.isDebugCommandNotFound()) {
+                logger.warn("Custom command '{}' not found", command);
+            }
             event.reply("Command unavailable.")
                     .setEphemeral(true)
                     .queue();

@@ -3,11 +3,13 @@ package com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholder
 import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersDiscordBM;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
 
 public class ResolvePlaceholdersAction implements CommandAction {
     private final String template;
@@ -26,6 +28,29 @@ public class ResolvePlaceholdersAction implements CommandAction {
         return MessageFormatterUtils.format(playerTemplate, event, context, false)
                 .thenCompose(playerName -> {
                     PlaceholdersResolver resolver = new PlaceholdersResolver(discordHost);
+                    
+                    if (context.getVariables() != null && 
+                        context.getVariables().containsKey(PlaceholdersDiscordBM.SERVER_NAME_VAR)) {
+                        return resolver.resolvePlaceholders(template, playerName, context);
+                    }
+                    
+                    var proxy = discordHost.getVelocityProxy();
+                    var playerOpt = proxy.getPlayer(playerName);
+                    if (playerOpt.isPresent()) {
+                        var player = playerOpt.get();
+                        var serverOpt = player.getCurrentServer();
+                        if (serverOpt.isPresent()) {
+                            String serverName = serverOpt.get().getServerInfo().getName();
+                            if (context.getVariables() == null) {
+                                Map<String, String> variables = new HashMap<>();
+                                variables.put(PlaceholdersDiscordBM.SERVER_NAME_VAR, serverName);
+                                context.setVariables(variables);
+                            } else {
+                                context.getVariables().put(PlaceholdersDiscordBM.SERVER_NAME_VAR, serverName);
+                            }
+                        }
+                    }
+                    
                     return resolver.resolvePlaceholders(template, playerName, context);
                 });
     }

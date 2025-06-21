@@ -7,6 +7,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersServer;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersUser;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersOption;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersDiscordBM;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
@@ -26,6 +27,7 @@ public class MessageFormatterUtils {
         placeholderManager.registerPlaceholder(new PlaceholdersChannel());
         placeholderManager.registerPlaceholder(new PlaceholdersResolved());
         placeholderManager.registerPlaceholder(new PlaceholdersOption());
+        placeholderManager.registerPlaceholder(new PlaceholdersDiscordBM());
     }
 
     public static CompletableFuture<String> format(@Nullable String template, Interaction event, Context context, boolean debugLog) {

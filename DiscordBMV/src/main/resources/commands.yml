@@ -314,7 +314,7 @@ commands:
         required: true
     actions:
       - type: "resolve_placeholders"
-        template: "%player_name% has %player_health% health and %player_food% food"
+        template: "%player_name% has %player_health% health and %player_food_level% food"
         player: "{player}"
       - type: "send_message"
         embed:
@@ -326,5 +326,5 @@ commands:
               value: "%player_health%"
               inline: true
             - name: "Food"
-              value: "%player_food%"
+              value: "%player_food_level%"
               inline: true

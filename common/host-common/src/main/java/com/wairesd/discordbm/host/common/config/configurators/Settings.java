@@ -64,7 +64,7 @@ public class Settings {
     }
 
     private static void validateConfig() {
-        if (config == null || !config.containsKey("Discord") || !((Map) config.get("Discord")).containsKey("Bot-token")) {
+        if (getBotToken().isEmpty()) {
             logger.warn("Bot-token missing in settings.yml, using default behavior");
         }
     }
@@ -87,6 +87,26 @@ public class Settings {
 
     public static boolean isDebugCommandRegistrations() {
         return getDebugOption("debug-command-registrations", false);
+    }
+
+    public static boolean isDebugCommandReceived() {
+        return getDebugOption("debug-command-received", false);
+    }
+
+    public static boolean isDebugCommandExecution() {
+        return getDebugOption("debug-command-execution", false);
+    }
+
+    public static boolean isDebugResolvedMessages() {
+        return getDebugOption("debug-resolved-messages", false);
+    }
+
+    public static boolean isDebugRequestProcessing() {
+        return getDebugOption("debug-request-processing", false);
+    }
+
+    public static boolean isDebugCommandNotFound() {
+        return getDebugOption("debug-command-not-found", false);
     }
 
     public static boolean isDebugNettyStart() {
