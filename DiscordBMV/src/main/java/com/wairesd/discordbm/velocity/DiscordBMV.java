@@ -93,8 +93,7 @@ public class DiscordBMV {
     public List<String[]> getAllMessageReferences(String labelPrefix, String guildId) {
         String fullPrefix = guildId + "_" + labelPrefix;
         List<String[]> results = new ArrayList<>();
-        
-        // Собираем все метки, которые начинаются с нужного префикса
+
         for (Map.Entry<String, String> entry : globalMessageLabels.entrySet()) {
             if (entry.getKey().equals(fullPrefix) || 
                     (labelPrefix.isEmpty() && entry.getKey().startsWith(guildId + "_"))) {
