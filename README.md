@@ -41,10 +41,10 @@
 
 ## Структура проекта
 
-- `DiscordBMB/` — основной модуль/ядро
-- `DiscordBMV/` — визуальные компоненты или дополнительные модули
+- `DiscordBMB/` — клиент
+- `DiscordBMV/` — сервер
 - `api/` — API для расширения функционала
-- `common/` — общие классы и утилиты
+- `common/`, `client-common/`, `host-common/` ` — общие классы и утилиты
 - `gradle/`, `build.gradle`, `settings.gradle` — файлы сборки
 - `README.md` — описание проекта
 
