@@ -24,9 +24,9 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common:host-common')
-    implementation project(':common')
-    implementation project(':api')
+    implementation project(":common:host-common")
+    implementation project(":common")
+    implementation project(":api")
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 

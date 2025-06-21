@@ -11,8 +11,8 @@ repositories {
 }
 
 dependencies {
-    implementation project(':api')
-    implementation project(':common')
+    implementation project(":api")
+    implementation project(":common")
 
     implementation("io.netty:netty-all:4.2.2.Final")
 
