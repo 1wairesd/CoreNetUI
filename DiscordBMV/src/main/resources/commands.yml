@@ -73,24 +73,61 @@ commands:
   - name: "delete-test"
     description: "Delete the test message"
     context: server
+    ephemeral: true
     actions:
       - type: delete_message
         label: test_message
+        response_message: "Test message has been deleted."
 
   - name: "send-to-channel"
     description: "Send a message to a specific channel"
     context: server
+    ephemeral: true
     options:
       - name: channel
         type: CHANNEL
         description: The channel to send the message to
         required: true
+      - name: message
+        type: STRING
+        description: Message to send
+        required: false
     actions:
-      - type: send_message
-        response_type: SPECIFIC_CHANNEL
-        target_id: "{channel}"
-        message: "Hello from specific channel!"
+      - type: send_to_channel
+        message: "{option:message|Hello from specific channel! This was sent from another channel.}"
         label: specific_message
+      - type: send_message
+        response_type: REPLY
+        message: "Message sent to the specified channel."
+
+  - name: "send-embed-to-channel"
+    description: "Send an embed message to a specific channel"
+    context: server
+    ephemeral: true
+    options:
+      - name: channel
+        type: CHANNEL
+        description: The channel to send the embed to
+        required: true
+      - name: title
+        type: STRING
+        description: Title of the embed
+        required: true
+      - name: description
+        type: STRING
+        description: Description for the embed
+        required: false
+    actions:
+      - type: send_to_channel
+        embed:
+          title: "{option:title}"
+          description: "{option:description|No description provided}"
+          color: "#00FF00"
+          footer: "Sent via Discord command"
+        label: embed_message
+      - type: send_message
+        response_type: REPLY
+        message: "Embed sent to the specified channel."
 
   - name: "delete-specific"
     description: "Delete the message sent to specific channel"

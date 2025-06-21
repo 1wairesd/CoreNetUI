@@ -7,7 +7,7 @@ import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.sub.ReloadCommand;
 import com.wairesd.discordbm.velocity.commands.sub.CommandsCommand;
 import com.wairesd.discordbm.velocity.commands.sub.HelpCommand;
-import com.wairesd.discordbm.velocity.config.configurators.Messages;
+import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
 
 public class CommandAdmin implements SimpleCommand {

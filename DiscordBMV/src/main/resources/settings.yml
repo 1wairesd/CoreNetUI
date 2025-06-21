@@ -24,6 +24,7 @@ debug:
   debug-plugin-connections: true   # Login connecting plugins to customers
   debug-command-registrations: false # Log in the registration events of the teams
   debug-sendmessage-action: false
+  debug-sendmessage-to-channel: false
   debug-authentication: true       # Log in authentication attempts and their results
   debug-netty-start: false
   debug-errors: true               # Log in errors and exceptions

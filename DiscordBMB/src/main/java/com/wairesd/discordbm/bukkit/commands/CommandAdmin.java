@@ -3,7 +3,7 @@ package com.wairesd.discordbm.bukkit.commands;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
 import com.wairesd.discordbm.bukkit.commands.sub.HelpCommand;
 import com.wairesd.discordbm.bukkit.commands.sub.ReloadCommand;
-import com.wairesd.discordbm.bukkit.config.configurators.Messages;
+import com.wairesd.discordbm.client.common.config.configurators.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

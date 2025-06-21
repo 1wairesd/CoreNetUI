@@ -2,10 +2,14 @@ package com.wairesd.discordbm.bukkit;
 
 import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
-import com.wairesd.discordbm.bukkit.config.ConfigManager;
-import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.common.DiscordBMAPIImpl;
-import com.wairesd.discordbm.common.platform.Platform;
+import com.wairesd.discordbm.bukkit.config.BukkitPlatformConfig;
+import com.wairesd.discordbm.bukkit.placeholders.BukkitPlaceholderService;
+import com.wairesd.discordbm.client.common.config.ConfigManager;
+import com.wairesd.discordbm.client.common.config.configurators.Settings;
+import com.wairesd.discordbm.client.common.DiscordBMAPIImpl;
+import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
+import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.client.common.platform.PlatformConfig;
 import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
@@ -14,10 +18,14 @@ import org.bukkit.Bukkit;
 public class BootstrapDBMB {
     private final DiscordBMB plugin;
     private final PluginLogger logger;
+    private final PlatformConfig platformConfig;
+    private final PlatformPlaceholder platformPlaceholderService;
 
     public BootstrapDBMB(DiscordBMB plugin, PluginLogger logger) {
         this.plugin = plugin;
         this.logger = logger;
+        this.platformConfig = new BukkitPlatformConfig(plugin);
+        this.platformPlaceholderService = new BukkitPlaceholderService(plugin);
     }
 
     public void initialize() {
@@ -31,7 +39,7 @@ public class BootstrapDBMB {
     }
 
     private void initConfig() {
-        ConfigManager configManager = new ConfigManager(plugin);
+        ConfigManager configManager = new ConfigManager(platformConfig);
         configManager.loadConfigs();
         plugin.setConfigManager(configManager);
         plugin.setServerName(Settings.getServerName());
@@ -39,7 +47,7 @@ public class BootstrapDBMB {
     }
 
     private void initPlatform() {
-        Platform platform = new BukkitPlatform(plugin);
+        Platform platform = new BukkitPlatform(plugin, platformPlaceholderService);
         plugin.setPlatform(platform);
         logger.info("Platform initialized");
     }

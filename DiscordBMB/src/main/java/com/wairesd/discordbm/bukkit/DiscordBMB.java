@@ -1,9 +1,9 @@
 package com.wairesd.discordbm.bukkit;
 
 import com.wairesd.discordbm.api.DiscordBMAPI;
-import com.wairesd.discordbm.bukkit.config.ConfigManager;
-import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
-import com.wairesd.discordbm.common.platform.Platform;
+import com.wairesd.discordbm.client.common.config.ConfigManager;
+import com.wairesd.discordbm.client.common.placeholders.PlaceholderService;
+import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
@@ -39,9 +39,9 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public void registerCommandHandler(String command, com.wairesd.discordbm.common.handler.DiscordCommandHandler handler, 
-                                      com.wairesd.discordbm.common.listener.DiscordBMCRLB listener, 
-                                      com.wairesd.discordbm.common.models.command.Command internalCommand) {
+    public void registerCommandHandler(String command, com.wairesd.discordbm.client.common.handler.DiscordCommandHandler handler,
+                                      com.wairesd.discordbm.client.common.listener.DiscordBMCRLB listener,
+                                      com.wairesd.discordbm.client.common.models.command.Command internalCommand) {
         platform.registerCommandHandler(command, handler, listener, internalCommand);
     }
 

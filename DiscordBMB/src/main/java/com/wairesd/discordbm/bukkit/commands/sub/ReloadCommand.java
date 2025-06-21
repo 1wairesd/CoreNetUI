@@ -2,8 +2,10 @@ package com.wairesd.discordbm.bukkit.commands.sub;
 
 import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
-import com.wairesd.discordbm.bukkit.config.ConfigManager;
-import com.wairesd.discordbm.bukkit.config.configurators.Messages;
+import com.wairesd.discordbm.bukkit.config.BukkitPlatformConfig;
+import com.wairesd.discordbm.client.common.config.ConfigManager;
+import com.wairesd.discordbm.client.common.config.configurators.Messages;
+import com.wairesd.discordbm.client.common.platform.PlatformConfig;
 import org.bukkit.command.CommandSender;
 
 public class ReloadCommand {
@@ -19,17 +21,17 @@ public class ReloadCommand {
             return true;
         }
 
-        ConfigManager configManager = new ConfigManager(plugin);
+        PlatformConfig platformConfig = new BukkitPlatformConfig(plugin);
+        ConfigManager configManager = new ConfigManager(platformConfig);
         configManager.reloadConfigs();
 
         if (plugin.getPlatform() != null && 
             plugin.getPlatform().getNettyService() != null &&
             plugin.getPlatform().getNettyService().getNettyClient() != null && 
             plugin.getPlatform().getNettyService().getNettyClient().isActive()) {
-            
-            // Fire reload event using the new API
+
             if (DiscordBMB.getApi() != null) {
-                // Fire reload events
+
                 DiscordBMReloadEvent configEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG);
                 DiscordBMReloadEvent networkEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK);
                 DiscordBMReloadEvent commandsEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS);

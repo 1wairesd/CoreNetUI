@@ -2,18 +2,17 @@ package com.wairesd.discordbm.velocity;
 
 import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-import com.wairesd.discordbm.velocity.commandbuilder.commands.core.CommandManager;
-import com.wairesd.discordbm.velocity.commandbuilder.components.buttons.listener.ButtonInteractionListener;
-import com.wairesd.discordbm.velocity.commandbuilder.components.forms.listener.FormInteractionListener;
+import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
+import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener.ButtonInteractionListener;
+import com.wairesd.discordbm.host.common.commandbuilder.components.forms.listener.FormInteractionListener;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
-import com.wairesd.discordbm.velocity.config.ConfigManager;
-import com.wairesd.discordbm.velocity.config.configurators.Settings;
-import com.wairesd.discordbm.velocity.config.configurators.Commands;
-import com.wairesd.discordbm.velocity.database.DatabaseManager;
-import com.wairesd.discordbm.velocity.discord.DiscordBotListener;
-import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
-import com.wairesd.discordbm.velocity.discord.response.ResponseHandler;
-import com.wairesd.discordbm.velocity.network.NettyServer;
+import com.wairesd.discordbm.host.common.config.ConfigManager;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.database.DatabaseManager;
+import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
+import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
+import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
+import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.dv8tion.jda.api.JDA;
 
@@ -24,6 +23,7 @@ public class BootstrapDBMV {
     private final Path dataDirectory;
     private final ProxyServer proxy;
     private final PluginLogger logger;
+    private final DiscordBMVHost discordHost;
 
     private NettyServer nettyServer;
     private DatabaseManager dbManager;
@@ -36,10 +36,10 @@ public class BootstrapDBMV {
         this.proxy = proxy;
         this.logger = logger;
         this.discordBotManager = new DiscordBotManager();
+        this.discordHost = plugin.getDiscordHost();
     }
 
     public void initialize() {
-        Commands.plugin = plugin;
         BannerPrinter.printBanner(BannerPrinter.Platform.VELOCITY);
 
         initConfig();
@@ -86,13 +86,13 @@ public class BootstrapDBMV {
         }
 
         logger.info("Discord bot initialized");
-        jda.addEventListener(new ButtonInteractionListener(nettyServer));
-        jda.addEventListener(new FormInteractionListener());
+        jda.addEventListener(new ButtonInteractionListener(nettyServer, discordHost));
+        jda.addEventListener(new FormInteractionListener(discordHost));
 
         nettyServer.setJda(jda);
-        DiscordBotListener listener = new DiscordBotListener(plugin, nettyServer, logger);
+        DiscordBotListener listener = new DiscordBotListener(discordHost, nettyServer, logger);
         jda.addEventListener(listener);
-        ResponseHandler.init(listener);
+        ResponseHandler.init(listener, discordHost);
 
         commandManager = new CommandManager(nettyServer, jda);
         commandManager.loadAndRegisterCommands();

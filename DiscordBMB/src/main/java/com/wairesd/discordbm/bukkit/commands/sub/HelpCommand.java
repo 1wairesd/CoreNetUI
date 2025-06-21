@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.bukkit.commands.sub;
 
 import com.wairesd.discordbm.bukkit.DiscordBMB;
-import com.wairesd.discordbm.bukkit.config.configurators.Messages;
+import com.wairesd.discordbm.client.common.config.configurators.Messages;
 import org.bukkit.command.CommandSender;
 
 public class HelpCommand {

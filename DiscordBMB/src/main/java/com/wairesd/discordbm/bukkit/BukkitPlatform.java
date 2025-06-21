@@ -1,12 +1,13 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.common.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.common.listener.DiscordBMCRLB;
-import com.wairesd.discordbm.common.models.command.Command;
-import com.wairesd.discordbm.common.network.NettyService;
-import com.wairesd.discordbm.common.platform.Platform;
-import com.wairesd.discordbm.bukkit.config.configurators.Settings;
-import com.wairesd.discordbm.bukkit.placeholders.PlaceholderService;
+import com.wairesd.discordbm.client.common.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.client.common.listener.DiscordBMCRLB;
+import com.wairesd.discordbm.client.common.models.command.Command;
+import com.wairesd.discordbm.client.common.network.NettyService;
+import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.client.common.config.configurators.Settings;
+import com.wairesd.discordbm.client.common.placeholders.PlaceholderService;
+import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
@@ -23,11 +24,11 @@ public class BukkitPlatform implements Platform {
     private final Set<DiscordBMCRLB> listeners = new HashSet<>();
     private final List<Command> addonCommands = new ArrayList<>();
 
-    public BukkitPlatform(DiscordBMB plugin) {
+    public BukkitPlatform(DiscordBMB plugin, PlatformPlaceholder platformPlaceholderService) {
         this.plugin = plugin;
         this.pluginLogger = new JavaPluginLogger(Bukkit.getLogger());
         this.nettyService = new NettyService(this, pluginLogger);
-        this.placeholderService = new PlaceholderService(plugin);
+        this.placeholderService = new PlaceholderService(platformPlaceholderService);
     }
 
     @Override

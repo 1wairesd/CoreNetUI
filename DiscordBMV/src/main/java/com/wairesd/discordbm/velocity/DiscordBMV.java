@@ -8,21 +8,25 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.velocity.commandbuilder.commands.core.CommandManager;
-import com.wairesd.discordbm.velocity.commandbuilder.core.models.pages.Page;
-import com.wairesd.discordbm.velocity.config.configurators.Pages;
-import com.wairesd.discordbm.velocity.config.configurators.Commands;
-import com.wairesd.discordbm.velocity.discord.DiscordBotManager;
-import com.wairesd.discordbm.velocity.network.NettyServer;
+import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
+import com.wairesd.discordbm.host.common.config.configurators.Pages;
+import com.wairesd.discordbm.host.common.config.configurators.Commands;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
+import com.wairesd.discordbm.host.common.network.NettyServer;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.slf4j.LoggerFactory;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
@@ -39,18 +43,20 @@ public class DiscordBMV {
 
     public static DiscordBMV plugin;
     public static Map<String, Page> pageMap = Pages.pageMap;
+    
+    private DiscordBMVHost discordHost;
 
     @Inject
     public DiscordBMV(@DataDirectory Path dataDirectory, ProxyServer proxy) {
         this.dataDirectory = dataDirectory;
         this.proxy = proxy;
-        Commands.plugin = this;
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         plugin = this;
-        Commands.plugin = this;
+        discordHost = new DiscordBMVHost(this);
+        Commands.discordHost = discordHost;
 
         threadPool = new DiscordBMThreadPool(4);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -65,8 +71,8 @@ public class DiscordBMV {
 
     public void updateActivity() {
         bootstrapService.getDiscordBotManager().updateActivity(
-                com.wairesd.discordbm.velocity.config.configurators.Settings.getActivityType(),
-                com.wairesd.discordbm.velocity.config.configurators.Settings.getActivityMessage()
+                Settings.getActivityType(),
+                Settings.getActivityMessage()
         );
     }
 
@@ -78,6 +84,30 @@ public class DiscordBMV {
         String value = globalMessageLabels.get(key);
         if (value == null) return null;
         return value.contains(":") ? value.split(":", 2) : new String[]{null, value};
+    }
+    
+    public void removeGlobalMessageLabel(String key) {
+        globalMessageLabels.remove(key);
+    }
+    
+    public List<String[]> getAllMessageReferences(String labelPrefix, String guildId) {
+        String fullPrefix = guildId + "_" + labelPrefix;
+        List<String[]> results = new ArrayList<>();
+        
+        // Собираем все метки, которые начинаются с нужного префикса
+        for (Map.Entry<String, String> entry : globalMessageLabels.entrySet()) {
+            if (entry.getKey().equals(fullPrefix) || 
+                    (labelPrefix.isEmpty() && entry.getKey().startsWith(guildId + "_"))) {
+                
+                String value = entry.getValue();
+                if (value != null && value.contains(":")) {
+                    String[] parts = value.split(":", 2);
+                    results.add(parts);
+                }
+            }
+        }
+        
+        return results;
     }
 
     public ProxyServer getProxy() {
@@ -110,5 +140,9 @@ public class DiscordBMV {
 
     public DiscordBMThreadPool getThreadPool() {
         return threadPool;
+    }
+    
+    public DiscordBMVHost getDiscordHost() {
+        return discordHost;
     }
 }
