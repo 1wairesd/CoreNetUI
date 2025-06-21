@@ -28,8 +28,6 @@ dependencies {
     implementation project(":common")
     implementation project(":api")
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 }
