@@ -27,8 +27,7 @@ public class DiscordBMB extends JavaPlugin {
         platform = bootstrap.getPlatform();
         configManager = bootstrap.getConfigManager();
         api = bootstrap.getApi();
-        
-        // Логируем зарегистрированные сервисы
+
         if (platform instanceof BukkitPlatform) {
             ((BukkitPlatform) platform).logAllRegisteredServices();
         }
