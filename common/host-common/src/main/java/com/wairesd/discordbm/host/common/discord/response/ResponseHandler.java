@@ -6,7 +6,7 @@ import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
-    private static DiscordHost discordHost;
+    private static DiscordBMVPlatform discordHost;
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
-    public static void init(DiscordBotListener discordBotListener, DiscordHost host) {
+    public static void init(DiscordBotListener discordBotListener, DiscordBMVPlatform host) {
         listener = discordBotListener;
         discordHost = host;
     }

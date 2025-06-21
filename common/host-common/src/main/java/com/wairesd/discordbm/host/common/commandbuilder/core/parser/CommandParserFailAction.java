@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class CommandParserFailAction {
 
-    public static List<CommandAction> parse(Map<String, Object> cmdData, DiscordHost discordHost) {
+    public static List<CommandAction> parse(Map<String, Object> cmdData, DiscordBMVPlatform discordHost) {
         Object raw = cmdData.get("fail-actions");
         if (!(raw instanceof List<?> list)) {
             return Collections.emptyList();

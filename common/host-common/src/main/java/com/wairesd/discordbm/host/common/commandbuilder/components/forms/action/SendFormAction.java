@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.components.forms.action;
 
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.builder.CommandFormBuilder;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
@@ -20,9 +20,9 @@ public class SendFormAction implements CommandAction {
     private final FormRepository formRepository = new FormRepository();
     private final CommandFormBuilder formBuilder = new CommandFormBuilder();
     private final FormSender modalSender = new FormSender();
-    private final DiscordHost discordHost;
+    private final DiscordBMVPlatform discordHost;
 
-    public SendFormAction(Map<String, Object> properties, DiscordHost discordHost) {
+    public SendFormAction(Map<String, Object> properties, DiscordBMVPlatform discordHost) {
         this.formName = (String) properties.get("form_name");
         this.discordHost = discordHost;
         if (formName == null || formName.isEmpty()) {

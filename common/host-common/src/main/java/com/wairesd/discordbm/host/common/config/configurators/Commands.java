@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.config.configurators;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
@@ -32,7 +32,7 @@ public class Commands {
     private static Path dataDirectory;
     private static volatile List<CommandStructured> customCommands = Collections.emptyList();
 
-    public static DiscordHost discordHost;
+    public static DiscordBMVPlatform discordHost;
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;

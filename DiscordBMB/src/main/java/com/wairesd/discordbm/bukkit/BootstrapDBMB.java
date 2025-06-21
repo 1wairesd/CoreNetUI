@@ -6,7 +6,7 @@ import com.wairesd.discordbm.bukkit.config.BukkitPlatformConfig;
 import com.wairesd.discordbm.bukkit.placeholders.BukkitPlaceholderService;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.config.configurators.Settings;
-import com.wairesd.discordbm.client.common.DiscordBMAPIImpl;
+import com.wairesd.discordbm.client.common.DiscordBMBAPIImpl;
 import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.platform.PlatformConfig;
@@ -53,7 +53,7 @@ public class BootstrapDBMB {
     }
 
     private void initApi() {
-        DiscordBMAPI api = new DiscordBMAPIImpl(plugin.getPlatform(), logger);
+        DiscordBMAPI api = new DiscordBMBAPIImpl(plugin.getPlatform(), logger);
         DiscordBMB.setApi(api);
 
         Bukkit.getServicesManager().register(DiscordBMAPI.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);

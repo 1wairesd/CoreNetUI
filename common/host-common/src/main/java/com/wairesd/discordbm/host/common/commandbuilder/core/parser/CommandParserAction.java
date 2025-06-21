@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.action.ButtonAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.components.EditComponentAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.DeleteMessageAction;
@@ -16,7 +16,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.components.forms.action.
 import java.util.Map;
 
 public class CommandParserAction {
-    public static CommandAction parseAction(Map<String, Object> actionMap, DiscordHost discordHost) {
+    public static CommandAction parseAction(Map<String, Object> actionMap, DiscordBMVPlatform discordHost) {
         String type = (String) actionMap.get("type");
         if (type == null) {
             throw new IllegalArgumentException("Action type is required");

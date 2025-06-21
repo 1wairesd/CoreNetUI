@@ -16,7 +16,7 @@ import com.wairesd.discordbm.client.common.message.MessageSenderImpl;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 
-public class DiscordBMAPIImpl implements DiscordBMAPI {
+public class DiscordBMBAPIImpl implements DiscordBMAPI {
     
     private final Platform platform;
     private final CommandRegistrationImpl commandRegistration;
@@ -25,7 +25,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
     private final EventRegistryImpl eventRegistry;
     private final LoggerAdapter logger;
 
-    public DiscordBMAPIImpl(Platform platform, PluginLogger pluginLogger) {
+    public DiscordBMBAPIImpl(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
         this.logger = new LoggerAdapter(pluginLogger);
         this.commandRegistration = new CommandRegistrationImpl(platform, this.logger);

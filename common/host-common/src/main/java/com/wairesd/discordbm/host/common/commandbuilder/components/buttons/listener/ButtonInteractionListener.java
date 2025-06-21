@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.service.ButtonActionService;
 import com.wairesd.discordbm.host.common.commandbuilder.security.checker.RoleChecker;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.form.ButtonFormBuilder;
@@ -34,9 +34,9 @@ public class ButtonInteractionListener extends ListenerAdapter {
     private final ButtonFormBuilder modalBuilder = new ButtonFormBuilder();
     private final ButtonResponseHandler responseHandler = new ButtonResponseHandler();
     private final NettyServer nettyServer;
-    private final DiscordHost discordHost;
+    private final DiscordBMVPlatform discordHost;
 
-    public ButtonInteractionListener(NettyServer nettyServer, DiscordHost discordHost) {
+    public ButtonInteractionListener(NettyServer nettyServer, DiscordBMVPlatform discordHost) {
         this.nettyServer = nettyServer;
         this.discordHost = discordHost;
     }

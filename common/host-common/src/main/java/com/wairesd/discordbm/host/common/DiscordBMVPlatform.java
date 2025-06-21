@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.host.common.api;
+package com.wairesd.discordbm.host.common;
 
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
@@ -14,7 +14,7 @@ import java.util.UUID;
  * Общий интерфейс для взаимодействия между host-common и конкретными реализациями Discord бота (например, DiscordBMV).
  * Это позволяет host-common не иметь прямых зависимостей от DiscordBMV.
  */
-public interface DiscordHost {
+public interface DiscordBMVPlatform {
     
     /**
      * Получить карту ожидающих запросов кнопок

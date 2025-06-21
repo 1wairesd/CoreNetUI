@@ -1,19 +1,18 @@
 package com.wairesd.discordbm.velocity;
 
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
 import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.host.common.config.configurators.Pages;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class DiscordBMVHost implements DiscordHost {
+public class DiscordBMVHost implements DiscordBMVPlatform {
     
     private final DiscordBMV plugin;
     

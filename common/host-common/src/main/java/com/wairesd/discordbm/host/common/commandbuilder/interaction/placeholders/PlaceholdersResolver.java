@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholder
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFinder;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.PlaceholderUtils;
@@ -19,12 +19,12 @@ import java.util.concurrent.TimeUnit;
 
 public class PlaceholdersResolver {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final DiscordHost discordHost;
+    private final DiscordBMVPlatform discordHost;
     private final NettyServer nettyServer;
     private final ChannelFinder channelFinder;
     private final PlaceholderRequestSender requestSender;
 
-    public PlaceholdersResolver(DiscordHost discordHost) {
+    public PlaceholdersResolver(DiscordBMVPlatform discordHost) {
         this.discordHost = discordHost;
         this.nettyServer = discordHost.getNettyServer();
         this.channelFinder = new ChannelFinder(nettyServer);

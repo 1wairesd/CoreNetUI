@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.components.forms.listen
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.api.DiscordHost;
+import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 public class FormInteractionListener extends ListenerAdapter {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final DiscordHost discordHost;
+    private final DiscordBMVPlatform discordHost;
 
-    public FormInteractionListener(DiscordHost discordHost) {
+    public FormInteractionListener(DiscordBMVPlatform discordHost) {
         this.discordHost = discordHost;
     }
 
