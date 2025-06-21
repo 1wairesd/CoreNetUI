@@ -29,12 +29,21 @@ public class NettyClient {
     private EventLoopGroup group;
     private Channel channel;
     private final Gson gson = new Gson();
-    private boolean closing = false;
+    private Runnable onConnectionFailure;
 
     public NettyClient(InetSocketAddress address, Platform platform, PluginLogger pluginLogger) {
         this.address = address;
         this.platform = platform;
         this.pluginLogger = pluginLogger;
+    }
+
+    public void setOnConnectionFailure(Runnable onConnectionFailure) {
+        this.onConnectionFailure = onConnectionFailure;
+    }
+
+    private void shutdownGroupAndNotify() {
+        if (group != null) group.shutdownGracefully();
+        if (onConnectionFailure != null) onConnectionFailure.run();
     }
 
     public void connect() {
@@ -54,39 +63,41 @@ public class NettyClient {
                             ch.pipeline().addLast("handler", new MessageHandler(platform, pluginLogger));
                         }
                     });
-
             try {
                 ChannelFuture future = bootstrap.connect(address).sync();
                 if (future.isSuccess()) {
                     channel = future.channel();
                     if (platform.isDebugConnections()) {
-                        pluginLogger.info("Connected to Velocity at {}:{}", address.getHostString(), address.getPort());
+                        pluginLogger.info("Connected to Velocity at " + address.getHostString() + ":" + address.getPort());
                     }
                     registerClient();
-                    platform.onNettyConnected();
                 } else {
-                    if (platform.isDebugConnections()) {
-                        pluginLogger.warn("Failed to connect to Velocity at {}:{}: {}", address.getHostString(), address.getPort(), future.cause().getMessage());
+                    if (platform.isDebugConnections() || platform.isDebugErrors()) {
+                        pluginLogger.warn("Failed to connect to Velocity at " + address.getHostString() + ":" + address.getPort() + ": " + (future.cause() != null ? future.cause().getMessage() : "Unknown error"));
+                    } else {
+                        pluginLogger.warn("Failed to connect to Velocity server. Check your settings.yml configuration.");
                     }
-                    scheduleReconnect();
+                    shutdownGroupAndNotify();
                 }
             } catch (InterruptedException e) {
                 if (platform.isDebugErrors()) {
-                    pluginLogger.error("Connection interrupted", e);
+                    pluginLogger.error("Connection interrupted: " + e.getMessage());
                 }
                 Thread.currentThread().interrupt();
+                shutdownGroupAndNotify();
             }
         }).exceptionally(throwable -> {
             if (platform.isDebugErrors()) {
-                pluginLogger.error("Error connecting to Velocity: {}", throwable.getMessage());
+                pluginLogger.error("Error connecting to Velocity: " + (throwable != null ? throwable.getMessage() : "Unknown error"));
+            } else {
+                pluginLogger.warn("Failed to connect to Velocity server. Check your settings.yml configuration.");
             }
-            scheduleReconnect();
+            shutdownGroupAndNotify();
             return null;
         });
     }
 
     public void close() {
-        closing = true;
         if (channel != null) channel.close();
         if (group != null) group.shutdownGracefully();
         if (platform.isDebugConnections()) {
@@ -105,6 +116,8 @@ public class NettyClient {
         if (platform.isDebugCommandRegistrations()) {
             pluginLogger.info("Sent client registration message.");
         }
+
+        platform.onNettyConnected();
     }
 
     public void registerCommands(List<Command> commands) {
@@ -128,15 +141,11 @@ public class NettyClient {
         }
     }
 
-    private void scheduleReconnect() {
-        if (!closing) {
-            platform.runTaskAsynchronously(() -> connect());
-        }
-    }
-
     public void send(String message) {
         if (isActive()) {
             channel.writeAndFlush(message);
+        } else {
+            pluginLogger.warn("Netty channel not active. Message not sent: " + message);
         }
     }
 

@@ -23,5 +23,6 @@ public interface Platform {
     boolean checkIfCanHandle(String playerName, List<String> placeholders);
     Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders);
     void runTaskAsynchronously(Runnable task);
+    void runTaskLaterAsynchronously(Runnable task, long delay);
     void onNettyConnected();
 }

@@ -82,9 +82,8 @@ public class SendToChannelAction implements CommandAction {
                                                 }
 
                                                 if (label != null) {
-                                                    String fullLabel = (context.getEvent().getGuild() != null ? 
-                                                            context.getEvent().getGuild().getId() : "DM") + "_" + label;
-                                                    Commands.discordHost.setGlobalMessageLabel(fullLabel, channel.getId(), message.getId());
+                                                    String fullLabel = (context.getEvent().getGuild() != null ? context.getEvent().getGuild().getId() : "DM") + "_" + label;
+                                                    Commands.getPlatform().setGlobalMessageLabel(fullLabel, channel.getId(), message.getId());
                                                 }
                                             },
                                             error -> {
@@ -103,9 +102,8 @@ public class SendToChannelAction implements CommandAction {
                                     }
 
                                     if (label != null) {
-                                        String fullLabel = (context.getEvent().getGuild() != null ? 
-                                                context.getEvent().getGuild().getId() : "DM") + "_" + label;
-                                        Commands.discordHost.setGlobalMessageLabel(fullLabel, channel.getId(), message.getId());
+                                        String fullLabel = (context.getEvent().getGuild() != null ? context.getEvent().getGuild().getId() : "DM") + "_" + label;
+                                        Commands.getPlatform().setGlobalMessageLabel(fullLabel, channel.getId(), message.getId());
                                     }
                                 },
                                 error -> {

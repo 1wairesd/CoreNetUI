@@ -9,9 +9,9 @@ public class PlaceholdersMessageID {
             return targetId;
         }
 
-        String guildId = context.getEvent().getGuild().getId();
+        String guildId = context.getEvent().getGuild() != null ? context.getEvent().getGuild().getId() : "DM";
         String fullLabel = guildId + "_welcome_message";
-        String messageId = Commands.discordHost.getGlobalMessageLabel(fullLabel);
+        String messageId = Commands.getPlatform().getGlobalMessageLabel(fullLabel);
         if (messageId == null) {
             throw new IllegalArgumentException("No previous message ID found for {message_id_from_previous_command}");
         }

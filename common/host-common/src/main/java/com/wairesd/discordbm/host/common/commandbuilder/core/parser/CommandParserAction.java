@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.action.ButtonAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.components.EditComponentAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.DeleteMessageAction;
@@ -16,7 +16,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.components.forms.action.
 import java.util.Map;
 
 public class CommandParserAction {
-    public static CommandAction parseAction(Map<String, Object> actionMap, DiscordBMVPlatform discordHost) {
+    public static CommandAction parseAction(Map<String, Object> actionMap, DiscordBMHPlatformManager platformManager) {
         String type = (String) actionMap.get("type");
         if (type == null) {
             throw new IllegalArgumentException("Action type is required");
@@ -26,9 +26,9 @@ public class CommandParserAction {
             case "send_to_channel" -> new SendToChannelAction(actionMap);
             case "button" -> new ButtonAction(actionMap);
             case "edit_component" -> new EditComponentAction(actionMap);
-            case "resolve_placeholders" -> new ResolvePlaceholdersAction(actionMap, discordHost);
+            case "resolve_placeholders" -> new ResolvePlaceholdersAction(actionMap, platformManager);
             case "delete_message" -> new DeleteMessageAction(actionMap);
-            case "send_form" -> new SendFormAction(actionMap, discordHost);
+            case "send_form" -> new SendFormAction(actionMap, platformManager);
             case "add_role" -> new AddRoleAction(actionMap);
             case "remove_role" -> new RemoveRoleAction(actionMap);
             case "send_page" -> new SendPageAction(actionMap);

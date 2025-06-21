@@ -1,141 +1,39 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.client.common.handler.DiscordCommandHandler;
-import com.wairesd.discordbm.client.common.listener.DiscordBMCRLB;
-import com.wairesd.discordbm.client.common.models.command.Command;
-import com.wairesd.discordbm.client.common.network.NettyService;
-import com.wairesd.discordbm.client.common.platform.Platform;
-import com.wairesd.discordbm.client.common.config.configurators.Settings;
-import com.wairesd.discordbm.client.common.placeholders.PlaceholderService;
+import com.wairesd.discordbm.client.common.platform.AbstractPlatform;
 import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
-import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
+import com.wairesd.discordbm.client.common.config.configurators.Settings;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.Collection;
 
-public class BukkitPlatform implements Platform {
-    private final DiscordBMB plugin;
-    private final NettyService nettyService;
-    private final Map<String, DiscordCommandHandler> commandHandlers = new HashMap<>();
-    private final PlaceholderService placeholderService;
-    private final PluginLogger pluginLogger;
-    private final Set<DiscordBMCRLB> listeners = new HashSet<>();
-    private final List<Command> addonCommands = new ArrayList<>();
+public class BukkitPlatform extends AbstractPlatform {
+    private final JavaPlugin plugin;
 
-    public BukkitPlatform(DiscordBMB plugin, PlatformPlaceholder platformPlaceholderService) {
+    public BukkitPlatform(JavaPlugin plugin, PlatformPlaceholder platformPlaceholderService, PluginLogger pluginLogger) {
+        super(pluginLogger, platformPlaceholderService);
         this.plugin = plugin;
-        this.pluginLogger = new JavaPluginLogger(Bukkit.getLogger());
-        this.nettyService = new NettyService(this, pluginLogger);
-        this.placeholderService = new PlaceholderService(platformPlaceholderService);
-    }
-
-    @Override
-    public String getVelocityHost() {
-        return Settings.getVelocityHost();
-    }
-
-    @Override
-    public int getVelocityPort() {
-        return Settings.getVelocityPort();
-    }
-
-    @Override
-    public String getServerName() {
-        return Settings.getServerName();
-    }
-
-    @Override
-    public String getSecretCode() {
-        return Settings.getSecretCode();
-    }
-
-    @Override
-    public boolean isDebugCommandRegistrations() {
-        return Settings.isDebugCommandRegistrations();
-    }
-
-    @Override
-    public boolean isDebugClientResponses() {
-        return Settings.isDebugClientResponses();
-    }
-
-    @Override
-    public boolean isDebugConnections() {
-        return Settings.isDebugConnections();
-    }
-
-    @Override
-    public boolean isDebugErrors() {
-        return Settings.isDebugErrors();
-    }
-
-    @Override
-    public NettyService getNettyService() {
-        return nettyService;
-    }
-
-    @Override
-    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordBMCRLB listener, Command addonCommand) {
-        commandHandlers.put(command, handler);
-        if (addonCommand != null) {
-            synchronized (addonCommands) {
-                addonCommands.add(addonCommand);
-                if (Settings.isDebugCommandRegistrations()) {
-                    pluginLogger.info("Registered addon command: " + addonCommand.getName());
-                }
-            }
-        }
-        if (listener != null && listeners.add(listener)) {
-            if (nettyService.getNettyClient() != null && nettyService.getNettyClient().isActive()) {
-                listener.onNettyConnected();
-            }
-        }
-    }
-
-    @Override
-    public void onNettyConnected() {
-        for (DiscordBMCRLB listener : listeners) {
-            listener.onNettyConnected();
-        }
-
-        if (listeners.isEmpty()) {
-            List<Command> commands = getAddonCommands();
-            if (!commands.isEmpty() && nettyService.getNettyClient() != null) {
-                nettyService.registerCommands(commands);
-            }
-        }
-    }
-
-    @Override
-    public Map<String, DiscordCommandHandler> getCommandHandlers() {
-        return Collections.unmodifiableMap(commandHandlers);
-    }
-
-    @Override
-    public boolean checkIfCanHandle(String playerName, List<String> placeholders) {
-        return placeholderService.checkIfCanHandle(playerName, placeholders);
-    }
-
-    @Override
-    public Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders) {
-        return placeholderService.getPlaceholderValues(playerName, placeholders);
     }
 
     @Override
     public void runTaskAsynchronously(Runnable task) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task);
     }
-
-    public List<Command> getAddonCommands() {
-        synchronized (addonCommands) {
-            return new ArrayList<>(addonCommands);
-        }
+    
+    @Override
+    public void runTaskLaterAsynchronously(Runnable task, long delay) {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, task, delay);
     }
 
     public void logAllRegisteredServices() {
-        pluginLogger.info("=== Listing all registered services ===");
+        if (!Settings.isDebugRegisteredServices()) {
+            return;
+        }
+        
+        pluginLogger.info("=== List of all registered services ===");
         for (Class<?> service : Bukkit.getServicesManager().getKnownServices()) {
             @SuppressWarnings("unchecked")
             Collection<RegisteredServiceProvider<?>> providers = 
@@ -149,9 +47,9 @@ public class BukkitPlatform implements Platform {
                                    ", Priority: " + provider.getPriority());
                 }
             } else {
-                pluginLogger.info("  - No providers registered");
+                pluginLogger.info("  - No registered providers");
             }
         }
-        pluginLogger.info("=== End of service listing ===");
+        pluginLogger.info("=== End of the list of services ===");
     }
-}
+} 

@@ -1,11 +1,11 @@
 package com.wairesd.discordbm.bukkit.commands.sub;
 
 import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
+import com.wairesd.discordbm.bukkit.BukkitPlatformConfig;
 import com.wairesd.discordbm.bukkit.DiscordBMB;
-import com.wairesd.discordbm.bukkit.config.BukkitPlatformConfig;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.config.configurators.Messages;
-import com.wairesd.discordbm.client.common.platform.PlatformConfig;
+import com.wairesd.discordbm.client.common.platform.Platform;
 import org.bukkit.command.CommandSender;
 
 public class ReloadCommand {
@@ -21,17 +21,17 @@ public class ReloadCommand {
             return true;
         }
 
-        PlatformConfig platformConfig = new BukkitPlatformConfig(plugin);
+        BukkitPlatformConfig platformConfig = new BukkitPlatformConfig(plugin);
         ConfigManager configManager = new ConfigManager(platformConfig);
         configManager.reloadConfigs();
 
-        if (plugin.getPlatform() != null && 
-            plugin.getPlatform().getNettyService() != null &&
-            plugin.getPlatform().getNettyService().getNettyClient() != null && 
-            plugin.getPlatform().getNettyService().getNettyClient().isActive()) {
+        Platform platform = plugin.getPlatform();
+        if (platform != null && 
+            platform.getNettyService() != null &&
+            platform.getNettyService().getNettyClient() != null && 
+            platform.getNettyService().getNettyClient().isActive()) {
 
             if (DiscordBMB.getApi() != null) {
-
                 DiscordBMReloadEvent configEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG);
                 DiscordBMReloadEvent networkEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK);
                 DiscordBMReloadEvent commandsEvent = new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS);
@@ -40,11 +40,11 @@ public class ReloadCommand {
                 DiscordBMB.getApi().getEventRegistry().fireEvent(networkEvent);
                 DiscordBMB.getApi().getEventRegistry().fireEvent(commandsEvent);
                 
-                plugin.getPluginLogger().info("Fired reload events");
+                plugin.getLogger().info("Fired reload events");
             }
         }
 
         sender.sendMessage(Messages.getMessage(Messages.Keys.RELOAD_SUCCESS));
         return true;
     }
-}
+} 

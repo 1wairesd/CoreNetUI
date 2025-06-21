@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholders;
 
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersDiscordBM;
@@ -14,12 +14,12 @@ import java.util.HashMap;
 public class ResolvePlaceholdersAction implements CommandAction {
     private final String template;
     private final String playerTemplate;
-    private final DiscordBMVPlatform discordHost;
+    private final DiscordBMHPlatformManager platformManager;
 
-    public ResolvePlaceholdersAction(Map<String, Object> properties, DiscordBMVPlatform discordHost) {
+    public ResolvePlaceholdersAction(Map<String, Object> properties, DiscordBMHPlatformManager platformManager) {
         this.template = (String) properties.get("template");
         this.playerTemplate = (String) properties.get("player");
-        this.discordHost = discordHost;
+        this.platformManager = platformManager;
     }
 
     @Override
@@ -27,14 +27,14 @@ public class ResolvePlaceholdersAction implements CommandAction {
         SlashCommandInteractionEvent event = (SlashCommandInteractionEvent) context.getEvent();
         return MessageFormatterUtils.format(playerTemplate, event, context, false)
                 .thenCompose(playerName -> {
-                    PlaceholdersResolver resolver = new PlaceholdersResolver(discordHost);
+                    PlaceholdersResolver resolver = new PlaceholdersResolver(platformManager);
                     
                     if (context.getVariables() != null && 
                         context.getVariables().containsKey(PlaceholdersDiscordBM.SERVER_NAME_VAR)) {
                         return resolver.resolvePlaceholders(template, playerName, context);
                     }
                     
-                    var proxy = discordHost.getVelocityProxy();
+                    var proxy = platformManager.getVelocityProxy();
                     var playerOpt = proxy.getPlayer(playerName);
                     if (playerOpt.isPresent()) {
                         var player = playerOpt.get();

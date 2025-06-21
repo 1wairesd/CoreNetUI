@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.bukkit.config;
+package com.wairesd.discordbm.bukkit;
 
 import com.wairesd.discordbm.client.common.platform.PlatformConfig;
 import org.bukkit.plugin.java.JavaPlugin;

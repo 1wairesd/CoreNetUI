@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.service.ButtonActionService;
 import com.wairesd.discordbm.host.common.commandbuilder.security.checker.RoleChecker;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.form.ButtonFormBuilder;
@@ -34,11 +34,11 @@ public class ButtonInteractionListener extends ListenerAdapter {
     private final ButtonFormBuilder modalBuilder = new ButtonFormBuilder();
     private final ButtonResponseHandler responseHandler = new ButtonResponseHandler();
     private final NettyServer nettyServer;
-    private final DiscordBMVPlatform discordHost;
+    private final DiscordBMHPlatformManager platformManager;
 
-    public ButtonInteractionListener(NettyServer nettyServer, DiscordBMVPlatform discordHost) {
+    public ButtonInteractionListener(NettyServer nettyServer, DiscordBMHPlatformManager platformManager) {
         this.nettyServer = nettyServer;
-        this.discordHost = discordHost;
+        this.platformManager = platformManager;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
 
             event.deferEdit().queue(hook -> {
                 UUID newRequestId = UUID.randomUUID();
-                discordHost.getPendingButtonRequests().put(newRequestId, hook);
+                platformManager.getPendingButtonRequests().put(newRequestId, hook);
 
                 Channel channel = nettyServer.getChannelByServerName(serverName);
                 if (channel == null) {
@@ -74,7 +74,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
             });
         } else if (buttonId.startsWith("goto:")) {
             String targetPageId = buttonId.substring(5);
-            Page page = discordHost.getPageMap().get(targetPageId);
+            Page page = platformManager.getPageMap().get(targetPageId);
 
             if (page == null) {
                 event.reply("Page not found.").setEphemeral(true).queue();
@@ -133,7 +133,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
                 return;
             }
             var modal = modalBuilder.buildModal(form);
-            discordHost.getFormHandlers().put(modal.getId(), formData.getMessageTemplate());
+            platformManager.getFormHandlers().put(modal.getId(), formData.getMessageTemplate());
             event.replyModal(modal).queue();
             return;
         }

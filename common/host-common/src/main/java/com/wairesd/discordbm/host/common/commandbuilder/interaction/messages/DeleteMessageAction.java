@@ -36,9 +36,8 @@ public class DeleteMessageAction implements CommandAction {
             deleter.deleteMessage(channel, ref.messageId());
             
             if (label != null) {
-                String guildId = context.getEvent().getGuild().getId();
-                String fullLabel = guildId + "_" + label;
-                Commands.discordHost.removeGlobalMessageLabel(fullLabel);
+                String fullLabel = (context.getEvent().getGuild() != null ? context.getEvent().getGuild().getId() : "DM") + "_" + label;
+                Commands.getPlatform().removeGlobalMessageLabel(fullLabel);
             }
             
             if (responseMessage != null && !responseMessage.isEmpty()) {

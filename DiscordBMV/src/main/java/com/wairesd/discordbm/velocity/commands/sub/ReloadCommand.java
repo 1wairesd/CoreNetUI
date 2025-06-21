@@ -2,16 +2,16 @@ package com.wairesd.discordbm.velocity.commands.sub;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
-import com.wairesd.discordbm.velocity.DiscordBMV;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.config.ConfigManager;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 
 public class ReloadCommand {
 
-    private final DiscordBMV plugin;
+    private final DiscordBMHPlatformManager platformManager;
 
-    public ReloadCommand(DiscordBMV plugin) {
-        this.plugin = plugin;
+    public ReloadCommand(DiscordBMHPlatformManager platformManager) {
+        this.platformManager = platformManager;
     }
 
     public void execute(CommandSource source, MessageContext context) {
@@ -22,9 +22,9 @@ public class ReloadCommand {
 
         ConfigManager.ConfigureReload();
 
-        if (plugin.getNettyServer() != null) {
-            plugin.updateActivity();
-            plugin.getCommandManager().loadAndRegisterCommands();
+        if (platformManager.getNettyServer() != null) {
+            platformManager.updateActivity();
+            platformManager.getCommandManager().loadAndRegisterCommands();
         }
 
         source.sendMessage(Messages.getComponent(Messages.Keys.RELOAD_SUCCESS, context));

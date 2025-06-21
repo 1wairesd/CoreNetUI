@@ -14,7 +14,7 @@ public class MessageReferenceResolver {
             }
 
             String fullLabel = context.getEvent().getGuild().getId() + "_" + label;
-            String[] parts = Commands.discordHost.getMessageReference(fullLabel);
+            String[] parts = Commands.getPlatform().getMessageReference(fullLabel);
             if (parts == null || parts.length != 2) {
                 throw new IllegalArgumentException("No message found for label " + label);
             }

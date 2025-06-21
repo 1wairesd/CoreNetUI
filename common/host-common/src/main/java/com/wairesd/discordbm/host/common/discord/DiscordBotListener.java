@@ -2,7 +2,6 @@ package com.wairesd.discordbm.host.common.discord;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.handler.CommandHandler;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class DiscordBotListener extends ListenerAdapter {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final DiscordBMVPlatform discordHost;
+    private final DiscordBMHPlatformManager platformManager;
     private final NettyServer nettyServer;
 
     private final CommandHandler commandHandler;
@@ -26,13 +25,13 @@ public class DiscordBotListener extends ListenerAdapter {
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
 
-    public DiscordBotListener(DiscordBMVPlatform discordHost, NettyServer nettyServer, PluginLogger logger) {
-        this.discordHost = discordHost;
+    public DiscordBotListener(DiscordBMHPlatformManager platformManager, NettyServer nettyServer, PluginLogger logger) {
+        this.platformManager = platformManager;
         this.nettyServer = nettyServer;
 
         this.requestSender = new RequestSender(nettyServer, logger);
         this.responseHelper = new ResponseHelper();
-        this.commandHandler = new CommandHandler(discordHost, requestSender, responseHelper);
+        this.commandHandler = new CommandHandler(platformManager, requestSender, responseHelper);
         this.serverSelector = new ServerSelector(requestSender, responseHelper);
     }
 

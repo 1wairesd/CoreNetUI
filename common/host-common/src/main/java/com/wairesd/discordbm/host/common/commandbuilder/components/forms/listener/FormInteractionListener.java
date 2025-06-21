@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.components.forms.listen
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 
 public class FormInteractionListener extends ListenerAdapter {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final DiscordBMVPlatform discordHost;
+    private final DiscordBMHPlatformManager platformManager;
 
-    public FormInteractionListener(DiscordBMVPlatform discordHost) {
-        this.discordHost = discordHost;
+    public FormInteractionListener(DiscordBMHPlatformManager platformManager) {
+        this.platformManager = platformManager;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FormInteractionListener extends ListenerAdapter {
         if (!modalID.startsWith("form_")) return;
 
         try {
-            Object handler = discordHost.getFormHandlers().get(modalID);
+            Object handler = platformManager.getFormHandlers().get(modalID);
             if (handler == null) return;
 
             Map<String, String> responses = event.getValues().stream()
@@ -55,7 +55,7 @@ public class FormInteractionListener extends ListenerAdapter {
             logger.error("Modal Window Processing Error", e);
             event.reply("An error occurred while processing the form.").setEphemeral(true).queue();
         } finally {
-            discordHost.getFormHandlers().remove(modalID);
+            platformManager.getFormHandlers().remove(modalID);
         }
     }
 

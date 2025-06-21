@@ -2,13 +2,12 @@ package com.wairesd.discordbm.bukkit;
 
 import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
-import com.wairesd.discordbm.client.common.placeholders.PlaceholderService;
 import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.client.common.platform.PlatformBootstrap;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
-
 
 public class DiscordBMB extends JavaPlugin {
     private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
@@ -16,17 +15,23 @@ public class DiscordBMB extends JavaPlugin {
     private ConfigManager configManager;
     private Platform platform;
     private String serverName;
-    private boolean invalidSecret = false;
-    private PlaceholderService placeholderService;
-
-    private BootstrapDBMB bootstrapService;
     private DiscordBMThreadPool threadPool;
+    private PlatformBootstrap bootstrap;
 
     @Override
     public void onEnable() {
         threadPool = new DiscordBMThreadPool(4);
-        bootstrapService = new BootstrapDBMB(this, pluginLogger);
-        bootstrapService.initialize();
+        bootstrap = new BootstrapDBMB(this, pluginLogger);
+        bootstrap.initialize();
+        
+        platform = bootstrap.getPlatform();
+        configManager = bootstrap.getConfigManager();
+        api = bootstrap.getApi();
+        
+        // Логируем зарегистрированные сервисы
+        if (platform instanceof BukkitPlatform) {
+            ((BukkitPlatform) platform).logAllRegisteredServices();
+        }
     }
 
     @Override

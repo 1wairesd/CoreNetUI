@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.discord.handler;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandExecutorFacade;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
@@ -13,17 +13,17 @@ import org.slf4j.LoggerFactory;
 
 public class CommandHandler {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final DiscordBMVPlatform discordHost;
+    private final DiscordBMHPlatformManager platformManager;
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
     private final CommandExecutorFacade commandExecutorFacade;
 
-    public CommandHandler(DiscordBMVPlatform discordHost, RequestSender requestSender, ResponseHelper responseHelper) {
-        this.discordHost = discordHost;
+    public CommandHandler(DiscordBMHPlatformManager platformManager, RequestSender requestSender, ResponseHelper responseHelper) {
+        this.platformManager = platformManager;
         this.requestSender = requestSender;
         this.responseHelper = responseHelper;
 
-        if (discordHost.getDiscordBotManager().getJda() != null) {
+        if (platformManager.getDiscordBotManager().getJda() != null) {
             this.commandExecutorFacade = new CommandExecutorFacade();
             logger.info("CommandExecutor initialized");
         } else {
@@ -37,7 +37,7 @@ public class CommandHandler {
     }
 
     public void handleCustomCommand(SlashCommandInteractionEvent event, String command) {
-        var customCommand = discordHost.getCommandManager().getCommand(command);
+        var customCommand = platformManager.getCommandManager().getCommand(command);
         if (customCommand != null) {
             if (commandExecutorFacade != null) {
                 if (Settings.isDebugCommandExecution()) {

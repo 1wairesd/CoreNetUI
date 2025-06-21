@@ -18,4 +18,4 @@ public class HelpCommand {
         sender.sendMessage(Messages.getMessage(Messages.Keys.HELP_INFO));
         return true;
     }
-}
+} 

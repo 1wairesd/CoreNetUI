@@ -6,7 +6,7 @@ import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
@@ -26,12 +26,12 @@ import java.util.HashMap;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
-    private static DiscordBMVPlatform discordHost;
+    private static DiscordBMHPlatformManager platformManager;
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
-    public static void init(DiscordBotListener discordBotListener, DiscordBMVPlatform host) {
+    public static void init(DiscordBotListener discordBotListener, DiscordBMHPlatformManager platform) {
         listener = discordBotListener;
-        discordHost = host;
+        platformManager = platform;
     }
 
     public static void handleResponse(ResponseMessage respMsg) {
@@ -41,7 +41,7 @@ public class ResponseHandler {
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
 
-            InteractionHook buttonHook = (InteractionHook)discordHost.getPendingButtonRequests().remove(requestId);
+            InteractionHook buttonHook = (InteractionHook)platformManager.getPendingButtonRequests().remove(requestId);
             if (buttonHook != null) {
                 var embedBuilder = new EmbedBuilder();
                 if (respMsg.embed() != null) {
@@ -259,38 +259,14 @@ public class ResponseHandler {
                         .setActionRow(jdaButtons.toArray(new Button[0]))
                         .queue();
             } else {
-                if (Settings.isDebugRequestProcessing()) {
-                    logger.info("About to send embed for requestId: {}", respMsg.requestId());
-                }
-                hook.editOriginalEmbeds(embed).queue(
-                        success -> {
-                            if (Settings.isDebugRequestProcessing()) {
-                                logger.info("Successfully sent embed for requestId: {}", respMsg.requestId());
-                            }
-                        },
-                        failure -> logger.error("Failed to send embed for requestId: {} - {}", respMsg.requestId(), failure.getMessage())
-                );
+                hook.editOriginalEmbeds(embed).queue();
             }
         } else if (respMsg.response() != null) {
-            hook.editOriginal(respMsg.response()).queue(
-                    success -> {
-                        if (Settings.isDebugRequestProcessing()) {
-                            logger.info("Message sent successfully");
-                        }
-                    },
-                    failure -> logger.error("Failed to send message: {}", failure.getMessage())
-            );
-            if (Settings.isDebugRequestProcessing()) {
-                logger.info("Response sent for requestId: {}", respMsg.requestId());
-            }
-        } else {
-            hook.editOriginal("No response provided.").queue();
+            hook.editOriginal(respMsg.response()).queue();
         }
     }
 
     private static void logInvalidUUID(String requestIdStr, IllegalArgumentException e) {
-        if (Settings.isDebugErrors()) {
-            logger.error("Invalid UUID in response: {}", requestIdStr, e);
-        }
+        logger.error("Invalid UUID format for requestId: {}", requestIdStr, e);
     }
 }

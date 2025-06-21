@@ -134,7 +134,7 @@ public class CommandResponder {
         String label = context.getExpectedMessageLabel();
         if (label != null) {
             String full = (context.getEvent().getGuild() != null ? context.getEvent().getGuild().getId() : "DM") + "_" + label;
-            Commands.discordHost.setGlobalMessageLabel(full, channelId, messageId);
+            Commands.getPlatform().setGlobalMessageLabel(full, channelId, messageId);
         }
     }
 }

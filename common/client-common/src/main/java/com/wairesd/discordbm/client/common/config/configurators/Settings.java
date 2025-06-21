@@ -74,4 +74,8 @@ public class Settings {
     public static boolean isDebugErrors() {
         return settingsConfig.node("debug", "debug-errors").getBoolean(true);
     }
+
+    public static boolean isDebugRegisteredServices() {
+        return settingsConfig.node("debug", "debug-registered-services").getBoolean(false);
+    }
 }

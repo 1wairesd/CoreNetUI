@@ -1,51 +1,49 @@
-package com.wairesd.discordbm.velocity;
+package com.wairesd.discordbm.host.common.bootstrap;
 
 import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener.ButtonInteractionListener;
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.listener.FormInteractionListener;
-import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.host.common.config.ConfigManager;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.DatabaseManager;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
 import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.network.NettyServer;
-import com.velocitypowered.api.proxy.ProxyServer;
 import net.dv8tion.jda.api.JDA;
 
 import java.nio.file.Path;
 
-public class BootstrapDBMV {
-    private final DiscordBMV plugin;
+public class DiscordBMHBootstrap {
+    private final DiscordBMHPlatformManager platformManager;
     private final Path dataDirectory;
-    private final ProxyServer proxy;
     private final PluginLogger logger;
-    private final DiscordBMVHost discordHost;
-
+    
     private NettyServer nettyServer;
     private DatabaseManager dbManager;
     private CommandManager commandManager;
     private DiscordBotManager discordBotManager;
+    private BannerPrinter.Platform platform;
 
-    public BootstrapDBMV(DiscordBMV plugin, Path dataDirectory, ProxyServer proxy, PluginLogger logger) {
-        this.plugin = plugin;
+    public DiscordBMHBootstrap(DiscordBMHPlatformManager platformManager, Path dataDirectory,
+                               PluginLogger logger, BannerPrinter.Platform platform) {
+        this.platformManager = platformManager;
         this.dataDirectory = dataDirectory;
-        this.proxy = proxy;
         this.logger = logger;
+        this.platform = platform;
         this.discordBotManager = new DiscordBotManager();
-        this.discordHost = plugin.getDiscordHost();
+        platformManager.setDiscordBotManager(discordBotManager);
     }
 
     public void initialize() {
-        BannerPrinter.printBanner(BannerPrinter.Platform.VELOCITY);
+        BannerPrinter.printBanner(platform);
 
         initConfig();
         initDatabase();
         initNetty();
-        initCommands();
         initDiscord();
         startNetty();
     }
@@ -63,14 +61,8 @@ public class BootstrapDBMV {
 
     private void initNetty() {
         nettyServer = new NettyServer(dbManager);
-        logger.info("Netty server initialized");
-    }
-
-    private void initCommands() {
-        proxy.getCommandManager().register(
-                proxy.getCommandManager().metaBuilder("discordBMV").build(),
-                new CommandAdmin(plugin)
-        );
+        platformManager.setNettyServer(nettyServer);
+        logger.info("Netty server is initialized");
     }
 
     private void initDiscord() {
@@ -81,20 +73,21 @@ public class BootstrapDBMV {
 
         JDA jda = discordBotManager.getJda();
         if (jda == null) {
-            logger.error("Failed to initialize Discord bot! Aborting.");
+            logger.error("Bot Discord initialization failed! Interrupt.");
             return;
         }
 
         logger.info("Discord bot initialized");
-        jda.addEventListener(new ButtonInteractionListener(nettyServer, discordHost));
-        jda.addEventListener(new FormInteractionListener(discordHost));
+        jda.addEventListener(new ButtonInteractionListener(nettyServer, platformManager));
+        jda.addEventListener(new FormInteractionListener(platformManager));
 
         nettyServer.setJda(jda);
-        DiscordBotListener listener = new DiscordBotListener(discordHost, nettyServer, logger);
+        DiscordBotListener listener = new DiscordBotListener(platformManager, nettyServer, logger);
         jda.addEventListener(listener);
-        ResponseHandler.init(listener, discordHost);
+        ResponseHandler.init(listener, platformManager);
 
         commandManager = new CommandManager(nettyServer, jda);
+        platformManager.setCommandManager(commandManager);
         commandManager.loadAndRegisterCommands();
     }
 
@@ -113,4 +106,4 @@ public class BootstrapDBMV {
     public NettyServer getNettyServer() {
         return nettyServer;
     }
-}
+} 

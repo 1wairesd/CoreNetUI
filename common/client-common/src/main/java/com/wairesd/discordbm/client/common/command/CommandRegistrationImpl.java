@@ -123,7 +123,26 @@ public class CommandRegistrationImpl implements CommandRegistration {
     }
 
     private void sendUnregisterMessage(String commandName, String pluginName) {
-        // Implementation for unregistering commands
+        String secret = platform.getSecretCode();
+        if (secret == null || secret.isEmpty()) {
+            logger.warn("Cannot unregister command: secret is empty!");
+            return;
+        }
+        String serverName = platform.getServerName();
+        com.wairesd.discordbm.common.models.unregister.UnregisterMessage msg =
+                new com.wairesd.discordbm.common.models.unregister.UnregisterMessage(serverName, pluginName, commandName, secret);
+        platform.getNettyService().sendNettyMessage(gson.toJson(msg));
+        if (platform.isDebugCommandRegistrations()) {
+            logger.info("Sent unregister message for command: " + commandName);
+        }
+    }
+
+    public void resendAllCommands() {
+        synchronized (registeredCommands) {
+            for (Command cmd : registeredCommands) {
+                sendRegistrationMessage(cmd);
+            }
+        }
     }
 
     private static class CommandHandlerWrapper {

@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.velocity.commands.sub;
 
 import com.velocitypowered.api.command.CommandSource;
-import com.wairesd.discordbm.velocity.DiscordBMV;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.host.common.config.configurators.Commands;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CommandsCommand {
-    private final DiscordBMV plugin;
 
-    public CommandsCommand(DiscordBMV plugin) {
-        this.plugin = plugin;
+public class CommandsCommand {
+    private final DiscordBMHPlatformManager platformManager;
+
+    public CommandsCommand(DiscordBMHPlatformManager platformManager) {
+        this.platformManager = platformManager;
     }
 
     public void execute(CommandSource source, String[] args, MessageContext context) {
@@ -72,10 +73,10 @@ public class CommandsCommand {
     }
 
     private Map<String, List<String>> getAddonCommands() {
-        return plugin.getNettyServer().getCommandToServers().entrySet().stream()
+        return platformManager.getNettyServer().getCommandToServers().entrySet().stream()
                 .filter(entry -> !isCustomCommand(entry.getKey()))
                 .collect(Collectors.groupingBy(
-                    entry -> plugin.getNettyServer().getPluginForCommand(entry.getKey()),
+                    entry -> platformManager.getNettyServer().getPluginForCommand(entry.getKey()),
                     Collectors.mapping(Map.Entry::getKey, Collectors.toList())
                 ));
     }

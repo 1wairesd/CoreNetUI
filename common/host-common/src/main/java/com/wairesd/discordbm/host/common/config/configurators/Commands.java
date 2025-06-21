@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.config.configurators;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.DiscordBMVPlatform;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
@@ -31,12 +31,19 @@ public class Commands {
 
     private static Path dataDirectory;
     private static volatile List<CommandStructured> customCommands = Collections.emptyList();
-
-    public static DiscordBMVPlatform discordHost;
+    private static DiscordBMHPlatformManager platformInstance;
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
         loadCommands();
+    }
+
+    public static void setPlatform(DiscordBMHPlatformManager platform) {
+        platformInstance = platform;
+    }
+
+    public static DiscordBMHPlatformManager getPlatform() {
+        return platformInstance;
     }
 
     private static synchronized List<CommandStructured> loadCommands() {
@@ -115,7 +122,7 @@ public class Commands {
         List<CommandOptions> options = getOptions(cmdData);
         List<CommandCondition> conditions = getConditions(cmdData);
         List<CommandAction> actions = getActions(cmdData);
-        List<CommandAction> failActions = CommandParserFailAction.parse(cmdData, discordHost);
+        List<CommandAction> failActions = CommandParserFailAction.parse(cmdData, platformInstance);
         Boolean ephemeral = cmdData.containsKey("ephemeral") ?
                 (Boolean) cmdData.get("ephemeral") : null;
 
@@ -173,10 +180,10 @@ public class Commands {
     }
 
     private static CommandAction createAction(Map<String, Object> data) {
-        if (discordHost == null) {
-            throw new IllegalStateException("DiscordHost instance is not set");
+        if (platformInstance == null) {
+            throw new IllegalStateException("Platform instance is not set");
         }
-        return CommandParserAction.parseAction(data, discordHost);
+        return CommandParserAction.parseAction(data, platformInstance);
     }
 
     private static boolean getBoolean(Map<String, Object> data, String key, boolean defaultValue) {

@@ -3,21 +3,23 @@ package com.wairesd.discordbm.velocity.commands;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
-import com.wairesd.discordbm.velocity.DiscordBMV;
 import com.wairesd.discordbm.velocity.commands.sub.ReloadCommand;
 import com.wairesd.discordbm.velocity.commands.sub.CommandsCommand;
 import com.wairesd.discordbm.velocity.commands.sub.HelpCommand;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
     private final CommandsCommand commandsCommand;
     private final HelpCommand helpCommand;
+    private final DiscordBMHPlatformManager platformManager;
 
-    public CommandAdmin(DiscordBMV plugin) {
-        this.reloadCommand = new ReloadCommand(plugin);
-        this.commandsCommand = new CommandsCommand(plugin);
+    public CommandAdmin(DiscordBMHPlatformManager platformManager) {
+        this.platformManager = platformManager;
+        this.reloadCommand = new ReloadCommand(platformManager);
+        this.commandsCommand = new CommandsCommand(platformManager);
         this.helpCommand = new HelpCommand();
     }
 

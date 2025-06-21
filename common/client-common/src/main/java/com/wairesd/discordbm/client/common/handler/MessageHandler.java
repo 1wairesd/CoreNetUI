@@ -11,6 +11,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,21 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     private final Platform platform;
     private final Gson gson = new Gson();
     private final PluginLogger pluginLogger;
+    private static final String ERROR_HANDLER_NOT_FOUND = "{\"error\":\"Command handler not found\"}";
+    private enum MessageType {
+        REQUEST("request"),
+        CAN_HANDLE_PLACEHOLDERS("can_handle_placeholders"),
+        GET_PLACEHOLDERS("get_placeholders");
+        private final String type;
+        MessageType(String type) { this.type = type; }
+        public String getType() { return type; }
+        public static MessageType from(String type) {
+            for (MessageType mt : values()) {
+                if (mt.type.equals(type)) return mt;
+            }
+            return null;
+        }
+    }
 
     public MessageHandler(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -27,55 +43,52 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String message) {
         if (platform.isDebugClientResponses()) {
-            pluginLogger.info("Received message: {}", message);
+            pluginLogger.info("Received message: " + message);
         }
-
         if (message.startsWith("Error:")) {
             handleErrorMessage(message, ctx);
             return;
         }
-
         try {
             JsonObject json = gson.fromJson(message, JsonObject.class);
-            String type = json.get("type").getAsString();
-
-            if ("request".equals(type)) {
-                handleRequest(json);
-            } else if ("can_handle_placeholders".equals(type)) {
-                CanHandlePlaceholdersRequest req = gson.fromJson(json, CanHandlePlaceholdersRequest.class);
-                platform.runTaskAsynchronously(() -> {
-                    boolean canHandle = platform.checkIfCanHandle(req.player(), req.placeholders());
-                    CanHandleResponse resp = new CanHandleResponse.Builder()
-                            .type("can_handle_response")
-                            .requestId(req.requestId())
-                            .canHandle(canHandle)
-                            .build();
-                    ctx.channel().writeAndFlush(gson.toJson(resp));
-                });
-            } else if ("get_placeholders".equals(type)) {
-                GetPlaceholdersRequest req = gson.fromJson(json, GetPlaceholdersRequest.class);
-                platform.runTaskAsynchronously(() -> {
-                    Map<String, String> values = platform.getPlaceholderValues(req.player(), req.placeholders());
-                    PlaceholdersResponse resp = new PlaceholdersResponse.Builder()
-                            .type("placeholders_response")
-                            .requestId(req.requestId())
-                            .values(values)
-                            .build();
-                    ctx.channel().writeAndFlush(gson.toJson(resp));
-                });
-            } else {
-                pluginLogger.warn("Unknown message type: {}", type);
+            String typeStr = json.get("type").getAsString();
+            MessageType type = MessageType.from(typeStr);
+            switch (type != null ? type : MessageType.REQUEST) {
+                case REQUEST -> handleRequest(json);
+                case CAN_HANDLE_PLACEHOLDERS -> {
+                    CanHandlePlaceholdersRequest req = gson.fromJson(json, CanHandlePlaceholdersRequest.class);
+                    platform.runTaskAsynchronously(() -> {
+                        boolean canHandle = platform.checkIfCanHandle(req.player(), req.placeholders());
+                        CanHandleResponse resp = new CanHandleResponse.Builder()
+                                .type("can_handle_response")
+                                .requestId(req.requestId())
+                                .canHandle(canHandle)
+                                .build();
+                        ctx.channel().writeAndFlush(gson.toJson(resp));
+                    });
+                }
+                case GET_PLACEHOLDERS -> {
+                    GetPlaceholdersRequest req = gson.fromJson(json, GetPlaceholdersRequest.class);
+                    platform.runTaskAsynchronously(() -> {
+                        Map<String, String> values = platform.getPlaceholderValues(req.player(), req.placeholders());
+                        PlaceholdersResponse resp = new PlaceholdersResponse.Builder()
+                                .type("placeholders_response")
+                                .requestId(req.requestId())
+                                .values(values)
+                                .build();
+                        ctx.channel().writeAndFlush(gson.toJson(resp));
+                    });
+                }
+                default -> pluginLogger.warn("Unknown message type: " + typeStr);
             }
         } catch (Exception e) {
-            if (platform.isDebugErrors()) {
-                pluginLogger.error("Error processing message: {}", message, e);
-            }
+            pluginLogger.error("Error processing message: " + message, e);
         }
     }
 
     private void handleErrorMessage(String message, ChannelHandlerContext ctx) {
         if (platform.isDebugErrors()) {
-            pluginLogger.warn("Received error from server: {}", message);
+            pluginLogger.warn("Received error from server: " + message);
         }
         switch (message) {
             case "Error: Invalid secret code":
@@ -91,7 +104,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
     private void handleRequest(JsonObject json) {
         String command = json.get("command").getAsString();
         String requestId = json.get("requestId").getAsString();
-
         Map<String, String> options = new HashMap<>();
         if (json.has("options")) {
             JsonObject optionsJson = json.getAsJsonObject("options");
@@ -99,7 +111,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 options.put(entry.getKey(), entry.getValue().getAsString());
             }
         }
-
         DiscordCommandHandler handler = platform.getCommandHandlers().get(command);
         if (handler != null) {
             String[] args = options.values().toArray(new String[0]);
@@ -112,15 +123,19 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 }
             });
         } else {
-            platform.getNettyService().sendResponse(requestId, "{\"error\":\"Command handler not found\"}");
+            platform.getNettyService().sendResponse(requestId, ERROR_HANDLER_NOT_FOUND);
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (platform.isDebugErrors()) {
-            pluginLogger.error("Connection error: {}", cause.getMessage(), cause);
+        if (cause instanceof SocketException && "Connection reset".equals(cause.getMessage())) {
+            ctx.close();
+        } else if (platform.isDebugErrors()) {
+            pluginLogger.error("Connection error: " + (cause != null ? cause.getMessage() : "Unknown error"), cause);
+            ctx.close();
+        } else {
+            ctx.close();
         }
-        ctx.close();
     }
 }

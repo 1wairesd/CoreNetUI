@@ -125,8 +125,20 @@ public class NettyServer {
     }
 
     public void removeServer(Channel channel) {
+        List<String> commandsToRemove = new ArrayList<>();
         for (var entry : commandToServers.entrySet()) {
             entry.getValue().removeIf(serverInfo -> serverInfo.channel() == channel);
+            if (entry.getValue().isEmpty()) {
+                commandsToRemove.add(entry.getKey());
+            }
+        }
+        for (String cmd : commandsToRemove) {
+            commandToServers.remove(cmd);
+            commandDefinitions.remove(cmd);
+            commandToPlugin.remove(cmd);
+            if (Settings.isDebugCommandRegistrations()) {
+                logger.info("Removed command {} as no servers remain", cmd);
+            }
         }
         channelToServerName.remove(channel);
     }
