@@ -84,4 +84,4 @@ README.md              # Описание и инструкция
 
 ## ⚖️ Лицензия
 
-Проект распространяется по лицензии MIT.
+Проект распространяется по лицензии [MIT](https://github.com/1wairesd/DiscordBM/blob/main/LICENSE).
