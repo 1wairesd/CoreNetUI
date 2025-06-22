@@ -55,6 +55,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         String ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
+        nettyServer.setConnectTime(ctx.channel(), System.currentTimeMillis());
         if (Settings.isDebugConnections()) {
             logger.info("Client connected: {}", ctx.channel().remoteAddress());
         }

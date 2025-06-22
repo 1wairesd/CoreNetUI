@@ -38,6 +38,9 @@ public class Messages {
         public static final String SERVER_SELECTION_TIMEOUT = "server-selection-timeout";
         public static final String SERVER_SELECTION_NO_SERVER = "server-selection-no-server";
         public static final String SERVER_SELECTION_NOT_FOUND = "server-selection-not-found";
+
+        public static final String NO_ACTIVE_CLIENTS = "no_active_clients";
+        public static final String NO_CONNECTED_CLIENTS = "no_connected_clients";
     }
 
     public static void init(Path dataDir) {

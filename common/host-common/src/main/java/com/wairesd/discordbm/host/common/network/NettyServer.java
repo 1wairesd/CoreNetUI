@@ -18,6 +18,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.LoggerFactory;
+import com.wairesd.discordbm.host.common.utils.ClientInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ public class NettyServer {
     private final String ip = Settings.getNettyIp();
     private final CommandRegistrationService commandRegistrationService;
     private final Map<String, String> commandToPlugin = new ConcurrentHashMap<>();
+    private final Map<Channel, Long> channelConnectTime = new ConcurrentHashMap<>();
 
     public NettyServer(DatabaseManager dbManager) {
         this.dbManager = dbManager;
@@ -141,6 +143,7 @@ public class NettyServer {
             }
         }
         channelToServerName.remove(channel);
+        channelConnectTime.remove(channel);
     }
 
     public Map<Channel, String> getChannelToServerName() {
@@ -201,5 +204,17 @@ public class NettyServer {
 
     public Map<String, String> getCommandToPlugin() {
         return commandToPlugin;
+    }
+
+    public void setConnectTime(Channel channel, long time) {
+        channelConnectTime.put(channel, time);
+    }
+
+    public Long getConnectTime(Channel channel) {
+        return channelConnectTime.get(channel);
+    }
+
+    public List<ClientInfo> getActiveClientsInfo() {
+        return ClientInfo.getActiveClientsInfo(channelToServerName, channelConnectTime);
     }
 }

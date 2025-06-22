@@ -6,6 +6,7 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.wairesd.discordbm.velocity.commands.sub.ReloadCommand;
 import com.wairesd.discordbm.velocity.commands.sub.CommandsCommand;
 import com.wairesd.discordbm.velocity.commands.sub.HelpCommand;
+import com.wairesd.discordbm.velocity.commands.sub.ClientsCommand;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
@@ -14,6 +15,7 @@ public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
     private final CommandsCommand commandsCommand;
     private final HelpCommand helpCommand;
+    private final ClientsCommand clientsCommand;
     private final DiscordBMHPlatformManager platformManager;
 
     public CommandAdmin(DiscordBMHPlatformManager platformManager) {
@@ -21,6 +23,7 @@ public class CommandAdmin implements SimpleCommand {
         this.reloadCommand = new ReloadCommand(platformManager);
         this.commandsCommand = new CommandsCommand(platformManager);
         this.helpCommand = new HelpCommand();
+        this.clientsCommand = new ClientsCommand(platformManager);
     }
 
     @Override
@@ -37,6 +40,7 @@ public class CommandAdmin implements SimpleCommand {
         switch (args[0].toLowerCase()) {
             case "reload" -> reloadCommand.execute(source, context);
             case "commands" -> commandsCommand.execute(source, args, context);
+            case "clients" -> clientsCommand.execute(source, context);
             case "help" -> helpCommand.execute(source, context);
             default -> showHelp(source, context);
         }

@@ -14,7 +14,6 @@ public class CommandErrorMessages {
     private static final Color ERROR_COLOR = new Color(255, 0, 0);
 
     static {
-        // Инициализация стандартных сообщений
         DEFAULT_MESSAGES.put(CommandErrorType.PERMISSION_DENIED, "❌ У вас нет прав для выполнения этой команды");
         DEFAULT_MESSAGES.put(CommandErrorType.ROLE_REQUIRED, "❌ Для выполнения этой команды требуется роль {role}");
         DEFAULT_MESSAGES.put(CommandErrorType.COOLDOWN_ACTIVE, "⏳ Подождите {time} секунд перед повторным использованием");

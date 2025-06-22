@@ -24,3 +24,6 @@ server-processing: "Processing command on server: {0}"
 server-selection-timeout: "Selection timeout expired."
 server-selection-no-server: "No server selected."
 server-selection-not-found: "Selected server not found."
+
+no_active_clients: "No active clients."
+no_connected_clients: "No connected clients."
