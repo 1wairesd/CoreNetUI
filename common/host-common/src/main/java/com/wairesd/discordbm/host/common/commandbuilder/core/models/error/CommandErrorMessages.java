@@ -1,6 +1,5 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.models.error;
 
-import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 

@@ -125,6 +125,7 @@ public class Commands {
         List<CommandAction> failActions = CommandParserFailAction.parse(cmdData, platformInstance);
         Boolean ephemeral = cmdData.containsKey("ephemeral") ?
                 (Boolean) cmdData.get("ephemeral") : null;
+        String permission = cmdData.containsKey("permission") ? (String) cmdData.get("permission") : null;
 
         return new CommandStructured(
                 name,
@@ -134,7 +135,8 @@ public class Commands {
                 conditions,
                 actions,
                 failActions,
-                ephemeral
+                ephemeral,
+                permission
         );
     }
 

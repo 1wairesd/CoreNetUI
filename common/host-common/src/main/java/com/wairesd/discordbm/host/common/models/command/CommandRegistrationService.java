@@ -39,6 +39,7 @@ public class CommandRegistrationService {
                 }
             } else {
                 commandDefinitions.put(cmd.name(), cmd);
+                nettyServer.getCommandDefinitions().put(cmd.name(), cmd);
                 var cmdData = net.dv8tion.jda.api.interactions.commands.build.Commands.slash(cmd.name(), cmd.description());
                 for (var opt : cmd.options()) {
                     cmdData.addOption(
@@ -58,8 +59,7 @@ public class CommandRegistrationService {
                         cmdData.setGuildOnly(false);
                     }
                 }
-                jda.upsertCommand(cmdData).queue(
-                );
+                jda.upsertCommand(cmdData).queue();
                 if (Settings.isDebugCommandRegistrations()) {
                     logger.info("Registered command: {} with context: {}", cmd.name(), cmd.context());
                 }
@@ -68,8 +68,6 @@ public class CommandRegistrationService {
             List<NettyServer.ServerInfo> servers = nettyServer.getCommandToServers().computeIfAbsent(cmd.name(), k -> new ArrayList<>());
             servers.removeIf(serverInfo -> serverInfo.serverName().equals(serverName));
             servers.add(new NettyServer.ServerInfo(serverName, channel));
-
-
             logger.info("Registered command '{}' for server '{}'. Total servers for command: {}",
                     cmd.name(), serverName, nettyServer.getCommandToServers().get(cmd.name()).size());
         }

@@ -54,6 +54,19 @@ public class DiscordBotListener extends ListenerAdapter {
         }
 
         var cmdDef = nettyServer.getCommandDefinitions().get(command);
+        if (cmdDef != null && cmdDef.permission() != null && !cmdDef.permission().isEmpty()) {
+            var member = event.getMember();
+            var memberRoles = member != null ? member.getRoles().stream().map(r -> r.getId()).toList() : java.util.Collections.emptyList();
+
+            boolean hasRole = member != null && member.getRoles().stream()
+                .anyMatch(role -> role.getId().equals(cmdDef.permission()));
+            if (!hasRole) {
+                new com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorHandler(null, event)
+                    .handleRoleRequired(cmdDef.permission());
+                return;
+            }
+        }
+
         if (commandHandler.isCommandRestrictedToDM(event, cmdDef)) {
             responseHelper.replyCommandRestrictedToDM(event);
             return;

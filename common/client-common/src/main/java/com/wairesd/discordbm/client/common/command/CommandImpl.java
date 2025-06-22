@@ -13,6 +13,7 @@ public class CommandImpl implements Command {
     private final String pluginName;
     private final String context;
     private final List<CommandOption> options;
+    private final String permission;
 
     private CommandImpl(Builder builder) {
         this.name = builder.name;
@@ -20,6 +21,7 @@ public class CommandImpl implements Command {
         this.pluginName = builder.pluginName;
         this.context = builder.context;
         this.options = builder.options != null ? builder.options : new ArrayList<>();
+        this.permission = builder.permission;
     }
     
     @Override
@@ -47,12 +49,18 @@ public class CommandImpl implements Command {
         return options;
     }
 
+    @Override
+    public String getPermission() {
+        return permission;
+    }
+
     public static class Builder implements Command.Builder {
         private String name;
         private String description;
         private String pluginName;
         private String context;
         private List<CommandOption> options;
+        private String permission;
         
         @Override
         public Builder name(String name) {
@@ -81,6 +89,12 @@ public class CommandImpl implements Command {
         @Override
         public Builder options(List<CommandOption> options) {
             this.options = options;
+            return this;
+        }
+        
+        @Override
+        public Builder permission(String roleId) {
+            this.permission = roleId;
             return this;
         }
         

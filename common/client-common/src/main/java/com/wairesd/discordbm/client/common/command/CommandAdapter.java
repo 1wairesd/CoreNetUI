@@ -47,6 +47,11 @@ public class CommandAdapter implements Command {
         return apiCommand.getOptions();
     }
 
+    @Override
+    public String getPermission() {
+        return apiCommand.getPermission();
+    }
+
     public com.wairesd.discordbm.client.common.models.command.Command getInternalCommand() {
         return internalCommand;
     }
@@ -62,6 +67,7 @@ public class CommandAdapter implements Command {
             .pluginName(apiCommand.getPluginName())
             .context(apiCommand.getContext())
             .options(options)
+            .permission(apiCommand.getPermission())
             .build();
     }
 
@@ -85,6 +91,7 @@ public class CommandAdapter implements Command {
             .pluginName(internalCommand.getPluginName())
             .context(internalCommand.getContext())
             .options(options)
+            .permission(internalCommand.getPermission())
             .build();
     }
 

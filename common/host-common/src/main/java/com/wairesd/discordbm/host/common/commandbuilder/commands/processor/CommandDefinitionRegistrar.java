@@ -19,7 +19,8 @@ public class CommandDefinitionRegistrar {
                 cmd.getContext(),
                 cmd.getOptions().stream()
                         .map(opt -> new OptionDefinition(opt.getName(), opt.getType(), opt.getDescription(), opt.isRequired()))
-                        .toList()
+                        .toList(),
+                cmd.getPermission()
         );
         nettyServer.getCommandDefinitions().put(cmd.getName(), def);
     }

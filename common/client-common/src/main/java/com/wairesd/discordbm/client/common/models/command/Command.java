@@ -8,6 +8,7 @@ public class Command {
     private final String pluginName;
     private final String context;
     private final List<CommandOptions> options;
+    private final String permission;
 
     private Command(Builder builder) {
         this.name = builder.name;
@@ -15,6 +16,7 @@ public class Command {
         this.pluginName = builder.pluginName;
         this.context = builder.context;
         this.options = builder.options;
+        this.permission = builder.permission;
     }
 
     public String getName() {
@@ -37,12 +39,17 @@ public class Command {
         return options;
     }
 
+    public String getPermission() {
+        return permission;
+    }
+
     public static class Builder {
         private String name;
         private String description;
         private String pluginName;
         private String context;
         private List<CommandOptions> options;
+        private String permission;
 
         public Builder name(String name) {
             this.name = name;
@@ -66,6 +73,11 @@ public class Command {
 
         public Builder options(List<CommandOptions> options) {
             this.options = options;
+            return this;
+        }
+
+        public Builder permission(String roleId) {
+            this.permission = roleId;
             return this;
         }
 
