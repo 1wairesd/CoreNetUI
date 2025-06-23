@@ -2,7 +2,6 @@ package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
 import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.chance.ChanceCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.permissions.RoleCondition;
-import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.permissions.NoRoleCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 
 import java.util.Map;
@@ -15,7 +14,6 @@ public class CommandParserCondition {
         }
         return switch (type.toLowerCase()) {
             case "permission" -> new RoleCondition(conditionMap);
-            case "no_permission" -> new NoRoleCondition(conditionMap);
             case "chance" -> new ChanceCondition(conditionMap);
             default -> throw new IllegalArgumentException("Unknown condition type: " + type);
         };
