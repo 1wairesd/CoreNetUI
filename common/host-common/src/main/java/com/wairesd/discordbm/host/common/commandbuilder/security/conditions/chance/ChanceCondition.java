@@ -15,14 +15,17 @@ public class ChanceCondition implements CommandCondition {
         if (percentObj == null) {
             throw new IllegalArgumentException("Percent is required for ChanceCondition");
         }
-        String percentStr = percentObj.toString();
-        try {
-            this.percent = Integer.parseInt(percentStr);
-            if (this.percent < 0 || this.percent > 100) {
-                throw new IllegalArgumentException("Percent must be between 0 and 100");
+        if (percentObj instanceof Number) {
+            this.percent = ((Number) percentObj).intValue();
+        } else {
+            try {
+                this.percent = (int) Double.parseDouble(percentObj.toString());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid percent value: " + percentObj);
             }
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid percent value: " + percentStr);
+        }
+        if (this.percent < 0 || this.percent > 100) {
+            throw new IllegalArgumentException("Percent must be between 0 and 100");
         }
     }
 

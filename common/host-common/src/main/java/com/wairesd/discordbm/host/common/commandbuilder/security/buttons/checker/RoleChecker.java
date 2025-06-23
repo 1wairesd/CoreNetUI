@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.host.common.commandbuilder.security.checker;
+package com.wairesd.discordbm.host.common.commandbuilder.security.buttons.checker;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 

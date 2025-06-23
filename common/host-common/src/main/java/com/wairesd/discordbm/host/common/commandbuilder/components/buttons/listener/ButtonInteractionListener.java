@@ -3,7 +3,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.components.buttons.list
 import com.google.gson.Gson;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.service.ButtonActionService;
-import com.wairesd.discordbm.host.common.commandbuilder.security.checker.RoleChecker;
+import com.wairesd.discordbm.host.common.commandbuilder.security.buttons.checker.RoleChecker;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.form.ButtonFormBuilder;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model.ButtonConfig;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model.FormButtonData;

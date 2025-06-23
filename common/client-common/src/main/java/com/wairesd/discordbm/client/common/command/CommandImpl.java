@@ -2,6 +2,7 @@ package com.wairesd.discordbm.client.common.command;
 
 import com.wairesd.discordbm.api.command.Command;
 import com.wairesd.discordbm.api.command.CommandOption;
+import com.wairesd.discordbm.api.command.CommandCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class CommandImpl implements Command {
     private final String context;
     private final List<CommandOption> options;
     private final String permission;
+    private final List<CommandCondition> conditions;
 
     private CommandImpl(Builder builder) {
         this.name = builder.name;
@@ -22,6 +24,7 @@ public class CommandImpl implements Command {
         this.context = builder.context;
         this.options = builder.options != null ? builder.options : new ArrayList<>();
         this.permission = builder.permission;
+        this.conditions = builder.conditions != null ? List.copyOf(builder.conditions) : List.of();
     }
     
     @Override
@@ -54,6 +57,11 @@ public class CommandImpl implements Command {
         return permission;
     }
 
+    @Override
+    public List<CommandCondition> getConditions() {
+        return conditions;
+    }
+
     public static class Builder implements Command.Builder {
         private String name;
         private String description;
@@ -61,6 +69,7 @@ public class CommandImpl implements Command {
         private String context;
         private List<CommandOption> options;
         private String permission;
+        private List<CommandCondition> conditions = new ArrayList<>();
         
         @Override
         public Builder name(String name) {
@@ -95,6 +104,18 @@ public class CommandImpl implements Command {
         @Override
         public Builder permission(String roleId) {
             this.permission = roleId;
+            return this;
+        }
+        
+        @Override
+        public Builder addCondition(CommandCondition condition) {
+            this.conditions.add(condition);
+            return this;
+        }
+
+        @Override
+        public Builder conditions(List<CommandCondition> conditions) {
+            this.conditions = new ArrayList<>(conditions);
             return this;
         }
         

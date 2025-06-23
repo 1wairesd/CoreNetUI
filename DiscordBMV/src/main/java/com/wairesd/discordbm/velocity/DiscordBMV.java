@@ -7,6 +7,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.wairesd.discordbm.common.utils.BannerPrinter;
+import com.wairesd.discordbm.common.utils.StartupTimer;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
@@ -40,6 +41,8 @@ public class DiscordBMV {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        StartupTimer timer = new StartupTimer(logger);
+        timer.start();
         plugin = this;
 
         platformManager = new DiscordBMHPlatformManager(proxy, logger, Pages.pageMap);
@@ -56,11 +59,13 @@ public class DiscordBMV {
         registerCommands();
 
         platformBootstrap.initialize();
+        timer.stop();
+        timer.printElapsed();
     }
 
     private void registerCommands() {
         proxy.getCommandManager().register(
-            proxy.getCommandManager().metaBuilder("discordBMV").build(),
+            proxy.getCommandManager().metaBuilder("DiscordBMV").build(),
             new CommandAdmin(platformManager)
         );
     }

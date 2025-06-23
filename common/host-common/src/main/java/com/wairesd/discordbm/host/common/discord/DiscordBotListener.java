@@ -67,6 +67,30 @@ public class DiscordBotListener extends ListenerAdapter {
             }
         }
 
+        if (cmdDef != null && cmdDef.conditions() != null && !cmdDef.conditions().isEmpty()) {
+            var conditions = cmdDef.conditions().stream()
+                .map(com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition::parseCondition)
+                .toList();
+            var commandStructured = new com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured(
+                cmdDef.name(),
+                cmdDef.description(),
+                cmdDef.context(),
+                java.util.List.of(),
+                conditions,
+                java.util.List.of(),
+                java.util.List.of(),
+                null,
+                cmdDef.permission()
+            );
+            var validator = new com.wairesd.discordbm.host.common.commandbuilder.interaction.validator.CommandValidator();
+            var context = new com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context(event);
+            if (!validator.validateConditions(commandStructured, context)) {
+                new com.wairesd.discordbm.host.common.commandbuilder.interaction.response.CommandResponder()
+                    .handleFailedValidation(event, commandStructured, context);
+                return;
+            }
+        }
+
         if (commandHandler.isCommandRestrictedToDM(event, cmdDef)) {
             responseHelper.replyCommandRestrictedToDM(event);
             return;

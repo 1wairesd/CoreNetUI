@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.permissions.RoleCondition;
+import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.chance.ChanceCondition;
+
 public class CommandResponder {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
 
@@ -43,6 +46,24 @@ public class CommandResponder {
                 });
             });
         } else {
+            var roleCond = command.getConditions().stream()
+                .filter(c -> c instanceof RoleCondition)
+                .map(c -> (RoleCondition) c)
+                .findFirst();
+            if (roleCond.isPresent()) {
+                String roleId = roleCond.get().getRequiredRoleId();
+                new com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorHandler(null, event)
+                    .handleRoleRequired(roleId);
+                return;
+            }
+            var chanceCond = command.getConditions().stream()
+                .filter(c -> c instanceof ChanceCondition)
+                .findFirst();
+            if (chanceCond.isPresent()) {
+                new com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorHandler(null, event)
+                    .handleChanceFailed();
+                return;
+            }
             event.reply("Command conditions not met").setEphemeral(true).queue();
         }
     }

@@ -15,5 +15,6 @@ public enum CommandErrorType {
     ALREADY_EXISTS,            // Объект уже существует
     DOES_NOT_EXIST,           // Объект не существует
     INVALID_FORMAT,           // Неверный формат данных
-    OPERATION_FAILED          // Операция не удалась
+    OPERATION_FAILED,          // Операция не удалась
+    CHANCE_FAILED             // Не выполнено условие chance
 } 

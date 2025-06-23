@@ -5,6 +5,7 @@ import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.platform.PlatformBootstrap;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
+import com.wairesd.discordbm.common.utils.StartupTimer;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +21,8 @@ public class DiscordBMB extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        StartupTimer timer = new StartupTimer(pluginLogger);
+        timer.start();
         threadPool = new DiscordBMThreadPool(4);
         bootstrap = new BootstrapDBMB(this, pluginLogger);
         bootstrap.initialize();
@@ -31,6 +34,8 @@ public class DiscordBMB extends JavaPlugin {
         if (platform instanceof BukkitPlatform) {
             ((BukkitPlatform) platform).logAllRegisteredServices();
         }
+        timer.stop();
+        timer.printElapsed();
     }
 
     @Override

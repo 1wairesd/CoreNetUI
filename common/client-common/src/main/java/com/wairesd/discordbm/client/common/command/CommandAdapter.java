@@ -2,10 +2,13 @@ package com.wairesd.discordbm.client.common.command;
 
 import com.wairesd.discordbm.api.command.Command;
 import com.wairesd.discordbm.api.command.CommandOption;
+import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.client.common.models.command.CommandOptions;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class CommandAdapter implements Command {
     
@@ -52,6 +55,11 @@ public class CommandAdapter implements Command {
         return apiCommand.getPermission();
     }
 
+    @Override
+    public List<CommandCondition> getConditions() {
+        return apiCommand.getConditions();
+    }
+
     public com.wairesd.discordbm.client.common.models.command.Command getInternalCommand() {
         return internalCommand;
     }
@@ -61,6 +69,13 @@ public class CommandAdapter implements Command {
             .map(this::convertToInternalOption)
             .collect(Collectors.toList());
         
+        List<Map<String, Object>> serializedConditions = new ArrayList<>();
+        if (apiCommand.getConditions() != null) {
+            for (CommandCondition cond : apiCommand.getConditions()) {
+                serializedConditions.add(cond.serialize());
+            }
+        }
+        
         return new com.wairesd.discordbm.client.common.models.command.Command.Builder()
             .name(apiCommand.getName())
             .description(apiCommand.getDescription())
@@ -68,6 +83,7 @@ public class CommandAdapter implements Command {
             .context(apiCommand.getContext())
             .options(options)
             .permission(apiCommand.getPermission())
+            .conditions(serializedConditions)
             .build();
     }
 

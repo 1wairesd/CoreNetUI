@@ -5,6 +5,9 @@ import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
 import com.wairesd.discordbm.host.common.models.option.OptionDefinition;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 
+import java.util.List;
+import java.util.Map;
+
 public class CommandDefinitionRegistrar {
     private final NettyServer nettyServer;
 
@@ -20,7 +23,8 @@ public class CommandDefinitionRegistrar {
                 cmd.getOptions().stream()
                         .map(opt -> new OptionDefinition(opt.getName(), opt.getType(), opt.getDescription(), opt.isRequired()))
                         .toList(),
-                cmd.getPermission()
+                cmd.getPermission(),
+                cmd.getConditions() != null ? cmd.getConditions().stream().map(c -> c instanceof Map ? (Map<String, Object>)c : null).toList() : List.of()
         );
         nettyServer.getCommandDefinitions().put(cmd.getName(), def);
     }

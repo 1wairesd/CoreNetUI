@@ -41,6 +41,9 @@ public class Messages {
 
         public static final String NO_ACTIVE_CLIENTS = "no_active_clients";
         public static final String NO_CONNECTED_CLIENTS = "no_connected_clients";
+
+        public static final String CHANCE_FAILED = "chance-failed";
+        public static final String ROLE_REQUIRED = "role-required";
     }
 
     public static void init(Path dataDir) {

@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.client.common.models.command;
 
 import java.util.List;
+import java.util.Map;
 
 public class Command {
     private final String name;
@@ -9,6 +10,7 @@ public class Command {
     private final String context;
     private final List<CommandOptions> options;
     private final String permission;
+    private final List<Map<String, Object>> conditions;
 
     private Command(Builder builder) {
         this.name = builder.name;
@@ -17,6 +19,7 @@ public class Command {
         this.context = builder.context;
         this.options = builder.options;
         this.permission = builder.permission;
+        this.conditions = builder.conditions;
     }
 
     public String getName() {
@@ -43,6 +46,10 @@ public class Command {
         return permission;
     }
 
+    public List<Map<String, Object>> getConditions() {
+        return conditions;
+    }
+
     public static class Builder {
         private String name;
         private String description;
@@ -50,6 +57,7 @@ public class Command {
         private String context;
         private List<CommandOptions> options;
         private String permission;
+        private List<Map<String, Object>> conditions;
 
         public Builder name(String name) {
             this.name = name;
@@ -78,6 +86,11 @@ public class Command {
 
         public Builder permission(String roleId) {
             this.permission = roleId;
+            return this;
+        }
+
+        public Builder conditions(List<Map<String, Object>> conditions) {
+            this.conditions = conditions;
             return this;
         }
 

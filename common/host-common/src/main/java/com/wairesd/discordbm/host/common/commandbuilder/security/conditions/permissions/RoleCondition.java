@@ -24,4 +24,8 @@ public class RoleCondition implements CommandCondition {
         return member != null && member.getRoles().stream()
                 .anyMatch(role -> role.getId().equals(requiredRoleId));
     }
+
+    public String getRequiredRoleId() {
+        return requiredRoleId;
+    }
 }

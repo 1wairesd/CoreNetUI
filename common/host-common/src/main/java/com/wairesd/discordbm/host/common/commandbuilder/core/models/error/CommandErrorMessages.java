@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.models.error;
 
+import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
@@ -14,7 +15,7 @@ public class CommandErrorMessages {
 
     static {
         DEFAULT_MESSAGES.put(CommandErrorType.PERMISSION_DENIED, "❌ У вас нет прав для выполнения этой команды");
-        DEFAULT_MESSAGES.put(CommandErrorType.ROLE_REQUIRED, "❌ Для выполнения этой команды требуется роль {role}");
+        DEFAULT_MESSAGES.put(CommandErrorType.ROLE_REQUIRED, Messages.getMessage(Messages.Keys.ROLE_REQUIRED));
         DEFAULT_MESSAGES.put(CommandErrorType.COOLDOWN_ACTIVE, "⏳ Подождите {time} секунд перед повторным использованием");
         DEFAULT_MESSAGES.put(CommandErrorType.INVALID_CONTEXT, "❌ Эта команда не может быть использована здесь");
         DEFAULT_MESSAGES.put(CommandErrorType.INVALID_ARGUMENTS, "❌ Неверные аргументы команды: {reason}");
@@ -28,6 +29,7 @@ public class CommandErrorMessages {
         DEFAULT_MESSAGES.put(CommandErrorType.DOES_NOT_EXIST, "❌ {object} не существует");
         DEFAULT_MESSAGES.put(CommandErrorType.INVALID_FORMAT, "❌ Неверный формат: {format}");
         DEFAULT_MESSAGES.put(CommandErrorType.OPERATION_FAILED, "❌ Не удалось выполнить операцию: {reason}");
+        DEFAULT_MESSAGES.put(CommandErrorType.CHANCE_FAILED, Messages.getMessage(Messages.Keys.CHANCE_FAILED));
     }
 
     public static void setCustomMessage(CommandErrorType type, String message) {

@@ -6,6 +6,8 @@ import io.netty.channel.Channel;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.wairesd.discordbm.host.common.commandbuilder.commands.processor.CommandLoader;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,16 @@ public class CommandRegistrationService {
         if (jda == null) {
             logger.warn("Cannot register commands - JDA is not initialized!");
             return;
+        }
+
+        CommandLoader loader = new CommandLoader();
+        List<CommandStructured> structured = loader.loadFromDefinitions(commands);
+        if (com.wairesd.discordbm.host.common.config.configurators.Commands.getPlatform() != null && com.wairesd.discordbm.host.common.config.configurators.Commands.getPlatform().getCommandManager() != null) {
+            for (CommandStructured cmd : structured) {
+                // TODO: Add a public method to CommandManager to add a command, e.g. addCommand(cmd)
+                // For now, skip direct map access as getCommandMap() does not exist
+                // com.wairesd.discordbm.host.common.config.configurators.Commands.getPlatform().getCommandManager().addCommand(cmd);
+            }
         }
 
         for (var cmd : commands) {

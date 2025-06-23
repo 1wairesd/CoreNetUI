@@ -96,6 +96,10 @@ public class CommandErrorHandler {
         sendError(CommandErrorType.OPERATION_FAILED, placeholders);
     }
 
+    public void handleChanceFailed() {
+        sendError(CommandErrorType.CHANCE_FAILED);
+    }
+
     private void sendError(CommandErrorType type, Map<String, String> placeholders) {
         MessageEmbed embed = CommandErrorMessages.createErrorEmbed(type, placeholders);
         if (event.isAcknowledged()) {
