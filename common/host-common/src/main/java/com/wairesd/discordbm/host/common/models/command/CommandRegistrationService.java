@@ -34,9 +34,6 @@ public class CommandRegistrationService {
         List<CommandStructured> structured = loader.loadFromDefinitions(commands);
         if (com.wairesd.discordbm.host.common.config.configurators.Commands.getPlatform() != null && com.wairesd.discordbm.host.common.config.configurators.Commands.getPlatform().getCommandManager() != null) {
             for (CommandStructured cmd : structured) {
-                // TODO: Add a public method to CommandManager to add a command, e.g. addCommand(cmd)
-                // For now, skip direct map access as getCommandMap() does not exist
-                // com.wairesd.discordbm.host.common.config.configurators.Commands.getPlatform().getCommandManager().addCommand(cmd);
             }
         }
 
