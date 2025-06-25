@@ -21,6 +21,14 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
 
+import com.wairesd.discordbm.common.models.request.AddRoleRequest;
+import com.wairesd.discordbm.common.models.request.RemoveRoleRequest;
+import com.wairesd.discordbm.common.models.response.RoleActionResponse;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         implements ClientRegisterHandler.NettyServerHandlerContext {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
@@ -103,6 +111,16 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         JsonObject json = gson.fromJson(msg, JsonObject.class);
         String type = json.get("type").getAsString();
 
+        if ("add_role".equals(type)) {
+            AddRoleRequest req = gson.fromJson(json, AddRoleRequest.class);
+            handleAddRole(ctx, req);
+            return;
+        } else if ("remove_role".equals(type)) {
+            RemoveRoleRequest req = gson.fromJson(json, RemoveRoleRequest.class);
+            handleRemoveRole(ctx, req);
+            return;
+        }
+
         if ("register".equals(type)) {
             registerHandler.handleRegister(ctx, msg, ip, port);
         } else if ("unregister".equals(type)) {
@@ -125,6 +143,53 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         } else {
             logger.warn("Unknown message type: {}", type);
         }
+    }
+
+    private void handleAddRole(ChannelHandlerContext ctx, AddRoleRequest req) {
+        JDA jdaInstance = (JDA) jda;
+        Guild guild = jdaInstance.getGuildById(req.getGuildId());
+        if (guild == null) {
+            sendRoleActionResponse(ctx, req.getRequestId(), false, "Guild not found");
+            return;
+        }
+        Role role = guild.getRoleById(req.getRoleId());
+        if (role == null) {
+            sendRoleActionResponse(ctx, req.getRequestId(), false, "Role not found");
+            return;
+        }
+        guild.retrieveMemberById(req.getUserId()).queue(
+            member -> guild.addRoleToMember(member, role).queue(
+                success -> sendRoleActionResponse(ctx, req.getRequestId(), true, null),
+                error -> sendRoleActionResponse(ctx, req.getRequestId(), false, error.getMessage())
+            ),
+            error -> sendRoleActionResponse(ctx, req.getRequestId(), false, error.getMessage())
+        );
+    }
+
+    private void handleRemoveRole(ChannelHandlerContext ctx, RemoveRoleRequest req) {
+        JDA jdaInstance = (JDA) jda;
+        Guild guild = jdaInstance.getGuildById(req.getGuildId());
+        if (guild == null) {
+            sendRoleActionResponse(ctx, req.getRequestId(), false, "Guild not found");
+            return;
+        }
+        Role role = guild.getRoleById(req.getRoleId());
+        if (role == null) {
+            sendRoleActionResponse(ctx, req.getRequestId(), false, "Role not found");
+            return;
+        }
+        guild.retrieveMemberById(req.getUserId()).queue(
+            member -> guild.removeRoleFromMember(member, role).queue(
+                success -> sendRoleActionResponse(ctx, req.getRequestId(), true, null),
+                error -> sendRoleActionResponse(ctx, req.getRequestId(), false, error.getMessage())
+            ),
+            error -> sendRoleActionResponse(ctx, req.getRequestId(), false, error.getMessage())
+        );
+    }
+
+    private void sendRoleActionResponse(ChannelHandlerContext ctx, String requestId, boolean success, String error) {
+        RoleActionResponse resp = new RoleActionResponse(requestId, success, error);
+        ctx.channel().writeAndFlush(gson.toJson(resp));
     }
 
     @Override

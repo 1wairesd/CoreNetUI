@@ -6,6 +6,7 @@ import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.event.EventRegistry;
 import com.wairesd.discordbm.api.logging.Logger;
+import com.wairesd.discordbm.api.role.RoleManager;
 
 /**
  * Main interface for the Discord Bot Manager API.
@@ -68,4 +69,11 @@ public interface DiscordBMAPI {
      * @return True if connected, false otherwise
      */
     boolean isConnected();
+    
+    /**
+     * Get the role manager service to manage Discord roles
+     *
+     * @return The role manager service
+     */
+    RoleManager getRoleManager();
 } 

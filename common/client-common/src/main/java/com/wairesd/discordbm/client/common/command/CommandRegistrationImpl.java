@@ -39,17 +39,10 @@ public class CommandRegistrationImpl implements CommandRegistration {
         commandHandlers.put(command.getName(), wrapper);
 
         platform.registerCommandHandler(command.getName(), 
-            (cmd, args, requestId) -> {
-                Map<String, String> options = new ConcurrentHashMap<>();
-                List<CommandOption> commandOptions = command.getOptions();
-                for (int i = 0; i < Math.min(args.length, commandOptions.size()); i++) {
-                    options.put(commandOptions.get(i).getName(), args[i]);
-                }
-
+            (cmd, options, requestId) -> {
                 handler.handleCommand(cmd, options, requestId);
-
                 if (listener != null) {
-                    listener.onCommandExecuted(cmd, args, requestId);
+                    listener.onCommandExecuted(cmd, options.values().toArray(new String[0]), requestId);
                 }
             }, 
             null,

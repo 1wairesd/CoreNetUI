@@ -94,6 +94,10 @@ public class RequestSender {
     private RequestMessage createRequestMessage(SlashCommandInteractionEvent event, UUID requestId) {
         Map<String, String> options = event.getOptions().stream()
                 .collect(Collectors.toMap(opt -> opt.getName(), opt -> opt.getAsString()));
+        options.put("user_Id", event.getUser().getId());
+        if (event.getGuild() != null) {
+            options.put("guild_Id", event.getGuild().getId());
+        }
         return new RequestMessage("request", event.getName(), options, requestId.toString());
     }
 

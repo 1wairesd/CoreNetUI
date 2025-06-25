@@ -15,6 +15,8 @@ import com.wairesd.discordbm.client.common.logging.LoggerAdapter;
 import com.wairesd.discordbm.client.common.message.MessageSenderImpl;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.client.common.role.RoleManagerImpl;
+import com.wairesd.discordbm.api.role.RoleManager;
 
 public class DiscordBMBAPIImpl implements DiscordBMAPI {
     
@@ -24,6 +26,7 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
     private final ComponentRegistryImpl componentRegistry;
     private final EventRegistryImpl eventRegistry;
     private final LoggerAdapter logger;
+    private final RoleManagerImpl roleManager;
 
     public DiscordBMBAPIImpl(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -32,6 +35,7 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
         this.messageSender = new MessageSenderImpl(platform, this.logger);
         this.componentRegistry = new ComponentRegistryImpl(platform, this.logger);
         this.eventRegistry = new EventRegistryImpl(this.logger);
+        this.roleManager = new RoleManagerImpl(platform);
     }
     
     @Override
@@ -74,6 +78,11 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
         return platform.getNettyService() != null && 
                platform.getNettyService().getNettyClient() != null && 
                platform.getNettyService().getNettyClient().isActive();
+    }
+
+    @Override
+    public RoleManager getRoleManager() {
+        return roleManager;
     }
 
     public Platform getPlatform() {

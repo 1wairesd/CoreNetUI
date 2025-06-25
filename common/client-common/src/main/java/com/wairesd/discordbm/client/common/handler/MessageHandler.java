@@ -7,7 +7,9 @@ import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceho
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
+import com.wairesd.discordbm.common.models.response.RoleActionResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.client.common.role.RoleManagerImpl;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -52,6 +54,13 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         try {
             JsonObject json = gson.fromJson(message, JsonObject.class);
             String typeStr = json.get("type").getAsString();
+            if ("role_action_response".equals(typeStr)) {
+                RoleActionResponse resp = gson.fromJson(json, RoleActionResponse.class);
+                if (platform instanceof com.wairesd.discordbm.client.common.DiscordBMBAPIImpl apiImpl) {
+                    ((RoleManagerImpl) apiImpl.getRoleManager()).handleRoleActionResponse(resp);
+                }
+                return;
+            }
             MessageType type = MessageType.from(typeStr);
             switch (type != null ? type : MessageType.REQUEST) {
                 case REQUEST -> handleRequest(json);
@@ -113,10 +122,9 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         }
         DiscordCommandHandler handler = platform.getCommandHandlers().get(command);
         if (handler != null) {
-            String[] args = options.values().toArray(new String[0]);
             platform.runTaskAsynchronously(() -> {
                 try {
-                    handler.handleCommand(command, args, requestId);
+                    handler.handleCommand(command, options, requestId);
                 } catch (Exception e) {
                     platform.getNettyService().sendResponse(requestId,
                             "{\"error\":\"Internal server error\"}");
