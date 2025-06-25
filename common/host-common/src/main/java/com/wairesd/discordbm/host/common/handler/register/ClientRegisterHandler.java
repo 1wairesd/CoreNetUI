@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.host.common.handler;
+package com.wairesd.discordbm.host.common.handler.register;
 
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;

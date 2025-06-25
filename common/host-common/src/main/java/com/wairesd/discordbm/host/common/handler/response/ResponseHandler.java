@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.host.common.handler;
+package com.wairesd.discordbm.host.common.handler.response;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

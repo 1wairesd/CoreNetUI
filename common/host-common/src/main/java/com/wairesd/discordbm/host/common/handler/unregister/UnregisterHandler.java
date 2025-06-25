@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.host.common.handler;
+package com.wairesd.discordbm.host.common.handler.unregister;
 
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
