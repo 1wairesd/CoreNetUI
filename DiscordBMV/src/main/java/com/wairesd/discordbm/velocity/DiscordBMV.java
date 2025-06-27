@@ -44,20 +44,10 @@ public class DiscordBMV {
         StartupTimer timer = new StartupTimer(logger);
         timer.start();
         plugin = this;
-
         platformManager = new DiscordBMHPlatformManager(proxy, logger, Pages.pageMap);
-
         Commands.setPlatform(platformManager);
-
-        platformBootstrap = new DiscordBMHBootstrap(
-            platformManager, 
-            dataDirectory, 
-            logger,
-            BannerPrinter.Platform.VELOCITY
-        );
-
+        platformBootstrap = new DiscordBMHBootstrap(platformManager, dataDirectory, logger, BannerPrinter.Platform.VELOCITY);
         registerCommands();
-
         platformBootstrap.initialize();
         timer.stop();
         timer.printElapsed();

@@ -26,11 +26,9 @@ public class DiscordBMB extends JavaPlugin {
         threadPool = new DiscordBMThreadPool(4);
         bootstrap = new BootstrapDBMB(this, pluginLogger);
         bootstrap.initialize();
-        
         platform = bootstrap.getPlatform();
         configManager = bootstrap.getConfigManager();
         api = bootstrap.getApi();
-
         if (platform instanceof BukkitPlatform) {
             ((BukkitPlatform) platform).logAllRegisteredServices();
         }
