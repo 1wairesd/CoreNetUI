@@ -58,35 +58,17 @@ public class RequestSender {
         });
     }
 
-    /**
-     * Store an interaction hook for a request ID
-     * 
-     * @param requestId The request ID
-     * @param hook The interaction hook
-     */
     public void storeInteractionHook(UUID requestId, InteractionHook hook) {
         pendingHooks.put(requestId, hook);
         if (Settings.isDebugRequestProcessing()) {
             logger.info("Stored interaction hook for requestId {}", requestId);
         }
     }
-    
-    /**
-     * Get an interaction hook for a request ID
-     * 
-     * @param requestId The request ID
-     * @return The interaction hook, or null if not found
-     */
+
     public InteractionHook getInteractionHook(UUID requestId) {
         return pendingHooks.get(requestId);
     }
-    
-    /**
-     * Remove and return an interaction hook for a request ID
-     * 
-     * @param requestId The request ID
-     * @return The interaction hook, or null if not found
-     */
+
     public InteractionHook removeInteractionHook(UUID requestId) {
         return pendingHooks.remove(requestId);
     }
@@ -105,32 +87,14 @@ public class RequestSender {
         return pendingRequests;
     }
 
-    /**
-     * Получает имя сервера для указанного requestId
-     * 
-     * @param requestId ID запроса
-     * @return Имя сервера или null, если не найдено
-     */
     public String getServerNameForRequest(UUID requestId) {
         return requestServerNames.get(requestId);
     }
-    
-    /**
-     * Удаляет и возвращает имя сервера для указанного requestId
-     * 
-     * @param requestId ID запроса
-     * @return Имя сервера или null, если не найдено
-     */
+
     public String removeServerNameForRequest(UUID requestId) {
         return requestServerNames.remove(requestId);
     }
 
-    /**
-     * Сохраняет имя сервера для указанного requestId
-     * 
-     * @param requestId ID запроса
-     * @param serverName Имя сервера
-     */
     public void storeServerNameForRequest(UUID requestId, String serverName) {
         requestServerNames.put(requestId, serverName);
     }

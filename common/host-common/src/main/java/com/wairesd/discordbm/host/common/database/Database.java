@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class DatabaseManager {
+public class Database {
     static {
         System.setProperty("com.j256.ormlite.logger.type", "SLF4J");
         Logger.setGlobalLogLevel(Level.WARNING);
@@ -27,7 +27,7 @@ public class DatabaseManager {
     private final Dao<IpBlockEntry, String> ipBlockDao;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public DatabaseManager(String dbUrl) {
+    public Database(String dbUrl) {
         try {
             JdbcConnectionSource source = new JdbcConnectionSource(dbUrl);
             this.ipBlockDao = com.j256.ormlite.dao.DaoManager.createDao(source, IpBlockEntry.class);

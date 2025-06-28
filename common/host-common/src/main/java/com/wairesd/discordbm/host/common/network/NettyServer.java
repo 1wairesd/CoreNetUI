@@ -7,7 +7,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.models.command.CommandRegistrationService;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.database.DatabaseManager;
+import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -37,7 +37,7 @@ public class NettyServer {
     private final Map<Channel, String> channelToServerName = new ConcurrentHashMap<>();
     private JDA jda;
     private final int port = Settings.getNettyPort();
-    private final DatabaseManager dbManager;
+    private final Database dbManager;
     private final ConcurrentHashMap<String, CompletableFuture<Boolean>> canHandleFutures = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CompletableFuture<PlaceholdersResponse>> placeholderFutures = new ConcurrentHashMap<>();
     private final String ip = Settings.getNettyIp();
@@ -45,7 +45,7 @@ public class NettyServer {
     private final Map<String, String> commandToPlugin = new ConcurrentHashMap<>();
     private final Map<Channel, Long> channelConnectTime = new ConcurrentHashMap<>();
 
-    public NettyServer(DatabaseManager dbManager) {
+    public NettyServer(Database dbManager) {
         this.dbManager = dbManager;
         this.commandRegistrationService = new CommandRegistrationService(null, this);
     }

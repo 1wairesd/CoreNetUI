@@ -10,7 +10,7 @@ import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.database.DatabaseManager;
+import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.handler.register.ClientRegisterHandler;
 import com.wairesd.discordbm.host.common.handler.register.RegisterHandler;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
@@ -32,7 +32,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private static final Gson gson = new Gson();
     private final Object jda;
-    private final DatabaseManager dbManager;
+    private final Database dbManager;
     private final NettyServer nettyServer;
     private boolean authenticated = false;
     private final RegisterHandler registerHandler;
@@ -47,7 +47,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
             new ThreadPoolExecutor.CallerRunsPolicy()
         );
 
-    public NettyServerHandler(NettyServer nettyServer, Object jda, DatabaseManager dbManager) {
+    public NettyServerHandler(NettyServer nettyServer, Object jda, Database dbManager) {
         this.nettyServer = nettyServer;
         this.jda = jda;
         this.dbManager = dbManager;

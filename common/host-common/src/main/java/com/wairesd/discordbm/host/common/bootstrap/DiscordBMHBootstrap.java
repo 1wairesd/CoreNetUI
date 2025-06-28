@@ -7,7 +7,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.liste
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.listener.FormInteractionListener;
 import com.wairesd.discordbm.host.common.config.ConfigManager;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.database.DatabaseManager;
+import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
 import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
@@ -23,7 +23,7 @@ public class DiscordBMHBootstrap {
     private final PluginLogger logger;
     
     private NettyServer nettyServer;
-    private DatabaseManager dbManager;
+    private Database dbManager;
     private CommandManager commandManager;
     private DiscordBotManager discordBotManager;
     private BannerPrinter.Platform platform;
@@ -55,7 +55,7 @@ public class DiscordBMHBootstrap {
 
     private void initDatabase() {
         String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db");
-        dbManager = new DatabaseManager(dbPath);
+        dbManager = new Database(dbPath);
         logger.info("Database initialized");
     }
 

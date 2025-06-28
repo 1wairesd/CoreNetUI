@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.host.common.models.command.CommandRegistrationService;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.database.DatabaseManager;
+import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.host.common.network.NettyServerHandler;
@@ -18,13 +18,13 @@ import java.util.List;
 public class RegisterHandler {
     private static final Logger logger = LoggerFactory.getLogger("DiscordBMV");
     private final NettyServerHandler handler;
-    private final DatabaseManager dbManager;
+    private final Database dbManager;
     private final NettyServer nettyServer;
     private final Gson gson = new Gson();
     private boolean authenticated = false;
     private final CommandRegistrationService commandRegisterService;
 
-    public RegisterHandler(NettyServerHandler handler, DatabaseManager dbManager, NettyServer nettyServer) {
+    public RegisterHandler(NettyServerHandler handler, Database dbManager, NettyServer nettyServer) {
         this.handler = handler;
         this.dbManager = dbManager;
         this.nettyServer = nettyServer;

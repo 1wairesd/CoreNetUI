@@ -2,7 +2,7 @@ package com.wairesd.discordbm.host.common.handler.register;
 
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.database.DatabaseManager;
+import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 public class ClientRegisterHandler {
     private final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
-    private final DatabaseManager dbManager;
+    private final Database dbManager;
     private final NettyServer nettyServer;
     private final NettyServerHandlerContext nettyContext;
 
-    public ClientRegisterHandler(DatabaseManager dbManager, NettyServer nettyServer, NettyServerHandlerContext nettyContext) {
+    public ClientRegisterHandler(Database dbManager, NettyServer nettyServer, NettyServerHandlerContext nettyContext) {
         this.dbManager = dbManager;
         this.nettyServer = nettyServer;
         this.nettyContext = nettyContext;
