@@ -7,6 +7,8 @@ import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.event.EventRegistry;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.role.RoleManager;
+import com.wairesd.discordbm.api.form.FormBuilder;
+import com.wairesd.discordbm.api.form.FormFieldBuilder;
 
 /**
  * Main interface for the Discord Bot Manager API.
@@ -55,6 +57,20 @@ public interface DiscordBMAPI {
      * @return A new embed builder
      */
     EmbedBuilder createEmbedBuilder();
+    
+    /**
+     * Create a new form builder
+     * 
+     * @return A new form builder
+     */
+    FormBuilder createFormBuilder();
+    
+    /**
+     * Create a new form field builder
+     * 
+     * @return A new form field builder
+     */
+    FormFieldBuilder createFormFieldBuilder();
     
     /**
      * Get the server name

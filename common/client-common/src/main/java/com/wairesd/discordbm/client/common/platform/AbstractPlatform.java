@@ -2,6 +2,8 @@ package com.wairesd.discordbm.client.common.platform;
 
 import com.wairesd.discordbm.client.common.config.configurators.Settings;
 import com.wairesd.discordbm.api.command.CommandHandler;
+import com.wairesd.discordbm.api.command.CommandRegistration;
+import com.wairesd.discordbm.client.common.command.CommandRegistrationImpl;
 import com.wairesd.discordbm.client.common.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.client.common.models.command.Command;
 import com.wairesd.discordbm.client.common.network.NettyService;
@@ -20,12 +22,14 @@ public abstract class AbstractPlatform implements Platform {
     protected final PlaceholderService placeholderService;
     protected final Set<DiscordBMCRLB> listeners = new HashSet<>();
     protected final List<Command> addonCommands = new ArrayList<>();
+    protected final CommandRegistrationImpl commandRegistration;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public AbstractPlatform(PluginLogger pluginLogger, PlatformPlaceholder platformPlaceholderService) {
         this.pluginLogger = pluginLogger;
         this.nettyService = new NettyService(() -> this, pluginLogger);
         this.placeholderService = new PlaceholderService(platformPlaceholderService);
+        this.commandRegistration = new CommandRegistrationImpl(this, new com.wairesd.discordbm.client.common.logging.LoggerAdapter(pluginLogger));
     }
 
     @Override
@@ -128,5 +132,10 @@ public abstract class AbstractPlatform implements Platform {
         synchronized (addonCommands) {
             return new ArrayList<>(addonCommands);
         }
+    }
+
+    @Override
+    public CommandRegistration getCommandRegistration() {
+        return commandRegistration;
     }
 } 

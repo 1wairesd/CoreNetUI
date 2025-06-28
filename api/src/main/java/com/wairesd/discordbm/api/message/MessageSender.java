@@ -2,6 +2,7 @@ package com.wairesd.discordbm.api.message;
 
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
+import com.wairesd.discordbm.api.form.Form;
 
 import java.util.List;
 
@@ -34,6 +35,23 @@ public interface MessageSender {
      * @param buttons The buttons to add to the message
      */
     void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons);
+    
+    /**
+     * Send a form in response to a command
+     * 
+     * @param requestId The request ID of the command
+     * @param form The form to send
+     */
+    void sendForm(String requestId, Form form);
+    
+    /**
+     * Send a form with a message in response to a command
+     * 
+     * @param requestId The request ID of the command
+     * @param message The message to send with the form
+     * @param form The form to send
+     */
+    void sendFormWithMessage(String requestId, String message, Form form);
     
     /**
      * Send a direct message to a user

@@ -62,6 +62,47 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 }
                 return;
             }
+            if ("form_submit".equals(typeStr)) {
+                String command = json.get("command").getAsString();
+                String requestId = json.get("requestId").getAsString();
+                Map<String, String> formData = new HashMap<>();
+                if (json.has("formData")) {
+                    JsonObject formJson = json.getAsJsonObject("formData");
+                    for (Map.Entry<String, com.google.gson.JsonElement> entry : formJson.entrySet()) {
+                        formData.put(entry.getKey(), entry.getValue().getAsString());
+                    }
+                }
+                pluginLogger.info("[MessageHandler] Processing form_submit for command: %s, requestId: %s, formData: %s", command, requestId, formData);
+
+                CommandHandler handler = null;
+                pluginLogger.info("[MessageHandler] Platform type: %s", platform.getClass().getName());
+                
+                var commandRegistration = platform.getCommandRegistration();
+                pluginLogger.info("[MessageHandler] CommandRegistration type: %s", commandRegistration != null ? commandRegistration.getClass().getName() : "null");
+                
+                if (commandRegistration instanceof com.wairesd.discordbm.client.common.command.CommandRegistrationImpl cmdReg) {
+                    pluginLogger.info("[MessageHandler] Got CommandRegistrationImpl, calling getCommandHandler");
+                    handler = cmdReg.getCommandHandler(command);
+                    pluginLogger.info("[MessageHandler] getCommandHandler result: %s", handler != null ? handler.getClass().getName() : "null");
+                } else {
+                    pluginLogger.warn("[MessageHandler] CommandRegistration is not CommandRegistrationImpl: %s", commandRegistration != null ? commandRegistration.getClass().getName() : "null");
+                }
+                
+                pluginLogger.info("[MessageHandler] Handler found: %s, Handler type: %s", handler != null, handler != null ? handler.getClass().getName() : "null");
+                if (handler != null) {
+                    try {
+                        pluginLogger.info("[MessageHandler] Calling handleFormSubmit synchronously...");
+                        handler.handleFormSubmit(command, formData, requestId);
+                        pluginLogger.info("[MessageHandler] handleFormSubmit completed successfully");
+                    } catch (Exception e) {
+                        pluginLogger.error("[MessageHandler] Error in handleFormSubmit: %s", e.getMessage());
+                        e.printStackTrace();
+                    }
+                } else {
+                    pluginLogger.warn("[MessageHandler] No handler found for command: %s", command);
+                }
+                return;
+            }
             MessageType type = MessageType.from(typeStr);
             switch (type != null ? type : MessageType.REQUEST) {
                 case REQUEST -> handleRequest(json);

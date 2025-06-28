@@ -30,32 +30,58 @@ public class RequestSender {
         this.nettyServer = nettyServer;
     }
 
-    public void sendRequestToServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo) {
+    public void sendRequestToServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo, boolean requiresModal, boolean useDeferReply) {
         UUID requestId = UUID.randomUUID();
-        CompletableFuture<InteractionHook> deferFuture = new CompletableFuture<>();
-
-        event.deferReply().queue(
-                hook -> deferFuture.complete(hook),
-                failure -> deferFuture.completeExceptionally(failure)
-        );
-
-        deferFuture.thenAccept(hook -> {
+        if (requiresModal) {
             pendingRequests.put(requestId, event);
             requestServerNames.put(requestId, serverInfo.serverName());
-            
             if (Settings.isDebugRequestProcessing()) {
-                logger.info("Added requestId {} to pendingRequests after defer", requestId);
+                logger.info("Added requestId {} to pendingRequests for modal", requestId);
             }
             RequestMessage request = createRequestMessage(event, requestId);
             String json = GSON.toJson(request);
             nettyServer.sendMessage(serverInfo.channel(), json);
             if (Settings.isDebugRequestProcessing()) {
-                logger.info("Sent request for requestId {}", requestId);
+                logger.info("Sent request for requestId {} (modal)", requestId);
             }
-        }).exceptionally(ex -> {
-            logger.error("Failed to defer reply for requestId {}: {}", requestId, ex.getMessage());
-            return null;
-        });
+            return;
+        }
+        if (useDeferReply) {
+            CompletableFuture<InteractionHook> deferFuture = new CompletableFuture<>();
+            event.deferReply().queue(
+                    hook -> deferFuture.complete(hook),
+                    failure -> deferFuture.completeExceptionally(failure)
+            );
+            deferFuture.thenAccept(hook -> {
+                pendingRequests.put(requestId, event);
+                requestServerNames.put(requestId, serverInfo.serverName());
+                if (Settings.isDebugRequestProcessing()) {
+                    logger.info("Added requestId {} to pendingRequests after defer", requestId);
+                }
+                RequestMessage request = createRequestMessage(event, requestId);
+                String json = GSON.toJson(request);
+                nettyServer.sendMessage(serverInfo.channel(), json);
+                if (Settings.isDebugRequestProcessing()) {
+                    logger.info("Sent request for requestId {}", requestId);
+                }
+            }).exceptionally(ex -> {
+                logger.error("Failed to defer reply for requestId {}: {}", requestId, ex.getMessage());
+                return null;
+            });
+            return;
+        }
+
+        pendingRequests.put(requestId, event);
+        requestServerNames.put(requestId, serverInfo.serverName());
+        if (Settings.isDebugRequestProcessing()) {
+            logger.info("Added requestId {} to pendingRequests (no defer)", requestId);
+        }
+        RequestMessage request = createRequestMessage(event, requestId);
+        String json = GSON.toJson(request);
+        nettyServer.sendMessage(serverInfo.channel(), json);
+        if (Settings.isDebugRequestProcessing()) {
+            logger.info("Sent request for requestId {} (no defer)", requestId);
+        }
     }
 
     public void storeInteractionHook(UUID requestId, InteractionHook hook) {

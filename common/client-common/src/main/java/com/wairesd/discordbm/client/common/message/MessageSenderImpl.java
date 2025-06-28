@@ -3,13 +3,17 @@ package com.wairesd.discordbm.client.common.message;
 import com.google.gson.Gson;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
+import com.wairesd.discordbm.api.form.Form;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.client.common.component.ButtonAdapter;
 import com.wairesd.discordbm.client.common.embed.EmbedAdapter;
+import com.wairesd.discordbm.client.common.form.FormAdapter;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
+import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.client.common.platform.Platform;
 
 import java.util.List;
@@ -34,6 +38,8 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -48,6 +54,8 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -63,6 +71,48 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    
+    @Override
+    public void sendForm(String requestId, Form form) {
+        FormDefinition formDef = convertToFormDefinition(form);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(null)
+                .buttons(null)
+                .form(formDef)
+                .flags(new ResponseFlags.Builder()
+                        .preventMessageSend(true)
+                        .isFormResponse(true)
+                        .requiresModal(true)
+                        .build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    
+    @Override
+    public void sendFormWithMessage(String requestId, String message, Form form) {
+        FormDefinition formDef = convertToFormDefinition(form);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(formDef)
+                .flags(new ResponseFlags.Builder()
+                        .preventMessageSend(true)
+                        .isFormResponse(true)
+                        .requiresModal(true)
+                        .build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -112,5 +162,12 @@ public class MessageSenderImpl implements MessageSender {
         return buttons.stream()
                 .map(button -> new ButtonAdapter(button).getInternalButton())
                 .collect(Collectors.toList());
+    }
+    
+    private FormDefinition convertToFormDefinition(Form form) {
+        if (form == null) {
+            return null;
+        }
+        return new FormAdapter(form).getInternalForm();
     }
 } 

@@ -79,6 +79,11 @@ public class CommandRegistrationImpl implements CommandRegistration {
         }
     }
     
+    public CommandHandler getCommandHandler(String commandName) {
+        CommandHandlerWrapper wrapper = commandHandlers.get(commandName);
+        return wrapper != null ? wrapper.getHandler() : null;
+    }
+    
     @Override
     public Command.Builder createCommandBuilder() {
         return new CommandImpl.Builder();

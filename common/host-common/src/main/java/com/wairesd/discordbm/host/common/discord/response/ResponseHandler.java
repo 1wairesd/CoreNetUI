@@ -3,6 +3,7 @@ package com.wairesd.discordbm.host.common.discord.response;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
+import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
@@ -16,6 +17,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.util.List;
@@ -40,6 +44,29 @@ public class ResponseHandler {
         }
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
+
+            if (respMsg.form() != null) {
+                if (respMsg.flags() != null && respMsg.flags().requiresModal()) {
+                    handleFormResponse(requestId, respMsg);
+                    return;
+                }
+                handleFormResponse(requestId, respMsg);
+                return;
+            }
+
+            if (respMsg.flags() != null && respMsg.flags().shouldPreventMessageSend()) {
+                if (Settings.isDebugRequestProcessing()) {
+                    logger.info("Message sending prevented for requestId: {}", requestId);
+                }
+                return;
+            }
+
+            if (respMsg.flags() != null && respMsg.flags().isFormResponse()) {
+                if (Settings.isDebugRequestProcessing()) {
+                    logger.info("Ignoring response after modal form for requestId: {}", requestId);
+                }
+                return;
+            }
 
             InteractionHook buttonHook = (InteractionHook)platformManager.getPendingButtonRequests().remove(requestId);
             if (buttonHook != null) {
@@ -72,6 +99,13 @@ public class ResponseHandler {
 
             var event = listener.getRequestSender().getPendingRequests().remove(requestId);
             if (event == null) {
+                if (respMsg.embed() != null && respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
+                    if (Settings.isDebugRequestProcessing()) {
+                        logger.info("Response after modal form for requestId: {} - ignoring (normal behavior)", requestId);
+                    }
+                    return;
+                }
+                
                 logger.warn("No event found for requestId: {}, retrying in 100ms", requestId);
                 new java.util.Timer().schedule(new java.util.TimerTask() {
                     @Override
@@ -104,6 +138,58 @@ public class ResponseHandler {
             sendResponse(event, respMsg);
         } catch (IllegalArgumentException e) {
             logInvalidUUID(respMsg.requestId(), e);
+        }
+    }
+
+    private static void handleFormResponse(UUID requestId, ResponseMessage respMsg) {
+        FormDefinition formDef = respMsg.form();
+        if (formDef == null) {
+            logger.error("Form definition is null for requestId: {}", requestId);
+            return;
+        }
+
+        Modal.Builder modalBuilder = Modal.create(formDef.getCustomId(), formDef.getTitle());
+        
+        for (var fieldDef : formDef.getFields()) {
+            TextInputStyle style = TextInputStyle.valueOf(fieldDef.getType().toUpperCase());
+            TextInput input = TextInput.create(
+                    fieldDef.getVariable(),
+                    fieldDef.getLabel(),
+                    style)
+                    .setPlaceholder(fieldDef.getPlaceholder())
+                    .setRequired(fieldDef.isRequired())
+                    .build();
+            modalBuilder.addActionRow(input);
+        }
+        
+        Modal modal = modalBuilder.build();
+
+        String messageTemplate = respMsg.response() != null ? respMsg.response() : "";
+        platformManager.getFormHandlers().put(formDef.getCustomId(), messageTemplate);
+
+        var event = listener.getRequestSender().getPendingRequests().remove(requestId);
+        if (event != null) {
+            event.replyModal(modal).queue(
+                    success -> {
+                        if (Settings.isDebugRequestProcessing()) {
+                            logger.info("Form sent successfully for requestId: {}", requestId);
+                        }
+                    },
+                    failure -> {
+                        logger.error("Failed to send form: {}", failure.getMessage());
+                        event.getHook().sendMessage("Failed to open form. Please try again.").setEphemeral(true).queue();
+                    }
+            );
+        } else {
+            InteractionHook hook = listener.getRequestSender().removeInteractionHook(requestId);
+            if (hook != null) {
+                if (respMsg.response() != null && !respMsg.response().isEmpty()) {
+                    hook.sendMessage(respMsg.response()).setEphemeral(true).queue();
+                }
+                hook.sendMessage("Form functionality is not available for deferred responses.").setEphemeral(true).queue();
+            } else {
+                logger.error("No event or hook found for form requestId: {}", requestId);
+            }
         }
     }
 
