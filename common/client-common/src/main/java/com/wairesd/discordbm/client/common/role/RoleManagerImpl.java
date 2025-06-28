@@ -47,7 +47,6 @@ public class RoleManagerImpl implements RoleManager {
         }
     }
 
-    // Этот метод должен вызываться из MessageHandler при получении ответа
     public void handleRoleActionResponse(RoleActionResponse response) {
         CompletableFuture<Boolean> future = pendingRequests.remove(response.getRequestId());
         if (future != null) {
