@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.bukkit;
 
 import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.platform.PlatformBootstrap;
@@ -46,7 +47,7 @@ public class DiscordBMB extends JavaPlugin {
         }
     }
 
-    public void registerCommandHandler(String command, com.wairesd.discordbm.client.common.handler.DiscordCommandHandler handler,
+    public void registerCommandHandler(String command, CommandHandler handler,
                                       com.wairesd.discordbm.client.common.listener.DiscordBMCRLB listener,
                                       com.wairesd.discordbm.client.common.models.command.Command internalCommand) {
         platform.registerCommandHandler(command, handler, listener, internalCommand);

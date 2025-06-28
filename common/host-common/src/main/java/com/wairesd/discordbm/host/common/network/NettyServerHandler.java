@@ -6,13 +6,14 @@ import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
+import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.DatabaseManager;
 import com.wairesd.discordbm.host.common.handler.register.ClientRegisterHandler;
 import com.wairesd.discordbm.host.common.handler.register.RegisterHandler;
-import com.wairesd.discordbm.host.common.handler.response.ResponseHandler;
+import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.handler.role.AddRoleHandler;
 import com.wairesd.discordbm.host.common.handler.role.RemoveRoleHandler;
 import com.wairesd.discordbm.host.common.handler.unregister.UnregisterHandler;
@@ -36,7 +37,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
     private boolean authenticated = false;
     private final RegisterHandler registerHandler;
     private final UnregisterHandler unregisterHandler;
-    private final ResponseHandler responseHandle;
     private final ClientRegisterHandler clientRegisterHandle;
     private static final ExecutorService messageExecutor = 
         new ThreadPoolExecutor(
@@ -53,7 +53,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         this.dbManager = dbManager;
         this.registerHandler = new RegisterHandler(this, dbManager, nettyServer);
         this.unregisterHandler = new UnregisterHandler(nettyServer);
-        this.responseHandle = new ResponseHandler();
         this.clientRegisterHandle = new ClientRegisterHandler(dbManager, nettyServer, this);
     }
 
@@ -124,7 +123,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
             UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
             unregisterHandler.handleUnregister(ctx, unregMsg);
         } else if ("response".equals(type)) {
-            responseHandle.handleResponse(json);
+            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseHandler.handleResponse(respMsg);
         } else if ("can_handle_response".equals(type)) {
             CanHandleResponse resp = gson.fromJson(json, CanHandleResponse.class);
             CompletableFuture<Boolean> future = nettyServer.getCanHandleFutures().remove(resp.requestId());

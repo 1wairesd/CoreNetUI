@@ -10,6 +10,7 @@ import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersRes
 import com.wairesd.discordbm.common.models.response.RoleActionResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.client.common.role.RoleManagerImpl;
+import com.wairesd.discordbm.api.command.CommandHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -120,7 +121,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 options.put(entry.getKey(), entry.getValue().getAsString());
             }
         }
-        DiscordCommandHandler handler = platform.getCommandHandlers().get(command);
+        CommandHandler handler = platform.getCommandHandlers().get(command);
         if (handler != null) {
             platform.runTaskAsynchronously(() -> {
                 try {

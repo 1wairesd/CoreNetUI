@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.client.common.platform;
 
 import com.wairesd.discordbm.client.common.config.configurators.Settings;
-import com.wairesd.discordbm.client.common.handler.DiscordCommandHandler;
+import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.client.common.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.client.common.models.command.Command;
 import com.wairesd.discordbm.client.common.network.NettyService;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractPlatform implements Platform {
     protected final PluginLogger pluginLogger;
     protected final NettyService nettyService;
-    protected final Map<String, DiscordCommandHandler> commandHandlers = new HashMap<>();
+    protected final Map<String, CommandHandler> commandHandlers = new HashMap<>();
     protected final PlaceholderService placeholderService;
     protected final Set<DiscordBMCRLB> listeners = new HashSet<>();
     protected final List<Command> addonCommands = new ArrayList<>();
@@ -74,7 +74,7 @@ public abstract class AbstractPlatform implements Platform {
     }
 
     @Override
-    public void registerCommandHandler(String command, DiscordCommandHandler handler, DiscordBMCRLB listener, Command addonCommand) {
+    public void registerCommandHandler(String command, CommandHandler handler, DiscordBMCRLB listener, Command addonCommand) {
         commandHandlers.put(command, handler);
         if (addonCommand != null) {
             synchronized (addonCommands) {
@@ -104,7 +104,7 @@ public abstract class AbstractPlatform implements Platform {
     }
 
     @Override
-    public Map<String, DiscordCommandHandler> getCommandHandlers() {
+    public Map<String, CommandHandler> getCommandHandlers() {
         return Collections.unmodifiableMap(commandHandlers);
     }
 
