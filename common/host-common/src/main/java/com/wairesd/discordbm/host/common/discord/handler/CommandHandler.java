@@ -49,6 +49,7 @@ public class CommandHandler {
                 event.reply("Command execution failed due to internal error.")
                         .setEphemeral(true)
                         .queue();
+                return;
             }
         } else {
             if (Settings.isDebugCommandNotFound()) {
@@ -57,6 +58,7 @@ public class CommandHandler {
             event.reply("Command unavailable.")
                     .setEphemeral(true)
                     .queue();
+            return;
         }
     }
 }

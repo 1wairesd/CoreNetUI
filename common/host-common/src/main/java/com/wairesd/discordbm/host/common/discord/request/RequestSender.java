@@ -47,27 +47,17 @@ public class RequestSender {
             return;
         }
         if (useDeferReply) {
-            CompletableFuture<InteractionHook> deferFuture = new CompletableFuture<>();
-            event.deferReply().queue(
-                    hook -> deferFuture.complete(hook),
-                    failure -> deferFuture.completeExceptionally(failure)
-            );
-            deferFuture.thenAccept(hook -> {
-                pendingRequests.put(requestId, event);
-                requestServerNames.put(requestId, serverInfo.serverName());
-                if (Settings.isDebugRequestProcessing()) {
-                    logger.info("Added requestId {} to pendingRequests after defer", requestId);
-                }
-                RequestMessage request = createRequestMessage(event, requestId);
-                String json = GSON.toJson(request);
-                nettyServer.sendMessage(serverInfo.channel(), json);
-                if (Settings.isDebugRequestProcessing()) {
-                    logger.info("Sent request for requestId {}", requestId);
-                }
-            }).exceptionally(ex -> {
-                logger.error("Failed to defer reply for requestId {}: {}", requestId, ex.getMessage());
-                return null;
-            });
+            pendingRequests.put(requestId, event);
+            requestServerNames.put(requestId, serverInfo.serverName());
+            if (Settings.isDebugRequestProcessing()) {
+                logger.info("Added requestId {} to pendingRequests after defer (no second defer)", requestId);
+            }
+            RequestMessage request = createRequestMessage(event, requestId);
+            String json = GSON.toJson(request);
+            nettyServer.sendMessage(serverInfo.channel(), json);
+            if (Settings.isDebugRequestProcessing()) {
+                logger.info("Sent request for requestId {} (after defer, no second defer)", requestId);
+            }
             return;
         }
 

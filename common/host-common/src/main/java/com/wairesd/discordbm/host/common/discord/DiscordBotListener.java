@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DiscordBotListener extends ListenerAdapter {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
@@ -27,6 +28,7 @@ public class DiscordBotListener extends ListenerAdapter {
     private final ServerSelector serverSelector;
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
+    public static final Map<String, Boolean> formEphemeralMap = new ConcurrentHashMap<>();
 
     public DiscordBotListener(DiscordBMHPlatformManager platformManager, NettyServer nettyServer, PluginLogger logger) {
         this.platformManager = platformManager;
@@ -104,6 +106,15 @@ public class DiscordBotListener extends ListenerAdapter {
             boolean requiresModal = false;
             boolean useDeferReply = false;
             boolean useReply = false;
+            boolean ephemeral = false;
+            if (!event.getOptions().isEmpty()) {
+                var opt = event.getOptions().stream().filter(o -> o.getName().equalsIgnoreCase("ephemeral")).findFirst();
+                if (opt.isPresent()) {
+                    try {
+                        ephemeral = Boolean.parseBoolean(opt.get().getAsString());
+                    } catch (Exception ignore) {}
+                }
+            }
             switch (responseType) {
                 case REPLY_MODAL -> requiresModal = true;
                 case DEFER_REPLY -> useDeferReply = true;
@@ -118,6 +129,14 @@ public class DiscordBotListener extends ListenerAdapter {
             }
             if (useReply) {
                 event.reply("...").queue();
+                return;
+            }
+            if (useDeferReply) {
+                final boolean finalRequiresModal = requiresModal;
+                final boolean finalUseDeferReply = useDeferReply;
+                event.deferReply(ephemeral).queue(hook -> {
+                    requestSender.sendRequestToServer(event, servers.get(0), finalRequiresModal, finalUseDeferReply);
+                });
                 return;
             }
             requestSender.sendRequestToServer(event, servers.get(0), requiresModal, useDeferReply);
@@ -161,6 +180,19 @@ public class DiscordBotListener extends ListenerAdapter {
             final String finalRequestId = requestId;
             final String finalCommand = command;
             logger.info("[onModalInteraction] command: {}, requestId: {}", finalCommand, finalRequestId);
+            final boolean ephemeral;
+            if (finalRequestId != null && formEphemeralMap.containsKey(finalRequestId)) {
+                ephemeral = formEphemeralMap.get(finalRequestId);
+                formEphemeralMap.remove(finalRequestId);
+            } else if (responses.containsKey("ephemeral")) {
+                boolean parsed = true;
+                try {
+                    parsed = Boolean.parseBoolean(responses.get("ephemeral"));
+                } catch (Exception ignore) {}
+                ephemeral = parsed;
+            } else {
+                ephemeral = true;
+            }
             if (finalRequestId != null && finalCommand != null) {
                 var nettyServer = platformManager.getNettyServer();
                 var servers = nettyServer.getServersForCommand(finalCommand);
@@ -168,7 +200,7 @@ public class DiscordBotListener extends ListenerAdapter {
                 if (servers != null && !servers.isEmpty()) {
                     var channel = servers.get(0).channel();
 
-                    event.deferReply(true).queue(hook -> {
+                    event.deferReply(ephemeral).queue(hook -> {
                         requestSender.storeInteractionHook(java.util.UUID.fromString(finalRequestId), hook);
                         logger.info("[onModalInteraction] Stored interaction hook for requestId: {}", finalRequestId);
 
@@ -177,6 +209,7 @@ public class DiscordBotListener extends ListenerAdapter {
                         msg.put("command", finalCommand);
                         msg.put("requestId", finalRequestId);
                         msg.put("formData", responses);
+                        msg.put("ephemeral", ephemeral);
                         String json = new com.google.gson.Gson().toJson(msg);
                         logger.info("[onModalInteraction] sending to client: {}", json);
                         nettyServer.sendMessage(channel, json);

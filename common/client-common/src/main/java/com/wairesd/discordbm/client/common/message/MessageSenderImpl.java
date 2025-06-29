@@ -148,6 +148,53 @@ public class MessageSenderImpl implements MessageSender {
         // This would require additional functionality in the platform
     }
 
+    public void sendResponse(String requestId, String message, boolean ephemeral) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, Embed embed, boolean ephemeral) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons, boolean ephemeral) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
     private EmbedDefinition convertToEmbedDefinition(Embed embed) {
         if (embed == null) {
             return null;

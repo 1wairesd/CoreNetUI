@@ -72,6 +72,13 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                         formData.put(entry.getKey(), entry.getValue().getAsString());
                     }
                 }
+                boolean ephemeral = true;
+                if (json.has("ephemeral")) {
+                    try {
+                        ephemeral = json.get("ephemeral").getAsBoolean();
+                    } catch (Exception ignore) {}
+                }
+                formData.put("ephemeral", Boolean.toString(ephemeral));
                 pluginLogger.info("[MessageHandler] Processing form_submit for command: %s, requestId: %s, formData: %s", command, requestId, formData);
 
                 CommandHandler handler = null;

@@ -167,6 +167,12 @@ public class ResponseHandler {
         String messageTemplate = respMsg.response() != null ? respMsg.response() : "";
         platformManager.getFormHandlers().put(formDef.getCustomId(), messageTemplate);
 
+        if (respMsg.flags() != null && respMsg.flags().requiresModal()) {
+            if (listener != null) {
+                listener.formEphemeralMap.put(requestId.toString(), respMsg.flags().isEphemeral());
+            }
+        }
+
         var event = listener.getRequestSender().getPendingRequests().remove(requestId);
         if (event != null) {
             event.replyModal(modal).queue(
@@ -194,10 +200,11 @@ public class ResponseHandler {
     }
 
     private static void sendResponse(SlashCommandInteractionEvent event, ResponseMessage respMsg) {
+        boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
         if (respMsg.embed() != null) {
-            sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()));
+            sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {
-            event.getHook().sendMessage(respMsg.response()).queue(
+            event.getHook().sendMessage(respMsg.response()).setEphemeral(ephemeral).queue(
                     success -> {
                         if (Settings.isDebugRequestProcessing()) {
                             logger.info("Message sent successfully");
@@ -209,25 +216,23 @@ public class ResponseHandler {
                 logger.info("Response sent for requestId: {}", respMsg.requestId());
             }
         } else {
-            event.getHook().sendMessage("No response provided.").queue();
+            event.getHook().sendMessage("No response provided.").setEphemeral(ephemeral).queue();
         }
     }
 
-    private static void sendCustomEmbed(SlashCommandInteractionEvent event, EmbedDefinition embedDef, List<ButtonDefinition> buttons, UUID requestId) {
+    private static void sendCustomEmbed(SlashCommandInteractionEvent event, EmbedDefinition embedDef, List<ButtonDefinition> buttons, UUID requestId, boolean ephemeral) {
         var embedBuilder = new EmbedBuilder();
         if (embedDef.title() != null) {
             embedBuilder.setTitle(embedDef.title());
         }
         if (embedDef.description() != null) {
             Context context = new Context(event);
-            
             String serverName = listener.getRequestSender().getServerNameForRequest(requestId);
             if (serverName != null) {
                 Map<String, String> variables = new HashMap<>();
                 variables.put(RequestSender.SERVER_NAME_VAR, serverName);
                 context.setVariables(variables);
             }
-            
             String description = embedDef.description();
             try {
                 description = MessageFormatterUtils.format(description, event, context, false).get();
@@ -236,7 +241,6 @@ public class ResponseHandler {
                     logger.error("Error formatting embed description: {}", e.getMessage());
                 }
             }
-            
             embedBuilder.setDescription(description);
         }
         if (embedDef.color() != null) {
@@ -245,17 +249,14 @@ public class ResponseHandler {
         if (embedDef.fields() != null) {
             for (var field : embedDef.fields()) {
                 Context context = new Context(event);
-                
                 String serverName = listener.getRequestSender().getServerNameForRequest(requestId);
                 if (serverName != null) {
                     Map<String, String> variables = new HashMap<>();
                     variables.put(RequestSender.SERVER_NAME_VAR, serverName);
                     context.setVariables(variables);
                 }
-                
                 String fieldName = field.name();
                 String fieldValue = field.value();
-                
                 try {
                     fieldName = MessageFormatterUtils.format(fieldName, event, context, false).get();
                     fieldValue = MessageFormatterUtils.format(fieldValue, event, context, false).get();
@@ -264,12 +265,10 @@ public class ResponseHandler {
                         logger.error("Error formatting embed field: {}", e.getMessage());
                     }
                 }
-                
                 embedBuilder.addField(fieldName, fieldValue, field.inline());
             }
         }
         var embed = embedBuilder.build();
-
         if (buttons != null && !buttons.isEmpty()) {
             List<Button> jdaButtons = buttons.stream()
                     .map(btn -> {
@@ -281,22 +280,36 @@ public class ResponseHandler {
                         }
                     })
                     .collect(Collectors.toList());
-
-            event.getHook().editOriginalEmbeds(embed)
-                    .setActionRow(jdaButtons.toArray(new Button[0]))
-                    .queue();
+            if (ephemeral) {
+                event.getHook().sendMessageEmbeds(embed).addActionRow(jdaButtons).setEphemeral(true).queue();
+            } else {
+                event.getHook().editOriginalEmbeds(embed)
+                        .setActionRow(jdaButtons.toArray(new Button[0]))
+                        .queue();
+            }
         } else {
             if (Settings.isDebugRequestProcessing()) {
                 logger.info("About to send embed for requestId: {}", requestId);
             }
-            event.getHook().editOriginalEmbeds(embed).queue(
-                    success -> {
-                        if (Settings.isDebugRequestProcessing()) {
-                            logger.info("Successfully sent embed for requestId: {}", requestId);
-                        }
-                    },
-                    failure -> logger.error("Failed to send embed for requestId: {} - {}", requestId, failure.getMessage())
-            );
+            if (ephemeral) {
+                event.getHook().sendMessageEmbeds(embed).setEphemeral(true).queue(
+                        success -> {
+                            if (Settings.isDebugRequestProcessing()) {
+                                logger.info("Successfully sent embed for requestId: {}", requestId);
+                            }
+                        },
+                        failure -> logger.error("Failed to send embed for requestId: {} - {}", requestId, failure.getMessage())
+                );
+            } else {
+                event.getHook().editOriginalEmbeds(embed).queue(
+                        success -> {
+                            if (Settings.isDebugRequestProcessing()) {
+                                logger.info("Successfully sent embed for requestId: {}", requestId);
+                            }
+                        },
+                        failure -> logger.error("Failed to send embed for requestId: {} - {}", requestId, failure.getMessage())
+                );
+            }
         }
     }
 

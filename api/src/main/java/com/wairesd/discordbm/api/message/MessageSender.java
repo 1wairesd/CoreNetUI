@@ -93,4 +93,29 @@ public interface MessageSender {
      * @param buttons The buttons to add to the message
      */
     void sendChannelMessageWithButtons(String channelId, Embed embed, List<Button> buttons);
+
+    /**
+     * Send a text message in response to a command with visibility control
+     * @param requestId The request ID of the command
+     * @param message The message to send
+     * @param ephemeral Whether the message should be ephemeral (private)
+     */
+    void sendResponse(String requestId, String message, boolean ephemeral);
+
+    /**
+     * Send an embed in response to a command with visibility control
+     * @param requestId The request ID of the command
+     * @param embed The embed to send
+     * @param ephemeral Whether the message should be ephemeral (private)
+     */
+    void sendResponse(String requestId, Embed embed, boolean ephemeral);
+
+    /**
+     * Send an embed with buttons in response to a command with visibility control
+     * @param requestId The request ID of the command
+     * @param embed The embed to send
+     * @param buttons The buttons to add to the message
+     * @param ephemeral Whether the message should be ephemeral (private)
+     */
+    void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons, boolean ephemeral);
 } 
