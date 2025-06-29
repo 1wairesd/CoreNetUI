@@ -1,5 +1,6 @@
-package com.wairesd.discordbm.api.component;
+package com.wairesd.discordbm.api.interaction;
 
+import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
 
 import java.util.List;

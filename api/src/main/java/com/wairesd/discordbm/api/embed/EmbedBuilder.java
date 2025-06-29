@@ -1,7 +1,5 @@
 package com.wairesd.discordbm.api.embed;
 
-import java.util.List;
-
 /**
  * Interface for building Discord embeds
  */

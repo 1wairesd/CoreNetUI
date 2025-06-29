@@ -96,6 +96,14 @@ public class RequestSender {
         if (event.getGuild() != null) {
             options.put("guild_Id", event.getGuild().getId());
         }
+        boolean ephemeral = false;
+        var opt = event.getOptions().stream().filter(o -> o.getName().equalsIgnoreCase("ephemeral")).findFirst();
+        if (opt.isPresent()) {
+            try {
+                ephemeral = Boolean.parseBoolean(opt.get().getAsString());
+            } catch (Exception ignore) {}
+        }
+        options.put("ephemeral", Boolean.toString(ephemeral));
         return new RequestMessage("request", event.getName(), options, requestId.toString());
     }
 

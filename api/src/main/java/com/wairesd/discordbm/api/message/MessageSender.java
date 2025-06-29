@@ -118,4 +118,21 @@ public interface MessageSender {
      * @param ephemeral Whether the message should be ephemeral (private)
      */
     void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons, boolean ephemeral);
+
+    /**
+     * Send a form in response to a command with visibility control
+     * @param requestId The request ID of the command
+     * @param form The form to send
+     * @param ephemeral Whether the form modal should be ephemeral (private)
+     */
+    void sendForm(String requestId, Form form, boolean ephemeral);
+
+    /**
+     * Send a form with a message in response to a command with visibility control
+     * @param requestId The request ID of the command
+     * @param message The message to send with the form
+     * @param form The form to send
+     * @param ephemeral Whether the form modal should be ephemeral (private)
+     */
+    void sendFormWithMessage(String requestId, String message, Form form, boolean ephemeral);
 } 

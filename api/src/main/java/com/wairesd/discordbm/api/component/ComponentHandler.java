@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.api.component;
 
+import com.wairesd.discordbm.api.interaction.InteractionResponseCallback;
+
 import java.util.Map;
 
 /**

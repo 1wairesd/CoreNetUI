@@ -20,6 +20,7 @@ public class DiscordBMHPlatformManager {
     private final DiscordBMThreadPool threadPool;
     private final Map<String, Object> formHandlers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, InteractionHook> pendingButtonRequests = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Boolean> pendingButtonEphemeral = new ConcurrentHashMap<>();
     
     private final MessageManager messageManager;
     private CommandManager commandManager;
@@ -59,6 +60,19 @@ public class DiscordBMHPlatformManager {
 
     public Map<UUID, Object> getPendingButtonRequests() {
         return (Map)pendingButtonRequests;
+    }
+
+    public void storePendingButtonRequest(UUID requestId, InteractionHook hook, boolean ephemeral) {
+        pendingButtonRequests.put(requestId, hook);
+        pendingButtonEphemeral.put(requestId, ephemeral);
+    }
+
+    public Boolean removePendingButtonEphemeral(UUID requestId) {
+        return pendingButtonEphemeral.remove(requestId);
+    }
+
+    public Boolean getPendingButtonEphemeral(UUID requestId) {
+        return pendingButtonEphemeral.get(requestId);
     }
 
     public Map<String, Page> getPageMap() {

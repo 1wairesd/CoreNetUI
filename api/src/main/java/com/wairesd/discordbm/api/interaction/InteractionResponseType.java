@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.api.interaction;
 
 public enum InteractionResponseType {
-    AUTO,        // Сервер сам решает по аргументам
+    AUTO,        // The server decides automatically based on arguments
     REPLY_MODAL, // replyModal()
     DEFER_REPLY, // deferReply() + send
-    REPLY        // reply() сразу
-} 
+    REPLY        // reply() immediately
+}

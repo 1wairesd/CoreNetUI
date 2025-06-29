@@ -82,9 +82,15 @@ public class ResponseHandler {
                         .map(btn -> Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()))
                         .collect(Collectors.toList());
 
-                buttonHook.editOriginalEmbeds(embed)
-                        .setActionRow(jdaButtons)
-                        .queue();
+                Boolean storedEphemeral = platformManager.removePendingButtonEphemeral(requestId);
+                boolean ephemeral = storedEphemeral != null ? storedEphemeral : (respMsg.flags() != null && respMsg.flags().isEphemeral());
+                if (ephemeral) {
+                    buttonHook.sendMessageEmbeds(embed).addActionRow(jdaButtons).setEphemeral(true).queue();
+                } else {
+                    buttonHook.editOriginalEmbeds(embed)
+                            .setActionRow(jdaButtons)
+                            .queue();
+                }
                 return;
             }
 
@@ -324,6 +330,7 @@ public class ResponseHandler {
     }
 
     private static void sendResponseWithHook(InteractionHook hook, ResponseMessage respMsg) {
+        boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
         if (respMsg.embed() != null) {
             var embedBuilder = new EmbedBuilder();
             if (respMsg.embed().title() != null) {
@@ -353,15 +360,26 @@ public class ResponseHandler {
                             }
                         })
                         .collect(Collectors.toList());
-
-                hook.editOriginalEmbeds(embed)
-                        .setActionRow(jdaButtons.toArray(new Button[0]))
-                        .queue();
+                if (ephemeral) {
+                    hook.sendMessageEmbeds(embed).addActionRow(jdaButtons).setEphemeral(true).queue();
+                } else {
+                    hook.editOriginalEmbeds(embed)
+                            .setActionRow(jdaButtons.toArray(new Button[0]))
+                            .queue();
+                }
             } else {
-                hook.editOriginalEmbeds(embed).queue();
+                if (ephemeral) {
+                    hook.sendMessageEmbeds(embed).setEphemeral(true).queue();
+                } else {
+                    hook.editOriginalEmbeds(embed).queue();
+                }
             }
         } else if (respMsg.response() != null) {
-            hook.editOriginal(respMsg.response()).queue();
+            if (ephemeral) {
+                hook.sendMessage(respMsg.response()).setEphemeral(true).queue();
+            } else {
+                hook.editOriginal(respMsg.response()).queue();
+            }
         }
     }
 

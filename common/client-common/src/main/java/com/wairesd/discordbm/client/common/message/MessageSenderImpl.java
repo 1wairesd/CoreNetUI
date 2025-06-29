@@ -195,6 +195,48 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
 
+    @Override
+    public void sendForm(String requestId, Form form, boolean ephemeral) {
+        FormDefinition formDef = convertToFormDefinition(form);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(null)
+                .buttons(null)
+                .form(formDef)
+                .flags(new ResponseFlags.Builder()
+                        .preventMessageSend(true)
+                        .isFormResponse(true)
+                        .requiresModal(true)
+                        .ephemeral(ephemeral)
+                        .build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendFormWithMessage(String requestId, String message, Form form, boolean ephemeral) {
+        FormDefinition formDef = convertToFormDefinition(form);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(formDef)
+                .flags(new ResponseFlags.Builder()
+                        .preventMessageSend(true)
+                        .isFormResponse(true)
+                        .requiresModal(true)
+                        .ephemeral(ephemeral)
+                        .build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
     private EmbedDefinition convertToEmbedDefinition(Embed embed) {
         if (embed == null) {
             return null;
