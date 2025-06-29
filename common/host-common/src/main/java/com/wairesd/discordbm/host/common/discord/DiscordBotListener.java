@@ -199,13 +199,6 @@ public class DiscordBotListener extends ListenerAdapter {
         }
     }
 
-    private String replacePlaceholders(String template, Map<String, String> responses) {
-        for (Map.Entry<String, String> entry : responses.entrySet()) {
-            template = template.replace("{" + entry.getKey() + "}", entry.getValue());
-        }
-        return template;
-    }
-
     public RequestSender getRequestSender() {
         return requestSender;
     }
