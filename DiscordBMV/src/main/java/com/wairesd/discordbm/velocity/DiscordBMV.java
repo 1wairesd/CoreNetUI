@@ -47,7 +47,7 @@ public class DiscordBMV {
         plugin = this;
         platformManager = new DiscordBMHPlatformManager(proxy, logger, Pages.pageMap);
         Commands.setPlatform(platformManager);
-        platformBootstrap = new DiscordBMHBootstrap(platformManager, dataDirectory, logger, BannerPrinter.Platform.VELOCITY);
+        platformBootstrap = new DiscordBMHBootstrap(platformManager, dataDirectory, logger);
         registerCommands();
         platformBootstrap.initialize();
         timer.stop();

@@ -6,10 +6,10 @@ import com.wairesd.discordbm.bukkit.placeholders.BukkitPlaceholderService;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.config.configurators.Settings;
 import com.wairesd.discordbm.client.common.DiscordBMBAPIImpl;
+import com.wairesd.discordbm.client.common.network.NettyService;
 import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.platform.PlatformBootstrap;
-import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
 
@@ -21,7 +21,7 @@ public class BootstrapDBMB implements PlatformBootstrap {
     private Platform platform;
     private ConfigManager configManager;
     private DiscordBMAPI api;
-    private com.wairesd.discordbm.client.common.network.NettyService nettyService;
+    private NettyService nettyService;
 
     public BootstrapDBMB(DiscordBMB plugin, PluginLogger logger) {
         this.plugin = plugin;
@@ -48,7 +48,7 @@ public class BootstrapDBMB implements PlatformBootstrap {
     }
 
     private void initPlatform() {
-        nettyService = new com.wairesd.discordbm.client.common.network.NettyService(() -> platform, logger);
+        nettyService = new NettyService(() -> platform, logger);
         platform = new BukkitPlatform(plugin, platformPlaceholderService, logger);
         plugin.setPlatform(platform);
         logger.info("Platform initialized");

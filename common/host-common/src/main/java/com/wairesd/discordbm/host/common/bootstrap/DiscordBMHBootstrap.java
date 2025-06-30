@@ -26,14 +26,12 @@ public class DiscordBMHBootstrap {
     private Database dbManager;
     private CommandManager commandManager;
     private DiscordBotManager discordBotManager;
-    private BannerPrinter.Platform platform;
 
     public DiscordBMHBootstrap(DiscordBMHPlatformManager platformManager, Path dataDirectory,
-                               PluginLogger logger, BannerPrinter.Platform platform) {
+                               PluginLogger logger) {
         this.platformManager = platformManager;
         this.dataDirectory = dataDirectory;
         this.logger = logger;
-        this.platform = platform;
         this.discordBotManager = new DiscordBotManager();
         platformManager.setDiscordBotManager(discordBotManager);
     }
