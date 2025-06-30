@@ -43,6 +43,7 @@ public class DiscordBMV {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         StartupTimer timer = new StartupTimer(logger);
         timer.start();
+        BannerPrinter.printBanner(BannerPrinter.Platform.VELOCITY);
         plugin = this;
         platformManager = new DiscordBMHPlatformManager(proxy, logger, Pages.pageMap);
         Commands.setPlatform(platformManager);

@@ -8,7 +8,18 @@ public final class BannerPrinter {
     private static final String ANSI_WHITE  = "\u001B[37m";
 
     public enum Platform {
-        BUKKIT, VELOCITY;
+        BUKKIT("DiscordBMB"),
+        VELOCITY("DiscordBMV");
+
+        private final String productName;
+
+        Platform(String productName) {
+            this.productName = productName;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
 
         @Override
         public String toString() {
@@ -23,7 +34,7 @@ public final class BannerPrinter {
         System.out.println(ANSI_PURPLE + "| |_) | " + ANSI_RED + "| |  | |" + ANSI_RESET);
         System.out.println(ANSI_PURPLE + "|____/  " + ANSI_RED + "|_|  |_|" + ANSI_RESET);
         System.out.println();
-        System.out.println(ANSI_WHITE + "    DiscordBMV v1.0" + ANSI_RESET);
+        System.out.println(ANSI_WHITE + "    " + platform.getProductName() + " v1.0" + ANSI_RESET);
         System.out.println(ANSI_WHITE + "    Running on " + platform + ANSI_RESET);
         System.out.println();
     }

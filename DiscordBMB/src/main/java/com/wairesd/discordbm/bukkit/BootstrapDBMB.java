@@ -32,8 +32,6 @@ public class BootstrapDBMB implements PlatformBootstrap {
 
     @Override
     public void initialize() {
-        BannerPrinter.printBanner(BannerPrinter.Platform.BUKKIT);
-
         initConfig();
         initPlatform();
         initApi();

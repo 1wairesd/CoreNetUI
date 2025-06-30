@@ -39,8 +39,6 @@ public class DiscordBMHBootstrap {
     }
 
     public void initialize() {
-        BannerPrinter.printBanner(platform);
-
         initConfig();
         initDatabase();
         initNetty();

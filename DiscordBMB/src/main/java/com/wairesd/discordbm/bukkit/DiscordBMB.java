@@ -5,6 +5,7 @@ import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.platform.PlatformBootstrap;
+import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.common.utils.StartupTimer;
 import com.wairesd.discordbm.common.utils.logging.JavaPluginLogger;
@@ -24,6 +25,7 @@ public class DiscordBMB extends JavaPlugin {
     public void onEnable() {
         StartupTimer timer = new StartupTimer(pluginLogger);
         timer.start();
+        BannerPrinter.printBanner(BannerPrinter.Platform.BUKKIT);
         threadPool = new DiscordBMThreadPool(4);
         bootstrap = new BootstrapDBMB(this, pluginLogger);
         bootstrap.initialize();
