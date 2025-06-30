@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
+import com.wairesd.discordbm.common.models.request.AddRoleRequest;
+import com.wairesd.discordbm.common.models.request.RemoveRoleRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
@@ -23,9 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
-
-import com.wairesd.discordbm.common.models.request.AddRoleRequest;
-import com.wairesd.discordbm.common.models.request.RemoveRoleRequest;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         implements ClientRegisterHandler.NettyServerHandlerContext {
@@ -122,6 +121,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         } else if ("unregister".equals(type)) {
             UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
             unregisterHandler.handleUnregister(ctx, unregMsg);
+        } else if ("form".equals(type)) {
+            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseHandler.handleFormOnly(respMsg);
         } else if ("response".equals(type)) {
             ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
             ResponseHandler.handleResponse(respMsg);

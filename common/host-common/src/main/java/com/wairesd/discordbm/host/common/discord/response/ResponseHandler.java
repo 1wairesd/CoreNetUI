@@ -386,4 +386,9 @@ public class ResponseHandler {
     private static void logInvalidUUID(String requestIdStr, IllegalArgumentException e) {
         logger.error("Invalid UUID format for requestId: {}", requestIdStr, e);
     }
+
+    public static void handleFormOnly(ResponseMessage respMsg) {
+        UUID requestId = UUID.fromString(respMsg.requestId());
+        handleFormResponse(requestId, respMsg);
+    }
 }
