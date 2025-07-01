@@ -75,25 +75,32 @@ public class CommandEphemeral {
         for (Map.Entry<String, String> entry : options.entrySet()) {
             sb.append(" ").append(entry.getKey()).append(":").append(entry.getValue());
         }
-        if (commandEphemeralMap.containsKey(sb.toString())) {
-            return commandEphemeralMap.get(sb.toString());
-        }
-        for (String key : options.keySet()) {
-            String k = command + " " + key;
-            if (commandEphemeralMap.containsKey(k)) {
-                return commandEphemeralMap.get(k);
+        String specificKey = sb.toString();
+        if (!options.isEmpty()) {
+            for (String key : options.keySet()) {
+                String k = command + "_args " + key;
+                if (commandEphemeralMap.containsKey(k)) {
+                    return commandEphemeralMap.get(k);
+                }
+            }
+            String argsKey = command + "_args";
+            if (commandEphemeralMap.containsKey(argsKey)) {
+                return commandEphemeralMap.get(argsKey);
             }
         }
         if (commandEphemeralMap.containsKey(command)) {
             return commandEphemeralMap.get(command);
         }
-        if (clientEphemeralRules.containsKey(sb.toString())) {
-            return clientEphemeralRules.get(sb.toString());
-        }
-        for (String key : options.keySet()) {
-            String k = command + " " + key;
-            if (clientEphemeralRules.containsKey(k)) {
-                return clientEphemeralRules.get(k);
+        if (!options.isEmpty()) {
+            for (String key : options.keySet()) {
+                String k = command + "_args " + key;
+                if (clientEphemeralRules.containsKey(k)) {
+                    return clientEphemeralRules.get(k);
+                }
+            }
+            String argsKey = command + "_args";
+            if (clientEphemeralRules.containsKey(argsKey)) {
+                return clientEphemeralRules.get(argsKey);
             }
         }
         if (clientEphemeralRules.containsKey(command)) {

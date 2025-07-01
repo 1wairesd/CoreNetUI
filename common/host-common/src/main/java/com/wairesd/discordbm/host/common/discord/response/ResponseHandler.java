@@ -82,8 +82,7 @@ public class ResponseHandler {
                         .map(btn -> Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()))
                         .collect(Collectors.toList());
 
-                Boolean storedEphemeral = platformManager.removePendingButtonEphemeral(requestId);
-                boolean ephemeral = storedEphemeral != null ? storedEphemeral : (respMsg.flags() != null && respMsg.flags().isEphemeral());
+                boolean ephemeral = false;
                 if (ephemeral) {
                     buttonHook.sendMessageEmbeds(embed).addActionRow(jdaButtons).setEphemeral(true).queue();
                 } else {
@@ -175,7 +174,7 @@ public class ResponseHandler {
 
         if (respMsg.flags() != null && respMsg.flags().requiresModal()) {
             if (listener != null) {
-                listener.formEphemeralMap.put(requestId.toString(), respMsg.flags().isEphemeral());
+                listener.formEphemeralMap.put(requestId.toString(), false);
             }
         }
 
@@ -206,11 +205,7 @@ public class ResponseHandler {
     }
 
     private static void sendResponse(SlashCommandInteractionEvent event, ResponseMessage respMsg) {
-        Boolean storedEphemeral = null;
-        if (listener != null && listener.getRequestSender() != null) {
-            storedEphemeral = listener.getRequestSender().removeEphemeralForRequest(UUID.fromString(respMsg.requestId()));
-        }
-        boolean ephemeral = storedEphemeral != null ? storedEphemeral : (respMsg.flags() != null && respMsg.flags().isEphemeral());
+        boolean ephemeral = false;
         if (respMsg.embed() != null) {
             sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {
@@ -334,7 +329,7 @@ public class ResponseHandler {
     }
 
     private static void sendResponseWithHook(InteractionHook hook, ResponseMessage respMsg) {
-        boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
+        boolean ephemeral = false;
         if (respMsg.embed() != null) {
             var embedBuilder = new EmbedBuilder();
             if (respMsg.embed().title() != null) {

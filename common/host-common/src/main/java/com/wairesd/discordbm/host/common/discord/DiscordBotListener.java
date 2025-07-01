@@ -153,17 +153,13 @@ public class DiscordBotListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         String modalId = event.getModalId();
-        logger.info("[onModalInteraction] modalId: {}", modalId);
         if (!modalId.contains("_form_")) {
-            logger.warn("[onModalInteraction] modalId does not contain '_form_': {}", modalId);
             return;
         }
 
         try {
             Object handler = platformManager.getFormHandlers().get(modalId);
-            logger.info("[onModalInteraction] handler found: {}", handler != null);
             if (handler == null) {
-                logger.warn("No handler found for modal ID: {}", modalId);
                 event.reply("Form has expired or is invalid.").setEphemeral(true).queue();
                 return;
             }
@@ -173,7 +169,6 @@ public class DiscordBotListener extends ListenerAdapter {
                             input -> input.getId(),
                             input -> input.getAsString()
                     ));
-            logger.info("[onModalInteraction] responses: {}", responses);
 
             String requestId = null;
             String command = null;
@@ -184,23 +179,18 @@ public class DiscordBotListener extends ListenerAdapter {
             }
             final String finalRequestId = requestId;
             final String finalCommand = command;
-            logger.info("[onModalInteraction] command: {}, requestId: {}", finalCommand, finalRequestId);
-            logger.info("[onModalInteraction] responses: {}", responses);
             Boolean configEphemeralLog = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
-            logger.info("[onModalInteraction] configEphemeral for command '{}', responses {}: {}", finalCommand, responses, configEphemeralLog);
             final boolean ephemeral;
             Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
             ephemeral = configEphemeral != null ? configEphemeral : false;
             if (finalRequestId != null && finalCommand != null) {
                 var nettyServer = platformManager.getNettyServer();
                 var servers = nettyServer.getServersForCommand(finalCommand);
-                logger.info("[onModalInteraction] servers for command '{}': {}", finalCommand, servers);
                 if (servers != null && !servers.isEmpty()) {
                     var channel = servers.get(0).channel();
 
                     event.deferReply(ephemeral).queue(hook -> {
                         requestSender.storeInteractionHook(java.util.UUID.fromString(finalRequestId), hook);
-                        logger.info("[onModalInteraction] Stored interaction hook for requestId: {}", finalRequestId);
 
                         Map<String, Object> msg = new java.util.HashMap<>();
                         msg.put("type", "form_submit");
@@ -209,24 +199,18 @@ public class DiscordBotListener extends ListenerAdapter {
                         msg.put("formData", responses);
                         msg.put("ephemeral", ephemeral);
                         String json = new com.google.gson.Gson().toJson(msg);
-                        logger.info("[onModalInteraction] sending to client: {}", json);
                         nettyServer.sendMessage(channel, json);
                     });
                 } else {
-                    logger.warn("[onModalInteraction] No servers found for command: {}", finalCommand);
                     event.reply("Ошибка: сервер не найден.").setEphemeral(true).queue();
                 }
-                logger.info("[onModalInteraction] deferReply sent to Discord");
             } else {
-                logger.warn("[onModalInteraction] Could not determine command or requestId for modalId: {}", modalId);
                 event.reply("Не удалось определить команду или requestId для формы.").setEphemeral(true).queue();
             }
         } catch (Exception e) {
-            logger.error("[onModalInteraction] Modal Window Processing Error", e);
             event.reply("An error occurred while processing the form.").setEphemeral(true).queue();
         } finally {
             platformManager.getFormHandlers().remove(modalId);
-            logger.info("[onModalInteraction] handler removed for modalId: {}", modalId);
         }
     }
 
