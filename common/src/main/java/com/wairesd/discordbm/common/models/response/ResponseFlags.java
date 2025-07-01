@@ -7,13 +7,11 @@ public class ResponseFlags {
     private final boolean preventMessageSend;
     private final boolean isFormResponse;
     private final boolean requiresModal;
-    private final boolean ephemeral;
 
-    public ResponseFlags(boolean preventMessageSend, boolean isFormResponse, boolean requiresModal, boolean ephemeral) {
+    public ResponseFlags(boolean preventMessageSend, boolean isFormResponse, boolean requiresModal) {
         this.preventMessageSend = preventMessageSend;
         this.isFormResponse = isFormResponse;
         this.requiresModal = requiresModal;
-        this.ephemeral = ephemeral;
     }
 
     public boolean shouldPreventMessageSend() {
@@ -28,15 +26,10 @@ public class ResponseFlags {
         return requiresModal;
     }
 
-    public boolean isEphemeral() {
-        return ephemeral;
-    }
-
     public static class Builder {
         private boolean preventMessageSend = false;
         private boolean isFormResponse = false;
         private boolean requiresModal = false;
-        private boolean ephemeral = false;
 
         public Builder preventMessageSend(boolean prevent) {
             this.preventMessageSend = prevent;
@@ -53,13 +46,8 @@ public class ResponseFlags {
             return this;
         }
 
-        public Builder ephemeral(boolean ephemeral) {
-            this.ephemeral = ephemeral;
-            return this;
-        }
-
         public ResponseFlags build() {
-            return new ResponseFlags(preventMessageSend, isFormResponse, requiresModal, ephemeral);
+            return new ResponseFlags(preventMessageSend, isFormResponse, requiresModal);
         }
     }
 } 

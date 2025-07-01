@@ -206,7 +206,11 @@ public class ResponseHandler {
     }
 
     private static void sendResponse(SlashCommandInteractionEvent event, ResponseMessage respMsg) {
-        boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
+        Boolean storedEphemeral = null;
+        if (listener != null && listener.getRequestSender() != null) {
+            storedEphemeral = listener.getRequestSender().removeEphemeralForRequest(UUID.fromString(respMsg.requestId()));
+        }
+        boolean ephemeral = storedEphemeral != null ? storedEphemeral : (respMsg.flags() != null && respMsg.flags().isEphemeral());
         if (respMsg.embed() != null) {
             sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {

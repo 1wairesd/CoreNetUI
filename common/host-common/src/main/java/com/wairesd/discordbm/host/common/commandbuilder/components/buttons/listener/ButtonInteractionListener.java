@@ -60,8 +60,7 @@ public class ButtonInteractionListener extends ListenerAdapter {
 
             event.deferEdit().queue(hook -> {
                 UUID newRequestId = UUID.randomUUID();
-                boolean isEphemeral = event.getMessage() != null && event.getMessage().isEphemeral();
-                platformManager.storePendingButtonRequest(newRequestId, hook, isEphemeral);
+                platformManager.storePendingButtonRequest(newRequestId, hook);
 
                 Channel channel = nettyServer.getChannelByServerName(serverName);
                 if (channel == null) {

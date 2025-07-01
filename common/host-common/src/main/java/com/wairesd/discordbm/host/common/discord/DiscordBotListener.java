@@ -3,12 +3,19 @@ package com.wairesd.discordbm.host.common.discord;
 import com.wairesd.discordbm.api.interaction.InteractionResponseType;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorHandler;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
+import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
+import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.CommandResponder;
+import com.wairesd.discordbm.host.common.commandbuilder.interaction.validator.CommandValidator;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.handler.CommandHandler;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
 import com.wairesd.discordbm.host.common.discord.selection.ServerSelector;
 import com.wairesd.discordbm.host.common.network.NettyServer;
+import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -33,8 +40,7 @@ public class DiscordBotListener extends ListenerAdapter {
     public DiscordBotListener(DiscordBMHPlatformManager platformManager, NettyServer nettyServer, PluginLogger logger) {
         this.platformManager = platformManager;
         this.nettyServer = nettyServer;
-
-        this.requestSender = new RequestSender(nettyServer, logger);
+        this.requestSender = new RequestSender(nettyServer, DiscordBotListener.logger);
         this.responseHelper = new ResponseHelper();
         this.commandHandler = new CommandHandler(platformManager, requestSender, responseHelper);
         this.serverSelector = new ServerSelector(requestSender, responseHelper);
@@ -66,7 +72,7 @@ public class DiscordBotListener extends ListenerAdapter {
             boolean hasRole = member != null && member.getRoles().stream()
                 .anyMatch(role -> role.getId().equals(cmdDef.permission()));
             if (!hasRole) {
-                new com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorHandler(null, event)
+                new CommandErrorHandler(null, event)
                     .handleRoleRequired(cmdDef.permission());
                 return;
             }
@@ -74,9 +80,9 @@ public class DiscordBotListener extends ListenerAdapter {
 
         if (cmdDef != null && cmdDef.conditions() != null && !cmdDef.conditions().isEmpty()) {
             var conditions = cmdDef.conditions().stream()
-                .map(com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition::parseCondition)
+                .map(CommandParserCondition::parseCondition)
                 .toList();
-            var commandStructured = new com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured(
+            var commandStructured = new CommandStructured(
                 cmdDef.name(),
                 cmdDef.description(),
                 cmdDef.context(),
@@ -87,10 +93,10 @@ public class DiscordBotListener extends ListenerAdapter {
                 null,
                 cmdDef.permission()
             );
-            var validator = new com.wairesd.discordbm.host.common.commandbuilder.interaction.validator.CommandValidator();
-            var context = new com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context(event);
+            var validator = new CommandValidator();
+            var context = new Context(event);
             if (!validator.validateConditions(commandStructured, context)) {
-                new com.wairesd.discordbm.host.common.commandbuilder.interaction.response.CommandResponder()
+                new CommandResponder()
                     .handleFailedValidation(event, commandStructured, context);
                 return;
             }
@@ -106,15 +112,12 @@ public class DiscordBotListener extends ListenerAdapter {
             boolean requiresModal = false;
             boolean useDeferReply = false;
             boolean useReply = false;
-            boolean ephemeral = false;
-            if (!event.getOptions().isEmpty()) {
-                var opt = event.getOptions().stream().filter(o -> o.getName().equalsIgnoreCase("ephemeral")).findFirst();
-                if (opt.isPresent()) {
-                    try {
-                        ephemeral = Boolean.parseBoolean(opt.get().getAsString());
-                    } catch (Exception ignore) {}
-                }
-            }
+            boolean ephemeral;
+            java.util.UUID requestId = java.util.UUID.randomUUID();
+            Map<String, String> options = event.getOptions().stream()
+                .collect(Collectors.toMap(o -> o.getName(), o -> o.getAsString()));
+            Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(command, options);
+            ephemeral = configEphemeral != null ? configEphemeral : false;
             switch (responseType) {
                 case REPLY_MODAL -> requiresModal = true;
                 case DEFER_REPLY -> useDeferReply = true;
@@ -134,12 +137,14 @@ public class DiscordBotListener extends ListenerAdapter {
             if (useDeferReply) {
                 final boolean finalRequiresModal = requiresModal;
                 final boolean finalUseDeferReply = useDeferReply;
+                final java.util.UUID finalRequestId = requestId;
+                final boolean finalEphemeral = ephemeral;
                 event.deferReply(ephemeral).queue(hook -> {
-                    requestSender.sendRequestToServer(event, servers.get(0), finalRequiresModal, finalUseDeferReply);
+                    requestSender.sendRequestToServer(event, servers.get(0), finalRequiresModal, finalUseDeferReply, finalRequestId, finalEphemeral);
                 });
                 return;
             }
-            requestSender.sendRequestToServer(event, servers.get(0), requiresModal, useDeferReply);
+            requestSender.sendRequestToServer(event, servers.get(0), requiresModal, useDeferReply, requestId, ephemeral);
         } else {
             serverSelector.sendServerSelectionMenu(event, servers);
         }
@@ -180,19 +185,12 @@ public class DiscordBotListener extends ListenerAdapter {
             final String finalRequestId = requestId;
             final String finalCommand = command;
             logger.info("[onModalInteraction] command: {}, requestId: {}", finalCommand, finalRequestId);
+            logger.info("[onModalInteraction] responses: {}", responses);
+            Boolean configEphemeralLog = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
+            logger.info("[onModalInteraction] configEphemeral for command '{}', responses {}: {}", finalCommand, responses, configEphemeralLog);
             final boolean ephemeral;
-            if (finalRequestId != null && formEphemeralMap.containsKey(finalRequestId)) {
-                ephemeral = formEphemeralMap.get(finalRequestId);
-                formEphemeralMap.remove(finalRequestId);
-            } else if (responses.containsKey("ephemeral")) {
-                boolean parsed = true;
-                try {
-                    parsed = Boolean.parseBoolean(responses.get("ephemeral"));
-                } catch (Exception ignore) {}
-                ephemeral = parsed;
-            } else {
-                ephemeral = true;
-            }
+            Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
+            ephemeral = configEphemeral != null ? configEphemeral : false;
             if (finalRequestId != null && finalCommand != null) {
                 var nettyServer = platformManager.getNettyServer();
                 var servers = nettyServer.getServersForCommand(finalCommand);

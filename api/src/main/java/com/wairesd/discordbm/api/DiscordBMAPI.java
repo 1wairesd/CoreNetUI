@@ -10,6 +10,8 @@ import com.wairesd.discordbm.api.role.RoleManager;
 import com.wairesd.discordbm.api.form.FormBuilder;
 import com.wairesd.discordbm.api.form.FormFieldBuilder;
 
+import java.util.Map;
+
 /**
  * Main interface for the Discord Bot Manager API.
  * This interface provides access to all the core functionality of the Discord Bot Manager.
@@ -92,4 +94,10 @@ public interface DiscordBMAPI {
      * @return The role manager service
      */
     RoleManager getRoleManager();
+    
+    /**
+     * Register ephemeral rules for commands from the addon.
+     * These rules will be sent to the host and used for determining message privacy.
+     */
+    void registerEphemeralRules(Map<String, Boolean> rules);
 } 

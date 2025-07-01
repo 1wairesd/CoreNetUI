@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import com.wairesd.discordbm.host.common.models.request.RequestMessage;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -23,6 +23,7 @@ public class RequestSender {
     private final ConcurrentHashMap<UUID, SlashCommandInteractionEvent> pendingRequests = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, InteractionHook> pendingHooks = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, String> requestServerNames = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Boolean> requestEphemeral = new ConcurrentHashMap<>();
     
     public static final String SERVER_NAME_VAR = "discordbm_server_name";
 
@@ -30,15 +31,15 @@ public class RequestSender {
         this.nettyServer = nettyServer;
     }
 
-    public void sendRequestToServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo, boolean requiresModal, boolean useDeferReply) {
-        UUID requestId = UUID.randomUUID();
+    public void sendRequestToServer(SlashCommandInteractionEvent event, NettyServer.ServerInfo serverInfo, boolean requiresModal, boolean useDeferReply, UUID requestId, boolean ephemeral) {
+        requestEphemeral.put(requestId, ephemeral);
         if (requiresModal) {
             pendingRequests.put(requestId, event);
             requestServerNames.put(requestId, serverInfo.serverName());
             if (Settings.isDebugRequestProcessing()) {
                 logger.info("Added requestId {} to pendingRequests for modal", requestId);
             }
-            RequestMessage request = createRequestMessage(event, requestId);
+            RequestMessage request = createRequestMessage(event, requestId, ephemeral);
             String json = GSON.toJson(request);
             nettyServer.sendMessage(serverInfo.channel(), json);
             if (Settings.isDebugRequestProcessing()) {
@@ -52,7 +53,7 @@ public class RequestSender {
             if (Settings.isDebugRequestProcessing()) {
                 logger.info("Added requestId {} to pendingRequests after defer (no second defer)", requestId);
             }
-            RequestMessage request = createRequestMessage(event, requestId);
+            RequestMessage request = createRequestMessage(event, requestId, ephemeral);
             String json = GSON.toJson(request);
             nettyServer.sendMessage(serverInfo.channel(), json);
             if (Settings.isDebugRequestProcessing()) {
@@ -60,13 +61,12 @@ public class RequestSender {
             }
             return;
         }
-
         pendingRequests.put(requestId, event);
         requestServerNames.put(requestId, serverInfo.serverName());
         if (Settings.isDebugRequestProcessing()) {
             logger.info("Added requestId {} to pendingRequests (no defer)", requestId);
         }
-        RequestMessage request = createRequestMessage(event, requestId);
+        RequestMessage request = createRequestMessage(event, requestId, ephemeral);
         String json = GSON.toJson(request);
         nettyServer.sendMessage(serverInfo.channel(), json);
         if (Settings.isDebugRequestProcessing()) {
@@ -89,19 +89,12 @@ public class RequestSender {
         return pendingHooks.remove(requestId);
     }
 
-    private RequestMessage createRequestMessage(SlashCommandInteractionEvent event, UUID requestId) {
+    private RequestMessage createRequestMessage(SlashCommandInteractionEvent event, UUID requestId, boolean ephemeral) {
         Map<String, String> options = event.getOptions().stream()
                 .collect(Collectors.toMap(opt -> opt.getName(), opt -> opt.getAsString()));
         options.put("user_Id", event.getUser().getId());
         if (event.getGuild() != null) {
             options.put("guild_Id", event.getGuild().getId());
-        }
-        boolean ephemeral = false;
-        var opt = event.getOptions().stream().filter(o -> o.getName().equalsIgnoreCase("ephemeral")).findFirst();
-        if (opt.isPresent()) {
-            try {
-                ephemeral = Boolean.parseBoolean(opt.get().getAsString());
-            } catch (Exception ignore) {}
         }
         options.put("ephemeral", Boolean.toString(ephemeral));
         return new RequestMessage("request", event.getName(), options, requestId.toString());
@@ -121,5 +114,21 @@ public class RequestSender {
 
     public void storeServerNameForRequest(UUID requestId, String serverName) {
         requestServerNames.put(requestId, serverName);
+    }
+
+    public Boolean getEphemeralForRequest(UUID requestId) {
+        return requestEphemeral.get(requestId);
+    }
+
+    public Boolean removeEphemeralForRequest(UUID requestId) {
+        return requestEphemeral.remove(requestId);
+    }
+
+    public void updateEphemeralRulesFromAddon(Map<String, Boolean> rules) {
+        if (rules != null) {
+            for (Map.Entry<String, Boolean> entry : rules.entrySet()) {
+                CommandEphemeral.addOrUpdateRule(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

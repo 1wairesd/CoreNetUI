@@ -20,6 +20,8 @@ import com.wairesd.discordbm.api.form.FormBuilder;
 import com.wairesd.discordbm.api.form.FormFieldBuilder;
 import com.wairesd.discordbm.client.common.form.FormBuilderImpl;
 import com.wairesd.discordbm.client.common.form.FormFieldBuilderImpl;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DiscordBMBAPIImpl implements DiscordBMAPI {
     
@@ -98,5 +100,14 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
 
     public Platform getPlatform() {
         return platform;
+    }
+
+    @Override
+    public void registerEphemeralRules(Map<String, Boolean> rules) {
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("type", "ephemeral_rules");
+        msg.put("rules", rules);
+        String json = new com.google.gson.Gson().toJson(msg);
+        platform.getNettyService().sendNettyMessage(json);
     }
 } 

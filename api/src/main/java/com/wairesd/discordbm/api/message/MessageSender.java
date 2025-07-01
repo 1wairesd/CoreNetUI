@@ -55,53 +55,6 @@ public interface MessageSender {
      */
     void sendFormWithMessage(String requestId, String message, Form form);
 
-    /**
-     * Send a text message in response to a command with visibility control
-     *
-     * @param requestId The request ID of the command
-     * @param message The message to send
-     * @param ephemeral Whether the message should be ephemeral (private)
-     */
-    void sendResponse(String requestId, String message, boolean ephemeral);
-
-    /**
-     * Send an embed in response to a command with visibility control
-     *
-     * @param requestId The request ID of the command
-     * @param embed The embed to send
-     * @param ephemeral Whether the message should be ephemeral (private)
-     */
-    void sendResponse(String requestId, Embed embed, boolean ephemeral);
-
-    /**
-     * Send an embed with buttons in response to a command with visibility control
-     *
-     * @param requestId The request ID of the command
-     * @param embed The embed to send
-     * @param buttons The buttons to add to the message
-     * @param ephemeral Whether the message should be ephemeral (private)
-     */
-    void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons, boolean ephemeral);
-
-    /**
-     * Send a form in response to a command with visibility control
-     *
-     * @param requestId The request ID of the command
-     * @param form The form to send
-     * @param ephemeral Whether the form modal should be ephemeral (private)
-     */
-    void sendForm(String requestId, Form form, boolean ephemeral);
-
-    /**
-     * Send a form with a message in response to a command with visibility control
-     *
-     * @param requestId The request ID of the command
-     * @param message The message to send with the form
-     * @param form The form to send
-     * @param ephemeral Whether the form modal should be ephemeral (private)
-     */
-    void sendFormWithMessage(String requestId, String message, Form form, boolean ephemeral);
-
     // --- Direct Message ---
 
     /**
