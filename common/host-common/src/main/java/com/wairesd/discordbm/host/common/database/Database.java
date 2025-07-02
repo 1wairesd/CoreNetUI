@@ -92,4 +92,8 @@ public class Database {
     private void logError(String message, String ip, Throwable e) {
         logger.error(message.formatted(ip), e);
     }
+
+    public void close() {
+        executor.shutdownNow();
+    }
 }

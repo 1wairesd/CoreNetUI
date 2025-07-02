@@ -3,14 +3,18 @@ package com.wairesd.discordbm.velocity.commands;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
+import com.wairesd.discordbm.common.utils.color.ColorUtils;
+import com.wairesd.discordbm.host.common.service.HostCommandService;
 import com.wairesd.discordbm.velocity.commands.sub.ReloadCommand;
 import com.wairesd.discordbm.velocity.commands.sub.CommandsCommand;
 import com.wairesd.discordbm.velocity.commands.sub.HelpCommand;
 import com.wairesd.discordbm.velocity.commands.sub.ClientsCommand;
-import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.velocity.commands.sub.WebHookCommand;
+import com.wairesd.discordbm.velocity.DiscordBMV;
+import net.kyori.adventure.text.Component;
+import com.wairesd.discordbm.common.utils.color.transform.AnsiColorTranslator;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
@@ -19,9 +23,11 @@ public class CommandAdmin implements SimpleCommand {
     private final ClientsCommand clientsCommand;
     private final DiscordBMHPlatformManager platformManager;
     private final WebHookCommand webHookCommand;
+    private final java.nio.file.Path dataDirectory;
 
     public CommandAdmin(DiscordBMHPlatformManager platformManager) {
         this.platformManager = platformManager;
+        this.dataDirectory = DiscordBMV.plugin.getDataDirectory();
         this.reloadCommand = new ReloadCommand(platformManager);
         this.commandsCommand = new CommandsCommand(platformManager);
         this.helpCommand = new HelpCommand();
@@ -36,24 +42,28 @@ public class CommandAdmin implements SimpleCommand {
         MessageContext context = (source instanceof ConsoleCommandSource) ? MessageContext.CONSOLE : MessageContext.CHAT;
 
         if (args.length == 0) {
-            showHelp(source, context);
+            if (context == MessageContext.CONSOLE) {
+                source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
+            } else {
+                source.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
+            }
             return;
         }
 
         switch (args[0].toLowerCase()) {
-            case "reload" -> reloadCommand.execute(source, context);
-            case "commands" -> commandsCommand.execute(source, args, context);
-            case "clients" -> clientsCommand.execute(source, context);
+            case "reload" -> reloadCommand.execute(source, context, platformManager, dataDirectory);
+            case "commands" -> commandsCommand.execute(source, args, context, platformManager);
+            case "clients" -> clientsCommand.execute(source, context, platformManager);
             case "help" -> helpCommand.execute(source, context);
-            case "webhook" -> webHookCommand.execute(source, args, context);
-            default -> showHelp(source, context);
+            case "webhook" -> webHookCommand.execute(source, args, context, dataDirectory);
+            default -> {
+                if (context == MessageContext.CONSOLE) {
+                    source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
+                } else {
+                    source.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
+                }
+            }
         }
     }
 
-    private void showHelp(CommandSource source, MessageContext context) {
-        source.sendMessage(Messages.getComponent(Messages.Keys.HELP_HEADER, context));
-        source.sendMessage(Messages.getComponent(Messages.Keys.HELP_RELOAD, context));
-        source.sendMessage(Messages.getComponent(Messages.Keys.HELP_CUSTOM_COMMANDS, context));
-        source.sendMessage(Messages.getComponent(Messages.Keys.HELP_ADDONS_COMMANDS, context));
-    }
 }

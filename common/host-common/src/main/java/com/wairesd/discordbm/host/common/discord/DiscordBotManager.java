@@ -72,4 +72,10 @@ public class DiscordBotManager {
         }
         return jda;
     }
+
+    public void shutdown() {
+        if (jda != null) {
+            jda.shutdownNow();
+        }
+    }
 }

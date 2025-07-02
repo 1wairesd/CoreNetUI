@@ -61,6 +61,9 @@ public class DiscordBMV {
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
         WebhookScheduler.shutdown();
+        if (platformBootstrap != null) {
+            platformBootstrap.shutdown();
+        }
     }
 
     private void registerCommands() {
