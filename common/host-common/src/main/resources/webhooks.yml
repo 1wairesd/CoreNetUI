@@ -1,0 +1,8 @@
+webhooks:
+  - name: myWebhook
+    url: "https://discord.com/api/webhooks/your_webhook"
+    enabled: false
+    actions:
+      - type: send
+        message: "hello!"
+        schedule: "every 5 seconds"

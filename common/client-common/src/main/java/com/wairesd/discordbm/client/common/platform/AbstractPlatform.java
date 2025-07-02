@@ -120,7 +120,7 @@ public abstract class AbstractPlatform implements Platform {
     public Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders) {
         return placeholderService.getPlaceholderValues(playerName, placeholders);
     }
-    
+
     @Override
     public void runTaskLaterAsynchronously(Runnable task, long delay) {
         long delayMs = (delay * 1000) / 20;

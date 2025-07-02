@@ -3,6 +3,7 @@ package com.wairesd.discordbm.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -16,6 +17,7 @@ import com.wairesd.discordbm.host.common.config.configurators.Commands;
 import com.wairesd.discordbm.host.common.bootstrap.DiscordBMHBootstrap;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
+import com.wairesd.discordbm.host.common.scheduler.WebhookScheduler;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
@@ -52,6 +54,11 @@ public class DiscordBMV {
         platformBootstrap.initialize();
         timer.stop();
         timer.printElapsed();
+    }
+
+    @Subscribe
+    public void onProxyShutdown(ProxyShutdownEvent event) {
+        WebhookScheduler.shutdown();
     }
 
     private void registerCommands() {

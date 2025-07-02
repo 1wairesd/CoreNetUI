@@ -1,6 +1,5 @@
 package com.wairesd.discordbm.host.common.bootstrap;
 
-import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener.ButtonInteractionListener;
@@ -13,6 +12,7 @@ import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.network.NettyServer;
+import com.wairesd.discordbm.host.common.scheduler.WebhookScheduler;
 import net.dv8tion.jda.api.JDA;
 
 import java.nio.file.Path;
@@ -47,6 +47,7 @@ public class DiscordBMHBootstrap {
     private void initConfig() {
         ConfigManager.init(dataDirectory);
         logger.info("Configuration initialized");
+        WebhookScheduler.start();
     }
 
     private void initDatabase() {
