@@ -84,7 +84,7 @@ public abstract class AbstractPlatform implements Platform {
             synchronized (addonCommands) {
                 addonCommands.add(addonCommand);
                 if (Settings.isDebugCommandRegistrations()) {
-                    pluginLogger.info("Зарегистрирована команда аддона: " + addonCommand.getName());
+                    pluginLogger.info("Addon team registered: " + addonCommand.getName());
                 }
             }
         }
@@ -97,7 +97,6 @@ public abstract class AbstractPlatform implements Platform {
 
     @Override
     public void onNettyConnected() {
-        pluginLogger.info("[ephemeral_rules] onNettyConnected вызван (AbstractPlatform)");
         for (DiscordBMCRLB listener : listeners) {
             listener.onNettyConnected();
         }
