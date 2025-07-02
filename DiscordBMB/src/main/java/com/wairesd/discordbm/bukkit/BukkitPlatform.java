@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.bukkit;
 
+import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.client.common.DiscordBMBAPIImpl;
 import com.wairesd.discordbm.client.common.platform.AbstractPlatform;
 import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
 import com.wairesd.discordbm.client.common.config.configurators.Settings;
@@ -51,5 +53,16 @@ public class BukkitPlatform extends AbstractPlatform {
             }
         }
         pluginLogger.info("=== End of the list of services ===");
+    }
+
+    @Override
+    public void onNettyConnected() {
+        super.onNettyConnected();
+        RegisteredServiceProvider<DiscordBMAPI> provider =
+            Bukkit.getServicesManager().getRegistration(DiscordBMAPI.class);
+        if (provider != null && provider.getProvider() instanceof DiscordBMBAPIImpl) {
+            DiscordBMBAPIImpl impl = (DiscordBMBAPIImpl) provider.getProvider();
+            impl.getEphemeralRulesManager().resendAllEphemeralRules();
+        }
     }
 } 

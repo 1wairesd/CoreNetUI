@@ -19,8 +19,6 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.LoggerFactory;
 import com.wairesd.discordbm.host.common.utils.ClientInfo;
-import com.google.gson.Gson;
-import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -218,22 +216,5 @@ public class NettyServer {
 
     public List<ClientInfo> getActiveClientsInfo() {
         return ClientInfo.getActiveClientsInfo(channelToServerName, channelConnectTime);
-    }
-
-    public void onMessageReceived(String json) {
-        Gson gson = new Gson();
-        Map<String, Object> msg = gson.fromJson(json, Map.class);
-        if (msg == null || !msg.containsKey("type")) return;
-        String type = (String) msg.get("type");
-        if ("ephemeral_rules".equals(type)) {
-            Object rulesObj = msg.get("rules");
-            if (rulesObj instanceof Map) {
-                Map<String, Boolean> rules = (Map<String, Boolean>) rulesObj;
-                for (Map.Entry<String, Boolean> entry : rules.entrySet()) {
-                    CommandEphemeral.addOrUpdateClientRule(entry.getKey(), entry.getValue());
-                }
-            }
-            return;
-        }
     }
 }

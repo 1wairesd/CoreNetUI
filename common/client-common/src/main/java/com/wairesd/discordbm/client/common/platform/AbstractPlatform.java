@@ -97,10 +97,10 @@ public abstract class AbstractPlatform implements Platform {
 
     @Override
     public void onNettyConnected() {
+        pluginLogger.info("[ephemeral_rules] onNettyConnected вызван (AbstractPlatform)");
         for (DiscordBMCRLB listener : listeners) {
             listener.onNettyConnected();
         }
-
         List<Command> commands = getAddonCommands();
         if (!commands.isEmpty() && nettyService.getNettyClient() != null) {
             nettyService.registerCommands(commands);
@@ -137,5 +137,10 @@ public abstract class AbstractPlatform implements Platform {
     @Override
     public CommandRegistration getCommandRegistration() {
         return commandRegistration;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return nettyService != null && nettyService.getNettyClient() != null && nettyService.getNettyClient().isActive();
     }
 } 

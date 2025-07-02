@@ -44,15 +44,6 @@ public class RegisterHandler {
             return;
         }
 
-        if (!handler.isAuthenticated()) {
-            handler.setAuthenticated(true);
-            dbManager.resetAttempts(ip);
-            if (Settings.isDebugAuthentication()) {
-                logger.info("Client {} IP - {} Port - {} authenticated successfully", 
-                    registerMessage.serverName(), ip, port);
-            }
-        }
-
         String serverName = registerMessage.serverName();
         String pluginName = registerMessage.pluginName();
         List<CommandDefinition> commands = registerMessage.commands();

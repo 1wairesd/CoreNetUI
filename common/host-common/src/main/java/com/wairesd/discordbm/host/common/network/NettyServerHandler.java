@@ -11,6 +11,7 @@ import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersRes
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.handler.register.ClientRegisterHandler;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.*;
+import java.util.List;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         implements ClientRegisterHandler.NettyServerHandlerContext {
@@ -139,6 +141,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
             if (future != null) {
                 future.complete(resp);
             }
+        } else if ("ephemeral_rules".equals(type)) {
+            String clientId = nettyServer.getServerName(ctx.channel());
+            if (json.has("rules") && json.get("rules").isJsonObject()) {
+                for (var entry : json.getAsJsonObject("rules").entrySet()) {
+                    CommandEphemeral.addOrUpdateClientRule(clientId, entry.getKey(), entry.getValue().getAsBoolean());
+                }
+            }
+            return;
         } else {
             logger.warn("Unknown message type: {}", type);
         }
@@ -146,6 +156,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        String clientId = nettyServer.getServerName(ctx.channel());
+        CommandEphemeral.removeAllClientRules(clientId);
+        if (clientId != null) {
+            for (var entry : nettyServer.getCommandToPlugin().entrySet()) {
+                String command = entry.getKey();
+                String pluginName = entry.getValue();
+                List<NettyServer.ServerInfo> servers = nettyServer.getServersForCommand(command);
+                if (servers != null && servers.stream().anyMatch(s -> clientId.equals(s.serverName()))) {
+                    CommandEphemeral.removeAllPluginRules(pluginName);
+                }
+            }
+        }
         nettyServer.removeServer(ctx.channel());
     }
 

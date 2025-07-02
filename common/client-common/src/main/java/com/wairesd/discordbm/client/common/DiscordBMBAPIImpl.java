@@ -20,7 +20,8 @@ import com.wairesd.discordbm.api.form.FormBuilder;
 import com.wairesd.discordbm.api.form.FormFieldBuilder;
 import com.wairesd.discordbm.client.common.form.FormBuilderImpl;
 import com.wairesd.discordbm.client.common.form.FormFieldBuilderImpl;
-import java.util.HashMap;
+import com.wairesd.discordbm.client.common.ephemeral.EphemeralRulesManager;
+
 import java.util.Map;
 
 public class DiscordBMBAPIImpl implements DiscordBMAPI {
@@ -31,6 +32,7 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
     private final EventRegistryImpl eventRegistry;
     private final LoggerAdapter logger;
     private final RoleManagerImpl roleManager;
+    private final EphemeralRulesManager ephemeralRulesManager;
 
     public DiscordBMBAPIImpl(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -39,55 +41,86 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
         this.componentRegistry = new ComponentRegistryImpl(platform, this.logger);
         this.eventRegistry = new EventRegistryImpl(this.logger);
         this.roleManager = new RoleManagerImpl(platform);
+        this.ephemeralRulesManager = new EphemeralRulesManager(platform);
     }
     
     @Override
     public CommandRegistration getCommandRegistration() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return platform.getCommandRegistration();
     }
     
     @Override
     public MessageSender getMessageSender() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return messageSender;
     }
     
     @Override
     public ComponentRegistry getComponentRegistry() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return componentRegistry;
     }
     
     @Override
     public EventRegistry getEventRegistry() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return eventRegistry;
     }
     
     @Override
     public Logger getLogger() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return logger;
     }
     
     @Override
     public EmbedBuilder createEmbedBuilder() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return new EmbedBuilderImpl();
     }
     
     @Override
     public FormBuilder createFormBuilder() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return new FormBuilderImpl();
     }
     
     @Override
     public FormFieldBuilder createFormFieldBuilder() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return new FormFieldBuilderImpl();
     }
     
     @Override
     public String getServerName() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return platform.getServerName();
     }
     
     @Override
     public boolean isConnected() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return platform.getNettyService() != null && 
                platform.getNettyService().getNettyClient() != null && 
                platform.getNettyService().getNettyClient().isActive();
@@ -95,19 +128,25 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
 
     @Override
     public RoleManager getRoleManager() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return roleManager;
+    }
+
+    @Override
+    public void registerEphemeralRules(Map<String, Boolean> rules) {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
+        ephemeralRulesManager.registerEphemeralRules(rules);
     }
 
     public Platform getPlatform() {
         return platform;
     }
 
-    @Override
-    public void registerEphemeralRules(Map<String, Boolean> rules) {
-        Map<String, Object> msg = new HashMap<>();
-        msg.put("type", "ephemeral_rules");
-        msg.put("rules", rules);
-        String json = new com.google.gson.Gson().toJson(msg);
-        platform.getNettyService().sendNettyMessage(json);
+    public EphemeralRulesManager getEphemeralRulesManager() {
+        return ephemeralRulesManager;
     }
 } 

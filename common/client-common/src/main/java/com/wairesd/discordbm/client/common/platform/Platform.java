@@ -27,4 +27,5 @@ public interface Platform {
     void runTaskAsynchronously(Runnable task);
     void runTaskLaterAsynchronously(Runnable task, long delay);
     void onNettyConnected();
+    boolean isConnected();
 }

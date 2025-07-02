@@ -9,12 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandEphemeral {
     private static final String CONFIG_FILE_NAME = "commands-ephemeral.yml";
     private static Path dataDirectory;
     private static final Map<String, Boolean> commandEphemeralMap = new HashMap<>();
-    private static final Map<String, Boolean> clientEphemeralRules = new HashMap<>();
+    private static final Map<String, Map<String, Boolean>> clientEphemeralRules = new ConcurrentHashMap<>();
 
     public static void init(Path dataDir) {
         dataDirectory = dataDir;
@@ -94,17 +95,23 @@ public class CommandEphemeral {
         if (!options.isEmpty()) {
             for (String key : options.keySet()) {
                 String k = command + "_args " + key;
-                if (clientEphemeralRules.containsKey(k)) {
-                    return clientEphemeralRules.get(k);
+                for (var clientRules : clientEphemeralRules.values()) {
+                    if (clientRules.containsKey(k)) {
+                        return clientRules.get(k);
+                    }
                 }
             }
             String argsKey = command + "_args";
-            if (clientEphemeralRules.containsKey(argsKey)) {
-                return clientEphemeralRules.get(argsKey);
+            for (var clientRules : clientEphemeralRules.values()) {
+                if (clientRules.containsKey(argsKey)) {
+                    return clientRules.get(argsKey);
+                }
             }
         }
-        if (clientEphemeralRules.containsKey(command)) {
-            return clientEphemeralRules.get(command);
+        for (var clientRules : clientEphemeralRules.values()) {
+            if (clientRules.containsKey(command)) {
+                return clientRules.get(command);
+            }
         }
         return false;
     }
@@ -117,11 +124,18 @@ public class CommandEphemeral {
         commandEphemeralMap.put(command + " " + arg, ephemeral);
     }
 
-    public static void addOrUpdateClientRule(String command, boolean ephemeral) {
-        clientEphemeralRules.put(command, ephemeral);
+    public static void addOrUpdateClientRule(String clientId, String ruleKey, boolean ephemeral) {
+        clientEphemeralRules.computeIfAbsent(clientId, k -> new ConcurrentHashMap<>()).put(ruleKey, ephemeral);
     }
 
-    public static void addOrUpdateClientRule(String command, String arg, boolean ephemeral) {
-        clientEphemeralRules.put(command + " " + arg, ephemeral);
+    public static void removeAllClientRules(String clientId) {
+        if (clientId == null) return;
+        clientEphemeralRules.remove(clientId);
+    }
+
+    public static void removeAllPluginRules(String pluginName) {
+        for (var entry : clientEphemeralRules.entrySet()) {
+            entry.getValue().keySet().removeIf(key -> key.startsWith(pluginName + " ") || key.equals(pluginName));
+        }
     }
 } 

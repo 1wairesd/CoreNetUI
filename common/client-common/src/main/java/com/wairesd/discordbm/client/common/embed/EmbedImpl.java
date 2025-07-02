@@ -110,7 +110,6 @@ public class EmbedImpl implements Embed {
                 try {
                     this.color = Integer.parseInt(hexColor.substring(1), 16);
                 } catch (NumberFormatException e) {
-                    // Ignore invalid color
                 }
             }
             return this;
