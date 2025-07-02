@@ -22,6 +22,7 @@ public class Messages {
         public static final String HELP_RELOAD = "help-reload";
         public static final String HELP_CUSTOM_COMMANDS = "help-custom-commands";
         public static final String HELP_ADDONS_COMMANDS = "help-addons-commands";
+        public static final String HELP_WEBHOOK = "help-webhook";
 
         public static final String CUSTOM_COMMANDS_EMPTY = "custom-commands-empty";
         public static final String CUSTOM_COMMANDS_HEADER = "custom-commands-header";

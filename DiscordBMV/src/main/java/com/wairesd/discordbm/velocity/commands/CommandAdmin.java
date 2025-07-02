@@ -10,6 +10,7 @@ import com.wairesd.discordbm.velocity.commands.sub.ClientsCommand;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
+import com.wairesd.discordbm.velocity.commands.sub.WebHookCommand;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
@@ -17,6 +18,7 @@ public class CommandAdmin implements SimpleCommand {
     private final HelpCommand helpCommand;
     private final ClientsCommand clientsCommand;
     private final DiscordBMHPlatformManager platformManager;
+    private final WebHookCommand webHookCommand;
 
     public CommandAdmin(DiscordBMHPlatformManager platformManager) {
         this.platformManager = platformManager;
@@ -24,6 +26,7 @@ public class CommandAdmin implements SimpleCommand {
         this.commandsCommand = new CommandsCommand(platformManager);
         this.helpCommand = new HelpCommand();
         this.clientsCommand = new ClientsCommand(platformManager);
+        this.webHookCommand = new WebHookCommand();
     }
 
     @Override
@@ -42,6 +45,7 @@ public class CommandAdmin implements SimpleCommand {
             case "commands" -> commandsCommand.execute(source, args, context);
             case "clients" -> clientsCommand.execute(source, context);
             case "help" -> helpCommand.execute(source, context);
+            case "webhook" -> webHookCommand.execute(source, args, context);
             default -> showHelp(source, context);
         }
     }

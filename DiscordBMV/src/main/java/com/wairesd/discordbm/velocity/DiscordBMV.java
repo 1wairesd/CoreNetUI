@@ -71,4 +71,8 @@ public class DiscordBMV {
     public DiscordBMHPlatformManager getPlatformManager() {
         return platformManager;
     }
+
+    public Path getDataDirectory() {
+        return dataDirectory;
+    }
 }

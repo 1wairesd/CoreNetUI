@@ -5,9 +5,10 @@ command-unavailable: "&cCommand unavailable: plugin is not connected."
 offline-player: "Offline player"
 
 help-header: "&6&l=== DiscordBMV Commands ==="
-help-reload: "&e/discordbm reload &7- &fReloads the configuration"
-help-custom-commands: "&e/discordbm commands custom &7- &fShows the list of custom commands"
-help-addons-commands: "&e/discordbm commands addons &7- &fShows the list of addon commands"
+help-reload: "&e/DiscordBMV reload &7- &fReloads the configuration"
+help-webhook: "/DiscordBMV webhook <webhook_name> <true/false> &7- &fEnable or Disable webhook"
+help-custom-commands: "&e/DiscordBMV commands custom &7- &fShows the list of custom commands"
+help-addons-commands: "&e/DiscordBMV commands addons &7- &fShows the list of addon commands"
 
 custom-commands-empty: "&cNo custom commands found."
 custom-commands-header: "&6&l=== Custom Commands ({0}) ==="

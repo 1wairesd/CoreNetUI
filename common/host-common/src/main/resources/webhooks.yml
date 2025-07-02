@@ -1,8 +1,21 @@
 webhooks:
-  - name: myWebhook
+  - name: myWebhook_hello
     url: "https://discord.com/api/webhooks/your_webhook"
     enabled: false
     actions:
       - type: send
         message: "hello!"
+        schedule: "every 30 seconds"
+
+  - name: myWebhook_embed
+    url: "https://discord.com/api/webhooks/your_webhook"
+    enabled: false
+    actions:
+      - type: send_embed
+        title: "Title"
+        description: "Description"
+        color: "#00ff00"
+        fields:
+          - name: "Field 1"
+            value: "Value 1"
         schedule: "every 5 seconds"

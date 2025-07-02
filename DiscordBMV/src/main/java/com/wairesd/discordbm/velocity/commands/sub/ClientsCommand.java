@@ -19,6 +19,10 @@ public class ClientsCommand {
     }
 
     public void execute(CommandSource source, MessageContext context) {
+        if (!source.hasPermission("discordbotmanager.clients")) {
+            source.sendMessage(Messages.getComponent(Messages.Keys.NO_PERMISSION, context));
+            return;
+        }
         NettyServer nettyServer = platformManager.getNettyServer();
         if (nettyServer == null) {
             source.sendMessage(Messages.getComponent(Messages.Keys.NO_ACTIVE_CLIENTS, context));

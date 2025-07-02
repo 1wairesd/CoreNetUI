@@ -27,6 +27,12 @@ public class WebhookScheduler {
                         scheduler.scheduleAtFixedRate(() -> sendWebhook(webhook.url(), action.message()), 0, period, TimeUnit.SECONDS);
                     }
                 }
+                if ("send_embed".equalsIgnoreCase(action.type()) && action.schedule() != null) {
+                    long period = parseScheduleToSeconds(action.schedule());
+                    if (period > 0) {
+                        scheduler.scheduleAtFixedRate(() -> sendEmbedWebhook(webhook.url(), action), 0, period, TimeUnit.SECONDS);
+                    }
+                }
             }
         }
     }
@@ -65,6 +71,46 @@ public class WebhookScheduler {
             connection.getInputStream().close();
         } catch (Exception e) {
         }
+    }
+
+    private static void sendEmbedWebhook(String url, Webhooks.Webhook.Action action) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            String payload = buildEmbedPayload(action);
+            byte[] out = payload.getBytes(StandardCharsets.UTF_8);
+            connection.getOutputStream().write(out);
+            int responseCode = connection.getResponseCode();
+            connection.getInputStream().close();
+        } catch (Exception e) {
+        }
+    }
+
+    private static String buildEmbedPayload(Webhooks.Webhook.Action action) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"embeds\":[{");
+        if (action.title() != null) sb.append("\"title\":").append(escapeJson(action.title())).append(",");
+        if (action.description() != null) sb.append("\"description\":").append(escapeJson(action.description())).append(",");
+        if (action.color() != null) {
+            try {
+                int colorInt = Integer.decode(action.color());
+                sb.append("\"color\":").append(colorInt).append(",");
+            } catch (NumberFormatException ignored) {}
+        }
+        if (action.fields() != null && !action.fields().isEmpty()) {
+            sb.append("\"fields\":[");
+            for (int i = 0; i < action.fields().size(); i++) {
+                Webhooks.Webhook.Field f = action.fields().get(i);
+                sb.append("{\"name\":").append(escapeJson(f.name())).append(",\"value\":").append(escapeJson(f.value())).append("}");
+                if (i < action.fields().size() - 1) sb.append(",");
+            }
+            sb.append("],");
+        }
+        if (sb.charAt(sb.length() - 1) == ',') sb.deleteCharAt(sb.length() - 1);
+        sb.append("}]}");
+        return sb.toString();
     }
 
     private static String escapeJson(String text) {
