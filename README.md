@@ -58,12 +58,12 @@ DiscordBM — гибкая платформа для разработки мощ
 - Открывает Netty-сервер для подключения клиентов.
 - Обрабатывает команды и синхронизирует действия между участниками.
 - Команды: (На стороне маенкрафта)
-  /DiscordBMV reload
-  /DiscordBMV clients
-  /DiscordBMV help
-  /DiscordBMV commands custom
-  /DiscordBMV commands addons
-  /DiscordBMV webhook <webhook_name> <true/false>
+- /DiscordBMV reload
+- /DiscordBMV clients
+- /DiscordBMV help
+- /DiscordBMV commands custom
+- /DiscordBMV commands addons
+- /DiscordBMV webhook <webhook_name> <true/false>
 
 ### Клиент (**DiscordBMB**):
 
@@ -71,8 +71,8 @@ DiscordBM — гибкая платформа для разработки мощ
 - Реализуют расширяемый API.
 - Выполняют логику команд и передают данные обратно на сервер.
 - Команды: (На стороне маенкрафта)
-  /DiscordBMB reload
-  /DiscordBMB help
+- /DiscordBMB reload
+- /DiscordBMB help
 
 ---
 
