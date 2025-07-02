@@ -1,0 +1,16 @@
+package com.wairesd.discordbm.velocity.listener;
+
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.LoginEvent;
+import com.velocitypowered.api.proxy.Player;
+import com.wairesd.discordbm.host.common.service.WebhookEventService;
+
+public class PlayerJoinListener {
+    @Subscribe
+    public void onPlayerJoin(LoginEvent event) {
+        Player player = event.getPlayer();
+        String playerName = player.getUsername();
+        String playerIp = player.getRemoteAddress().getAddress().getHostAddress();
+        WebhookEventService.handlePlayerJoinEvent(playerName, playerIp);
+    }
+}

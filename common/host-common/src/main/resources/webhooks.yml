@@ -19,3 +19,11 @@ webhooks:
           - name: "Field 1"
             value: "Value 1"
         schedule: "every 5 seconds"
+
+  - name: myWebhook_player_join_velocity
+    url: "https://discord.com/api/webhooks/your_webhook"
+    enabled: false
+    actions:
+      - type: forward_event
+        event: player_join
+        message: Player {player} joined the server, IP = {player_ip}

@@ -17,7 +17,7 @@ public class Webhooks {
 
     public record Webhook(String name, String url, boolean enabled, List<Action> actions) {
         public record Field(String name, String value) {}
-        public record Action(String type, String message, String schedule, String title, String description, String color, List<Field> fields) {}
+        public record Action(String type, String message, String schedule, String title, String description, String color, List<Field> fields, String event) {}
     }
 
     public static void init(File dataDir) {
@@ -94,7 +94,8 @@ public class Webhooks {
                                 fields.add(new Webhook.Field(fieldName, fieldValue));
                             }
                         }
-                        actions.add(new Webhook.Action(type, message, schedule, title, description, color, fields));
+                        String event = (String) actionMap.get("event");
+                        actions.add(new Webhook.Action(type, message, schedule, title, description, color, fields, event));
                     }
                 }
                 result.add(new Webhook(name, url, enabled, actions));
