@@ -24,7 +24,8 @@ public class CommandDefinitionRegistrar {
                         .map(opt -> new OptionDefinition(opt.getName(), opt.getType(), opt.getDescription(), opt.isRequired()))
                         .toList(),
                 cmd.getPermission(),
-                cmd.getConditions() != null ? cmd.getConditions().stream().map(c -> c instanceof Map ? (Map<String, Object>)c : null).toList() : List.of()
+                cmd.getConditions() != null ? cmd.getConditions().stream().map(c -> c instanceof Map ? (Map<String, Object>)c : null).toList() : List.of(),
+                cmd.getPluginName()
         );
         nettyServer.getCommandDefinitions().put(cmd.getName(), def);
     }

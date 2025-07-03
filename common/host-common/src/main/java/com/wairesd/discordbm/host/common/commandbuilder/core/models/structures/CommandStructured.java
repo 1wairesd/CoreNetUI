@@ -17,11 +17,12 @@ public class CommandStructured {
     private final List<CommandAction> failActions;
     private final Boolean ephemeral;
     private final String permission;
+    private final String pluginName;
 
     public CommandStructured(String name, String description, String context,
                              List<CommandOptions> options, List<CommandCondition> conditions,
                              List<CommandAction> actions, List<CommandAction> failActions, Boolean ephemeral,
-                             String permission) {
+                             String permission, String pluginName) {
         validateInputs(name, description, context);
         this.name = name;
         this.description = description;
@@ -32,6 +33,7 @@ public class CommandStructured {
         this.failActions = failActions != null ? List.copyOf(failActions) : List.of();
         this.ephemeral = ephemeral;
         this.permission = permission;
+        this.pluginName = pluginName;
     }
 
     public Boolean getEphemeral() {
@@ -84,5 +86,9 @@ public class CommandStructured {
 
     public String getPermission() {
         return permission;
+    }
+
+    public String getPluginName() {
+        return pluginName;
     }
 }

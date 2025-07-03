@@ -30,8 +30,9 @@ public class Messages {
 
         public static final String ADDONS_COMMANDS_EMPTY = "addons-commands-empty";
         public static final String ADDONS_COMMANDS_HEADER = "addons-commands-header";
-        public static final String ADDONS_COMMANDS_PLUGIN = "addons-commands-plugin";
         public static final String ADDONS_COMMANDS_ENTRY = "addons-commands-entry";
+        public static final String ADDONS_COMMANDS_ADDON = "addons-commands-addon";
+        public static final String ADDONS_COMMANDS_COMMANDS = "addons-commands-commands";
 
         public static final String SERVER_SELECTION_PROMPT = "server-selection-prompt";
         public static final String SERVER_SELECTION_PLACEHOLDER = "server-selection-placeholder";

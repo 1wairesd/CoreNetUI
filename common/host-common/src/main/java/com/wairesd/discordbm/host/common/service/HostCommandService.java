@@ -81,9 +81,9 @@ public class HostCommandService {
             return Messages.get(Messages.Keys.CUSTOM_COMMANDS_EMPTY, context);
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(Messages.get(Messages.Keys.CUSTOM_COMMANDS_HEADER, context, customCommands.size()));
+        sb.append(Messages.get(Messages.Keys.CUSTOM_COMMANDS_HEADER, customCommands.size()));
         for (var cmd : customCommands) {
-            sb.append("\n").append(Messages.get(Messages.Keys.CUSTOM_COMMANDS_ENTRY, context, cmd.getName()));
+            sb.append("\n").append(Messages.get(Messages.Keys.CUSTOM_COMMANDS_ENTRY, cmd.getName()));
         }
         return sb.toString();
     }
@@ -97,25 +97,46 @@ public class HostCommandService {
         var customCommands = com.wairesd.discordbm.host.common.config.configurators.Commands.getCustomCommands();
         java.util.Set<String> customNames = new java.util.HashSet<>();
         for (var cmd : customCommands) customNames.add(cmd.getName());
-        java.util.Map<String, List<String>> addonCommands = new java.util.HashMap<>();
+
+        var commandDefinitions = nettyServer.getCommandDefinitions();
+        java.util.Map<String, java.util.Map<String, List<String>>> grouped = new java.util.HashMap<>();
+        int total = 0;
         for (var entry : commandToServers.entrySet()) {
-            if (!customNames.contains(entry.getKey())) {
-                String plugin = nettyServer.getPluginForCommand(entry.getKey());
-                addonCommands.computeIfAbsent(plugin, k -> new java.util.ArrayList<>()).add(entry.getKey());
+            String command = entry.getKey();
+            if (customNames.contains(command)) continue;
+            String plugin;
+            var def = commandDefinitions.get(command);
+            if (def != null && def.pluginName() != null && !def.pluginName().isEmpty()) {
+                plugin = def.pluginName();
+            } else {
+                plugin = nettyServer.getPluginForCommand(command);
+            }
+            for (var serverInfo : entry.getValue()) {
+                String client = serverInfo.serverName();
+                grouped.computeIfAbsent(client, k -> new java.util.HashMap<>())
+                        .computeIfAbsent(plugin, k -> new java.util.ArrayList<>())
+                        .add(command);
+                total++;
             }
         }
-        if (addonCommands.isEmpty()) {
+        if (total == 0) {
             return Messages.get(Messages.Keys.ADDONS_COMMANDS_EMPTY, context);
         }
-        int total = addonCommands.values().stream().mapToInt(List::size).sum();
         StringBuilder sb = new StringBuilder();
-        sb.append(Messages.get(Messages.Keys.ADDONS_COMMANDS_HEADER, context, total));
-        addonCommands.forEach((plugin, commands) -> {
-            sb.append("\n").append(Messages.get(Messages.Keys.ADDONS_COMMANDS_PLUGIN, context, plugin, commands.size()));
-            for (String cmd : commands) {
-                sb.append("\n").append(Messages.get(Messages.Keys.ADDONS_COMMANDS_ENTRY, context, cmd));
+        sb.append(Messages.get(Messages.Keys.ADDONS_COMMANDS_HEADER, total));
+        for (var clientEntry : grouped.entrySet()) {
+            String client = clientEntry.getKey();
+            sb.append("\n").append(client).append(":");
+            for (var pluginEntry : clientEntry.getValue().entrySet()) {
+                String plugin = pluginEntry.getKey();
+                List<String> commands = pluginEntry.getValue();
+                sb.append("\n  - ").append(Messages.get(Messages.Keys.ADDONS_COMMANDS_ADDON, plugin));
+                sb.append("\n     - ").append(Messages.get(Messages.Keys.ADDONS_COMMANDS_COMMANDS));
+                for (String cmd : commands) {
+                    sb.append("\n        ").append(Messages.get(Messages.Keys.ADDONS_COMMANDS_ENTRY, cmd));
+                }
             }
-        });
+        }
         return sb.toString();
     }
 } 

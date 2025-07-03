@@ -90,7 +90,8 @@ public class DiscordBotListener extends ListenerAdapter {
                 java.util.List.of(),
                 java.util.List.of(),
                 null,
-                cmdDef.permission()
+                cmdDef.permission(),
+                cmdDef.pluginName()
             );
             var validator = new CommandValidator();
             var context = new Context(event);

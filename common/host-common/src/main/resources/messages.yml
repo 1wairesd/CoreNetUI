@@ -16,8 +16,9 @@ custom-commands-entry: "&e- {0}"
 
 addons-commands-empty: "&cNo addon commands found."
 addons-commands-header: "&6&l=== Addon Commands ({0}) ==="
-addons-commands-plugin: "&a{0} ({1}):"
 addons-commands-entry: "&e- {0}"
+addons-commands-addon: "addon: {0}"
+addons-commands-commands: "commands:"
 
 server-selection-prompt: "Command registered on multiple servers. Select one:"
 server-selection-placeholder: "Select a server"

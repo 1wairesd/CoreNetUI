@@ -42,7 +42,8 @@ public class CommandLoader {
                 List.of(),
                 List.of(),
                 null,
-                def.permission()
+                def.permission(),
+                def.pluginName()
             );
         }).toList();
     }

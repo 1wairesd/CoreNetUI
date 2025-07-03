@@ -54,13 +54,24 @@ public class RegisterHandler {
             for (CommandDefinition cmd : commands) {
                 commandRegisterService.registerCommands(serverName, List.of(cmd), ctx.channel());
                 
-                if (pluginName != null && !pluginName.isEmpty()) {
-                    nettyServer.registerAddonCommand(cmd.name(), pluginName);
+                String realPluginName = null;
+                try {
+                    var method = cmd.getClass().getMethod("pluginName");
+                    Object value = method.invoke(cmd);
+                    if (value instanceof String s && !s.isEmpty()) {
+                        realPluginName = s;
+                    }
+                } catch (Exception ignored) {}
+                if (realPluginName == null || realPluginName.isEmpty()) {
+                    realPluginName = pluginName;
+                }
+                if (realPluginName != null && !realPluginName.isEmpty()) {
+                    nettyServer.registerAddonCommand(cmd.name(), realPluginName);
                 }
                 
                 if (Settings.isDebugCommandRegistrations()) {
                     logger.info("Registered command '{}' from plugin '{}' for server '{}'",
-                            cmd.name(), pluginName, serverName);
+                            cmd.name(), realPluginName, serverName);
                 }
             }
         }

@@ -118,6 +118,7 @@ public class Commands {
         String name = getString(cmdData, "name");
         String description = getString(cmdData, "description");
         String context = getString(cmdData, "context", "both");
+        String pluginName = getString(cmdData, "pluginName");
 
         List<CommandOptions> options = getOptions(cmdData);
         List<CommandCondition> conditions = getConditions(cmdData);
@@ -136,7 +137,8 @@ public class Commands {
                 actions,
                 failActions,
                 ephemeral,
-                permission
+                permission,
+                pluginName
         );
     }
 
