@@ -36,7 +36,7 @@ public class UnregisterHandler {
         }
 
         if (Settings.isDebugCommandRegistrations()) {
-            logger.info("Unregistered command {} for server {}", commandName, serverName);
+            logger.warn("Unregistered command {} for server {}", commandName, serverName);
         }
     }
 }

@@ -116,14 +116,6 @@ public class CommandEphemeral {
         return false;
     }
 
-    public static void addOrUpdateRule(String command, boolean ephemeral) {
-        commandEphemeralMap.put(command, ephemeral);
-    }
-
-    public static void addOrUpdateRule(String command, String arg, boolean ephemeral) {
-        commandEphemeralMap.put(command + " " + arg, ephemeral);
-    }
-
     public static void addOrUpdateClientRule(String clientId, String ruleKey, boolean ephemeral) {
         clientEphemeralRules.computeIfAbsent(clientId, k -> new ConcurrentHashMap<>()).put(ruleKey, ephemeral);
     }

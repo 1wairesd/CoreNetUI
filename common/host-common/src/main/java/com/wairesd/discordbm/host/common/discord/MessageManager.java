@@ -44,8 +44,4 @@ public class MessageManager {
     public String getGlobalMessageLabel(String key) {
         return globalMessageLabels.get(key);
     }
-
-    public Map<String, String> getGlobalMessageLabels() {
-        return globalMessageLabels;
-    }
 } 

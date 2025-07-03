@@ -259,12 +259,4 @@ public class Context {
     public void setVariables(Map<String, String> variables) {
         this.variables = variables;
     }
-
-    public ButtonData getButtonData() {
-        return buttonData;
-    }
-
-    public void setButtonData(ButtonData buttonData) {
-        this.buttonData = buttonData;
-    }
 }

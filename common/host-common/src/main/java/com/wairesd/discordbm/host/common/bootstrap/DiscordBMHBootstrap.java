@@ -92,25 +92,11 @@ public class DiscordBMHBootstrap {
         new Thread(nettyServer::start, "Netty-Server-Thread").start();
     }
 
-    public DiscordBotManager getDiscordBotManager() {
-        return discordBotManager;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
     public NettyServer getNettyServer() {
         return nettyServer;
     }
 
     public Database getDatabase() {
         return dbManager;
-    }
-
-    public void shutdown() {
-        if (nettyServer != null) nettyServer.shutdown();
-        if (discordBotManager != null) discordBotManager.shutdown();
-        if (dbManager != null) dbManager.close();
     }
 } 

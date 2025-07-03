@@ -210,10 +210,6 @@ public class NettyServer {
         channelConnectTime.put(channel, time);
     }
 
-    public Long getConnectTime(Channel channel) {
-        return channelConnectTime.get(channel);
-    }
-
     public List<ClientInfo> getActiveClientsInfo() {
         return ClientInfo.getActiveClientsInfo(channelToServerName, channelConnectTime);
     }

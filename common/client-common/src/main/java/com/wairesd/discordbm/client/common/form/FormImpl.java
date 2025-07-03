@@ -5,9 +5,6 @@ import com.wairesd.discordbm.api.form.FormField;
 
 import java.util.List;
 
-/**
- * Implementation of Form interface
- */
 public class FormImpl implements Form {
     
     private final String title;

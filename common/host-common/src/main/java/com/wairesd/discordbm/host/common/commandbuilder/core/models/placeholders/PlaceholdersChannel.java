@@ -22,8 +22,7 @@ public class PlaceholdersChannel implements Placeholder {
 
     public static String resolveChannelId(String targetId, Context context) {
         if (targetId == null) return null;
-        
-        // Если это текущий канал
+
         if (targetId.equals("{channel}")) {
             return context.getEvent().getChannel().getId();
         }

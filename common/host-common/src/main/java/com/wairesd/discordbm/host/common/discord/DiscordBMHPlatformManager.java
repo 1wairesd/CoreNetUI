@@ -122,8 +122,4 @@ public class DiscordBMHPlatformManager {
     public PluginLogger getLogger() {
         return logger;
     }
-
-    public DiscordBMThreadPool getThreadPool() {
-        return threadPool;
-    }
 } 

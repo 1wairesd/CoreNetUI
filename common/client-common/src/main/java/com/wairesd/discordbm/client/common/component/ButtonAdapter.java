@@ -13,11 +13,6 @@ public class ButtonAdapter implements Button {
         this.apiButton = apiButton;
         this.internalButton = convertToInternalButton(apiButton);
     }
-
-    public ButtonAdapter(ButtonDefinition internalButton) {
-        this.internalButton = internalButton;
-        this.apiButton = convertToApiButton(internalButton);
-    }
     
     @Override
     public String getLabel() {

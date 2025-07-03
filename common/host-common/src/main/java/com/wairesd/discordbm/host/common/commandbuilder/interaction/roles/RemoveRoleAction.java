@@ -6,7 +6,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Cont
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class RemoveRoleAction implements CommandAction {
+public class  RemoveRoleAction implements CommandAction {
     private final String roleId;
 
     public RemoveRoleAction(Map<String, Object> properties) {

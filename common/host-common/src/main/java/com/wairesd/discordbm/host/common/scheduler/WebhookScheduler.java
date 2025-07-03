@@ -67,7 +67,6 @@ public class WebhookScheduler {
             String payload = "{\"content\": " + escapeJson(message) + "}";
             byte[] out = payload.getBytes(StandardCharsets.UTF_8);
             connection.getOutputStream().write(out);
-            int responseCode = connection.getResponseCode();
             connection.getInputStream().close();
         } catch (Exception e) {
         }
@@ -82,7 +81,6 @@ public class WebhookScheduler {
             String payload = buildEmbedPayload(action);
             byte[] out = payload.getBytes(StandardCharsets.UTF_8);
             connection.getOutputStream().write(out);
-            int responseCode = connection.getResponseCode();
             connection.getInputStream().close();
         } catch (Exception e) {
         }

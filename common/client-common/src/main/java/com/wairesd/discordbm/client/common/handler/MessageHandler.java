@@ -29,7 +29,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         GET_PLACEHOLDERS("get_placeholders");
         private final String type;
         MessageType(String type) { this.type = type; }
-        public String getType() { return type; }
         public static MessageType from(String type) {
             for (MessageType mt : values()) {
                 if (mt.type.equals(type)) return mt;
@@ -71,12 +70,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                     for (Map.Entry<String, com.google.gson.JsonElement> entry : formJson.entrySet()) {
                         formData.put(entry.getKey(), entry.getValue().getAsString());
                     }
-                }
-                boolean ephemeral = true;
-                if (json.has("ephemeral")) {
-                    try {
-                        ephemeral = json.get("ephemeral").getAsBoolean();
-                    } catch (Exception ignore) {}
                 }
 
                 CommandHandler handler = null;

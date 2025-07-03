@@ -14,7 +14,6 @@ public class WebhookSender {
             String payload = "{\"content\": " + escapeJson(message) + "}";
             byte[] out = payload.getBytes(StandardCharsets.UTF_8);
             connection.getOutputStream().write(out);
-            int responseCode = connection.getResponseCode();
             connection.getInputStream().close();
         } catch (Exception e) {
         }

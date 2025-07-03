@@ -3,9 +3,6 @@ package com.wairesd.discordbm.client.common.form;
 import com.wairesd.discordbm.api.form.FormField;
 import com.wairesd.discordbm.api.form.FormFieldBuilder;
 
-/**
- * Implementation of FormFieldBuilder interface
- */
 public class FormFieldBuilderImpl implements FormFieldBuilder {
     
     private String label;

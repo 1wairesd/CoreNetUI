@@ -135,14 +135,6 @@ public class CommandRegistrationImpl implements CommandRegistration {
         }
     }
 
-    public void resendAllCommands() {
-        synchronized (registeredCommands) {
-            for (Command cmd : registeredCommands) {
-                sendRegistrationMessage(cmd);
-            }
-        }
-    }
-
     private static class CommandHandlerWrapper {
         private final CommandHandler handler;
         private final CommandListener listener;
@@ -154,10 +146,6 @@ public class CommandRegistrationImpl implements CommandRegistration {
         
         public CommandHandler getHandler() {
             return handler;
-        }
-        
-        public CommandListener getListener() {
-            return listener;
         }
     }
 } 

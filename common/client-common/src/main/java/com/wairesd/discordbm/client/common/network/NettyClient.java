@@ -37,10 +37,6 @@ public class NettyClient {
         this.pluginLogger = pluginLogger;
     }
 
-    public void setOnConnectionFailure(Runnable onConnectionFailure) {
-        this.onConnectionFailure = onConnectionFailure;
-    }
-
     private void shutdownGroupAndNotify() {
         if (group != null) group.shutdownGracefully();
         if (onConnectionFailure != null) onConnectionFailure.run();

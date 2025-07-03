@@ -19,11 +19,6 @@ public class CommandAdapter implements Command {
         this.apiCommand = apiCommand;
         this.internalCommand = convertToInternalCommand(apiCommand);
     }
-
-    public CommandAdapter(com.wairesd.discordbm.client.common.models.command.Command internalCommand) {
-        this.internalCommand = internalCommand;
-        this.apiCommand = convertToApiCommand(internalCommand);
-    }
     
     @Override
     public String getName() {
@@ -93,21 +88,6 @@ public class CommandAdapter implements Command {
             .description(apiOption.getDescription())
             .type(apiOption.getType())
             .required(apiOption.isRequired())
-            .build();
-    }
-
-    private Command convertToApiCommand(com.wairesd.discordbm.client.common.models.command.Command internalCommand) {
-        List<CommandOption> options = internalCommand.getOptions().stream()
-            .map(this::convertToApiOption)
-            .collect(Collectors.toList());
-        
-        return new CommandImpl.Builder()
-            .name(internalCommand.getName())
-            .description(internalCommand.getDescription())
-            .pluginName(internalCommand.getPluginName())
-            .context(internalCommand.getContext())
-            .options(options)
-            .permission(internalCommand.getPermission())
             .build();
     }
 

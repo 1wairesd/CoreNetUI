@@ -8,9 +8,6 @@ import com.wairesd.discordbm.common.models.form.FormFieldDefinition;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Adapter for converting API Form to internal FormDefinition
- */
 public class FormAdapter {
     
     private final Form form;

@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Implementation of FormBuilder interface
- */
 public class FormBuilderImpl implements FormBuilder {
     
     private String title;

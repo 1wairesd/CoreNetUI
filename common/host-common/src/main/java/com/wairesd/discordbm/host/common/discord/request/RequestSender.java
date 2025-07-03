@@ -81,10 +81,6 @@ public class RequestSender {
         }
     }
 
-    public InteractionHook getInteractionHook(UUID requestId) {
-        return pendingHooks.get(requestId);
-    }
-
     public InteractionHook removeInteractionHook(UUID requestId) {
         return pendingHooks.remove(requestId);
     }
@@ -108,27 +104,7 @@ public class RequestSender {
         return requestServerNames.get(requestId);
     }
 
-    public String removeServerNameForRequest(UUID requestId) {
-        return requestServerNames.remove(requestId);
-    }
-
     public void storeServerNameForRequest(UUID requestId, String serverName) {
         requestServerNames.put(requestId, serverName);
-    }
-
-    public Boolean getEphemeralForRequest(UUID requestId) {
-        return requestEphemeral.get(requestId);
-    }
-
-    public Boolean removeEphemeralForRequest(UUID requestId) {
-        return requestEphemeral.remove(requestId);
-    }
-
-    public void updateEphemeralRulesFromAddon(Map<String, Boolean> rules) {
-        if (rules != null) {
-            for (Map.Entry<String, Boolean> entry : rules.entrySet()) {
-                CommandEphemeral.addOrUpdateRule(entry.getKey(), entry.getValue());
-            }
-        }
     }
 }

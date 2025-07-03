@@ -2,9 +2,6 @@ package com.wairesd.discordbm.client.common.form;
 
 import com.wairesd.discordbm.api.form.FormField;
 
-/**
- * Implementation of FormField interface
- */
 public class FormFieldImpl implements FormField {
     
     private final String label;

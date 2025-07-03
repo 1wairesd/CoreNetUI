@@ -5,12 +5,8 @@ import net.dv8tion.jda.api.interactions.Interaction;
 
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Плейсхолдер для подстановки имени сервера DiscordBM
- */
 public class PlaceholdersDiscordBM implements Placeholder {
-    
-    // Константа для имени переменной в контексте
+
     public static final String SERVER_NAME_VAR = "discordbm_server_name";
     
     @Override

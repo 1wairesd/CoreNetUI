@@ -67,7 +67,6 @@ public class DiscordBotListener extends ListenerAdapter {
         var cmdDef = nettyServer.getCommandDefinitions().get(command);
         if (cmdDef != null && cmdDef.permission() != null && !cmdDef.permission().isEmpty()) {
             var member = event.getMember();
-            var memberRoles = member != null ? member.getRoles().stream().map(r -> r.getId()).toList() : java.util.Collections.emptyList();
 
             boolean hasRole = member != null && member.getRoles().stream()
                 .anyMatch(role -> role.getId().equals(cmdDef.permission()));
@@ -179,7 +178,6 @@ public class DiscordBotListener extends ListenerAdapter {
             }
             final String finalRequestId = requestId;
             final String finalCommand = command;
-            Boolean configEphemeralLog = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
             final boolean ephemeral;
             Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
             ephemeral = configEphemeral != null ? configEphemeral : false;

@@ -34,8 +34,4 @@ public class ComponentRegistryImpl implements ComponentRegistry {
     public Button.Builder createButtonBuilder() {
         return new ButtonImpl.Builder();
     }
-
-    public ComponentHandler getButtonHandler(String customId) {
-        return buttonHandlers.get(customId);
-    }
 } 
