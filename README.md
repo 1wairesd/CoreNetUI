@@ -104,6 +104,7 @@ README.md              # Документация
 
 Вопросы, предложения и идеи — всегда приветствуются!  
 **Автор:** [1wairesd](https://github.com/1wairesd)
+**Discord** [click](https://discord.gg/xBUbXcdc)
 
 ---
 
