@@ -43,13 +43,6 @@ public interface Command {
     List<CommandOption> getOptions();
     
     /**
-     * Get the required role ID for this command, or null if none is required
-     *
-     * @return The required role ID, or null if no permission is required
-     */
-    String getPermission();
-    
-    /**
      * Get the conditions for this command
      *
      * @return The command conditions
@@ -99,14 +92,6 @@ public interface Command {
          * @return This builder
          */
         Builder options(List<CommandOption> options);
-        
-        /**
-         * Set the required role ID for this command (optional)
-         *
-         * @param roleId The Discord role ID required to use this command, or null if no permission is required
-         * @return This builder
-         */
-        Builder permission(String roleId);
         
         /**
          * Add a condition to the command
