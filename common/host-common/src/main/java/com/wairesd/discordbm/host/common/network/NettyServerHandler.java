@@ -126,6 +126,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         } else if ("form".equals(type)) {
             ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
             ResponseHandler.handleFormOnly(respMsg);
+        } else if ("direct_message".equals(type)) {
+            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseHandler.sendDirectMessage(respMsg);
+        } else if ("channel_message".equals(type)) {
+            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseHandler.sendChannelMessage(respMsg);
         } else if ("response".equals(type)) {
             ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
             ResponseHandler.handleResponse(respMsg);

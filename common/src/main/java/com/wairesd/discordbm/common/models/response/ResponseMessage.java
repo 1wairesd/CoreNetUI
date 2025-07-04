@@ -14,6 +14,8 @@ public class ResponseMessage {
     private final List<ButtonDefinition> buttons;
     private final FormDefinition form;
     private final ResponseFlags flags;
+    private final String userId;
+    private final String channelId;
 
     private ResponseMessage(Builder builder) {
         this.type = builder.type;
@@ -23,6 +25,8 @@ public class ResponseMessage {
         this.buttons = builder.buttons;
         this.form = builder.form;
         this.flags = builder.flags;
+        this.userId = builder.userId;
+        this.channelId = builder.channelId;
     }
 
     public String type() {
@@ -53,6 +57,14 @@ public class ResponseMessage {
         return flags;
     }
 
+    public String userId() {
+        return userId;
+    }
+
+    public String channelId() {
+        return channelId;
+    }
+
     public static class Builder {
         private String type;
         private String requestId;
@@ -61,6 +73,8 @@ public class ResponseMessage {
         private List<ButtonDefinition> buttons;
         private FormDefinition form;
         private ResponseFlags flags;
+        private String userId;
+        private String channelId;
 
         public Builder type(String type) {
             this.type = type;
@@ -94,6 +108,16 @@ public class ResponseMessage {
 
         public Builder flags(ResponseFlags flags) {
             this.flags = flags;
+            return this;
+        }
+
+        public Builder userId(String userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder channelId(String channelId) {
+            this.channelId = channelId;
             return this;
         }
 

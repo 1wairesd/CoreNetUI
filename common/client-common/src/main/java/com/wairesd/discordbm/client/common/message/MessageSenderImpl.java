@@ -62,7 +62,7 @@ public class MessageSenderImpl implements MessageSender {
     }
     
     @Override
-    public void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons) {
+    public void sendResponse(String requestId, Embed embed, List<Button> buttons) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
         List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -99,7 +99,7 @@ public class MessageSenderImpl implements MessageSender {
     }
     
     @Override
-    public void sendFormWithMessage(String requestId, String message, Form form) {
+    public void sendForm(String requestId, String message, Form form) {
         FormDefinition formDef = convertToFormDefinition(form);
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
@@ -120,32 +120,81 @@ public class MessageSenderImpl implements MessageSender {
     
     @Override
     public void sendDirectMessage(String userId, String message) {
-        // Implementation for sending direct messages
-        // This would require additional functionality in the platform
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
     }
     
     @Override
     public void sendDirectMessage(String userId, Embed embed) {
-        // Implementation for sending direct messages with embeds
-        // This would require additional functionality in the platform
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
     }
     
     @Override
     public void sendChannelMessage(String channelId, String message) {
-        // Implementation for sending channel messages
-        // This would require additional functionality in the platform
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
     }
     
     @Override
     public void sendChannelMessage(String channelId, Embed embed) {
-        // Implementation for sending channel messages with embeds
-        // This would require additional functionality in the platform
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
     }
     
     @Override
-    public void sendChannelMessageWithButtons(String channelId, Embed embed, List<Button> buttons) {
-        // Implementation for sending channel messages with embeds and buttons
-        // This would require additional functionality in the platform
+    public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
     }
 
     private EmbedDefinition convertToEmbedDefinition(Embed embed) {
@@ -170,4 +219,4 @@ public class MessageSenderImpl implements MessageSender {
         }
         return new FormAdapter(form).getInternalForm();
     }
-} 
+}

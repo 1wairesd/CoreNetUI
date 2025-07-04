@@ -390,4 +390,71 @@ public class ResponseHandler {
         UUID requestId = UUID.fromString(respMsg.requestId());
         handleFormResponse(requestId, respMsg);
     }
+
+    public static void sendDirectMessage(ResponseMessage respMsg) {
+        String userId = respMsg.userId();
+        if (userId == null) {
+            logger.error("No userId provided for direct_message");
+            return;
+        }
+        var jda = platformManager.getDiscordBotManager().getJda();
+        var user = jda.getUserById(userId);
+        if (user == null) {
+            logger.error("User with ID {} not found for direct_message", userId);
+            return;
+        }
+        user.openPrivateChannel().queue(pc -> {
+            var msgAction = respMsg.response() != null ? pc.sendMessage(respMsg.response()) : pc.sendMessage("");
+            if (respMsg.embed() != null) {
+                var embed = toJdaEmbed(respMsg.embed()).build();
+                msgAction.setEmbeds(embed);
+            }
+            if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
+                List<Button> jdaButtons = respMsg.buttons().stream()
+                        .map(btn -> btn.style() == ButtonStyle.LINK ? Button.link(btn.url(), btn.label()) : Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()).withDisabled(btn.disabled()))
+                        .collect(Collectors.toList());
+                msgAction.setActionRow(jdaButtons);
+            }
+            msgAction.queue();
+        });
+    }
+
+    public static void sendChannelMessage(ResponseMessage respMsg) {
+        String channelId = respMsg.channelId();
+        if (channelId == null) {
+            logger.error("No channelId provided for channel_message");
+            return;
+        }
+        var jda = platformManager.getDiscordBotManager().getJda();
+        var channel = jda.getTextChannelById(channelId);
+        if (channel == null) {
+            logger.error("Channel with ID {} not found for channel_message", channelId);
+            return;
+        }
+        var msgAction = respMsg.response() != null ? channel.sendMessage(respMsg.response()) : channel.sendMessage("");
+        if (respMsg.embed() != null) {
+            var embed = toJdaEmbed(respMsg.embed()).build();
+            msgAction.setEmbeds(embed);
+        }
+        if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
+            List<Button> jdaButtons = respMsg.buttons().stream()
+                    .map(btn -> btn.style() == ButtonStyle.LINK ? Button.link(btn.url(), btn.label()) : Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()).withDisabled(btn.disabled()))
+                    .collect(Collectors.toList());
+            msgAction.setActionRow(jdaButtons);
+        }
+        msgAction.queue();
+    }
+
+    private static net.dv8tion.jda.api.EmbedBuilder toJdaEmbed(EmbedDefinition embedDef) {
+        var embedBuilder = new EmbedBuilder();
+        if (embedDef.title() != null) embedBuilder.setTitle(embedDef.title());
+        if (embedDef.description() != null) embedBuilder.setDescription(embedDef.description());
+        if (embedDef.color() != null) embedBuilder.setColor(new Color(embedDef.color()));
+        if (embedDef.fields() != null) {
+            for (var field : embedDef.fields()) {
+                embedBuilder.addField(field.name(), field.value(), field.inline());
+            }
+        }
+        return embedBuilder;
+    }
 }

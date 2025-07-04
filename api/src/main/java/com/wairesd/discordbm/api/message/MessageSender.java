@@ -36,7 +36,7 @@ public interface MessageSender {
      * @param embed The embed to send
      * @param buttons The buttons to add to the message
      */
-    void sendResponseWithButtons(String requestId, Embed embed, List<Button> buttons);
+    void sendResponse(String requestId, Embed embed, List<Button> buttons);
 
     /**
      * Send a form in response to a command
@@ -53,7 +53,7 @@ public interface MessageSender {
      * @param message The message to send with the form
      * @param form The form to send
      */
-    void sendFormWithMessage(String requestId, String message, Form form);
+    void sendForm(String requestId, String message, Form form);
 
     // --- Direct Message ---
 
@@ -98,5 +98,5 @@ public interface MessageSender {
      * @param embed The embed to send
      * @param buttons The buttons to add to the message
      */
-    void sendChannelMessageWithButtons(String channelId, Embed embed, List<Button> buttons);
+    void sendChannelMessage(String channelId, Embed embed, List<Button> buttons);
 }
