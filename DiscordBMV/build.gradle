@@ -7,17 +7,6 @@ plugins {
 group = 'com.wairesd.discordbm.velocity'
 version = '1.0'
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            groupId = 'com.wairesd.discordbm'
-            artifactId = 'DiscordBMV'
-            version = '1.0'
-        }
-    }
-}
-
 repositories {
     mavenCentral()
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
