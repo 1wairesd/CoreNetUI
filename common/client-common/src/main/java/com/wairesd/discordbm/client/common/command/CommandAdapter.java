@@ -46,11 +46,6 @@ public class CommandAdapter implements Command {
     }
 
     @Override
-    public String getPermission() {
-        return apiCommand.getPermission();
-    }
-
-    @Override
     public List<CommandCondition> getConditions() {
         return apiCommand.getConditions();
     }
@@ -77,7 +72,6 @@ public class CommandAdapter implements Command {
             .pluginName(apiCommand.getPluginName())
             .context(apiCommand.getContext())
             .options(options)
-            .permission(apiCommand.getPermission())
             .conditions(serializedConditions)
             .build();
     }

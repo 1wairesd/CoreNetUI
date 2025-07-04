@@ -14,7 +14,6 @@ public class CommandImpl implements Command {
     private final String pluginName;
     private final String context;
     private final List<CommandOption> options;
-    private final String permission;
     private final List<CommandCondition> conditions;
 
     private CommandImpl(Builder builder) {
@@ -23,7 +22,6 @@ public class CommandImpl implements Command {
         this.pluginName = builder.pluginName;
         this.context = builder.context;
         this.options = builder.options != null ? builder.options : new ArrayList<>();
-        this.permission = builder.permission;
         this.conditions = builder.conditions != null ? List.copyOf(builder.conditions) : List.of();
     }
     
@@ -53,11 +51,6 @@ public class CommandImpl implements Command {
     }
 
     @Override
-    public String getPermission() {
-        return permission;
-    }
-
-    @Override
     public List<CommandCondition> getConditions() {
         return conditions;
     }
@@ -68,7 +61,6 @@ public class CommandImpl implements Command {
         private String pluginName;
         private String context;
         private List<CommandOption> options;
-        private String permission;
         private List<CommandCondition> conditions = new ArrayList<>();
         
         @Override
@@ -98,12 +90,6 @@ public class CommandImpl implements Command {
         @Override
         public Builder options(List<CommandOption> options) {
             this.options = options;
-            return this;
-        }
-        
-        @Override
-        public Builder permission(String roleId) {
-            this.permission = roleId;
             return this;
         }
         
