@@ -39,6 +39,15 @@ public interface MessageSender {
     void sendResponse(String requestId, Embed embed, List<Button> buttons);
 
     /**
+     * Send a text message with buttons in response to a command
+     *
+     * @param requestId The request ID of the command
+     * @param message The message to send
+     * @param buttons The buttons to add to the message
+     */
+    void sendResponse(String requestId, String message, List<Button> buttons);
+
+    /**
      * Send a form in response to a command
      *
      * @param requestId The request ID of the command
@@ -73,6 +82,24 @@ public interface MessageSender {
      */
     void sendDirectMessage(String userId, Embed embed);
 
+    /**
+     * Send an embed as a direct message to a user
+     *
+     * @param userId The ID of the user to send the message to
+     * @param embed The embed to send
+     * @param buttons The buttons to add to the message
+     */
+    void sendDirectMessage(String userId, Embed embed, List<Button> buttons);
+
+    /**
+     * Send a direct message to a user with buttons
+     *
+     * @param userId The ID of the user to send the message to
+     * @param message The message to send
+     * @param buttons The buttons to add to the message
+     */
+    void sendDirectMessage(String userId, String message, List<Button> buttons);
+
     // --- Channel Message ---
 
     /**
@@ -92,11 +119,20 @@ public interface MessageSender {
     void sendChannelMessage(String channelId, Embed embed);
 
     /**
-     * Send an embed with buttons to a channel
+     * Send an embed to a channel
      *
      * @param channelId The ID of the channel to send the message to
      * @param embed The embed to send
      * @param buttons The buttons to add to the message
      */
     void sendChannelMessage(String channelId, Embed embed, List<Button> buttons);
+
+    /**
+     * Send a message to a channel with buttons
+     *
+     * @param channelId The ID of the channel to send the message to
+     * @param message The message to send
+     * @param buttons The buttons to add to the message
+     */
+    void sendChannelMessage(String channelId, String message, List<Button> buttons);
 }
