@@ -55,8 +55,7 @@ public class PlaceholdersOption implements Placeholder {
     
     public static String resolveOption(String template, SlashCommandInteractionEvent event) {
         if (template == null) return null;
-        
-        // Обработка простого случая {channel}
+
         if (template.equals("{channel}")) {
             OptionMapping channelOption = event.getOption("channel");
             if (channelOption != null) {
