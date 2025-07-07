@@ -100,6 +100,16 @@ public interface MessageSender {
      */
     void sendDirectMessage(String userId, String message, List<Button> buttons);
 
+    /**
+     * Send a direct message to a user with requestId and channelId
+     *
+     * @param userId The ID of the user to send the message to
+     * @param message The message to send
+     * @param requestId The request ID of the command
+     * @param channelId The ID of the channel to send the message to
+     */
+    void sendDirectMessage(String userId, String message, String requestId, String channelId);
+
     // --- Channel Message ---
 
     /**
@@ -135,4 +145,40 @@ public interface MessageSender {
      * @param buttons The buttons to add to the message
      */
     void sendChannelMessage(String channelId, String message, List<Button> buttons);
+
+    /**
+     * Edit a previously sent message by label, replacing its text.
+     *
+     * @param label The label/id of the message to edit
+     * @param newMessage The new message text
+     */
+    void editMessage(String label, String newMessage);
+
+    /**
+     * Edit a previously sent message by label, replacing its embed.
+     *
+     * @param label The label/id of the message to edit
+     * @param newEmbed The new embed
+     */
+    void editMessage(String label, Embed newEmbed);
+
+    /**
+     * Edit a previously sent message by label, replacing its embed and buttons.
+     *
+     * @param label The label/id of the message to edit
+     * @param newEmbed The new embed
+     * @param newButtons The new buttons
+     */
+    void editMessage(String label, Embed newEmbed, List<Button> newButtons);
+
+    /**
+     * Edit a component (e.g., button) in a previously sent message by label and component id.
+     *
+     * @param label The label/id of the message
+     * @param componentId The id of the component to edit
+     * @param newLabel The new label for the component (nullable)
+     * @param newStyle The new style for the component (nullable)
+     * @param disabled Whether the component should be disabled (nullable)
+     */
+    void editComponent(String label, String componentId, String newLabel, String newStyle, Boolean disabled);
 }

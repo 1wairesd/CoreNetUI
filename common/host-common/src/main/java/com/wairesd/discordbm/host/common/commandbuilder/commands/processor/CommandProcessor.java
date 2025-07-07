@@ -20,9 +20,10 @@ public class CommandProcessor {
 
         if (command.hasFormAction()) {
             executeActions(command.getActions(), context)
-                    .thenRun(() -> responder.respond(context, event))
+                    .thenRun(() -> {
+                        responder.respond(context, event);
+                    })
                     .exceptionally(ex -> {
-                        logger.error("Error executing command actions: {}", ex.getMessage(), ex);
                         event.reply("An error occurred while executing the command.").setEphemeral(true).queue();
                         return null;
                     });
@@ -30,9 +31,10 @@ public class CommandProcessor {
             event.deferReply(ephemeral).queue(hook -> {
                 context.setHook(hook);
                 executeActions(command.getActions(), context)
-                        .thenRun(() -> responder.respondAndCleanup(context, event, hook))
+                        .thenRun(() -> {
+                            responder.respondAndCleanup(context, event, hook);
+                        })
                         .exceptionally(ex -> {
-                            logger.error("Error executing command actions: {}", ex.getMessage(), ex);
                             hook.sendMessage("An error occurred while executing the command.").setEphemeral(true).queue();
                             return null;
                         });

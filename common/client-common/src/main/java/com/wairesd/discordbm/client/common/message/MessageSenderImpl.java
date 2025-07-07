@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.client.common.message;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.form.Form;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MessageSenderImpl implements MessageSender {
-
+    
     private final Platform platform;
     private final Logger logger;
     private final Gson gson = new Gson();
@@ -29,7 +30,7 @@ public class MessageSenderImpl implements MessageSender {
         this.platform = platform;
         this.logger = logger;
     }
-
+    
     @Override
     public void sendResponse(String requestId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -44,7 +45,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendResponse(String requestId, Embed embed) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -60,7 +61,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendResponse(String requestId, Embed embed, List<Button> buttons) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -77,7 +78,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendForm(String requestId, Form form) {
         FormDefinition formDef = convertToFormDefinition(form);
@@ -97,7 +98,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendForm(String requestId, String message, Form form) {
         FormDefinition formDef = convertToFormDefinition(form);
@@ -117,7 +118,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendDirectMessage(String userId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -132,7 +133,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendDirectMessage(String userId, Embed embed) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -148,7 +149,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendDirectMessage(String userId, Embed embed, List<Button> buttons) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -165,7 +166,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendDirectMessage(String userId, String message, List<Button> buttons) {
         List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
@@ -181,7 +182,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendChannelMessage(String channelId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -196,7 +197,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendChannelMessage(String channelId, Embed embed) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -212,7 +213,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -262,6 +263,91 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
 
+    @Override
+    public void editMessage(String label, String newMessage) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("edit_message")
+                .requestId(label)
+                .response(newMessage)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void editMessage(String label, Embed newEmbed) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(newEmbed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("edit_message")
+                .requestId(label)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void editMessage(String label, Embed newEmbed, List<Button> newButtons) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(newEmbed);
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(newButtons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("edit_message")
+                .requestId(label)
+                .response(null)
+                .embed(embedDef)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void editComponent(String label, String componentId, String newLabel, String newStyle, Boolean disabled) {
+        JsonObject responseObj = new JsonObject();
+        responseObj.addProperty("componentId", componentId);
+        if (newLabel != null) responseObj.addProperty("newLabel", newLabel);
+        if (newStyle != null) responseObj.addProperty("newStyle", newStyle);
+        if (disabled != null) responseObj.addProperty("disabled", disabled);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("edit_component")
+                .requestId(label)
+                .response(responseObj.toString())
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendDirectMessage(String userId, String message, String requestId, String channelId) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .requestId(requestId)
+                .channelId(channelId)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
     private EmbedDefinition convertToEmbedDefinition(Embed embed) {
         if (embed == null) {
             return null;
@@ -277,7 +363,7 @@ public class MessageSenderImpl implements MessageSender {
                 .map(button -> new ButtonAdapter(button).getInternalButton())
                 .collect(Collectors.toList());
     }
-
+    
     private FormDefinition convertToFormDefinition(Form form) {
         if (form == null) {
             return null;

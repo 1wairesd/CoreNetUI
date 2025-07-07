@@ -93,6 +93,7 @@ public class RequestSender {
             options.put("guild_Id", event.getGuild().getId());
         }
         options.put("ephemeral", Boolean.toString(ephemeral));
+        options.put("channelId", event.getChannel().getId());
         return new RequestMessage("request", event.getName(), options, requestId.toString());
     }
 

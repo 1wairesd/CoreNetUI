@@ -46,6 +46,7 @@ public class Messages {
 
         public static final String CHANCE_FAILED = "chance-failed";
         public static final String ROLE_REQUIRED = "role-required";
+        public static final String DM_FAILED = "dm-failed";
     }
 
     public static void init(Path dataDir) {

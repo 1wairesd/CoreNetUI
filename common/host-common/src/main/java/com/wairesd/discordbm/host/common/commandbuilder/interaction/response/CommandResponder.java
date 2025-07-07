@@ -40,7 +40,6 @@ public class CommandResponder {
                         hook.sendMessage(context.getMessageText()).setEphemeral(true).queue();
                     }
                 }).exceptionally(ex -> {
-                    logger.error("Error in fail actions: {}", ex.getMessage(), ex);
                     hook.sendMessage("Error in fail actions.").setEphemeral(true).queue();
                     return null;
                 });
@@ -87,7 +86,6 @@ public class CommandResponder {
     private void sendReply(Context context) {
         InteractionHook hook = context.getHook();
         if (hook == null) {
-            logger.warn("Hook is null");
             return;
         }
         var msg = hook.sendMessage(context.replacePlaceholders(context.getMessageText()));

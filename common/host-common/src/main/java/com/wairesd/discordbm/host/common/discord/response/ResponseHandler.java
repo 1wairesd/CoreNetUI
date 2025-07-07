@@ -7,6 +7,8 @@ import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorMessages;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorType;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
@@ -21,6 +23,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.slf4j.LoggerFactory;
+
 import java.awt.*;
 import java.util.List;
 import java.util.UUID;
@@ -209,14 +212,38 @@ public class ResponseHandler {
         if (respMsg.embed() != null) {
             sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {
-            event.getHook().sendMessage(respMsg.response()).setEphemeral(ephemeral).queue(
-                    success -> {
-                        if (Settings.isDebugRequestProcessing()) {
-                            logger.info("Message sent successfully");
-                        }
-                    },
-                    failure -> logger.error("Failed to send message: {}", failure.getMessage())
-            );
+            if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
+                List<Button> jdaButtons = respMsg.buttons().stream()
+                        .map(btn -> {
+                            if (btn.style() == ButtonStyle.LINK) {
+                                return Button.link(btn.url(), btn.label());
+                            } else {
+                                return Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label())
+                                        .withDisabled(btn.disabled());
+                            }
+                        })
+                        .collect(Collectors.toList());
+                event.getHook().sendMessage(respMsg.response())
+                        .addActionRow(jdaButtons)
+                        .setEphemeral(ephemeral)
+                        .queue(
+                                success -> {
+                                    if (Settings.isDebugRequestProcessing()) {
+                                        logger.info("Message with buttons sent successfully");
+                                    }
+                                },
+                                failure -> logger.error("Failed to send message with buttons: {}", failure.getMessage())
+                        );
+            } else {
+                event.getHook().sendMessage(respMsg.response()).setEphemeral(ephemeral).queue(
+                        success -> {
+                            if (Settings.isDebugRequestProcessing()) {
+                                logger.info("Message sent successfully");
+                            }
+                        },
+                        failure -> logger.error("Failed to send message: {}", failure.getMessage())
+                );
+            }
             if (Settings.isDebugRequestProcessing()) {
                 logger.info("Response sent for requestId: {}", respMsg.requestId());
             }
@@ -415,7 +442,19 @@ public class ResponseHandler {
                         .collect(Collectors.toList());
                 msgAction.setActionRow(jdaButtons);
             }
-            msgAction.queue();
+            msgAction.queue(null, error -> {
+                if (error != null && error.getClass().getSimpleName().equals("ErrorResponseException") && error.getMessage().contains("50007")) {
+                    logger.warn("Failed to send DM to user {}: 50007 Cannot send messages to this user", userId);
+                    if (respMsg.requestId() != null && respMsg.channelId() != null) {
+                        sendChannelMessage(new ResponseMessage.Builder()
+                            .type("response")
+                            .requestId(respMsg.requestId())
+                            .channelId(respMsg.channelId())
+                            .response(CommandErrorMessages.getMessage(CommandErrorType.DM_FAILED))
+                            .build());
+                    }
+                }
+            });
         });
     }
 
@@ -456,5 +495,74 @@ public class ResponseHandler {
             }
         }
         return embedBuilder;
+    }
+
+    public static void editMessage(ResponseMessage respMsg) {
+        String label = respMsg.requestId();
+        if (respMsg.type() != null && respMsg.type().equals("edit_message")) {
+            label = respMsg.response();
+        }
+        if (label == null) {
+            return;
+        }
+        String[] ref = platformManager.getMessageReference(label);
+        if (ref == null || ref.length != 2) {
+            return;
+        }
+        String channelId = ref[0];
+        String messageId = ref[1];
+        var jda = platformManager.getDiscordBotManager().getJda();
+        var channel = jda.getTextChannelById(channelId);
+        if (channel == null) {
+            return;
+        }
+        if (respMsg.embed() != null || (respMsg.buttons() != null && !respMsg.buttons().isEmpty())) {
+            var action = channel.editMessageById(messageId, respMsg.response() != null ? respMsg.response() : "");
+            if (respMsg.embed() != null) {
+                var embed = toJdaEmbed(respMsg.embed()).build();
+                action = action.setEmbeds(embed);
+            }
+            if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
+                var jdaButtons = respMsg.buttons().stream()
+                        .map(btn -> net.dv8tion.jda.api.interactions.components.buttons.Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()))
+                        .collect(Collectors.toList());
+                action = action.setActionRow(jdaButtons);
+            }
+            action.queue();
+        } else {
+            channel.editMessageById(messageId, respMsg.response() != null ? respMsg.response() : "").queue();
+        }
+    }
+
+    public static void editComponent(ResponseMessage respMsg) {
+        String label = respMsg.requestId();
+        if (respMsg.type() != null && respMsg.type().equals("edit_component")) {
+            label = respMsg.response();
+        }
+        if (label == null) {
+            return;
+        }
+        String[] ref = platformManager.getMessageReference(label);
+        if (ref == null || ref.length != 2) {
+            return;
+        }
+        String channelId = ref[0];
+        String messageId = ref[1];
+        var jda = platformManager.getDiscordBotManager().getJda();
+        var channel = jda.getTextChannelById(channelId);
+        if (channel == null) {
+            return;
+        }
+        com.google.gson.JsonObject obj = new com.google.gson.JsonParser().parse(respMsg.response()).getAsJsonObject();
+        String componentId = obj.get("componentId").getAsString();
+        String newLabel = obj.has("newLabel") ? obj.get("newLabel").getAsString() : null;
+        String newStyle = obj.has("newStyle") ? obj.get("newStyle").getAsString() : null;
+        Boolean disabled = obj.has("disabled") ? obj.get("disabled").getAsBoolean() : null;
+        new com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageComponentFetcher(channel, messageId)
+                .fetchAndApply(rows -> {
+                    new com.wairesd.discordbm.host.common.commandbuilder.components.buttons.component.ButtonEditor(componentId, newLabel, newStyle, disabled)
+                            .edit(rows);
+                    new com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageUpdater(channel, messageId, rows).update();
+                });
     }
 }
