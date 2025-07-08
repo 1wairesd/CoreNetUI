@@ -1,10 +1,10 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders;
 
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
-import net.dv8tion.jda.api.entities.channel.Channel;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.entities.channel.Channel;
 
 import java.util.concurrent.CompletableFuture;
 

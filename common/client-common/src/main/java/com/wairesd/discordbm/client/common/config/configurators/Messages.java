@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.client.common.config.configurators;
 
-import com.wairesd.discordbm.client.common.platform.PlatformConfig;
 import com.wairesd.discordbm.common.utils.color.ColorUtils;
+import com.wairesd.discordbm.client.common.platform.PlatformConfig;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.loader.ConfigurationLoader;

@@ -1,10 +1,7 @@
 package com.wairesd.discordbm.host.common.utils;
 
 import io.netty.channel.Channel;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClientInfo {
     public final String name;

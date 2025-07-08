@@ -5,8 +5,6 @@ import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
-import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.chance.ChanceCondition;
-import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.permissions.RoleCondition;
 import com.wairesd.discordbm.host.common.config.configurators.Commands;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import net.dv8tion.jda.api.JDA;
@@ -21,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.permissions.RoleCondition;
+import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.chance.ChanceCondition;
 
 public class CommandResponder {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));

@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.host.common.commandbuilder.utils.message;
 
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersResolved;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.config.configurators.Commands;
 
 public class MessageReferenceResolver {

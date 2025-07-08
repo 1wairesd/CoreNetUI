@@ -2,9 +2,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.utils;
 
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

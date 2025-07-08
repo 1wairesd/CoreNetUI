@@ -5,6 +5,7 @@ import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.form.FormDefinition;
 
 import java.util.List;
+import java.util.Map;
 
 public class ResponseMessage {
     private final String type;
@@ -16,6 +17,7 @@ public class ResponseMessage {
     private final ResponseFlags flags;
     private final String userId;
     private final String channelId;
+    private final List<Map<String, Object>> conditions;
 
     private ResponseMessage(Builder builder) {
         this.type = builder.type;
@@ -27,6 +29,7 @@ public class ResponseMessage {
         this.flags = builder.flags;
         this.userId = builder.userId;
         this.channelId = builder.channelId;
+        this.conditions = builder.conditions;
     }
 
     public String type() {
@@ -65,6 +68,10 @@ public class ResponseMessage {
         return channelId;
     }
 
+    public List<Map<String, Object>> conditions() {
+        return conditions;
+    }
+
     public static class Builder {
         private String type;
         private String requestId;
@@ -75,6 +82,7 @@ public class ResponseMessage {
         private ResponseFlags flags;
         private String userId;
         private String channelId;
+        private List<Map<String, Object>> conditions;
 
         public Builder type(String type) {
             this.type = type;
@@ -118,6 +126,11 @@ public class ResponseMessage {
 
         public Builder channelId(String channelId) {
             this.channelId = channelId;
+            return this;
+        }
+
+        public Builder conditions(List<Map<String, Object>> conditions) {
+            this.conditions = conditions;
             return this;
         }
 

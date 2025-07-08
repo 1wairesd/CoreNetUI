@@ -2,8 +2,7 @@ package com.wairesd.discordbm.client.common.placeholders;
 
 import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlaceholderService {
 

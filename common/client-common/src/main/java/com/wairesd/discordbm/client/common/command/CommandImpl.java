@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.client.common.command;
 
 import com.wairesd.discordbm.api.command.Command;
-import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.api.command.CommandOption;
+import com.wairesd.discordbm.api.command.CommandCondition;
 
 import java.util.ArrayList;
 import java.util.List;

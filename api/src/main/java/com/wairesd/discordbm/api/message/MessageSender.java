@@ -64,6 +64,33 @@ public interface MessageSender {
      */
     void sendForm(String requestId, String message, Form form);
 
+    // --- Response с label ---
+    /**
+     * Send a text message in response to a command, with label
+     */
+    void sendResponse(String requestId, String message, String label);
+    /**
+     * Send an embed in response to a command, with label
+     */
+    void sendResponse(String requestId, Embed embed, String label);
+    /**
+     * Send an embed with buttons in response to a command, with label
+     */
+    void sendResponse(String requestId, Embed embed, List<Button> buttons, String label);
+    /**
+     * Send a text message with buttons in response to a command, with label
+     */
+    void sendResponse(String requestId, String message, List<Button> buttons, String label);
+
+    /**
+     * Send a text message in response to a command, with conditions
+     */
+    void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions);
+    /**
+     * Send a text message in response to a command, with conditions and label
+     */
+    void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label);
+
     // --- Direct Message ---
 
     /**
@@ -145,6 +172,32 @@ public interface MessageSender {
      * @param buttons The buttons to add to the message
      */
     void sendChannelMessage(String channelId, String message, List<Button> buttons);
+
+    /**
+     * Send a message to a channel, with label
+     */
+    void sendChannelMessage(String channelId, String message, String label);
+    /**
+     * Send an embed to a channel, with label
+     */
+    void sendChannelMessage(String channelId, Embed embed, String label);
+    /**
+     * Send an embed to a channel with buttons, with label
+     */
+    void sendChannelMessage(String channelId, Embed embed, List<Button> buttons, String label);
+    /**
+     * Send a message to a channel with buttons, with label
+     */
+    void sendChannelMessage(String channelId, String message, List<Button> buttons, String label);
+
+    /**
+     * Send a message to a channel, with conditions
+     */
+    void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions);
+    /**
+     * Send a message to a channel, with conditions and label
+     */
+    void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label);
 
     /**
      * Edit a previously sent message by label, replacing its text.

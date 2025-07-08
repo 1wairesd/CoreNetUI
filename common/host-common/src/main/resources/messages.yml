@@ -32,4 +32,3 @@ no_connected_clients: "No connected clients."
 
 chance-failed: "❌ You're out of luck"
 role-required: "❌ This command requires the role {0}"
-dm-failed: "❌ Unable to interact with the user."

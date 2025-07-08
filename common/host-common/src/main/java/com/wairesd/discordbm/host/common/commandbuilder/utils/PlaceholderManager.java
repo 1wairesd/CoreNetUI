@@ -1,9 +1,8 @@
 package com.wairesd.discordbm.host.common.commandbuilder.utils;
 
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.Placeholder;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import net.dv8tion.jda.api.interactions.Interaction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

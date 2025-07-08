@@ -2,16 +2,20 @@ package com.wairesd.discordbm.host.common.commandbuilder.utils;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersChannel;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersResolved;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersServer;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersUser;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersOption;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersDiscordBM;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import org.jetbrains.annotations.Nullable;
+import java.util.Map;
 
 public class MessageFormatterUtils {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));

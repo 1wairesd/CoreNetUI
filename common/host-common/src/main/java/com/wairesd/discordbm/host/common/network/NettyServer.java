@@ -1,15 +1,14 @@
 package com.wairesd.discordbm.host.common.network;
 
-import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.network.codec.ByteBufDecoder;
 import com.wairesd.discordbm.common.network.codec.ByteBufEncoder;
+import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.models.command.CommandRegistrationService;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
-import com.wairesd.discordbm.host.common.models.command.CommandRegistrationService;
-import com.wairesd.discordbm.host.common.utils.ClientInfo;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -19,6 +18,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.LoggerFactory;
+import com.wairesd.discordbm.host.common.utils.ClientInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

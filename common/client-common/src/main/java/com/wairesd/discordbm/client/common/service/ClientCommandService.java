@@ -1,9 +1,9 @@
 package com.wairesd.discordbm.client.common.service;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
-import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.config.configurators.Messages;
+import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.wairesd.discordbm.client.common.ephemeral;
 
 import com.wairesd.discordbm.client.common.platform.Platform;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

@@ -6,7 +6,6 @@ import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.function.Supplier;

@@ -1,9 +1,9 @@
 package com.wairesd.discordbm.client.common.platform;
 
+import com.wairesd.discordbm.client.common.config.configurators.Settings;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.client.common.command.CommandRegistrationImpl;
-import com.wairesd.discordbm.client.common.config.configurators.Settings;
 import com.wairesd.discordbm.client.common.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.client.common.models.command.Command;
 import com.wairesd.discordbm.client.common.network.NettyService;

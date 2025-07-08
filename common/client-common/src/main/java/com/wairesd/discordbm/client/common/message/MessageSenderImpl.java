@@ -10,12 +10,12 @@ import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.client.common.component.ButtonAdapter;
 import com.wairesd.discordbm.client.common.embed.EmbedAdapter;
 import com.wairesd.discordbm.client.common.form.FormAdapter;
-import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.form.FormDefinition;
-import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
+import com.wairesd.discordbm.common.models.response.ResponseFlags;
+import com.wairesd.discordbm.client.common.platform.Platform;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -232,6 +232,74 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
+    public void sendChannelMessage(String channelId, String message, String label) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .requestId(label)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendChannelMessage(String channelId, Embed embed, String label) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .requestId(label)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendChannelMessage(String channelId, String message, List<Button> buttons, String label) {
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .requestId(label)
+                .response(message)
+                .embed(null)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons, String label) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .requestId(label)
+                .response(null)
+                .embed(embedDef)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
     public void sendChannelMessage(String channelId, String message, List<Button> buttons) {
         List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -253,6 +321,70 @@ public class MessageSenderImpl implements MessageSender {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, String message, String label) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(label)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, Embed embed, String label) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(label)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, Embed embed, List<Button> buttons, String label) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(label)
+                .response(null)
+                .embed(embedDef)
+                .buttons(buttonDefs)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, String message, List<Button> buttons, String label) {
+        List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(label)
                 .response(message)
                 .embed(null)
                 .buttons(buttonDefs)
@@ -377,5 +509,86 @@ public class MessageSenderImpl implements MessageSender {
             return null;
         }
         return new FormAdapter(form).getInternalForm();
+    }
+
+    @Override
+    public void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions) {
+        List<java.util.Map<String, Object>> serialized = null;
+        if (conditions != null) {
+            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+        }
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .conditions(serialized)
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label) {
+        List<java.util.Map<String, Object>> serialized = null;
+        if (conditions != null) {
+            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+        }
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(label)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .conditions(serialized)
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions) {
+        List<java.util.Map<String, Object>> serialized = null;
+        if (conditions != null) {
+            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+        }
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .conditions(serialized)
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label) {
+        List<java.util.Map<String, Object>> serialized = null;
+        if (conditions != null) {
+            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+        }
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .requestId(label)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().build())
+                .conditions(serialized)
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
     }
 }

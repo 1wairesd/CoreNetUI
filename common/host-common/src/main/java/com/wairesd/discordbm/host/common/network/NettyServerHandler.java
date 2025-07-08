@@ -2,21 +2,21 @@ package com.wairesd.discordbm.host.common.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
-import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
+import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.request.AddRoleRequest;
 import com.wairesd.discordbm.common.models.request.RemoveRoleRequest;
+import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
+import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
-import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.Database;
-import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.handler.register.ClientRegisterHandler;
 import com.wairesd.discordbm.host.common.handler.register.RegisterHandler;
+import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.handler.role.AddRoleHandler;
 import com.wairesd.discordbm.host.common.handler.role.RemoveRoleHandler;
 import com.wairesd.discordbm.host.common.handler.unregister.UnregisterHandler;
@@ -25,8 +25,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.List;
 import java.util.concurrent.*;
+import java.util.List;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         implements ClientRegisterHandler.NettyServerHandlerContext {

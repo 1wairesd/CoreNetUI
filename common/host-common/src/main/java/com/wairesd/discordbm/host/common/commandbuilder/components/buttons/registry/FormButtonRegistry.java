@@ -2,8 +2,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.components.buttons.regi
 
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model.FormButtonData;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
 public class FormButtonRegistry {
     private static final ConcurrentMap<String, FormButtonData> formButtonDataMap = new ConcurrentHashMap<>();

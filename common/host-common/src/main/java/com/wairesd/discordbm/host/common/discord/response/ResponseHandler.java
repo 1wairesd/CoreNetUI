@@ -10,17 +10,19 @@ import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.component.ButtonEditor;
-import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFetcher;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
-import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageComponentFetcher;
-import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageDeleter;
-import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageReferenceResolver;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageUpdater;
-import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageReferenceResolver;
+import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFetcher;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageDeleter;
+import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -31,11 +33,11 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
@@ -50,6 +52,27 @@ public class ResponseHandler {
     public static void handleResponse(ResponseMessage respMsg) {
         if (Settings.isDebugRequestProcessing()) {
             logger.info("Response received for request " + respMsg.requestId() + ": " + respMsg.toString());
+        }
+        if (respMsg.conditions() != null && !respMsg.conditions().isEmpty()) {
+            Context context = null;
+            var event = listener != null ? listener.getRequestSender().getPendingRequests().get(respMsg.requestId()) : null;
+            if (event != null) {
+                context = new Context(event);
+            } else {
+                context = new Context((SlashCommandInteractionEvent) null);
+            }
+            for (var condMap : respMsg.conditions()) {
+                try {
+                    CommandCondition cond = CommandParserCondition.parseCondition(condMap);
+                    if (!cond.check(context)) {
+                        logger.info("Message condition not met, skipping send: " + condMap);
+                        return;
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to parse/check message condition: " + condMap, e);
+                    return;
+                }
+            }
         }
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
@@ -215,6 +238,7 @@ public class ResponseHandler {
 
     private static void sendResponse(SlashCommandInteractionEvent event, ResponseMessage respMsg) {
         boolean ephemeral = false;
+        String label = respMsg.requestId();
         if (respMsg.embed() != null) {
             sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {
@@ -234,6 +258,11 @@ public class ResponseHandler {
                         .setEphemeral(ephemeral)
                         .queue(
                                 success -> {
+                                    if (label != null && !label.isEmpty()) {
+                                        String channelId = event.getChannel().getId();
+                                        String messageId = success.getId();
+                                        platformManager.setGlobalMessageLabel(label, channelId, messageId);
+                                    }
                                     if (Settings.isDebugRequestProcessing()) {
                                         logger.info("Message with buttons sent successfully");
                                     }
@@ -243,6 +272,11 @@ public class ResponseHandler {
             } else {
                 event.getHook().sendMessage(respMsg.response()).setEphemeral(ephemeral).queue(
                         success -> {
+                            if (label != null && !label.isEmpty()) {
+                                String channelId = event.getChannel().getId();
+                                String messageId = success.getId();
+                                platformManager.setGlobalMessageLabel(label, channelId, messageId);
+                            }
                             if (Settings.isDebugRequestProcessing()) {
                                 logger.info("Message sent successfully");
                             }
@@ -479,10 +513,15 @@ public class ResponseHandler {
                     .collect(Collectors.toList());
             msgAction.setActionRow(jdaButtons);
         }
-        msgAction.queue();
+        msgAction.queue(success -> {
+            if (respMsg.requestId() != null && !respMsg.requestId().isEmpty()) {
+                String messageId = success.getId();
+                platformManager.setGlobalMessageLabel(respMsg.requestId(), channelId, messageId);
+            }
+        });
     }
 
-    private static EmbedBuilder toJdaEmbed(EmbedDefinition embedDef) {
+    private static net.dv8tion.jda.api.EmbedBuilder toJdaEmbed(EmbedDefinition embedDef) {
         var embedBuilder = new EmbedBuilder();
         if (embedDef.title() != null) embedBuilder.setTitle(embedDef.title());
         if (embedDef.description() != null) embedBuilder.setDescription(embedDef.description());
