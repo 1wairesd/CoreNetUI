@@ -1,10 +1,10 @@
 package com.wairesd.discordbm.host.common.handler.unregister;
 
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
-import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.network.NettyServer;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.LoggerFactory;
 

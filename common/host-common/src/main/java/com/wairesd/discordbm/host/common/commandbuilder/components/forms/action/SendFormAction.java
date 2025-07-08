@@ -1,12 +1,12 @@
 package com.wairesd.discordbm.host.common.commandbuilder.components.forms.action;
 
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.builder.CommandFormBuilder;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.repository.FormRepository;
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.sender.FormSender;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.config.configurators.Forms;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.apache.commons.lang3.tuple.ImmutablePair;

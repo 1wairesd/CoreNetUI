@@ -4,7 +4,7 @@ import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +30,6 @@ public class CommandErrorMessages {
         DEFAULT_MESSAGES.put(CommandErrorType.INVALID_FORMAT, "❌ Неверный формат: {0}");
         DEFAULT_MESSAGES.put(CommandErrorType.OPERATION_FAILED, "❌ Не удалось выполнить операцию: {0}");
         DEFAULT_MESSAGES.put(CommandErrorType.CHANCE_FAILED, Messages.getMessage(Messages.Keys.CHANCE_FAILED));
-        DEFAULT_MESSAGES.put(CommandErrorType.DM_FAILED, Messages.getMessage(Messages.Keys.DM_FAILED));
     }
 
     public static void setCustomMessage(CommandErrorType type, String message) {

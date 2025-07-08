@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.host.common.commandbuilder.interaction.validator;
 
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 
 public class CommandValidator {
     public boolean validateConditions(CommandStructured command, Context context) {

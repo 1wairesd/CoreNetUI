@@ -1,32 +1,28 @@
 package com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
-import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.service.ButtonActionService;
-import com.wairesd.discordbm.host.common.commandbuilder.security.buttons.checker.RoleChecker;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.form.ButtonFormBuilder;
+import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.handler.ButtonResponseHandler;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model.ButtonConfig;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model.FormButtonData;
-import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.handler.ButtonResponseHandler;
+import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.service.ButtonActionService;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
+import com.wairesd.discordbm.host.common.commandbuilder.security.buttons.checker.RoleChecker;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.EmbedFactoryUtils;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
 import com.wairesd.discordbm.host.common.config.configurators.Forms;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.models.request.RequestMessage;
 import com.wairesd.discordbm.host.common.network.NettyServer;
+import io.netty.channel.Channel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import io.netty.channel.Channel;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ButtonInteractionListener extends ListenerAdapter {
     private final ButtonActionService actionService = new ButtonActionService();

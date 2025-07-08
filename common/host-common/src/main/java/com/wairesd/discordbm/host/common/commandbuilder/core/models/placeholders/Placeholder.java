@@ -2,6 +2,7 @@ package com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholder
 
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import net.dv8tion.jda.api.interactions.Interaction;
+
 import java.util.concurrent.CompletableFuture;
 
 public interface Placeholder {

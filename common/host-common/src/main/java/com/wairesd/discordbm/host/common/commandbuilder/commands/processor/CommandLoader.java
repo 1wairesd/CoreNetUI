@@ -2,12 +2,12 @@ package com.wairesd.discordbm.host.common.commandbuilder.commands.processor;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
+import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.config.configurators.Commands;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;

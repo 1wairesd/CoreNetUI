@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.host.common.commandbuilder.utils.message;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.entities.Message;
 
 import java.util.List;
 import java.util.function.Consumer;

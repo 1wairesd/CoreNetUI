@@ -1,7 +1,8 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.action.ButtonAction;
+import com.wairesd.discordbm.host.common.commandbuilder.components.forms.action.SendFormAction;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.components.EditComponentAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.DeleteMessageAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.SendMessageAction;
@@ -10,8 +11,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.interaction.page.SendPag
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholders.ResolvePlaceholdersAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.roles.AddRoleAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.roles.RemoveRoleAction;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
-import com.wairesd.discordbm.host.common.commandbuilder.components.forms.action.SendFormAction;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 
 import java.util.Map;
 

@@ -2,11 +2,11 @@ package com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholder
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFinder;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.PlaceholderUtils;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import io.netty.channel.Channel;
 import org.slf4j.LoggerFactory;

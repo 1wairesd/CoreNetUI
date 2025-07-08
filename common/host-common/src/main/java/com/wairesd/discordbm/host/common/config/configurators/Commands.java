@@ -2,14 +2,14 @@ package com.wairesd.discordbm.host.common.config.configurators;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
-import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.options.CommandOptions;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
+import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserFailAction;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;

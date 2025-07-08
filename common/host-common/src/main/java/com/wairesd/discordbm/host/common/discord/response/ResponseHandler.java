@@ -7,14 +7,12 @@ import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorMessages;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorType;
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
-import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
-import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
+import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
+import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
+import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -25,11 +23,11 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.HashMap;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
@@ -445,14 +443,6 @@ public class ResponseHandler {
             msgAction.queue(null, error -> {
                 if (error != null && error.getClass().getSimpleName().equals("ErrorResponseException") && error.getMessage().contains("50007")) {
                     logger.warn("Failed to send DM to user {}: 50007 Cannot send messages to this user", userId);
-                    if (respMsg.requestId() != null && respMsg.channelId() != null) {
-                        sendChannelMessage(new ResponseMessage.Builder()
-                            .type("response")
-                            .requestId(respMsg.requestId())
-                            .channelId(respMsg.channelId())
-                            .response(CommandErrorMessages.getMessage(CommandErrorType.DM_FAILED))
-                            .build());
-                    }
                 }
             });
         });
@@ -484,7 +474,7 @@ public class ResponseHandler {
         msgAction.queue();
     }
 
-    private static net.dv8tion.jda.api.EmbedBuilder toJdaEmbed(EmbedDefinition embedDef) {
+    private static EmbedBuilder toJdaEmbed(EmbedDefinition embedDef) {
         var embedBuilder = new EmbedBuilder();
         if (embedDef.title() != null) embedBuilder.setTitle(embedDef.title());
         if (embedDef.description() != null) embedBuilder.setDescription(embedDef.description());
@@ -524,7 +514,7 @@ public class ResponseHandler {
             }
             if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
                 var jdaButtons = respMsg.buttons().stream()
-                        .map(btn -> net.dv8tion.jda.api.interactions.components.buttons.Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()))
+                        .map(btn -> Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()))
                         .collect(Collectors.toList());
                 action = action.setActionRow(jdaButtons);
             }

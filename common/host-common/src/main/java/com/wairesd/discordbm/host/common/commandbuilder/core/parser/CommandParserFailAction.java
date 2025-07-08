@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 
 import java.util.Collections;
 import java.util.List;

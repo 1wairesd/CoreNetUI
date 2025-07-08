@@ -1,13 +1,13 @@
 package com.wairesd.discordbm.host.common.models.command;
 
+import com.wairesd.discordbm.host.common.commandbuilder.commands.processor.CommandLoader;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import io.netty.channel.Channel;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.wairesd.discordbm.host.common.commandbuilder.commands.processor.CommandLoader;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 
 import java.util.ArrayList;
 import java.util.List;

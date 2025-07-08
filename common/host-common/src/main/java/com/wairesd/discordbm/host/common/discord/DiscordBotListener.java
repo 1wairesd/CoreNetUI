@@ -9,22 +9,22 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.C
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.CommandResponder;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.validator.CommandValidator;
+import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.handler.CommandHandler;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
 import com.wairesd.discordbm.host.common.discord.selection.ServerSelector;
 import com.wairesd.discordbm.host.common.network.NettyServer;
-import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.LoggerFactory;
 
-import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DiscordBotListener extends ListenerAdapter {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));

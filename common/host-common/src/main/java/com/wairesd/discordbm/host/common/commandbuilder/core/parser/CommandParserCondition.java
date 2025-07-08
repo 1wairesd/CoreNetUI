@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.parser;
 
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.chance.ChanceCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.permissions.RoleCondition;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 
 import java.util.Map;
 

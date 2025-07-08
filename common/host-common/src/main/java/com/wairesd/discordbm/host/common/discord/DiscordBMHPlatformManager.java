@@ -1,8 +1,8 @@
 package com.wairesd.discordbm.host.common.discord;
 
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
+import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;

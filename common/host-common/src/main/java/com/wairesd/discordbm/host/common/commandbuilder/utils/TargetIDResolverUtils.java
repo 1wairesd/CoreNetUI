@@ -1,9 +1,9 @@
 package com.wairesd.discordbm.host.common.commandbuilder.utils;
 
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersChannel;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersMessageID;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersOption;
-import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class TargetIDResolverUtils {

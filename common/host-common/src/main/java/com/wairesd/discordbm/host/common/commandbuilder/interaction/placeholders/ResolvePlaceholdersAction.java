@@ -1,15 +1,15 @@
 package com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholders;
 
-import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersDiscordBM;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
+import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.HashMap;
 
 public class ResolvePlaceholdersAction implements CommandAction {
     private final String template;
