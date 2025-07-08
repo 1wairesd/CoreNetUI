@@ -181,4 +181,11 @@ public interface MessageSender {
      * @param disabled Whether the component should be disabled (nullable)
      */
     void editComponent(String label, String componentId, String newLabel, String newStyle, Boolean disabled);
+
+    /**
+     * Delete a previously sent message by label/id.
+     *
+     * @param label The label/id of the message to delete
+     */
+    void deleteMessage(String label);
 }

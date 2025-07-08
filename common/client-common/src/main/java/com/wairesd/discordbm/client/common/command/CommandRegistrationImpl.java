@@ -1,14 +1,10 @@
 package com.wairesd.discordbm.client.common.command;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.api.command.Command;
-import com.wairesd.discordbm.api.command.CommandHandler;
-import com.wairesd.discordbm.api.command.CommandListener;
-import com.wairesd.discordbm.api.command.CommandOption;
-import com.wairesd.discordbm.api.command.CommandRegistration;
+import com.wairesd.discordbm.api.command.*;
 import com.wairesd.discordbm.api.logging.Logger;
-import com.wairesd.discordbm.common.models.register.RegisterMessage;
 import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.common.models.register.RegisterMessage;
 
 import java.util.ArrayList;
 import java.util.List;

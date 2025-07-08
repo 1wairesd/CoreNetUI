@@ -1,14 +1,14 @@
 package com.wairesd.discordbm.client.common.command;
 
 import com.wairesd.discordbm.api.command.Command;
-import com.wairesd.discordbm.api.command.CommandOption;
 import com.wairesd.discordbm.api.command.CommandCondition;
+import com.wairesd.discordbm.api.command.CommandOption;
 import com.wairesd.discordbm.client.common.models.command.CommandOptions;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CommandAdapter implements Command {
     

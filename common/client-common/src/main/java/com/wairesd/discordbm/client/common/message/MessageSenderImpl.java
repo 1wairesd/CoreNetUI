@@ -10,12 +10,12 @@ import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.client.common.component.ButtonAdapter;
 import com.wairesd.discordbm.client.common.embed.EmbedAdapter;
 import com.wairesd.discordbm.client.common.form.FormAdapter;
+import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.form.FormDefinition;
-import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
-import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.common.models.response.ResponseMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -346,6 +346,14 @@ public class MessageSenderImpl implements MessageSender {
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void deleteMessage(String label) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("type", "delete_message");
+        obj.addProperty("label", label);
+        platform.getNettyService().sendNettyMessage(obj.toString());
     }
 
     private EmbedDefinition convertToEmbedDefinition(Embed embed) {

@@ -2,15 +2,15 @@ package com.wairesd.discordbm.client.common.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.client.common.role.RoleManagerImpl;
 import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.response.RoleActionResponse;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
-import com.wairesd.discordbm.client.common.role.RoleManagerImpl;
-import com.wairesd.discordbm.api.command.CommandHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

@@ -1,13 +1,13 @@
 package com.wairesd.discordbm.client.common.network;
 
 import com.google.gson.Gson;
-import com.wairesd.discordbm.common.network.codec.ByteBufDecoder;
-import com.wairesd.discordbm.common.network.codec.ByteBufEncoder;
-import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.handler.MessageHandler;
 import com.wairesd.discordbm.client.common.models.command.Command;
+import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
+import com.wairesd.discordbm.common.network.codec.ByteBufDecoder;
+import com.wairesd.discordbm.common.network.codec.ByteBufEncoder;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
