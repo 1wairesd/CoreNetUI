@@ -161,6 +161,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         } else if ("edit_component".equals(type)) {
             ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
             ResponseHandler.editComponent(respMsg);
+        } else if ("delete_message".equals(type)) {
+            String label = json.get("label").getAsString();
+            ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("delete_message")
+                .requestId(label)
+                .build();
+            ResponseHandler.deleteMessage(respMsg);
+            return;
         } else {
             logger.warn("Unknown message type: {}", type);
         }

@@ -1,5 +1,7 @@
 package com.wairesd.discordbm.host.common.discord.response;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
@@ -7,8 +9,14 @@ import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.component.ButtonEditor;
+import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFetcher;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageComponentFetcher;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageDeleter;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageReferenceResolver;
+import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageUpdater;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
@@ -543,16 +551,42 @@ public class ResponseHandler {
         if (channel == null) {
             return;
         }
-        com.google.gson.JsonObject obj = new com.google.gson.JsonParser().parse(respMsg.response()).getAsJsonObject();
+        JsonObject obj = new JsonParser().parse(respMsg.response()).getAsJsonObject();
         String componentId = obj.get("componentId").getAsString();
         String newLabel = obj.has("newLabel") ? obj.get("newLabel").getAsString() : null;
         String newStyle = obj.has("newStyle") ? obj.get("newStyle").getAsString() : null;
         Boolean disabled = obj.has("disabled") ? obj.get("disabled").getAsBoolean() : null;
-        new com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageComponentFetcher(channel, messageId)
+        new MessageComponentFetcher(channel, messageId)
                 .fetchAndApply(rows -> {
-                    new com.wairesd.discordbm.host.common.commandbuilder.components.buttons.component.ButtonEditor(componentId, newLabel, newStyle, disabled)
+                    new ButtonEditor(componentId, newLabel, newStyle, disabled)
                             .edit(rows);
-                    new com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageUpdater(channel, messageId, rows).update();
+                    new MessageUpdater(channel, messageId, rows).update();
                 });
+    }
+
+    public static void deleteMessage(ResponseMessage respMsg) {
+        String label = respMsg.requestId();
+        if (label == null) {
+            logger.error("No label provided for delete_message");
+            return;
+        }
+        try {
+            MessageReferenceResolver resolver = new MessageReferenceResolver();
+            String[] ref = platformManager.getMessageReference(label);
+            if (ref == null || ref.length != 2) {
+                logger.error("No message reference found for label: {}", label);
+                return;
+            }
+            String channelId = ref[0];
+            String messageId = ref[1];
+            ChannelFetcher fetcher = new ChannelFetcher();
+            MessageDeleter deleter = new MessageDeleter();
+            var jda = platformManager.getDiscordBotManager().getJda();
+            var channel = fetcher.getTextChannel(jda, channelId);
+            deleter.deleteMessage(channel, messageId);
+            platformManager.removeGlobalMessageLabel(label);
+        } catch (Exception e) {
+            logger.error("Failed to delete message for label: {}", label, e);
+        }
     }
 }
