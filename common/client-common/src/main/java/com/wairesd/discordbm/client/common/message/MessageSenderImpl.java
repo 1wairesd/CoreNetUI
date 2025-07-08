@@ -614,37 +614,6 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendResponse(String requestId, String message, boolean ephemeral) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(requestId)
-                .response(message)
-                .embed(null)
-                .buttons(null)
-                .form(null)
-                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
-    }
-
-    @Override
-    public void sendResponse(String requestId, Embed embed, boolean ephemeral) {
-        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(requestId)
-                .response(null)
-                .embed(embedDef)
-                .buttons(null)
-                .form(null)
-                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
-    }
-
-    @Override
     public void sendResponse(String requestId, String message, ResponseType responseType) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
@@ -670,6 +639,111 @@ public class MessageSenderImpl implements MessageSender {
                 .buttons(null)
                 .form(null)
                 .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendChannelMessage(String channelId, String message, ResponseType responseType) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    @Override
+    public void sendChannelMessage(String channelId, Embed embed, ResponseType responseType) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    @Override
+    public void sendDirectMessage(String userId, String message, ResponseType responseType) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    @Override
+    public void sendDirectMessage(String userId, Embed embed, ResponseType responseType) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    @Override
+    public void sendForm(String requestId, Form form, ResponseType responseType) {
+        FormDefinition formDef = convertToFormDefinition(form);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(null)
+                .buttons(null)
+                .form(formDef)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).preventMessageSend(true).isFormResponse(true).requiresModal(true).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    @Override
+    public void sendForm(String requestId, String message, Form form, ResponseType responseType) {
+        FormDefinition formDef = convertToFormDefinition(form);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(formDef)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).preventMessageSend(true).isFormResponse(true).requiresModal(true).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+    @Override
+    public void sendButtonWithForm(String requestId, String message, Button button, Form form, ResponseType responseType) {
+        ButtonDefinition buttonDef = new ButtonAdapter(button).getInternalButton();
+        if (form == null) throw new IllegalArgumentException("Form must not be null for sendButtonWithForm");
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(java.util.Collections.singletonList(buttonDef))
+                .form(convertToFormDefinition(form))
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).preventMessageSend(true).isFormResponse(false).requiresModal(false).build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
