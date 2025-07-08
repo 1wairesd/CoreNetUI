@@ -10,6 +10,7 @@ public class ButtonImpl implements Button {
     private final ButtonStyle style;
     private final String url;
     private final boolean disabled;
+    private final String formName;
     
     private ButtonImpl(Builder builder) {
         this.label = builder.label;
@@ -17,6 +18,7 @@ public class ButtonImpl implements Button {
         this.style = builder.style;
         this.url = builder.url;
         this.disabled = builder.disabled;
+        this.formName = builder.formName;
     }
     
     @Override
@@ -44,12 +46,17 @@ public class ButtonImpl implements Button {
         return disabled;
     }
 
+    public String getFormName() {
+        return formName;
+    }
+
     public static class Builder implements Button.Builder {
         private String label;
         private String customId;
         private ButtonStyle style = ButtonStyle.PRIMARY;
         private String url;
         private boolean disabled;
+        private String formName;
         
         @Override
         public Builder label(String label) {
@@ -78,6 +85,11 @@ public class ButtonImpl implements Button {
         @Override
         public Builder disabled(boolean disabled) {
             this.disabled = disabled;
+            return this;
+        }
+
+        public Builder formName(String formName) {
+            this.formName = formName;
             return this;
         }
         

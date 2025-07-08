@@ -200,6 +200,15 @@ public interface MessageSender {
     void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label);
 
     /**
+     * Send a message with a button that opens a form in response to a command
+     * @param requestId The request ID of the command
+     * @param message The message to send
+     * @param button The button that will open the form
+     * @param form The form to open when the button is pressed
+     */
+    void sendButtonWithForm(String requestId, String message, Button button, Form form);
+
+    /**
      * Edit a previously sent message by label, replacing its text.
      *
      * @param label The label/id of the message to edit

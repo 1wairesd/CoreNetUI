@@ -91,4 +91,15 @@ public interface Button {
          */
         Button build();
     }
+
+    /**
+     * Interface for a button that opens a form
+     */
+    interface ButtonWithForm extends Button {
+        /**
+         * Get the form name to open
+         * @return The form name
+         */
+        String getFormName();
+    }
 } 

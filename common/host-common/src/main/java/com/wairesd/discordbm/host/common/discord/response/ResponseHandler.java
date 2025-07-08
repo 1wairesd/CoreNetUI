@@ -23,6 +23,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFetc
 import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageDeleter;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
+import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.registry.ButtonActionRegistry;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -289,6 +290,20 @@ public class ResponseHandler {
             }
         } else {
             event.getHook().sendMessage("No response provided.").setEphemeral(ephemeral).queue();
+        }
+        if (respMsg.buttons() != null && !respMsg.buttons().isEmpty() && respMsg.form() != null) {
+            for (var btn : respMsg.buttons()) {
+                if (btn.formName() != null && !btn.formName().isEmpty()) {
+                    ButtonActionRegistry registry = new ButtonActionRegistry();
+                    registry.registerFormButton(
+                        btn.customId(),
+                        btn.formName(),
+                        respMsg.response(),
+                        null,
+                        10 * 60 * 1000L
+                    );
+                }
+            }
         }
     }
 

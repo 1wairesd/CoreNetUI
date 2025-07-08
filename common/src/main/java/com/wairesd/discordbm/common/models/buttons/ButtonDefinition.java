@@ -6,6 +6,7 @@ public class ButtonDefinition {
     private final ButtonStyle style;
     private final String url;
     private final boolean disabled;
+    private final String formName;
 
     private ButtonDefinition(Builder builder) {
         this.label = builder.label;
@@ -13,6 +14,7 @@ public class ButtonDefinition {
         this.style = builder.style;
         this.url = builder.url;
         this.disabled = builder.disabled;
+        this.formName = builder.formName;
     }
 
     public String label() {
@@ -35,12 +37,17 @@ public class ButtonDefinition {
         return disabled;
     }
 
+    public String formName() {
+        return formName;
+    }
+
     public static class Builder {
         private String label;
         private String customId;
         private ButtonStyle style;
         private String url;
         private boolean disabled;
+        private String formName;
 
         public Builder label(String label) {
             this.label = label;
@@ -64,6 +71,11 @@ public class ButtonDefinition {
 
         public Builder disabled(boolean disabled) {
             this.disabled = disabled;
+            return this;
+        }
+
+        public Builder formName(String formName) {
+            this.formName = formName;
             return this;
         }
 

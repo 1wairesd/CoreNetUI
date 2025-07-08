@@ -591,4 +591,25 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
+    @Override
+    public void sendButtonWithForm(String requestId, String message, Button button, Form form) {
+        ButtonDefinition buttonDef = new ButtonAdapter(button).getInternalButton();
+        if (form == null) throw new IllegalArgumentException("Form must not be null for sendButtonWithForm");
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(java.util.Collections.singletonList(buttonDef))
+                .form(convertToFormDefinition(form))
+                .flags(new ResponseFlags.Builder()
+                        .preventMessageSend(true)
+                        .isFormResponse(false)
+                        .requiresModal(false)
+                        .build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
 }

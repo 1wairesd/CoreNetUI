@@ -54,6 +54,7 @@ public class ButtonAdapter implements Button {
             .style(convertToInternalStyle(apiButton.getStyle()))
             .url(apiButton.getUrl())
             .disabled(apiButton.isDisabled())
+            .formName(apiButton instanceof ButtonWithForm ? ((ButtonWithForm) apiButton).getFormName() : null)
             .build();
     }
 
@@ -83,13 +84,16 @@ public class ButtonAdapter implements Button {
             return null;
         }
         
-        return new ButtonImpl.Builder()
+        ButtonImpl.Builder builder = new ButtonImpl.Builder()
             .label(internalButton.label())
             .customId(internalButton.customId())
             .style(convertToApiStyle(internalButton.style()))
             .url(internalButton.url())
-            .disabled(internalButton.disabled())
-            .build();
+            .disabled(internalButton.disabled());
+        if (internalButton.formName() != null) {
+            builder = builder.formName(internalButton.formName());
+        }
+        return builder.build();
     }
 
     private ButtonStyle convertToApiStyle(com.wairesd.discordbm.common.models.buttons.ButtonStyle internalStyle) {
@@ -110,6 +114,97 @@ public class ButtonAdapter implements Button {
                 return ButtonStyle.LINK;
             default:
                 return ButtonStyle.PRIMARY;
+        }
+    }
+
+    public static class ButtonImpl implements Button, ButtonWithForm {
+        private final String label;
+        private final String customId;
+        private final ButtonStyle style;
+        private final String url;
+        private final boolean disabled;
+        private final String formName;
+
+        private ButtonImpl(Builder builder) {
+            this.label = builder.label;
+            this.customId = builder.customId;
+            this.style = builder.style;
+            this.url = builder.url;
+            this.disabled = builder.disabled;
+            this.formName = builder.formName;
+        }
+
+        @Override
+        public String getLabel() {
+            return label;
+        }
+
+        @Override
+        public String getCustomId() {
+            return customId;
+        }
+
+        @Override
+        public ButtonStyle getStyle() {
+            return style;
+        }
+
+        @Override
+        public String getUrl() {
+            return url;
+        }
+
+        @Override
+        public boolean isDisabled() {
+            return disabled;
+        }
+
+        @Override
+        public String getFormName() {
+            return formName;
+        }
+
+        public static class Builder {
+            private String label;
+            private String customId;
+            private ButtonStyle style;
+            private String url;
+            private boolean disabled;
+            private String formName;
+
+            public Builder label(String label) {
+                this.label = label;
+                return this;
+            }
+
+            public Builder customId(String customId) {
+                this.customId = customId;
+                return this;
+            }
+
+            public Builder style(ButtonStyle style) {
+                this.style = style;
+                return this;
+            }
+
+            public Builder url(String url) {
+                this.url = url;
+                return this;
+            }
+
+            public Builder disabled(boolean disabled) {
+                this.disabled = disabled;
+                return this;
+            }
+
+            public Builder formName(String formName) {
+                this.formName = formName;
+                return this;
+            }
+
+            public ButtonImpl build() {
+                return new ButtonImpl(this);
+            }
         }
     }
 } 
