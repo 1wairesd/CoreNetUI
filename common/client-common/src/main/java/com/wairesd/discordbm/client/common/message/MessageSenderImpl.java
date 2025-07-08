@@ -612,4 +612,66 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
+    @Override
+    public void sendResponse(String requestId, String message, boolean ephemeral) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, Embed embed, boolean ephemeral) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().ephemeral(ephemeral).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, String message, ResponseType responseType) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
+    @Override
+    public void sendResponse(String requestId, Embed embed, ResponseType responseType) {
+        EmbedDefinition embedDef = convertToEmbedDefinition(embed);
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(null)
+                .embed(embedDef)
+                .buttons(null)
+                .form(null)
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
 }

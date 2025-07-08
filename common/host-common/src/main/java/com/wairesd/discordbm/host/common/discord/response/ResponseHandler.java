@@ -238,8 +238,13 @@ public class ResponseHandler {
     }
 
     private static void sendResponse(SlashCommandInteractionEvent event, ResponseMessage respMsg) {
-        boolean ephemeral = false;
+        boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
+        String responseType = respMsg.flags() != null ? respMsg.flags().getResponseType() : null;
         String label = respMsg.requestId();
+        if ("EDIT_MESSAGE".equalsIgnoreCase(responseType)) {
+            event.getHook().editOriginal(respMsg.response() != null ? respMsg.response() : "").queue();
+            return;
+        }
         if (respMsg.embed() != null) {
             sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {

@@ -83,6 +83,23 @@ public interface MessageSender {
     void sendResponse(String requestId, String message, List<Button> buttons, String label);
 
     /**
+     * Send a text message in response to a command, with ephemeral flag
+     */
+    void sendResponse(String requestId, String message, boolean ephemeral);
+    /**
+     * Send an embed in response to a command, with ephemeral flag
+     */
+    void sendResponse(String requestId, Embed embed, boolean ephemeral);
+    /**
+     * Send a text message in response to a command, with response type
+     */
+    void sendResponse(String requestId, String message, ResponseType responseType);
+    /**
+     * Send an embed in response to a command, with response type
+     */
+    void sendResponse(String requestId, Embed embed, ResponseType responseType);
+
+    /**
      * Send a text message in response to a command, with conditions
      */
     void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions);
@@ -250,4 +267,13 @@ public interface MessageSender {
      * @param label The label/id of the message to delete
      */
     void deleteMessage(String label);
+
+    /**
+     * Enum for response type (reply, edit, ephemeral)
+     */
+    enum ResponseType {
+        REPLY,
+        EDIT_MESSAGE,
+        EPHEMERAL
+    }
 }
