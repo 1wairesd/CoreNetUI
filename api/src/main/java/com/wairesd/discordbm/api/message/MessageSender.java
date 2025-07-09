@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.api.message;
 
+import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.form.Form;
@@ -103,11 +104,11 @@ public interface MessageSender {
     /**
      * Send a text message in response to a command, with conditions
      */
-    void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions);
+    void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions);
     /**
      * Send a text message in response to a command, with conditions and label
      */
-    void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label);
+    void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions, String label);
 
     // --- Direct Message ---
 
@@ -221,11 +222,11 @@ public interface MessageSender {
     /**
      * Send a message to a channel, with conditions
      */
-    void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions);
+    void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions);
     /**
      * Send a message to a channel, with conditions and label
      */
-    void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label);
+    void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions, String label);
 
     /**
      * Send a message to a channel, with response type
