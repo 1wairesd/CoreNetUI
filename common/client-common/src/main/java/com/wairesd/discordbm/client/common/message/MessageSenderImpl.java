@@ -2,6 +2,7 @@ package com.wairesd.discordbm.client.common.message;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.form.Form;
@@ -512,10 +513,10 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions) {
+    public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions) {
         List<java.util.Map<String, Object>> serialized = null;
         if (conditions != null) {
-            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+            serialized = conditions.stream().map(CommandCondition::serialize).toList();
         }
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
@@ -532,10 +533,10 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendResponseWithConditions(String requestId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label) {
+    public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions, String label) {
         List<java.util.Map<String, Object>> serialized = null;
         if (conditions != null) {
-            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+            serialized = conditions.stream().map(CommandCondition::serialize).toList();
         }
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
@@ -552,10 +553,10 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions) {
+    public void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions) {
         List<java.util.Map<String, Object>> serialized = null;
         if (conditions != null) {
-            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+            serialized = conditions.stream().map(CommandCondition::serialize).toList();
         }
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")
@@ -572,10 +573,10 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendChannelMessageWithConditions(String channelId, String message, List<com.wairesd.discordbm.api.command.CommandCondition> conditions, String label) {
+    public void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions, String label) {
         List<java.util.Map<String, Object>> serialized = null;
         if (conditions != null) {
-            serialized = conditions.stream().map(com.wairesd.discordbm.api.command.CommandCondition::serialize).toList();
+            serialized = conditions.stream().map(CommandCondition::serialize).toList();
         }
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")
@@ -658,6 +659,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
     @Override
     public void sendChannelMessage(String channelId, Embed embed, ResponseType responseType) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -673,6 +675,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
     @Override
     public void sendDirectMessage(String userId, String message, ResponseType responseType) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -687,6 +690,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
     @Override
     public void sendDirectMessage(String userId, Embed embed, ResponseType responseType) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -702,6 +706,24 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
+    @Override
+    public void sendButtonWithForm(String requestId, String message, Button button, Form form, ResponseType responseType) {
+        ButtonDefinition buttonDef = new ButtonAdapter(button).getInternalButton();
+        if (form == null) throw new IllegalArgumentException("Form must not be null for sendButtonWithForm");
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .embed(null)
+                .buttons(java.util.Collections.singletonList(buttonDef))
+                .form(convertToFormDefinition(form))
+                .flags(new ResponseFlags.Builder().responseType(responseType.name()).preventMessageSend(true).isFormResponse(false).requiresModal(false).build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
+
     @Override
     public void sendForm(String requestId, Form form, ResponseType responseType) {
         FormDefinition formDef = convertToFormDefinition(form);
@@ -728,22 +750,6 @@ public class MessageSenderImpl implements MessageSender {
                 .buttons(null)
                 .form(formDef)
                 .flags(new ResponseFlags.Builder().responseType(responseType.name()).preventMessageSend(true).isFormResponse(true).requiresModal(true).build())
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
-    }
-    @Override
-    public void sendButtonWithForm(String requestId, String message, Button button, Form form, ResponseType responseType) {
-        ButtonDefinition buttonDef = new ButtonAdapter(button).getInternalButton();
-        if (form == null) throw new IllegalArgumentException("Form must not be null for sendButtonWithForm");
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(requestId)
-                .response(message)
-                .embed(null)
-                .buttons(java.util.Collections.singletonList(buttonDef))
-                .form(convertToFormDefinition(form))
-                .flags(new ResponseFlags.Builder().responseType(responseType.name()).preventMessageSend(true).isFormResponse(false).requiresModal(false).build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);

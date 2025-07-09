@@ -64,6 +64,15 @@ public interface MessageSender {
      */
     void sendForm(String requestId, String message, Form form);
 
+    /**
+     * Send a form in response to a command, with response type
+     */
+    void sendForm(String requestId, Form form, ResponseType responseType);
+    /**
+     * Send a form with a message in response to a command, with response type
+     */
+    void sendForm(String requestId, String message, Form form, ResponseType responseType);
+
     // --- Response с label ---
     /**
      * Send a text message in response to a command, with label
@@ -150,6 +159,11 @@ public interface MessageSender {
      * Send a direct message to a user with response type
      */
     void sendDirectMessage(String userId, String message, ResponseType responseType);
+
+    /**
+     * Send an embed as a direct message to a user, with response type
+     */
+    void sendDirectMessage(String userId, Embed embed, ResponseType responseType);
 
     // --- Channel Message ---
 
