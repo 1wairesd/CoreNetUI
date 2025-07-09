@@ -105,13 +105,15 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 case GET_PLACEHOLDERS -> {
                     GetPlaceholdersRequest req = gson.fromJson(json, GetPlaceholdersRequest.class);
                     platform.runTaskAsynchronously(() -> {
-                        Map<String, String> values = platform.getPlaceholderValues(req.player(), req.placeholders());
-                        PlaceholdersResponse resp = new PlaceholdersResponse.Builder()
-                                .type("placeholders_response")
-                                .requestId(req.requestId())
-                                .values(values)
-                                .build();
-                        ctx.channel().writeAndFlush(gson.toJson(resp));
+                        platform.getPlaceholderValues(req.player(), req.placeholders())
+                            .thenAccept(values -> {
+                                PlaceholdersResponse resp = new PlaceholdersResponse.Builder()
+                                        .type("placeholders_response")
+                                        .requestId(req.requestId())
+                                        .values(values)
+                                        .build();
+                                ctx.channel().writeAndFlush(gson.toJson(resp));
+                            });
                     });
                 }
                 default -> pluginLogger.warn("Unknown message type: " + typeStr);

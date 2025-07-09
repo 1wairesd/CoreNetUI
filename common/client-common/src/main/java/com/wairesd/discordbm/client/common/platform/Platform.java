@@ -6,6 +6,7 @@ import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.client.common.models.command.Command;
 import com.wairesd.discordbm.client.common.network.NettyService;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public interface Platform {
     Map<String, CommandHandler> getCommandHandlers();
     CommandRegistration getCommandRegistration();
     boolean checkIfCanHandle(String playerName, List<String> placeholders);
-    Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders);
+    CompletableFuture<Map<String, String>> getPlaceholderValues(String playerName, List<String> placeholders);
     void runTaskAsynchronously(Runnable task);
     void runTaskLaterAsynchronously(Runnable task, long delay);
     void onNettyConnected();

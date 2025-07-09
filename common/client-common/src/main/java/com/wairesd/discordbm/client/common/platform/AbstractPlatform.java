@@ -11,6 +11,7 @@ import com.wairesd.discordbm.client.common.placeholders.PlaceholderService;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -117,8 +118,8 @@ public abstract class AbstractPlatform implements Platform {
     }
 
     @Override
-    public Map<String, String> getPlaceholderValues(String playerName, List<String> placeholders) {
-        return placeholderService.getPlaceholderValues(playerName, placeholders);
+    public CompletableFuture<Map<String, String>> getPlaceholderValues(String playerName, List<String> placeholders) {
+        return CompletableFuture.supplyAsync(() -> placeholderService.getPlaceholderValues(playerName, placeholders));
     }
 
     @Override
