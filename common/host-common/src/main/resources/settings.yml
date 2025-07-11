@@ -44,7 +44,7 @@ debug:
   debug-button-register: false
 
 mysql:
-  enabled: false           # true — использовать MySQL, false — использовать SQLite
+  enabled: false
   host: localhost
   port: 3306
   database: discordbmv
