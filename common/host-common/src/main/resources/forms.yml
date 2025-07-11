@@ -1,4 +1,12 @@
-# Example
+# forms.yml — form configuration for DiscordBMV
+# Documentation and examples: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-forms
+# If something is unclear — see the link above!
+
+# forms.yml — настройка форм для DiscordBMV
+# Документация и примеры: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-forms
+# Если что-то не понятно — смотри по ссылке выше!
+
+# Example forms
 forms:
   feedback-form:
     title: "Feedback"

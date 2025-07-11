@@ -1,3 +1,11 @@
+# commands.yml — commands configuration for DiscordBMV
+# Documentation and examples: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-commands
+# If something is unclear — see the link above!
+
+# commands.yml — настройка команд для DiscordBMV
+# Документация и примеры: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-commands
+# Если что-то не понятно — смотри по ссылке выше!
+
 # Example
 commands:
   - name: "hello"
@@ -328,3 +336,23 @@ commands:
             - name: "Food"
               value: "%player_food_level%"
               inline: true
+
+  - name: "remove-role-demo"
+    description: "Remove a specific role from the user"
+    context: server
+    options:
+      - name: user
+        type: USER
+        description: "User to remove the role from"
+        required: true
+      - name: role
+        type: ROLE
+        description: "Role to remove"
+        required: true
+    actions:
+      - type: remove_role
+        user_id: "{option:user}"
+        role_id: "{option:role}"
+      - type: send_message
+        response_type: REPLY
+        message: "Role <@&{option:role}> has been removed from <@{option:user}>."

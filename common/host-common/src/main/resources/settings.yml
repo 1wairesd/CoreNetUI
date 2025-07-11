@@ -1,3 +1,11 @@
+# settings.yml — settings configuration for DiscordBMV
+# Documentation and examples: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-settings
+# If something is unclear — see the link above!
+
+# settings.yml — настройка настроек для DiscordBMV
+# Документация и примеры: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-settings
+# Если что-то не понятно — смотри по ссылке выше!
+
 Discord:
   Bot-token: "your-bot-token"
   activity:

@@ -28,4 +28,4 @@ public class ClientsCommand {
             source.sendMessage(ColorUtils.parseComponent(result));
         }
     }
-} 
+}
