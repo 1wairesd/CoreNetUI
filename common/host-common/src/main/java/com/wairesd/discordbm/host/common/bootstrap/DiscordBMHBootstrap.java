@@ -51,9 +51,10 @@ public class DiscordBMHBootstrap {
     }
 
     private void initDatabase() {
-        String dbPath = "jdbc:sqlite:" + dataDirectory.resolve("DiscordBMV.db");
-        dbManager = new Database(dbPath);
-        logger.info("Database initialized");
+        String sqlitePath = dataDirectory.resolve("DiscordBMV.db").toString();
+        String dbUrl = Settings.getDatabaseJdbcUrl(sqlitePath);
+        dbManager = new Database(dbUrl);
+        logger.info("Database initialized ({} mode)", Settings.isMySQLEnabled() ? "MySQL" : "SQLite");
     }
 
     private void initNetty() {

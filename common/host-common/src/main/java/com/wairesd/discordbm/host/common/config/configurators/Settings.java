@@ -174,6 +174,42 @@ public class Settings {
         return (boolean) getConfigValue("view_connected_banned_ip", false);
     }
 
+    public static boolean isMySQLEnabled() {
+        return (boolean) getConfigValue("mysql.enabled", false);
+    }
+    public static String getMySQLHost() {
+        return (String) getConfigValue("mysql.host", "localhost");
+    }
+    public static int getMySQLPort() {
+        return (int) getConfigValue("mysql.port", 3306);
+    }
+    public static String getMySQLDatabase() {
+        return (String) getConfigValue("mysql.database", "discordbmv");
+    }
+    public static String getMySQLUsername() {
+        return (String) getConfigValue("mysql.username", "root");
+    }
+    public static String getMySQLPassword() {
+        return (String) getConfigValue("mysql.password", "password");
+    }
+    public static String getMySQLParams() {
+        return (String) getConfigValue("mysql.params", "?useSSL=false&serverTimezone=UTC");
+    }
+
+    public static String getDatabaseJdbcUrl(String sqlitePath) {
+        if (isMySQLEnabled()) {
+            return String.format(
+                "jdbc:mysql://%s:%d/%s%s",
+                getMySQLHost(),
+                getMySQLPort(),
+                getMySQLDatabase(),
+                getMySQLParams()
+            ) + String.format("&user=%s&password=%s", getMySQLUsername(), getMySQLPassword());
+        } else {
+            return "jdbc:sqlite:" + sqlitePath;
+        }
+    }
+
     private static Object getConfigValue(String path, Object defaultValue) {
         String[] keys = path.split("\\.");
         Object current = config;

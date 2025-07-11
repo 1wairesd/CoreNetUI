@@ -42,3 +42,14 @@ debug:
   debug-netty-start: false
   debug-errors: true               # Log in errors and exceptions
   debug-button-register: false
+
+mysql:
+  enabled: false           # true — использовать MySQL, false — использовать SQLite
+  host: localhost
+  port: 3306
+  database: discordbmv
+  username: root
+  password: password
+  params: '?useSSL=false&serverTimezone=UTC'
+  # example:
+  # jdbc:mysql://localhost:3306/discordbmv?user=root&password=password&useSSL=false&serverTimezone=UTC
