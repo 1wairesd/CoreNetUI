@@ -23,6 +23,8 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFetc
 import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageDeleter;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorMessages;
+import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorType;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.registry.ButtonActionRegistry;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -485,29 +487,34 @@ public class ResponseHandler {
             return;
         }
         var jda = platformManager.getDiscordBotManager().getJda();
-        var user = jda.getUserById(userId);
-        if (user == null) {
-            logger.error("User with ID {} not found for direct_message", userId);
-            return;
-        }
-        user.openPrivateChannel().queue(pc -> {
-            var msgAction = respMsg.response() != null ? pc.sendMessage(respMsg.response()) : pc.sendMessage("");
-            if (respMsg.embed() != null) {
-                var embed = toJdaEmbed(respMsg.embed()).build();
-                msgAction.setEmbeds(embed);
+        try {
+            var user = jda.getUserById(userId);
+            if (user == null) {
+                logger.error("User with ID {} not found for direct_message", userId);
+                return;
             }
-            if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
-                List<Button> jdaButtons = respMsg.buttons().stream()
-                        .map(btn -> btn.style() == ButtonStyle.LINK ? Button.link(btn.url(), btn.label()) : Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()).withDisabled(btn.disabled()))
-                        .collect(Collectors.toList());
-                msgAction.setActionRow(jdaButtons);
-            }
-            msgAction.queue(null, error -> {
-                if (error != null && error.getClass().getSimpleName().equals("ErrorResponseException") && error.getMessage().contains("50007")) {
-                    logger.warn("Failed to send DM to user {}: 50007 Cannot send messages to this user", userId);
+            user.openPrivateChannel().queue(pc -> {
+                var msgAction = respMsg.response() != null ? pc.sendMessage(respMsg.response()) : pc.sendMessage("");
+                if (respMsg.embed() != null) {
+                    var embed = toJdaEmbed(respMsg.embed()).build();
+                    msgAction.setEmbeds(embed);
                 }
+                if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
+                    List<Button> jdaButtons = respMsg.buttons().stream()
+                            .map(btn -> btn.style() == ButtonStyle.LINK ? Button.link(btn.url(), btn.label()) : Button.of(getJdaButtonStyle(btn.style()), btn.customId(), btn.label()).withDisabled(btn.disabled()))
+                            .collect(Collectors.toList());
+                    msgAction.setActionRow(jdaButtons);
+                }
+                msgAction.queue(null, error -> {
+                    if (error != null && error.getClass().getSimpleName().equals("ErrorResponseException") && error.getMessage().contains("50007")) {
+                        logger.warn("Failed to send DM to user {}: 50007 Cannot send messages to this user", userId);
+                    }
+                });
             });
-        });
+        } catch (NumberFormatException e) {
+            logger.error("Invalid userId for direct_message: {}", userId);
+            var embed = CommandErrorMessages.createErrorEmbed(CommandErrorType.INVALID_SNOWFLAKE);
+        }
     }
 
     public static void sendChannelMessage(ResponseMessage respMsg) {

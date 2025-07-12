@@ -30,6 +30,7 @@ public class CommandErrorMessages {
         DEFAULT_MESSAGES.put(CommandErrorType.INVALID_FORMAT, "❌ Неверный формат: {0}");
         DEFAULT_MESSAGES.put(CommandErrorType.OPERATION_FAILED, "❌ Не удалось выполнить операцию: {0}");
         DEFAULT_MESSAGES.put(CommandErrorType.CHANCE_FAILED, Messages.getMessage(Messages.Keys.CHANCE_FAILED));
+        DEFAULT_MESSAGES.put(CommandErrorType.INVALID_SNOWFLAKE, Messages.getMessage(Messages.Keys.INVALID_SNOWFLAKE));
     }
 
     public static void setCustomMessage(CommandErrorType type, String message) {

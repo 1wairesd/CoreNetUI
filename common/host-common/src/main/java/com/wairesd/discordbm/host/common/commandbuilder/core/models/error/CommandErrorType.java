@@ -16,5 +16,6 @@ public enum CommandErrorType {
     DOES_NOT_EXIST,           // Объект не существует
     INVALID_FORMAT,           // Неверный формат данных
     OPERATION_FAILED,          // Операция не удалась
-    CHANCE_FAILED             // Не выполнено условие chance
+    CHANCE_FAILED,             // Не выполнено условие chance
+    INVALID_SNOWFLAKE         // Некорректный или отсутствующий Discord snowflake/ID
 } 

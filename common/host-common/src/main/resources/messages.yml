@@ -32,3 +32,4 @@ no_connected_clients: "No connected clients."
 
 chance-failed: "❌ You're out of luck"
 role-required: "❌ This command requires the role {0}"
+invalid-snowflake: "❌ Invalid or missing Discord ID (user/channel). Please provide a valid Discord snowflake."
