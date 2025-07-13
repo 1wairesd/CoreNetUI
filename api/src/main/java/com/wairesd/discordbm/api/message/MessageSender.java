@@ -65,15 +65,6 @@ public interface MessageSender {
      */
     void sendForm(String requestId, String message, Form form);
 
-    /**
-     * Send a form in response to a command, with response type
-     */
-    void sendForm(String requestId, Form form, ResponseType responseType);
-    /**
-     * Send a form with a message in response to a command, with response type
-     */
-    void sendForm(String requestId, String message, Form form, ResponseType responseType);
-
     // --- Response с label ---
     /**
      * Send a text message in response to a command, with label
@@ -91,15 +82,6 @@ public interface MessageSender {
      * Send a text message with buttons in response to a command, with label
      */
     void sendResponse(String requestId, String message, List<Button> buttons, String label);
-
-    /**
-     * Send a text message in response to a command, with response type
-     */
-    void sendResponse(String requestId, String message, ResponseType responseType);
-    /**
-     * Send an embed in response to a command, with response type
-     */
-    void sendResponse(String requestId, Embed embed, ResponseType responseType);
 
     /**
      * Send a text message in response to a command, with conditions
@@ -155,16 +137,6 @@ public interface MessageSender {
      * @param channelId The ID of the channel to send the message to
      */
     void sendDirectMessage(String userId, String message, String requestId, String channelId);
-
-    /**
-     * Send a direct message to a user with response type
-     */
-    void sendDirectMessage(String userId, String message, ResponseType responseType);
-
-    /**
-     * Send an embed as a direct message to a user, with response type
-     */
-    void sendDirectMessage(String userId, Embed embed, ResponseType responseType);
 
     // --- Channel Message ---
 
@@ -229,15 +201,6 @@ public interface MessageSender {
     void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions, String label);
 
     /**
-     * Send a message to a channel, with response type
-     */
-    void sendChannelMessage(String channelId, String message, ResponseType responseType);
-    /**
-     * Send an embed to a channel, with response type
-     */
-    void sendChannelMessage(String channelId, Embed embed, ResponseType responseType);
-
-    /**
      * Send a message with a button that opens a form in response to a command
      * @param requestId The request ID of the command
      * @param message The message to send
@@ -245,11 +208,6 @@ public interface MessageSender {
      * @param form The form to open when the button is pressed
      */
     void sendButtonWithForm(String requestId, String message, Button button, Form form);
-
-    /**
-     * Send a message with a button that opens a form in response to a command, with response type
-     */
-    void sendButtonWithForm(String requestId, String message, Button button, Form form, ResponseType responseType);
 
     /**
      * Edit a previously sent message by label, replacing its text.
@@ -293,13 +251,4 @@ public interface MessageSender {
      * @param label The label/id of the message to delete
      */
     void deleteMessage(String label);
-
-    /**
-     * Enum for response type (reply, edit, ephemeral)
-     */
-    enum ResponseType {
-        REPLY,
-        EDIT_MESSAGE,
-        EPHEMERAL
-    }
 }

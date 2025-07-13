@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.client.common.network;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.wairesd.discordbm.common.network.codec.ByteBufDecoder;
 import com.wairesd.discordbm.common.network.codec.ByteBufEncoder;
 import com.wairesd.discordbm.client.common.platform.Platform;
@@ -8,6 +9,8 @@ import com.wairesd.discordbm.client.common.handler.MessageHandler;
 import com.wairesd.discordbm.client.common.models.command.Command;
 import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.register.RegisterMessage;
+import com.wairesd.discordbm.common.models.response.ResponseMessage;
+import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -139,10 +142,48 @@ public class NettyClient {
 
     public void send(String message) {
         if (isActive()) {
+            message = autoDetectAndUpdateResponseType(message);
             channel.writeAndFlush(message);
         } else {
             pluginLogger.warn("Netty channel not active. Message not sent: " + message);
         }
+    }
+
+    private String autoDetectAndUpdateResponseType(String message) {
+        try {
+            JsonObject json = new com.google.gson.JsonParser().parse(message).getAsJsonObject();
+            String type = json.get("type") != null ? json.get("type").getAsString() : null;
+
+            if ("response".equals(type)) {
+                ResponseMessage respMsg = gson.fromJson(message, ResponseMessage.class);
+                ResponseTypeDetector.ResponseType responseType = ResponseTypeDetector.determineResponseType(respMsg);
+                ResponseFlags updatedFlags = ResponseTypeDetector.updateFlagsForResponseType(respMsg, responseType);
+                ResponseMessage updatedRespMsg = new ResponseMessage.Builder()
+                    .type(respMsg.type())
+                    .requestId(respMsg.requestId())
+                    .response(respMsg.response())
+                    .embed(respMsg.embed())
+                    .buttons(respMsg.buttons())
+                    .form(respMsg.form())
+                    .flags(updatedFlags)
+                    .userId(respMsg.userId())
+                    .channelId(respMsg.channelId())
+                    .conditions(respMsg.conditions())
+                    .build();
+                
+                if (platform.isDebugCommandRegistrations()) {
+                    pluginLogger.info("Auto-detected response type: %s for message", responseType);
+                }
+                
+                return gson.toJson(updatedRespMsg);
+            }
+        } catch (Exception e) {
+            if (platform.isDebugErrors()) {
+                pluginLogger.error("Error auto-detecting response type: " + e.getMessage());
+            }
+        }
+        
+        return message;
     }
 
     public boolean isActive() {

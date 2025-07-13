@@ -56,6 +56,12 @@ public class ResponseHandler {
         if (Settings.isDebugRequestProcessing()) {
             logger.info("Response received for request " + respMsg.requestId() + ": " + respMsg.toString());
         }
+
+        ResponseTypeDetector.ResponseType responseType = ResponseTypeDetector.determineResponseType(respMsg);
+        if (Settings.isDebugRequestProcessing()) {
+            logger.info("Auto-detected response type: {} for requestId: {}", responseType, respMsg.requestId());
+        }
+        
         if (respMsg.conditions() != null && !respMsg.conditions().isEmpty()) {
             Context context = null;
             var event = listener != null ? listener.getRequestSender().getPendingRequests().get(respMsg.requestId()) : null;
@@ -77,16 +83,29 @@ public class ResponseHandler {
                 }
             }
         }
+        
         try {
             UUID requestId = UUID.fromString(respMsg.requestId());
 
-            if (respMsg.form() != null) {
-                if (respMsg.flags() != null && respMsg.flags().requiresModal()) {
+            switch (responseType) {
+                case MODAL:
                     handleFormResponse(requestId, respMsg);
                     return;
-                }
-                handleFormResponse(requestId, respMsg);
-                return;
+                case DIRECT:
+                    sendDirectMessage(respMsg);
+                    return;
+                case CHANNEL:
+                    sendChannelMessage(respMsg);
+                    return;
+                case EDIT_MESSAGE:
+                    editMessage(respMsg);
+                    return;
+                case REPLY_MODAL:
+                    handleReplyModal(requestId, respMsg);
+                    return;
+                case REPLY:
+                default:
+                    break;
             }
 
             if (respMsg.flags() != null && respMsg.flags().shouldPreventMessageSend()) {
@@ -478,6 +497,34 @@ public class ResponseHandler {
     public static void handleFormOnly(ResponseMessage respMsg) {
         UUID requestId = UUID.fromString(respMsg.requestId());
         handleFormResponse(requestId, respMsg);
+    }
+
+    /**
+     * Обрабатывает ответ типа REPLY_MODAL - сначала отправляет ответ, затем форму
+     */
+    private static void handleReplyModal(UUID requestId, ResponseMessage respMsg) {
+        var event = listener.getRequestSender().getPendingRequests().remove(requestId);
+        if (event != null) {
+            // Сначала отправляем ответ
+            boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
+            if (respMsg.response() != null && !respMsg.response().isEmpty()) {
+                event.getHook().sendMessage(respMsg.response()).setEphemeral(ephemeral).queue(
+                    success -> {
+                        if (Settings.isDebugRequestProcessing()) {
+                            logger.info("Reply sent for REPLY_MODAL, now sending form for requestId: {}", requestId);
+                        }
+                        // После отправки ответа отправляем форму
+                        handleFormResponse(requestId, respMsg);
+                    },
+                    failure -> logger.error("Failed to send reply for REPLY_MODAL: {}", failure.getMessage())
+                );
+            } else {
+                // Если нет текста ответа, сразу отправляем форму
+                handleFormResponse(requestId, respMsg);
+            }
+        } else {
+            logger.error("No event found for REPLY_MODAL requestId: {}", requestId);
+        }
     }
 
     public static void sendDirectMessage(ResponseMessage respMsg) {

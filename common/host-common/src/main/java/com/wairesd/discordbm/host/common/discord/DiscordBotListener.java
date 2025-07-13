@@ -108,7 +108,7 @@ public class DiscordBotListener extends ListenerAdapter {
         }
 
         if (servers.size() == 1) {
-            InteractionResponseType responseType = InteractionResponseType.AUTO;
+            InteractionResponseType responseType = determineResponseTypeForCommand(command, event);
             boolean requiresModal = false;
             boolean useDeferReply = false;
             boolean useReply = false;
@@ -118,6 +118,7 @@ public class DiscordBotListener extends ListenerAdapter {
                 .collect(Collectors.toMap(o -> o.getName(), o -> o.getAsString()));
             Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(command, options);
             ephemeral = configEphemeral != null ? configEphemeral : false;
+            
             switch (responseType) {
                 case REPLY_MODAL -> requiresModal = true;
                 case DEFER_REPLY -> useDeferReply = true;
@@ -130,6 +131,7 @@ public class DiscordBotListener extends ListenerAdapter {
                     }
                 }
             }
+            
             if (useReply) {
                 event.reply("...").queue();
                 return;
@@ -215,6 +217,22 @@ public class DiscordBotListener extends ListenerAdapter {
 
     public RequestSender getRequestSender() {
         return requestSender;
+    }
+    private InteractionResponseType determineResponseTypeForCommand(String command, SlashCommandInteractionEvent event) {
+        boolean hasOptions = !event.getOptions().isEmpty();
+
+        var cmdDef = nettyServer.getCommandDefinitions().get(command);
+        if (cmdDef != null) {
+            if (cmdDef.context() != null && cmdDef.context().contains("form")) {
+                return InteractionResponseType.REPLY_MODAL;
+            }
+
+            if (hasOptions && cmdDef.options() != null && cmdDef.options().size() > 2) {
+                return InteractionResponseType.DEFER_REPLY;
+            }
+        }
+
+        return InteractionResponseType.AUTO;
     }
 
     @Override

@@ -174,4 +174,10 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
             ctx.close();
         }
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) {
+        pluginLogger.warn("Netty connection to host lost (channel inactive). Attempting reconnect or manual intervention may be required.");
+        ctx.fireChannelInactive();
+    }
 }
