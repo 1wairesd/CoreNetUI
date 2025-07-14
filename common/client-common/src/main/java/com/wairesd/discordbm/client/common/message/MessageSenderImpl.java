@@ -17,7 +17,6 @@ import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.client.common.platform.Platform;
-import com.wairesd.discordbm.client.common.network.ResponseTypeDetector;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class MessageSenderImpl implements MessageSender {
         this.logger = logger;
     }
     
-    @Override
+        @Override
     public void sendResponse(String requestId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
@@ -44,9 +43,6 @@ public class MessageSenderImpl implements MessageSender {
                 .form(null)
                 .flags(new ResponseFlags.Builder().build())
                 .build();
-
-        autoDetectAndUpdateResponseType(respMsg);
-        
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
@@ -84,7 +80,7 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
     
-    @Override
+        @Override
     public void sendForm(String requestId, Form form) {
         FormDefinition formDef = convertToFormDefinition(form);
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -96,9 +92,6 @@ public class MessageSenderImpl implements MessageSender {
                 .form(formDef)
                 .flags(new ResponseFlags.Builder().build())
                 .build();
-
-        autoDetectAndUpdateResponseType(respMsg);
-        
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
@@ -113,17 +106,13 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(formDef)
-                .flags(new ResponseFlags.Builder()
-                        .preventMessageSend(true)
-                        .isFormResponse(true)
-                        .requiresModal(true)
-                        .build())
+                .flags(new ResponseFlags.Builder().build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
     
-    @Override
+        @Override
     public void sendDirectMessage(String userId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("direct_message")
@@ -134,8 +123,6 @@ public class MessageSenderImpl implements MessageSender {
                 .form(null)
                 .flags(new ResponseFlags.Builder().build())
                 .build();
-
-        autoDetectAndUpdateResponseType(respMsg);
         
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -190,7 +177,7 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
     
-    @Override
+        @Override
     public void sendChannelMessage(String channelId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")
@@ -201,8 +188,6 @@ public class MessageSenderImpl implements MessageSender {
                 .form(null)
                 .flags(new ResponseFlags.Builder().build())
                 .build();
-
-        autoDetectAndUpdateResponseType(respMsg);
         
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -521,36 +506,6 @@ public class MessageSenderImpl implements MessageSender {
         return new FormAdapter(form).getInternalForm();
     }
 
-    private void autoDetectAndUpdateResponseType(ResponseMessage respMsg) {
-        try {
-            ResponseTypeDetector.ResponseType responseType = ResponseTypeDetector.determineResponseType(respMsg);
-
-            ResponseFlags updatedFlags = ResponseTypeDetector.updateFlagsForResponseType(respMsg, responseType);
-
-            ResponseMessage updatedRespMsg = new ResponseMessage.Builder()
-                .type(respMsg.type())
-                .requestId(respMsg.requestId())
-                .response(respMsg.response())
-                .embed(respMsg.embed())
-                .buttons(respMsg.buttons())
-                .form(respMsg.form())
-                .flags(updatedFlags)
-                .userId(respMsg.userId())
-                .channelId(respMsg.channelId())
-                .conditions(respMsg.conditions())
-                .build();
-
-            respMsg = updatedRespMsg;
-
-            if (platform.isDebugCommandRegistrations()) {
-                logger.info("Auto-detected response type: %s for requestId: %s", responseType, respMsg.requestId());
-            }
-        } catch (Exception e) {
-            if (platform.isDebugErrors()) {
-                logger.error("Error auto-detecting response type: " + e.getMessage());
-            }
-        }
-    }
 
     @Override
     public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions) {
@@ -644,11 +599,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(java.util.Collections.singletonList(buttonDef))
                 .form(convertToFormDefinition(form))
-                .flags(new ResponseFlags.Builder()
-                        .preventMessageSend(true)
-                        .isFormResponse(false)
-                        .requiresModal(false)
-                        .build())
+                .flags(new ResponseFlags.Builder().build())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
