@@ -163,9 +163,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
             ResponseHandler.editComponent(respMsg);
         } else if ("delete_message".equals(type)) {
             String label = json.get("label").getAsString();
+            boolean deleteAll = !json.has("delete_all") || json.get("delete_all").getAsBoolean();
             ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("delete_message")
                 .requestId(label)
+                .deleteAll(deleteAll)
                 .build();
             ResponseHandler.deleteMessage(respMsg);
             return;

@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.DeleteMessageAction;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
@@ -515,13 +516,9 @@ public class ResponseHandler {
         handleFormResponse(requestId, respMsg);
     }
 
-    /**
-     * Обрабатывает ответ типа REPLY_MODAL - сначала отправляет ответ, затем форму
-     */
     private static void handleReplyModal(UUID requestId, ResponseMessage respMsg) {
         var event = listener.getRequestSender().getPendingRequests().remove(requestId);
         if (event != null) {
-            // Сначала отправляем ответ
             boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
             if (respMsg.response() != null && !respMsg.response().isEmpty()) {
                 event.getHook().sendMessage(respMsg.response()).setEphemeral(ephemeral).queue(
@@ -529,13 +526,11 @@ public class ResponseHandler {
                         if (Settings.isDebugRequestProcessing()) {
                             logger.info("Reply sent for REPLY_MODAL, now sending form for requestId: {}", requestId);
                         }
-                        // После отправки ответа отправляем форму
                         handleFormResponse(requestId, respMsg);
                     },
                     failure -> logger.error("Failed to send reply for REPLY_MODAL: {}", failure.getMessage())
                 );
             } else {
-                // Если нет текста ответа, сразу отправляем форму
                 handleFormResponse(requestId, respMsg);
             }
         } else {
@@ -700,20 +695,12 @@ public class ResponseHandler {
             return;
         }
         try {
-            MessageReferenceResolver resolver = new MessageReferenceResolver();
-            String[] ref = platformManager.getMessageReference(label);
-            if (ref == null || ref.length != 2) {
-                logger.error("No message reference found for label: {}", label);
-                return;
-            }
-            String channelId = ref[0];
-            String messageId = ref[1];
-            ChannelFetcher fetcher = new ChannelFetcher();
-            MessageDeleter deleter = new MessageDeleter();
-            var jda = platformManager.getDiscordBotManager().getJda();
-            var channel = fetcher.getTextChannel(jda, channelId);
-            deleter.deleteMessage(channel, messageId);
-            platformManager.removeGlobalMessageLabel(label);
+            // Передаём deleteAll в DeleteMessageAction через properties
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("label", label);
+            properties.put("delete_all", respMsg.deleteAll());
+            DeleteMessageAction action = new DeleteMessageAction(properties);
+            action.execute(null).join();
         } catch (Exception e) {
             logger.error("Failed to delete message for label: {}", label, e);
         }

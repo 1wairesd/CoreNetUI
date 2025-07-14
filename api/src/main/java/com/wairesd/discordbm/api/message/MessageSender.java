@@ -249,6 +249,15 @@ public interface MessageSender {
      * Delete a previously sent message by label/id.
      *
      * @param label The label/id of the message to delete
+     * @param deleteAll If true, delete all messages with this label; if false, only the last one
      */
-    void deleteMessage(String label);
+    void deleteMessage(String label, boolean deleteAll);
+
+    /**
+     * Delete all messages with the given label (default behavior).
+     * @param label The label/id of the message to delete
+     */
+    default void deleteMessage(String label) {
+        deleteMessage(label, true);
+    }
 }

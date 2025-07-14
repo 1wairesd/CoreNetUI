@@ -122,4 +122,12 @@ public class DiscordBMHPlatformManager {
     public PluginLogger getLogger() {
         return logger;
     }
+
+    public List<String[]> getAllMessageReferencesByLabel(String key) {
+        return messageManager.getAllMessageReferencesByLabel(key);
+    }
+
+    public void removeMessageReference(String key, String channelId, String messageId) {
+        messageManager.removeMessageReference(key, channelId, messageId);
+    }
 } 

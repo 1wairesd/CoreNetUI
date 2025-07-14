@@ -18,6 +18,7 @@ public class ResponseMessage {
     private final String userId;
     private final String channelId;
     private final List<Map<String, Object>> conditions;
+    private final boolean deleteAll;
 
     private ResponseMessage(Builder builder) {
         this.type = builder.type;
@@ -30,6 +31,7 @@ public class ResponseMessage {
         this.userId = builder.userId;
         this.channelId = builder.channelId;
         this.conditions = builder.conditions;
+        this.deleteAll = builder.deleteAll;
     }
 
     public String type() {
@@ -72,6 +74,10 @@ public class ResponseMessage {
         return conditions;
     }
 
+    public boolean deleteAll() {
+        return deleteAll;
+    }
+
     public static class Builder {
         private String type;
         private String requestId;
@@ -83,6 +89,7 @@ public class ResponseMessage {
         private String userId;
         private String channelId;
         private List<Map<String, Object>> conditions;
+        private boolean deleteAll = true;
 
         public Builder type(String type) {
             this.type = type;
@@ -131,6 +138,11 @@ public class ResponseMessage {
 
         public Builder conditions(List<Map<String, Object>> conditions) {
             this.conditions = conditions;
+            return this;
+        }
+
+        public Builder deleteAll(boolean deleteAll) {
+            this.deleteAll = deleteAll;
             return this;
         }
 

@@ -476,11 +476,17 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void deleteMessage(String label) {
+    public void deleteMessage(String label, boolean deleteAll) {
         JsonObject obj = new JsonObject();
         obj.addProperty("type", "delete_message");
         obj.addProperty("label", label);
+        if (!deleteAll) obj.addProperty("delete_all", false);
         platform.getNettyService().sendNettyMessage(obj.toString());
+    }
+
+    @Override
+    public void deleteMessage(String label) {
+        deleteMessage(label, true);
     }
 
     private EmbedDefinition convertToEmbedDefinition(Embed embed) {
