@@ -8,3 +8,6 @@ commands:
   DiscordBMB:
     description: Discord bot plugin management
     permission: discrdbmb.admin
+
+libraries:
+  - io.netty:netty-all:4.2.2.Final

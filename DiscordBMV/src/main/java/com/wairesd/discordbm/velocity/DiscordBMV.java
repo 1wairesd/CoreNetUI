@@ -18,17 +18,22 @@ import com.wairesd.discordbm.host.common.bootstrap.DiscordBMHBootstrap;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.host.common.scheduler.WebhookScheduler;
+import com.wairesd.discordbm.velocity.libraries.LibraryLoader;
 import com.wairesd.discordbm.velocity.listener.PlayerJoinListener;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.Map;
+import com.velocitypowered.api.plugin.PluginManager;
+import org.slf4j.Logger;
 
 @Plugin(id = "discordbmv", name = "DiscordBMV", version = "1.0", authors = {"wairesd"})
 public class DiscordBMV {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
     private final Path dataDirectory;
     private final ProxyServer proxy;
+    private final PluginManager pluginManager;
+    private final Logger slf4jLogger;
     
     private DiscordBMHPlatformManager platformManager;
     private DiscordBMHBootstrap platformBootstrap;
@@ -37,13 +42,19 @@ public class DiscordBMV {
     public static Map<String, Page> pageMap = Pages.pageMap;
 
     @Inject
-    public DiscordBMV(@DataDirectory Path dataDirectory, ProxyServer proxy) {
+    public DiscordBMV(@DataDirectory Path dataDirectory, ProxyServer proxy, PluginManager pluginManager, Logger logger) {
         this.dataDirectory = dataDirectory;
         this.proxy = proxy;
+        this.pluginManager = pluginManager;
+        this.slf4jLogger = logger;
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        LibraryLoader loader = new LibraryLoader(proxy, pluginManager, dataDirectory, slf4jLogger, this);
+        loader.loadLibraries();
+        try { Class.forName("com.mysql.cj.jdbc.Driver"); } catch (ClassNotFoundException ignored) {}
+        try { Class.forName("org.sqlite.JDBC"); } catch (ClassNotFoundException ignored) {}
         StartupTimer timer = new StartupTimer(logger);
         timer.start();
         BannerPrinter.printBanner(BannerPrinter.Platform.VELOCITY);
