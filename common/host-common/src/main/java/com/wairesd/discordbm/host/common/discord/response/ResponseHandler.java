@@ -41,11 +41,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ResponseHandler {
     private static DiscordBotListener listener;
     private static DiscordBMHPlatformManager platformManager;
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final ConcurrentHashMap<String, Boolean> sentFormRequests = new ConcurrentHashMap<>();
 
     public static void init(DiscordBotListener discordBotListener, DiscordBMHPlatformManager platform) {
         listener = discordBotListener;
@@ -89,6 +91,9 @@ public class ResponseHandler {
 
             switch (responseType) {
                 case MODAL:
+                    if (sentFormRequests.putIfAbsent(respMsg.requestId(), true) != null) {
+                        return;
+                    }
                     handleFormResponse(requestId, respMsg);
                     return;
                 case DIRECT:

@@ -79,6 +79,7 @@ public class FormInteractionListener extends ListenerAdapter {
                     msg.put("ephemeral", ephemeral);
                     String json = new com.google.gson.Gson().toJson(msg);
                     nettyServer.sendMessage(channel, json);
+                    hook.deleteOriginal().queue();
                 }, error -> {
                     logger.error("Failed to deferReply in onModalInteraction", error);
                 });
