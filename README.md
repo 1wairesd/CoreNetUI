@@ -110,4 +110,4 @@ README.md              # Документация
 
 ## ⚖️ Лицензия
 
-Проект распространяется по лицензии [MIT](https://github.com/1wairesd/DiscordBM/blob/main/LICENSE).
+Проект распространяется по лицензии [MIT](https://github.com/1wairesd/DiscordBM?tab=MIT-1-ov-file).
