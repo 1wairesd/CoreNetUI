@@ -18,7 +18,6 @@ import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.LoggerFactory;
 
@@ -36,14 +35,16 @@ public class DiscordBotListener extends ListenerAdapter {
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
     public static final Map<String, Boolean> formEphemeralMap = new ConcurrentHashMap<>();
+    private final Map<String, String> requestIdToCommand;
 
-    public DiscordBotListener(DiscordBMHPlatformManager platformManager, NettyServer nettyServer, PluginLogger logger) {
+    public DiscordBotListener(DiscordBMHPlatformManager platformManager, NettyServer nettyServer, PluginLogger logger, Map<String, String> requestIdToCommand) {
         this.platformManager = platformManager;
         this.nettyServer = nettyServer;
         this.requestSender = new RequestSender(nettyServer, DiscordBotListener.logger);
         this.responseHelper = new ResponseHelper();
         this.commandHandler = new CommandHandler(platformManager, requestSender, responseHelper);
         this.serverSelector = new ServerSelector(requestSender, responseHelper);
+        this.requestIdToCommand = requestIdToCommand;
     }
 
     @Override
@@ -147,72 +148,16 @@ public class DiscordBotListener extends ListenerAdapter {
                 return;
             }
             requestSender.sendRequestToServer(event, servers.get(0), requiresModal, useDeferReply, requestId, ephemeral);
+            if (requiresModal) {
+                requestIdToCommand.put(requestId.toString(), command);
+            }
         } else {
             serverSelector.sendServerSelectionMenu(event, servers);
         }
     }
 
-    @Override
-    public void onModalInteraction(ModalInteractionEvent event) {
-        String modalId = event.getModalId();
-        if (!modalId.contains("_form_")) {
-            return;
-        }
-
-        try {
-            Object handler = platformManager.getFormHandlers().get(modalId);
-            if (handler == null) {
-                event.reply("Form has expired or is invalid.").setEphemeral(true).queue();
-                return;
-            }
-
-            Map<String, String> responses = event.getValues().stream()
-                    .collect(Collectors.toMap(
-                            input -> input.getId(),
-                            input -> input.getAsString()
-                    ));
-
-            String requestId = null;
-            String command = null;
-            if (modalId.contains("_form_")) {
-                int idx = modalId.lastIndexOf("_form_");
-                command = modalId.substring(0, idx);
-                requestId = modalId.substring(idx + 6);
-            }
-            final String finalRequestId = requestId;
-            final String finalCommand = command;
-            final boolean ephemeral;
-            Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(finalCommand, responses);
-            ephemeral = configEphemeral != null ? configEphemeral : false;
-            if (finalRequestId != null && finalCommand != null) {
-                var nettyServer = platformManager.getNettyServer();
-                var servers = nettyServer.getServersForCommand(finalCommand);
-                if (servers != null && !servers.isEmpty()) {
-                    var channel = servers.get(0).channel();
-
-                    event.deferReply(ephemeral).queue(hook -> {
-                        requestSender.storeInteractionHook(java.util.UUID.fromString(finalRequestId), hook);
-
-                        Map<String, Object> msg = new java.util.HashMap<>();
-                        msg.put("type", "form_submit");
-                        msg.put("command", finalCommand);
-                        msg.put("requestId", finalRequestId);
-                        msg.put("formData", responses);
-                        msg.put("ephemeral", ephemeral);
-                        String json = new com.google.gson.Gson().toJson(msg);
-                        nettyServer.sendMessage(channel, json);
-                    });
-                } else {
-                    event.reply("Ошибка: сервер не найден.").setEphemeral(true).queue();
-                }
-            } else {
-                event.reply("Не удалось определить команду или requestId для формы.").setEphemeral(true).queue();
-            }
-        } catch (Exception e) {
-            event.reply("An error occurred while processing the form.").setEphemeral(true).queue();
-        } finally {
-            platformManager.getFormHandlers().remove(modalId);
-        }
+    public Map<String, String> getRequestIdToCommand() {
+        return requestIdToCommand;
     }
 
     public RequestSender getRequestSender() {

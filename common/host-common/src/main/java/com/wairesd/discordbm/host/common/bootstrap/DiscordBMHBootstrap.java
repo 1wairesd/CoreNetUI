@@ -16,6 +16,8 @@ import com.wairesd.discordbm.host.common.scheduler.WebhookScheduler;
 import net.dv8tion.jda.api.JDA;
 
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DiscordBMHBootstrap {
     private final DiscordBMHPlatformManager platformManager;
@@ -77,11 +79,12 @@ public class DiscordBMHBootstrap {
 
         logger.info("Discord bot initialized");
         jda.addEventListener(new ButtonInteractionListener(nettyServer, platformManager));
-        jda.addEventListener(new FormInteractionListener(platformManager));
+        Map<String, String> requestIdToCommand = new ConcurrentHashMap<>();
+        DiscordBotListener listener = new DiscordBotListener(platformManager, nettyServer, logger, requestIdToCommand);
+        jda.addEventListener(listener);
+        jda.addEventListener(new FormInteractionListener(platformManager, requestIdToCommand));
 
         nettyServer.setJda(jda);
-        DiscordBotListener listener = new DiscordBotListener(platformManager, nettyServer, logger);
-        jda.addEventListener(listener);
         ResponseHandler.init(listener, platformManager);
 
         commandManager = new CommandManager(nettyServer, jda);

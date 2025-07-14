@@ -115,8 +115,6 @@ public class NettyClient {
         if (platform.isDebugCommandRegistrations()) {
             pluginLogger.info("Sent client registration message.");
         }
-
-        platform.onNettyConnected();
     }
 
     public void registerCommands(List<Command> commands) {

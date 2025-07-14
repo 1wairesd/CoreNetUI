@@ -121,8 +121,10 @@ public class NettyServer {
     }
 
     public void sendMessage(Channel channel, String message) {
-        if (channel != null && channel.isActive()) {
-            channel.writeAndFlush(message);
+        if (channel != null) {
+            if (channel.isActive()) {
+                channel.writeAndFlush(message);
+            }
         }
     }
 

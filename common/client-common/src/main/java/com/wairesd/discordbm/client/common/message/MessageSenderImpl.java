@@ -32,7 +32,7 @@ public class MessageSenderImpl implements MessageSender {
         this.logger = logger;
     }
     
-        @Override
+    @Override
     public void sendResponse(String requestId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
@@ -80,7 +80,7 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
     
-        @Override
+    @Override
     public void sendForm(String requestId, Form form) {
         FormDefinition formDef = convertToFormDefinition(form);
         ResponseMessage respMsg = new ResponseMessage.Builder()
@@ -112,7 +112,7 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
     
-        @Override
+    @Override
     public void sendDirectMessage(String userId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("direct_message")
@@ -177,7 +177,7 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
     
-        @Override
+    @Override
     public void sendChannelMessage(String channelId, String message) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")

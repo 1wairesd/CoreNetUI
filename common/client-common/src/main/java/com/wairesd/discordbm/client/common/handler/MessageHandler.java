@@ -54,6 +54,10 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
         try {
             JsonObject json = gson.fromJson(message, JsonObject.class);
             String typeStr = json.get("type").getAsString();
+            if ("auth_ok".equals(typeStr)) {
+                platform.onNettyConnected();
+                return;
+            }
             if ("role_action_response".equals(typeStr)) {
                 RoleActionResponse resp = gson.fromJson(json, RoleActionResponse.class);
                 if (platform instanceof com.wairesd.discordbm.client.common.DiscordBMBAPIImpl apiImpl) {

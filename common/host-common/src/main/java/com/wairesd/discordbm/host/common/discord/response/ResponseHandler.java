@@ -224,7 +224,16 @@ public class ResponseHandler {
         Modal modal = modalBuilder.build();
 
         String messageTemplate = respMsg.response() != null ? respMsg.response() : "";
-        platformManager.getFormHandlers().put(formDef.getCustomId(), messageTemplate);
+        boolean isNettyForm = false;
+        if (listener != null) {
+            Map<String, String> requestIdToCommand = listener.getRequestIdToCommand();
+            if (requestIdToCommand != null && requestIdToCommand.containsKey(requestId.toString())) {
+                isNettyForm = true;
+            }
+        }
+        if (!isNettyForm) {
+            platformManager.getFormHandlers().put(formDef.getCustomId(), messageTemplate);
+        }
 
         if (respMsg.flags() != null && respMsg.flags().requiresModal()) {
             if (listener != null) {
@@ -232,7 +241,7 @@ public class ResponseHandler {
             }
         }
 
-        var event = listener.getRequestSender().getPendingRequests().remove(requestId);
+        var event = listener.getRequestSender().getPendingRequests().get(requestId);
         if (event != null) {
             event.replyModal(modal).queue(
                     success -> {
@@ -314,6 +323,8 @@ public class ResponseHandler {
             if (Settings.isDebugRequestProcessing()) {
                 logger.info("Response sent for requestId: {}", respMsg.requestId());
             }
+            UUID requestId = UUID.fromString(respMsg.requestId());
+            var removed = listener.getRequestSender().getPendingRequests().remove(requestId);
         } else {
             event.getHook().sendMessage("No response provided.").setEphemeral(ephemeral).queue();
         }

@@ -33,6 +33,7 @@ public class ClientRegisterHandler {
             nettyContext.setAuthenticated(true);
             dbManager.resetAttempts(ip);
             nettyServer.setServerName(ctx.channel(), regMsg.getServerName());
+            ctx.writeAndFlush("{\"type\":\"auth_ok\"}");
             if (Settings.isDebugAuthentication()) {
                 logger.info("Client {} IP - {} Port - {} authenticated successfully", regMsg.getServerName(), ip, port);
             }
