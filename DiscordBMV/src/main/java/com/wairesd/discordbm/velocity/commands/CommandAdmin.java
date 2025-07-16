@@ -15,6 +15,8 @@ import com.wairesd.discordbm.velocity.commands.sub.WebHookCommand;
 import com.wairesd.discordbm.velocity.DiscordBMV;
 import net.kyori.adventure.text.Component;
 import com.wairesd.discordbm.common.utils.color.transform.AnsiColorTranslator;
+import com.wairesd.discordbm.velocity.commands.sub.EditorCommand;
+import com.wairesd.discordbm.velocity.commands.sub.ApplyEditsCommand;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
@@ -24,6 +26,8 @@ public class CommandAdmin implements SimpleCommand {
     private final DiscordBMHPlatformManager platformManager;
     private final WebHookCommand webHookCommand;
     private final java.nio.file.Path dataDirectory;
+    private final EditorCommand editorCommand;
+    private final ApplyEditsCommand applyEditsCommand;
 
     public CommandAdmin(DiscordBMHPlatformManager platformManager) {
         this.platformManager = platformManager;
@@ -33,6 +37,8 @@ public class CommandAdmin implements SimpleCommand {
         this.helpCommand = new HelpCommand();
         this.clientsCommand = new ClientsCommand(platformManager);
         this.webHookCommand = new WebHookCommand();
+        this.editorCommand = new EditorCommand(dataDirectory);
+        this.applyEditsCommand = new ApplyEditsCommand(dataDirectory);
     }
 
     @Override
@@ -56,6 +62,14 @@ public class CommandAdmin implements SimpleCommand {
             case "clients" -> clientsCommand.execute(source, context, platformManager);
             case "help" -> helpCommand.execute(source, context);
             case "webhook" -> webHookCommand.execute(source, args, context, dataDirectory);
+            case "editor" -> editorCommand.execute(source);
+            case "applyedits" -> {
+                if (args.length < 2) {
+                    source.sendMessage(Component.text("Укажите код изменений!"));
+                } else {
+                    applyEditsCommand.execute(source, args[1]);
+                }
+            }
             default -> {
                 if (context == MessageContext.CONSOLE) {
                     source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));

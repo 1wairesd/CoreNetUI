@@ -356,3 +356,15 @@ commands:
       - type: send_message
         response_type: REPLY
         message: "Role <@&{option:role}> has been removed from <@{option:user}>."
+
+  - name: "random-greet"
+    description: "Отправляет случайный приветственный ответ"
+    context: server
+    actions:
+      - type: send_message
+        response_type: random_reply
+        responses:
+          - "Привет!"
+          - "Здравствуй!"
+          - "Хай!"
+          - "Добрый день!"

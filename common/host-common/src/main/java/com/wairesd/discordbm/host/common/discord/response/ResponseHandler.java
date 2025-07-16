@@ -109,6 +109,19 @@ public class ResponseHandler {
                 case REPLY_MODAL:
                     handleReplyModal(requestId, respMsg);
                     return;
+                case RANDOM_REPLY:
+                    if (respMsg.responses() != null && !respMsg.responses().isEmpty()) {
+                        List<String> responses = respMsg.responses();
+                        String random = responses.get(new java.util.Random().nextInt(responses.size()));
+            
+                        ResponseMessage replyMsg = respMsg.toBuilder()
+                            .response(random)
+                            .type("reply")
+                            .build();
+                        handleResponse(replyMsg);
+                        return;
+                    }
+                    break;
                 case REPLY:
                 default:
                     break;
