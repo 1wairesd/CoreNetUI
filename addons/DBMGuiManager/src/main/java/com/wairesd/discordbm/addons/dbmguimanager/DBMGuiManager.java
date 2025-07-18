@@ -6,8 +6,10 @@ import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.api.DiscordBMAPIProvider;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public final class DBMGuiManager extends JavaPlugin {
 
@@ -17,21 +19,21 @@ public final class DBMGuiManager extends JavaPlugin {
     public void onEnable() {
         this.api = DiscordBMAPIProvider.getInstanceOrThrow();
 
+        saveDefaultConfig();
+
         JGuiInitializer.init(this);
-        getCommand("opengui").setExecutor(this::onOpenGuiCommand);
+
+        PluginCommand command = getCommand("opengui");
+        if (command != null) command.setExecutor(this);
     }
 
     @Override
-    public void onDisable() {
-    }
-
-    private boolean onOpenGuiCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("§cТолько игрок может открыть GUI.");
-            return true;
+            return false;
         }
-        Player player = (Player) sender;
-        new MainMenu(api).open(player);
+        new MainMenu(this, api).open(player);
         return true;
     }
 }
