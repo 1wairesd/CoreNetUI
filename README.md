@@ -4,7 +4,7 @@
 
 ---
 
-Этот проект использует библиотеку [JGuiWrapper](https://github.com/JodexIndustries/JGuiWrapper) для создания современных и удобных GUI-меню в Minecraft (например, в аддоне DBMGuiManager). JGuiWrapper обеспечивает гибкие интерфейсы, обработку кликов, пагинацию и простое расширение меню через билдеры.
+Этот проект использует библиотеку [JGuiWrapper](https://github.com/JodexIndustries/JGuiWrapper) создатель [Jodexx](https://github.com/Jodexx), для создания современных и удобных GUI-меню в Minecraft (например, в аддоне DBMGuiManager). JGuiWrapper обеспечивает гибкие интерфейсы, обработку кликов, пагинацию и простое расширение меню через билдеры.
 
 ---
 
