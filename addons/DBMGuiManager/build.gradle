@@ -33,4 +33,6 @@ jar {
 shadowJar {
     archiveBaseName.set('DBMGuiManager')
     archiveClassifier.set(null)
+
+    relocate("com.jodexindustries", "com.wairesd")
 }
