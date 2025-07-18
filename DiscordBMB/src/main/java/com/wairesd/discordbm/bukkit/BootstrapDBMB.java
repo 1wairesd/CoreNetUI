@@ -56,9 +56,9 @@ public class BootstrapDBMB implements PlatformBootstrap {
 
     private void initApi() {
         api = new DiscordBMBAPIImpl(platform, logger);
+        com.wairesd.discordbm.api.DiscordBMAPIProvider.setInstance(api);
         DiscordBMB.setApi(api);
         Bukkit.getServicesManager().register(DiscordBMAPI.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
-        
         logger.info("DiscordBM API initialized");
     }
 

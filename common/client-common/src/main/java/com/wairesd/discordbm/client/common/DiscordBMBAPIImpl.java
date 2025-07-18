@@ -33,6 +33,7 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
     private final LoggerAdapter logger;
     private final RoleManagerImpl roleManager;
     private final EphemeralRulesManager ephemeralRulesManager;
+    private final long startTime = System.currentTimeMillis();
 
     public DiscordBMBAPIImpl(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -140,6 +141,17 @@ public class DiscordBMBAPIImpl implements DiscordBMAPI {
             throw new NullPointerException("DiscordBM API: Platform is not initialized");
         }
         ephemeralRulesManager.registerEphemeralRules(rules);
+    }
+
+    @Override
+    public long getUptimeMillis() {
+        if (startTime == 0) {
+            if (logger != null) {
+                logger.error("[DiscordBMAPI] startTime is 0 in getUptimeMillis! Throwing NPE.");
+            }
+            throw new NullPointerException("DiscordBMAPI: startTime is not initialized!");
+        }
+        return System.currentTimeMillis() - startTime;
     }
 
     public Platform getPlatform() {

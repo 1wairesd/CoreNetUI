@@ -12,5 +12,7 @@ include(
         ':common:client-common',
         ':common:host-common',
         ':DiscordBMB',
-        ':DiscordBMV'
+        ':DiscordBMV',
+        ':addons',
+        ':addons:DBMGuiManager'
 )

@@ -100,4 +100,9 @@ public interface DiscordBMAPI {
      * These rules will be sent to the host and used for determining message privacy.
      */
     void registerEphemeralRules(Map<String, Boolean> rules);
+
+    /**
+     * Returns the uptime of the client in milliseconds.
+     */
+    long getUptimeMillis();
 } 
