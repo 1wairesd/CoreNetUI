@@ -695,7 +695,6 @@ public class ResponseHandler {
             return;
         }
         try {
-            // Передаём deleteAll в DeleteMessageAction через properties
             Map<String, Object> properties = new HashMap<>();
             properties.put("label", label);
             properties.put("delete_all", respMsg.deleteAll());
