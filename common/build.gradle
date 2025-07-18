@@ -1,7 +1,3 @@
-plugins {
-    id 'java'
-}
-
 group = 'com.wairesd.discordbm'
 version = '1.0.0'
 
