@@ -1,28 +1,29 @@
-package com.wairesd.discordbm.addons;
+package com.wairesd.discordbm.addons.dbmguimanager.menu;
 
 import com.jodexindustries.jguiwrapper.gui.SimpleGui;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import com.wairesd.discordbm.api.DiscordBMAPI;
-import org.bukkit.inventory.meta.ItemMeta;
-import java.util.List;
-import java.util.Arrays;
 import com.wairesd.discordbm.api.command.Command;
-import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class OtherMenuGui extends SimpleGui {
+import java.util.Arrays;
+import java.util.List;
+
+public class CommandListMenu extends SimpleGui {
     private final DiscordBMAPI api;
     private final int page;
     private final int pageSize;
     private final List<Command> commands;
 
-    public OtherMenuGui(DiscordBMAPI api) {
+    public CommandListMenu(DiscordBMAPI api) {
         this(api, 0);
     }
 
-    public OtherMenuGui(DiscordBMAPI api, int page) {
+    public CommandListMenu(DiscordBMAPI api, int page) {
         super(calcSize(api, page), "Зарегистрированные команды");
         this.api = api;
         this.page = page;
@@ -84,10 +85,10 @@ public class OtherMenuGui extends SimpleGui {
             Player player = (Player) event.getWhoClicked();
             if (hasNextPage() && raw == 53) {
                 player.closeInventory();
-                Bukkit.getScheduler().runTaskLater(JavaPlugin.getProvidingPlugin(getClass()), () -> new OtherMenuGui(api, page + 1).open(player), 1L);
+                Bukkit.getScheduler().runTaskLater(JavaPlugin.getProvidingPlugin(getClass()), () -> new CommandListMenu(api, page + 1).open(player), 1L);
             } else if (hasPrevPage() && raw == 45) {
                 player.closeInventory();
-                Bukkit.getScheduler().runTaskLater(JavaPlugin.getProvidingPlugin(getClass()), () -> new OtherMenuGui(api, page - 1).open(player), 1L);
+                Bukkit.getScheduler().runTaskLater(JavaPlugin.getProvidingPlugin(getClass()), () -> new CommandListMenu(api, page - 1).open(player), 1L);
             }
         }, 45, 53);
     }

@@ -1,22 +1,23 @@
-package com.wairesd.discordbm.addons;
+package com.wairesd.discordbm.addons.dbmguimanager.menu;
 
 import com.jodexindustries.jguiwrapper.gui.SimpleGui;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import com.wairesd.discordbm.api.DiscordBMAPI;
 import org.bukkit.Bukkit;
-import java.util.Arrays;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
+import java.util.Arrays;
 
 
-public class MenuGui extends SimpleGui {
+public class MainMenu extends SimpleGui {
     private final DiscordBMAPI api;
 
-    public MenuGui(DiscordBMAPI api) {
+    public MainMenu(DiscordBMAPI api) {
         super(27, "Простое меню");
         this.api = api;
         initMenu();
@@ -62,7 +63,7 @@ public class MenuGui extends SimpleGui {
                     player.closeInventory();
                     Bukkit.getScheduler().runTaskLater(
                         JavaPlugin.getProvidingPlugin(getClass()),
-                        () -> new OtherMenuGui(api).open(player),
+                        () -> new CommandListMenu(api).open(player),
                         1L
                     );
                 }

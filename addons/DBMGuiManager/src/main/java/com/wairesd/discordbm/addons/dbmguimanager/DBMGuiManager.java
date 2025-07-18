@@ -1,12 +1,13 @@
-package com.wairesd.discordbm.addons;
+package com.wairesd.discordbm.addons.dbmguimanager;
 
+import com.jodexindustries.jguiwrapper.common.JGuiInitializer;
+import com.wairesd.discordbm.addons.dbmguimanager.menu.MainMenu;
+import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.api.DiscordBMAPIProvider;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.jodexindustries.jguiwrapper.common.JGuiInitializer;
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DBMGuiManager extends JavaPlugin {
 
@@ -30,7 +31,7 @@ public final class DBMGuiManager extends JavaPlugin {
             return true;
         }
         Player player = (Player) sender;
-        new MenuGui(api).open(player);
+        new MainMenu(api).open(player);
         return true;
     }
 }
