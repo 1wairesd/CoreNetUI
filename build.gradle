@@ -1,7 +1,7 @@
 plugins {
     id 'maven-publish'
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.0.0-rc1'
 }
 
 group = 'com.wairesd.discordbm'
@@ -24,7 +24,7 @@ tasks.withType(JavaCompile).configureEach {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.gradleup.shadow'
 
     repositories {
         mavenCentral()
@@ -42,13 +42,13 @@ subprojects {
     }
 
     if (project.name in ['DiscordBMB', 'DiscordBMV']) {
-        tasks.shadowJar {
+        tasks.named('shadowJar') {
             archiveClassifier.set('')
             mergeServiceFiles()
         }
 
-        tasks.build {
-            dependsOn(tasks.shadowJar)
+        tasks.named('build') {
+            dependsOn(tasks.named('shadowJar'))
         }
 
         processResources {
