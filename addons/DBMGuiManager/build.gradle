@@ -15,12 +15,10 @@ repositories {
 
 dependencies {
     compileOnly project(":api")
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
+    implementation("com.jodexindustries.jguiwrapper:common:1.0.0")
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -55,6 +53,5 @@ jar {
 
 shadowJar {
     archiveBaseName.set('DBMGuiManager')
-    archiveClassifier.set('')
-    archiveVersion.set('1.0')
+    archiveClassifier.set(null)
 }
