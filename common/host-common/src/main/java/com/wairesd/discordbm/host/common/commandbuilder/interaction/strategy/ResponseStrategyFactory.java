@@ -5,6 +5,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.Dir
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.EditMessageResponse;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.ReplyResponse;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.SpecificChannelResponse;
+import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.RandomReplyResponse;
 
 public class ResponseStrategyFactory {
     public static ResponseStrategy getStrategy(ResponseType type) {
@@ -13,6 +14,7 @@ public class ResponseStrategyFactory {
             case DIRECT_MESSAGE -> new DirectMessageResponse();
             case EDIT_MESSAGE -> new EditMessageResponse();
             case REPLY -> new ReplyResponse();
+            case RANDOM_REPLY -> new RandomReplyResponse();
         };
     }
 }

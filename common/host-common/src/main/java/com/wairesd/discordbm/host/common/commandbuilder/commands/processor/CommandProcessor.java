@@ -6,6 +6,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.Comm
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.CommandResponder;
+import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.SendMessageAction;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,14 @@ public class CommandProcessor {
     public void process(CommandStructured command, Context context, SlashCommandInteractionEvent event, CommandResponder responder) {
         boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();
 
+        boolean hasCustomReply = false;
+        for (CommandAction action : command.getActions()) {
+            if (action instanceof SendMessageAction sendMsg && sendMsg.getReplyMessageId() != null && !sendMsg.getReplyMessageId().isEmpty()) {
+                hasCustomReply = true;
+                break;
+            }
+        }
+
         if (command.hasFormAction()) {
             executeActions(command.getActions(), context)
                     .thenRun(() -> {
@@ -27,6 +36,13 @@ public class CommandProcessor {
                         event.reply("An error occurred while executing the command.").setEphemeral(true).queue();
                         return null;
                     });
+        } else if (hasCustomReply) {
+            // Просто выполнить actions, не делать deferReply и responder
+            executeActions(command.getActions(), context)
+                .exceptionally(ex -> {
+                    event.reply("An error occurred while executing the command.").setEphemeral(true).queue();
+                    return null;
+                });
         } else {
             event.deferReply(ephemeral).queue(hook -> {
                 context.setHook(hook);

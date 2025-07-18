@@ -35,6 +35,7 @@ public class Context {
     private User targetUser;
     private Map<String, String> resolvedPlaceholders = new HashMap<>();
     private ButtonData buttonData;
+    private List<String> messageList;
 
     public Context(ModalInteractionEvent event) {
         if (event == null) {
@@ -258,5 +259,12 @@ public class Context {
 
     public void setVariables(Map<String, String> variables) {
         this.variables = variables;
+    }
+
+    public List<String> getMessageList() {
+        return messageList;
+    }
+    public void setMessageList(List<String> messageList) {
+        this.messageList = messageList;
     }
 }

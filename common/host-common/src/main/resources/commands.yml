@@ -368,3 +368,17 @@ commands:
           - "Здравствуй!"
           - "Хай!"
           - "Добрый день!"
+
+  - name: "reply_specific_message"
+    description: "Ответить на сообщение"
+    content: "server"
+    options:
+      - name: message_id
+        type: STRING
+        description: "ID сообщения для ответа"
+        required: true
+    actions:
+      - type: send_message
+        message: "Ответ на конкретное сообщение!"
+        reply_message_id: "{option:message_id}"
+        reply_mention_author: true
