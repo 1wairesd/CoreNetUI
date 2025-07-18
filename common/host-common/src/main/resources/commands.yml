@@ -362,8 +362,8 @@ commands:
     context: server
     actions:
       - type: send_message
-        response_type: random_reply
-        responses:
+        response_type: RANDOM_REPLY
+        message:
           - "Привет!"
           - "Здравствуй!"
           - "Хай!"
