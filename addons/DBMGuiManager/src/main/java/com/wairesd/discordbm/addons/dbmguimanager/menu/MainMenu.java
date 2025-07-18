@@ -1,32 +1,30 @@
 package com.wairesd.discordbm.addons.dbmguimanager.menu;
 
-import com.jodexindustries.jguiwrapper.gui.SimpleGui;
+import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
+import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
 import com.wairesd.discordbm.api.DiscordBMAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 
 
-public class MainMenu extends SimpleGui {
+public class MainMenu extends AdvancedGui {
+
+    private final Plugin plugin;
     private final DiscordBMAPI api;
 
-    public MainMenu(DiscordBMAPI api) {
+    public MainMenu(Plugin plugin, DiscordBMAPI api) {
         super(27, "Простое меню");
+        this.plugin = plugin;
         this.api = api;
         initMenu();
     }
 
     private String formatUptime(long uptimeMillis) {
-        File configFile = new File(JavaPlugin.getProvidingPlugin(getClass()).getDataFolder(), "config.yml");
-        FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-        String format = config.getString("uptime-format", "short");
+        String format = plugin.getConfig().getString("uptime-format", "short");
         long seconds = uptimeMillis / 1000 % 60;
         long minutes = uptimeMillis / (1000 * 60) % 60;
         long hours = uptimeMillis / (1000 * 60 * 60) % 24;
@@ -39,35 +37,36 @@ public class MainMenu extends SimpleGui {
     }
 
     private void initMenu() {
-        ItemStack uptimeItem = new ItemStack(Material.CLOCK);
-        ItemMeta meta = uptimeItem.getItemMeta();
-        long uptimeMillis = api.getUptimeMillis();
-        String formatted = formatUptime(uptimeMillis);
-        meta.setDisplayName("§eВремя работы клиента");
-        meta.setLore(Arrays.asList("§7Аптайм:", "§f" + formatted));
-        uptimeItem.setItemMeta(meta);
-        holder().getInventory().setItem(4, uptimeItem);
-
-        ItemStack menuItem = new ItemStack(Material.COMPASS);
-        ItemMeta menuMeta = menuItem.getItemMeta();
-        menuMeta.setDisplayName("§bОткрыть другое меню");
-        menuMeta.setLore(Arrays.asList("§7Нажмите, чтобы открыть другое меню"));
-        menuItem.setItemMeta(menuMeta);
-        holder().getInventory().setItem(13, menuItem);
-
-        setClickHandlers((event, g) -> {
-            if (event.getRawSlot() == 13) {
-                event.getWhoClicked().sendMessage("§aОткрывается меню команд!");
-                if (event.getWhoClicked() instanceof org.bukkit.entity.Player) {
-                    org.bukkit.entity.Player player = (org.bukkit.entity.Player) event.getWhoClicked();
-                    player.closeInventory();
-                    Bukkit.getScheduler().runTaskLater(
-                        JavaPlugin.getProvidingPlugin(getClass()),
-                        () -> new CommandListMenu(api).open(player),
-                        1L
+        registerItem("uptime", builder -> {
+            builder.slots(4)
+                    .defaultItem(
+                            ItemWrapper.builder(Material.CLOCK)
+                                    .displayName("&eВремя работы клиента")
+                                    .lore(List.of(
+                                            LEGACY_AMPERSAND.deserialize("&7Аптайм:"),
+                                            LEGACY_AMPERSAND.deserialize("&f" + formatUptime(api.getUptimeMillis()))
+                                    ))
+                                    .build()
                     );
-                }
-            }
-        }, 13);
+        });
+
+        registerItem("menu", builder -> {
+            builder.slots(13)
+                    .defaultItem(ItemWrapper.builder(Material.COMPASS)
+                            .displayName("&bОткрыть другое меню")
+                            .lore(List.of(LEGACY_AMPERSAND.deserialize("&7Нажмите, чтобы открыть другое меню")))
+                            .build())
+                    .defaultClickHandler((event, controller) -> {
+                        HumanEntity player = event.getWhoClicked();
+
+                        event.setCancelled(true);
+
+                        player.sendMessage("§aОткрывается меню команд!");
+                        player.closeInventory();
+                        Bukkit.getScheduler().runTask(plugin, () -> new CommandListMenu(api).open(player));
+
+                    })
+            ;
+        });
     }
-} 
+}
