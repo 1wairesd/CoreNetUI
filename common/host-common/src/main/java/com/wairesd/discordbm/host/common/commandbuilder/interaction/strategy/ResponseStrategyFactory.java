@@ -6,6 +6,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.Edi
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.ReplyResponse;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.SpecificChannelResponse;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.RandomReplyResponse;
+import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.ReplyToMessageResponse;
 
 public class ResponseStrategyFactory {
     public static ResponseStrategy getStrategy(ResponseType type) {
@@ -15,6 +16,7 @@ public class ResponseStrategyFactory {
             case EDIT_MESSAGE -> new EditMessageResponse();
             case REPLY -> new ReplyResponse();
             case RANDOM_REPLY -> new RandomReplyResponse();
+            case REPLY_TO_MESSAGE -> new ReplyToMessageResponse();
         };
     }
 }

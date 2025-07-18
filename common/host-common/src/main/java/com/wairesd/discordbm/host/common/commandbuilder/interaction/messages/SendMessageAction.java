@@ -95,11 +95,20 @@ public class SendMessageAction implements CommandAction {
                     if (responseType == ResponseType.RANDOM_REPLY && messageList != null && !messageList.isEmpty()) {
                         context.setMessageList(messageList);
                         context.setMessageText("");
+                    } else if (responseType == ResponseType.REPLY_TO_MESSAGE) {
+                        context.setMessageText(formattedMessage);
+                        if (context.getVariables() != null) {
+                            context.getVariables().put("reply_message_id", replyMessageId);
+                            context.getVariables().put("reply_mention_author", Boolean.toString(replyMentionAuthor));
+                        }
                     } else {
                         context.setMessageText(formattedMessage);
                         context.setMessageList(null);
                     }
                     context.setResponseType(responseType);
+                    if (responseType == ResponseType.REPLY_TO_MESSAGE) {
+                        return;
+                    }
 
                     if (embedProperties != null) {
                         EmbedFactoryUtils.create(embedProperties, event, context)

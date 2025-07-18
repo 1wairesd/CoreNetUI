@@ -5,5 +5,6 @@ public enum ResponseType {
     SPECIFIC_CHANNEL,
     DIRECT_MESSAGE,
     EDIT_MESSAGE,
-    RANDOM_REPLY
+    RANDOM_REPLY,
+    REPLY_TO_MESSAGE
 }

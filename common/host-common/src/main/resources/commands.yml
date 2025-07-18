@@ -379,6 +379,7 @@ commands:
         required: true
     actions:
       - type: send_message
+        response_type: REPLY_TO_MESSAGE
         message: "Ответ на конкретное сообщение!"
         reply_message_id: "{option:message_id}"
         reply_mention_author: true
