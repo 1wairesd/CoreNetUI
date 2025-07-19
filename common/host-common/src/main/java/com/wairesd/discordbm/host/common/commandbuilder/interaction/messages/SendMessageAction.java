@@ -106,9 +106,6 @@ public class SendMessageAction implements CommandAction {
                         context.setMessageList(null);
                     }
                     context.setResponseType(responseType);
-                    if (responseType == ResponseType.REPLY_TO_MESSAGE) {
-                        return;
-                    }
 
                     if (embedProperties != null) {
                         EmbedFactoryUtils.create(embedProperties, event, context)

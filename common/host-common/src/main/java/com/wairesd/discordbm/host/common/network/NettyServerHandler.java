@@ -109,11 +109,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         String type = json.get("type").getAsString();
 
         if ("add_role".equals(type)) {
-            AddRoleRequest req = gson.fromJson(json, AddRoleRequest.class);
+            AddRoleRequest req = gson.fromJson(msg, AddRoleRequest.class);
             new AddRoleHandler(jda).handle(ctx, req);
             return;
         } else if ("remove_role".equals(type)) {
-            RemoveRoleRequest req = gson.fromJson(json, RemoveRoleRequest.class);
+            RemoveRoleRequest req = gson.fromJson(msg, RemoveRoleRequest.class);
             new RemoveRoleHandler(jda).handle(ctx, req);
             return;
         }
@@ -121,45 +121,34 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         if ("register".equals(type)) {
             registerHandler.handleRegister(ctx, msg, ip, port);
         } else if ("unregister".equals(type)) {
-            UnregisterMessage unregMsg = gson.fromJson(json, UnregisterMessage.class);
+            UnregisterMessage unregMsg = gson.fromJson(msg, UnregisterMessage.class);
             unregisterHandler.handleUnregister(ctx, unregMsg);
         } else if ("form".equals(type)) {
-            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseMessage respMsg = gson.fromJson(msg, ResponseMessage.class);
             ResponseHandler.handleFormOnly(respMsg);
         } else if ("direct_message".equals(type)) {
-            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseMessage respMsg = gson.fromJson(msg, ResponseMessage.class);
             ResponseHandler.sendDirectMessage(respMsg);
         } else if ("channel_message".equals(type)) {
-            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseMessage respMsg = gson.fromJson(msg, ResponseMessage.class);
             ResponseHandler.sendChannelMessage(respMsg);
-        } else if ("response".equals(type)) {
-            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
-            ResponseHandler.handleResponse(respMsg);
         } else if ("can_handle_response".equals(type)) {
-            CanHandleResponse resp = gson.fromJson(json, CanHandleResponse.class);
+            CanHandleResponse resp = gson.fromJson(msg, CanHandleResponse.class);
             CompletableFuture<Boolean> future = nettyServer.getCanHandleFutures().remove(resp.requestId());
             if (future != null) {
                 future.complete(resp.canHandle());
             }
         } else if ("placeholders_response".equals(type)) {
-            PlaceholdersResponse resp = gson.fromJson(json, PlaceholdersResponse.class);
+            PlaceholdersResponse resp = gson.fromJson(msg, PlaceholdersResponse.class);
             CompletableFuture<PlaceholdersResponse> future = nettyServer.getPlaceholderFutures().remove(resp.requestId());
             if (future != null) {
                 future.complete(resp);
             }
-        } else if ("ephemeral_rules".equals(type)) {
-            String clientId = nettyServer.getServerName(ctx.channel());
-            if (json.has("rules") && json.get("rules").isJsonObject()) {
-                for (var entry : json.getAsJsonObject("rules").entrySet()) {
-                    CommandEphemeral.addOrUpdateClientRule(clientId, entry.getKey(), entry.getValue().getAsBoolean());
-                }
-            }
-            return;
         } else if ("edit_message".equals(type)) {
-            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseMessage respMsg = gson.fromJson(msg, ResponseMessage.class);
             ResponseHandler.editMessage(respMsg);
         } else if ("edit_component".equals(type)) {
-            ResponseMessage respMsg = gson.fromJson(json, ResponseMessage.class);
+            ResponseMessage respMsg = gson.fromJson(msg, ResponseMessage.class);
             ResponseHandler.editComponent(respMsg);
         } else if ("delete_message".equals(type)) {
             String label = json.get("label").getAsString();
@@ -170,6 +159,17 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
                 .deleteAll(deleteAll)
                 .build();
             ResponseHandler.deleteMessage(respMsg);
+            return;
+        } else if ("request".equals(type) || "response".equals(type)) {
+            ResponseMessage respMsg = gson.fromJson(msg, ResponseMessage.class);
+            ResponseHandler.handleResponse(respMsg);
+        } else if ("ephemeral_rules".equals(type)) {
+            String clientId = nettyServer.getServerName(ctx.channel());
+            if (json.has("rules") && json.get("rules").isJsonObject()) {
+                for (var entry : json.getAsJsonObject("rules").entrySet()) {
+                    CommandEphemeral.addOrUpdateClientRule(clientId, entry.getKey(), entry.getValue().getAsBoolean());
+                }
+            }
             return;
         } else {
             logger.warn("Unknown message type: {}", type);

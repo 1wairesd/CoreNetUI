@@ -622,4 +622,18 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
+    @Override
+    public void sendReplyToMessage(String requestId, String message, String replyMessageId, boolean mentionAuthor) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .replyMessageId(replyMessageId)
+                .replyMentionAuthor(mentionAuthor)
+                .flags(new ResponseFlags.Builder().responseType("REPLY_TO_MESSAGE").build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
 }

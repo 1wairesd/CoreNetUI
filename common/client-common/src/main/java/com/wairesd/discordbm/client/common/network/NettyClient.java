@@ -168,6 +168,8 @@ public class NettyClient {
                     .channelId(respMsg.channelId())
                     .conditions(respMsg.conditions())
                     .responses(respMsg.responses())
+                    .replyMessageId(respMsg.replyMessageId())
+                    .replyMentionAuthor(respMsg.replyMentionAuthor())
                     .build();
                 
                 if (platform.isDebugCommandRegistrations()) {

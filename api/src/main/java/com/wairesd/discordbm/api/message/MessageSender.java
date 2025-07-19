@@ -267,4 +267,13 @@ public interface MessageSender {
     default void deleteMessage(String label) {
         deleteMessage(label, true);
     }
+
+    /**
+     * Send a reply to a specific message (REPLY_TO_MESSAGE)
+     * @param requestId The request ID of the command
+     * @param message The message to send
+     * @param replyMessageId The ID of the message to reply to
+     * @param mentionAuthor Whether to mention the author of the original message
+     */
+    void sendReplyToMessage(String requestId, String message, String replyMessageId, boolean mentionAuthor);
 }

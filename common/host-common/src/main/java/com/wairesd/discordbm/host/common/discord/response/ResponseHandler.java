@@ -2,6 +2,7 @@ package com.wairesd.discordbm.host.common.discord.response;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
@@ -298,6 +299,30 @@ public class ResponseHandler {
         }
         if ("EDIT_MESSAGE".equalsIgnoreCase(responseType)) {
             event.getHook().editOriginal(respMsg.response() != null ? respMsg.response() : "").queue();
+            return;
+        }
+        if ("REPLY_TO_MESSAGE".equalsIgnoreCase(responseType) && respMsg.replyMessageId() != null && !respMsg.replyMessageId().isEmpty()) {
+            try {
+                if (event != null) {
+                    if (!event.isAcknowledged()) {
+                        event.deferReply(true).queue(hook -> hook.deleteOriginal().queue());
+                    } else if (event.getHook() != null) {
+                        event.getHook().deleteOriginal().queue();
+                    }
+                }
+                var msgAction = event.getChannel().sendMessage(respMsg.response())
+                        .setMessageReference(respMsg.replyMessageId())
+                        .mentionRepliedUser(Boolean.TRUE.equals(respMsg.replyMentionAuthor()));
+                msgAction.queue(success -> {
+                    if (label != null && !label.isEmpty()) {
+                        String channelId = event.getChannel().getId();
+                        String messageId = success.getId();
+                        platformManager.setGlobalMessageLabel(label, channelId, messageId);
+                    }
+                }, failure -> logger.error("Failed to send REPLY_TO_MESSAGE: {}", failure.getMessage()));
+            } catch (Exception e) {
+                logger.error("Exception while sending REPLY_TO_MESSAGE for requestId: {} | {}", respMsg.requestId(), e.getMessage(), e);
+            }
             return;
         }
         if (respMsg.embed() != null) {

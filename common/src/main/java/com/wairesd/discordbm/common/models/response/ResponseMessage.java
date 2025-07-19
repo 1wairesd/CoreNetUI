@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.common.models.response;
 
+import com.google.gson.annotations.SerializedName;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.form.FormDefinition;
@@ -20,6 +21,10 @@ public class ResponseMessage {
     private final List<Map<String, Object>> conditions;
     private final boolean deleteAll;
     private final List<String> responses;
+    @SerializedName("replyMessageId")
+    private String replyMessageId;
+    @SerializedName("replyMentionAuthor")
+    private Boolean replyMentionAuthor;
 
     private ResponseMessage(Builder builder) {
         this.type = builder.type;
@@ -34,6 +39,8 @@ public class ResponseMessage {
         this.conditions = builder.conditions;
         this.deleteAll = builder.deleteAll;
         this.responses = builder.responses;
+        this.replyMessageId = builder.replyMessageId;
+        this.replyMentionAuthor = builder.replyMentionAuthor;
     }
 
     public String type() {
@@ -84,6 +91,13 @@ public class ResponseMessage {
         return responses;
     }
 
+    public String replyMessageId() {
+        return replyMessageId;
+    }
+    public Boolean replyMentionAuthor() {
+        return replyMentionAuthor;
+    }
+
     public static class Builder {
         private String type;
         private String requestId;
@@ -97,6 +111,8 @@ public class ResponseMessage {
         private List<Map<String, Object>> conditions;
         private boolean deleteAll = true;
         private List<String> responses;
+        private String replyMessageId;
+        private Boolean replyMentionAuthor;
 
         public Builder type(String type) {
             this.type = type;
@@ -155,6 +171,15 @@ public class ResponseMessage {
 
         public Builder responses(List<String> responses) {
             this.responses = responses;
+            return this;
+        }
+
+        public Builder replyMessageId(String replyMessageId) {
+            this.replyMessageId = replyMessageId;
+            return this;
+        }
+        public Builder replyMentionAuthor(Boolean replyMentionAuthor) {
+            this.replyMentionAuthor = replyMentionAuthor;
             return this;
         }
 

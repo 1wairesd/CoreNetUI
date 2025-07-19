@@ -45,7 +45,6 @@ tasks.named('shadowJar') {
     archiveBaseName.set('DiscordBM-Bukkit')
     archiveClassifier.set('')
     mergeServiceFiles()
-    from(project(':common').sourceSets.main.output)
 }
 
 tasks.named('build') {

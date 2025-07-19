@@ -22,6 +22,8 @@ public class ResponseTypeDetector {
                     return ResponseType.MODAL;
                 case "random_reply":
                     return ResponseType.RANDOM_REPLY;
+                case "reply_to_message":
+                    return ResponseType.REPLY_TO_MESSAGE;
             }
         }
 
@@ -93,6 +95,12 @@ public class ResponseTypeDetector {
                     .isFormResponse(false)
                     .requiresModal(false);
                 break;
+            case REPLY_TO_MESSAGE:
+                flagsBuilder
+                    .preventMessageSend(false)
+                    .isFormResponse(false)
+                    .requiresModal(false);
+                break;
             case REPLY:
             default:
                 flagsBuilder
@@ -113,6 +121,7 @@ public class ResponseTypeDetector {
         REPLY_MODAL,
         DIRECT,
         CHANNEL,
-        RANDOM_REPLY
+        RANDOM_REPLY,
+        REPLY_TO_MESSAGE
     }
 } 

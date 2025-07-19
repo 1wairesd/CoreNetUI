@@ -37,7 +37,6 @@ public class CommandProcessor {
                         return null;
                     });
         } else if (hasCustomReply) {
-            // Просто выполнить actions, не делать deferReply и responder
             executeActions(command.getActions(), context)
                 .exceptionally(ex -> {
                     event.reply("An error occurred while executing the command.").setEphemeral(true).queue();
