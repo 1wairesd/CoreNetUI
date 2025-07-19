@@ -70,6 +70,8 @@ public class HostCommandService {
         joiner.add(Messages.get(Messages.Keys.HELP_HEADER, context));
         joiner.add(Messages.get(Messages.Keys.HELP_RELOAD, context));
         joiner.add(Messages.get(Messages.Keys.HELP_WEBHOOK, context));
+        joiner.add(Messages.get(Messages.Keys.HELP_EDITOR, context));
+        joiner.add(Messages.get(Messages.Keys.HELP_APPLYEDITS, context));
         joiner.add(Messages.get(Messages.Keys.HELP_CUSTOM_COMMANDS, context));
         joiner.add(Messages.get(Messages.Keys.HELP_ADDONS_COMMANDS, context));
         return joiner.toString();

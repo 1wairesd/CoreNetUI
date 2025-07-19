@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.LoggerFactory;
 
 public class ActivityUpdater {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private final JDA jda;
     private final ActivityFactory activityFactory;
 

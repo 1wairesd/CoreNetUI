@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandRegistrationService {
-    private static final Logger logger = LoggerFactory.getLogger("DiscordBMV");
+    private static final Logger logger = LoggerFactory.getLogger("DiscordBM");
     private final NettyServer nettyServer;
     private JDA jda;
     private final ConcurrentHashMap<String, CommandDefinition> commandDefinitions = new ConcurrentHashMap<>();

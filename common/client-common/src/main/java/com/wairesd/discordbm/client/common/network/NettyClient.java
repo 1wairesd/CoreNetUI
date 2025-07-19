@@ -126,7 +126,7 @@ public class NettyClient {
         RegisterMessage<Command> registerMsg = new RegisterMessage.Builder<Command>()
                 .type("register")
                 .serverName(platform.getServerName())
-                .pluginName("DiscordBMB")
+                .pluginName("DiscordBM")
                 .commands(commands)
                 .secret(secret)
                 .build();

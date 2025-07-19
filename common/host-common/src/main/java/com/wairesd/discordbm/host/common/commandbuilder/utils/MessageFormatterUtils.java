@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class MessageFormatterUtils {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final PlaceholderManager placeholderManager = new PlaceholderManager();
 
     static {

@@ -25,7 +25,7 @@ import java.util.Random;
 import java.util.List;
 
 public class SendMessageAction implements CommandAction {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final String DEFAULT_MESSAGE = "";
 
     private final String messageTemplate;

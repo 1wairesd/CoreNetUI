@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class FormInteractionListener extends ListenerAdapter {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private final DiscordBMHPlatformManager platformManager;
     private final Map<String, String> requestIdToCommand;
 

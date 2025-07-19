@@ -18,9 +18,6 @@ import com.wairesd.discordbm.host.common.discord.DiscordBotListener;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
-import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageReferenceResolver;
-import com.wairesd.discordbm.host.common.commandbuilder.core.channel.ChannelFetcher;
-import com.wairesd.discordbm.host.common.commandbuilder.utils.message.MessageDeleter;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorMessages;
@@ -47,7 +44,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.Del
 public class ResponseHandler {
     private static DiscordBotListener listener;
     private static DiscordBMHPlatformManager platformManager;
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final ConcurrentHashMap<String, Boolean> sentFormRequests = new ConcurrentHashMap<>();
 
     public static void init(DiscordBotListener discordBotListener, DiscordBMHPlatformManager platform) {

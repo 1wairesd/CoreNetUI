@@ -2,6 +2,7 @@ package com.wairesd.discordbm.client.common.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.wairesd.discordbm.client.common.DiscordBMAPIImpl;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.models.placeholders.request.CanHandlePlaceholdersRequest;
 import com.wairesd.discordbm.common.models.placeholders.request.GetPlaceholdersRequest;
@@ -60,7 +61,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
             }
             if ("role_action_response".equals(typeStr)) {
                 RoleActionResponse resp = gson.fromJson(json, RoleActionResponse.class);
-                if (platform instanceof com.wairesd.discordbm.client.common.DiscordBMBAPIImpl apiImpl) {
+                if (platform instanceof DiscordBMAPIImpl apiImpl) {
                     ((RoleManagerImpl) apiImpl.getRoleManager()).handleRoleActionResponse(resp);
                 }
                 return;

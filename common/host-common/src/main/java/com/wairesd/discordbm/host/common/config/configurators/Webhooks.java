@@ -10,7 +10,7 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Webhooks {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final String WEBHOOKS_FILE_NAME = "webhooks.yml";
     private static Path dataDirectory;
     private static List<Webhook> webhooks = new ArrayList<>();

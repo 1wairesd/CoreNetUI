@@ -18,7 +18,7 @@ import java.util.Map;
 import static com.wairesd.discordbm.host.common.config.configurators.Settings.isDebugCommandRegistrations;
 
 public class CommandManager {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private final Map<String, CommandStructured> commandMap = new HashMap<>();
 
     private final CommandLoader loader = new CommandLoader();

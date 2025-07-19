@@ -5,7 +5,10 @@ import net.kyori.adventure.text.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class Messages {
     private static Path dataDirectory;
@@ -23,6 +26,8 @@ public class Messages {
         public static final String HELP_CUSTOM_COMMANDS = "help-custom-commands";
         public static final String HELP_ADDONS_COMMANDS = "help-addons-commands";
         public static final String HELP_WEBHOOK = "help-webhook";
+        public static final String HELP_EDITOR = "help-editor";
+        public static final String HELP_APPLYEDITS = "help-applyedits";
 
         public static final String CUSTOM_COMMANDS_EMPTY = "custom-commands-empty";
         public static final String CUSTOM_COMMANDS_HEADER = "custom-commands-header";
@@ -56,9 +61,26 @@ public class Messages {
 
     private static void loadMessages() {
         try {
+            Path messagesPath = dataDirectory.resolve(MESSAGES_FILE_NAME);
+            if (!Files.exists(messagesPath)) {
+                createDefaultMessagesFile(messagesPath);
+            }
             com.wairesd.discordbm.common.utils.MessagesUN.load(new File(dataDirectory.toFile(), MESSAGES_FILE_NAME));
         } catch (IOException e) {
             System.err.println("Error loading messages.yml: " + e.getMessage());
+        }
+    }
+
+    private static void createDefaultMessagesFile(Path messagesPath) throws IOException {
+        Files.createDirectories(dataDirectory);
+        try (InputStream in = Messages.class.getClassLoader().getResourceAsStream(MESSAGES_FILE_NAME)) {
+            if (in != null) {
+                Files.copy(in, messagesPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Default messages.yml loaded from resources to " + messagesPath);
+            } else {
+                System.err.println(MESSAGES_FILE_NAME + " not found in resources!");
+                throw new IOException(MESSAGES_FILE_NAME + " not found in resources");
+            }
         }
     }
 

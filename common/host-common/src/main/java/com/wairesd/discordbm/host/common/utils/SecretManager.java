@@ -12,7 +12,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class SecretManager {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final SecureRandom random = new SecureRandom();
 
     private final Path secretFilePath;

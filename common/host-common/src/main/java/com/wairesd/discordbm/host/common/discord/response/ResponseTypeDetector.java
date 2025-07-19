@@ -7,7 +7,7 @@ import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import org.slf4j.LoggerFactory;
 
 public class ResponseTypeDetector {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
     public static ResponseType determineResponseType(ResponseMessage respMsg) {
         if (respMsg == null) {

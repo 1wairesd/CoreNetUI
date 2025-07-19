@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.JDA;
 import org.slf4j.LoggerFactory;
 import com.wairesd.discordbm.host.common.utils.ClientInfo;
 
+import java.net.BindException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NettyServer {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private Channel serverChannel;
@@ -90,6 +91,15 @@ public class NettyServer {
                 logger.error("Netty server interrupted", e);
             }
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            Throwable cause = e instanceof BindException ? e : e.getCause();
+            if (cause instanceof BindException) {
+                logger.error("Port {} is already in use! Please change netty.port in settings.yml or stop the other application.", port);
+            } else if (Settings.isDebugErrors()) {
+                logger.error("Error starting Netty server: {}", e.getMessage(), e);
+            } else {
+                logger.error("Error starting Netty server: {}", e.getMessage());
+            }
         } finally {
             shutdown();
         }

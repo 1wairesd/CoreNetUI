@@ -10,9 +10,9 @@ repositories {
 
 dependencies {
     compileOnly project(":api")
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-
     implementation("com.jodexindustries.jguiwrapper:common:1.0.0")
+
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 }
 
 processResources {

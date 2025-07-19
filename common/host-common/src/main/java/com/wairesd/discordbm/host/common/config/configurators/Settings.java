@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 public class Settings {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final String CONFIG_FILE_NAME = "settings.yml";
     private static final String DEFAULT_FORWARDING_SECRET_FILE = "secret.complete.code";
 
@@ -184,7 +184,7 @@ public class Settings {
         return (int) getConfigValue("mysql.port", 3306);
     }
     public static String getMySQLDatabase() {
-        return (String) getConfigValue("mysql.database", "discordbmv");
+        return (String) getConfigValue("mysql.database", "DiscordBM");
     }
     public static String getMySQLUsername() {
         return (String) getConfigValue("mysql.username", "root");

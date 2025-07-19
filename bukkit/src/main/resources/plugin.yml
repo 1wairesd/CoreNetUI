@@ -1,0 +1,14 @@
+name: DiscordBM
+version: '1.0'
+main: com.wairesd.discordbm.bukkit.DBMBukkitPlugin
+api-version: '1.21'
+softdepend: [PlaceholderAPI]
+authors: [1wairesd]
+commands:
+  DiscordBM:
+    description: Discord bot plugin management
+    permission: discrdbmb.admin
+    alias: [dbm]
+
+libraries:
+  - io.netty:netty-all:4.2.2.Final

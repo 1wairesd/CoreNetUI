@@ -8,12 +8,13 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
 
 public class DiscordBotManager {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private JDA jda;
     private boolean initialized = false;
 
@@ -21,8 +22,9 @@ public class DiscordBotManager {
     }
 
     public void initializeBot(String token, String activityType, String activityMessage) {
-        if (token == null || token.isEmpty()) {
-            logger.error("Bot token is not specified!");
+        if (token == null || token.isEmpty() || "your-bot-token".equals(token)) {
+            logger.error("❌ Bot token is not specified or invalid!");
+            logger.error("Please set a valid bot token in settings.yml under Discord.Bot-token");
             return;
         }
         if (initialized) {
@@ -46,10 +48,15 @@ public class DiscordBotManager {
                     .build()
                     .awaitReady();
 
-            logger.info("JDA initialized");
+            logger.info("Discord bot initialized successfully");
             initialized = true;
+        } catch (InvalidTokenException e) {
+            logger.error("Invalid bot token provided!");
+            logger.error("Please check your bot token in settings.yml and make sure it's correct");
+            jda = null;
+            initialized = false;
         } catch (Exception e) {
-            logger.error("Error initializing JDA: {}", e.getMessage(), e);
+            logger.error("Error initializing Discord bot: {}", e.getMessage());
             jda = null;
             initialized = false;
         }

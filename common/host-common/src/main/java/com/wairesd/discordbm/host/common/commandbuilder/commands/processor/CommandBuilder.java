@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import static net.dv8tion.jda.api.interactions.commands.build.Commands.slash;
 
 public class CommandBuilder {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
     public SlashCommandData build(CommandStructured cmd) {
         SlashCommandData cmdData = slash(cmd.getName(), cmd.getDescription());

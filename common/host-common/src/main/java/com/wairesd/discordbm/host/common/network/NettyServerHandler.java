@@ -30,7 +30,7 @@ import java.util.List;
 
 public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         implements ClientRegisterHandler.NettyServerHandlerContext {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final Gson gson = new Gson();
     private final Object jda;
     private final Database dbManager;

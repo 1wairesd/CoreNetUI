@@ -24,7 +24,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.perm
 import com.wairesd.discordbm.host.common.commandbuilder.security.conditions.chance.ChanceCondition;
 
 public class CommandResponder {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
     public void handleFailedValidation(SlashCommandInteractionEvent event, CommandStructured command, Context context) {
         List<CommandAction> failActions = command.getFailActions();

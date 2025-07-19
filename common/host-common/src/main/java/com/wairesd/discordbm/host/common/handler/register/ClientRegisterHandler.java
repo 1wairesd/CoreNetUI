@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.LoggerFactory;
 
 public class ClientRegisterHandler {
-    private final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private final Database dbManager;
     private final NettyServer nettyServer;
     private final NettyServerHandlerContext nettyContext;

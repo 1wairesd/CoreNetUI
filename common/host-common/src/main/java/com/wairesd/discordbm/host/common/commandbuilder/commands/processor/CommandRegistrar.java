@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class CommandRegistrar {
     private final JDA jda;
     private final CommandBuilder builder;
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
     public CommandRegistrar(JDA jda, CommandBuilder builder) {
         this.jda = jda;

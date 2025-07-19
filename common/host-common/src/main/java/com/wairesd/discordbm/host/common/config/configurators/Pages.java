@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Pages {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final String CONFIG_FILE_NAME = "pages.yml";
     private static File configFile;
     private static Map<String, Object> rawConfig;

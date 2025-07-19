@@ -10,9 +10,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
-
-import static com.jodexindustries.jguiwrapper.gui.AbstractGui.LEGACY_AMPERSAND;
-
 public class CommandListMenu extends AdvancedGui {
     private final DiscordBMAPI api;
     private final int page;

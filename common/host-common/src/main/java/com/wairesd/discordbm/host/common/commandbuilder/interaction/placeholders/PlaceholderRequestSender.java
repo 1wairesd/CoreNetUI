@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.LoggerFactory;
 
 public class PlaceholderRequestSender {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBMV"));
+    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private final NettyServer nettyServer;
     private final Gson gson = new Gson();
 
