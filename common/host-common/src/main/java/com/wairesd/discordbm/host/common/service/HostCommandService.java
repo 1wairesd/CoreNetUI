@@ -9,12 +9,29 @@ import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.host.common.utils.ClientInfo;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.common.utils.color.MessageContext;
-
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.DumperOptions;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
+import okhttp3.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import java.util.zip.GZIPOutputStream;
+
 import java.util.List;
 import java.util.StringJoiner;
 
 public class HostCommandService {
+    private static final String BYTEBIN_URL = "https://bytebin.lucko.me/";
+
     public static String reload(Path dataDirectory, DiscordBMHPlatformManager platformManager) {
         WebhookScheduler.shutdown();
         ConfigManager.ConfigureReload();
@@ -101,7 +118,7 @@ public class HostCommandService {
         for (var cmd : customCommands) customNames.add(cmd.getName());
 
         var commandDefinitions = nettyServer.getCommandDefinitions();
-        java.util.Map<String, java.util.Map<String, List<String>>> grouped = new java.util.HashMap<>();
+        Map<String, Map<String, List<String>>> grouped = new java.util.HashMap<>();
         int total = 0;
         for (var entry : commandToServers.entrySet()) {
             String command = entry.getKey();
@@ -140,5 +157,67 @@ public class HostCommandService {
             }
         }
         return sb.toString();
+    }
+
+    public static String uploadCommandsToEditor(Path dataDirectory) throws IOException {
+        Path commandsPath = dataDirectory.resolve("commands.yml");
+        if (!Files.exists(commandsPath)) {
+            throw new IOException("commands.yml not found!");
+        }
+        try (InputStream in = Files.newInputStream(commandsPath)) {
+            Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
+            Object loaded = yaml.load(in);
+            if (!(loaded instanceof Map<?, ?> map)) {
+                throw new IOException("Invalid YAML format!");
+            }
+            String json = new Gson().toJson(map);
+            byte[] gzipped;
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                 GZIPOutputStream gzip = new GZIPOutputStream(baos);
+                 OutputStreamWriter writer = new OutputStreamWriter(gzip, StandardCharsets.UTF_8)) {
+                writer.write(json);
+                writer.flush();
+                gzip.finish();
+                gzipped = baos.toByteArray();
+            }
+            OkHttpClient client = new OkHttpClient();
+            RequestBody body = RequestBody.create(gzipped, MediaType.parse("application/json"));
+            Request request = new Request.Builder()
+                .url(BYTEBIN_URL + "post")
+                .addHeader("Content-Encoding", "gzip")
+                .post(body)
+                .build();
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    throw new IOException("Ошибка отправки на bytebin!");
+                }
+                String resp = response.body().string();
+                String key = JsonParser.parseString(resp).getAsJsonObject().get("key").getAsString();
+                return "https://discordbmeditor.onrender.com/#" + key;
+            }
+        }
+    }
+
+    public static void applyEditsFromEditor(Path dataDirectory, String code) throws IOException {
+        if (code == null || code.isEmpty()) {
+            throw new IOException("Не указан код!");
+        }
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(BYTEBIN_URL + code).get().build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                throw new IOException("Ошибка загрузки данных с bytebin!");
+            }
+            String json = response.body().string();
+            Map<String, Object> map = new Gson().fromJson(json, Map.class);
+            DumperOptions options = new DumperOptions();
+            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            options.setPrettyFlow(true);
+            Yaml yaml = new Yaml(options);
+            Path commandsPath = dataDirectory.resolve("commands.yml");
+            try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(commandsPath), StandardCharsets.UTF_8)) {
+                yaml.dump(map, writer);
+            }
+        }
     }
 } 
