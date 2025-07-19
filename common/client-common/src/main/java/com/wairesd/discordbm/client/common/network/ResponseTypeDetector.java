@@ -20,6 +20,8 @@ public class ResponseTypeDetector {
                     return ResponseType.EDIT_MESSAGE;
                 case "form":
                     return ResponseType.MODAL;
+                case "random_reply":
+                    return ResponseType.RANDOM_REPLY;
             }
         }
 
@@ -110,6 +112,7 @@ public class ResponseTypeDetector {
         MODAL,
         REPLY_MODAL,
         DIRECT,
-        CHANNEL
+        CHANNEL,
+        RANDOM_REPLY
     }
 } 

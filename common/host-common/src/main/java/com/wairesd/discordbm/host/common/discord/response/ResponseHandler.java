@@ -274,6 +274,28 @@ public class ResponseHandler {
         boolean ephemeral = respMsg.flags() != null && respMsg.flags().isEphemeral();
         String responseType = respMsg.flags() != null ? respMsg.flags().getResponseType() : null;
         String label = respMsg.requestId();
+        if ("RANDOM_REPLY".equalsIgnoreCase(responseType) && respMsg.responses() != null && !respMsg.responses().isEmpty()) {
+            List<String> responses = respMsg.responses();
+            String randomMessage = responses.get(new java.util.Random().nextInt(responses.size()));
+            try {
+                event.getHook().sendMessage(randomMessage).setEphemeral(ephemeral).queue(
+                    success -> {
+                        if (label != null && !label.isEmpty()) {
+                            String channelId = event.getChannel().getId();
+                            String messageId = success.getId();
+                            platformManager.setGlobalMessageLabel(label, channelId, messageId);
+                        }
+                        if (Settings.isDebugRequestProcessing()) {
+                            logger.info("Random reply message sent successfully");
+                        }
+                    },
+                    failure -> logger.error("Failed to send random reply message: {}", failure.getMessage())
+                );
+            } catch (Exception e) {
+                logger.error("Exception while sending message for requestId: {} | {}", respMsg.requestId(), e.getMessage(), e);
+            }
+            return;
+        }
         if ("EDIT_MESSAGE".equalsIgnoreCase(responseType)) {
             event.getHook().editOriginal(respMsg.response() != null ? respMsg.response() : "").queue();
             return;

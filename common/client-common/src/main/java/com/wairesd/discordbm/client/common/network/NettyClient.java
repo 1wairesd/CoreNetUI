@@ -167,6 +167,7 @@ public class NettyClient {
                     .userId(respMsg.userId())
                     .channelId(respMsg.channelId())
                     .conditions(respMsg.conditions())
+                    .responses(respMsg.responses())
                     .build();
                 
                 if (platform.isDebugCommandRegistrations()) {

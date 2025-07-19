@@ -210,6 +210,13 @@ public interface MessageSender {
     void sendButtonWithForm(String requestId, String message, Button button, Form form);
 
     /**
+     * Send a random reply (random message from the list) in response to a command
+     * @param requestId The request ID of the command
+     * @param messages The list of possible messages
+     */
+    void sendRandomReply(String requestId, List<String> messages);
+
+    /**
      * Edit a previously sent message by label, replacing its text.
      *
      * @param label The label/id of the message to edit

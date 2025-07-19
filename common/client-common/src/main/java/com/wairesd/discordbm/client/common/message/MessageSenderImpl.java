@@ -610,4 +610,16 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
+    @Override
+    public void sendRandomReply(String requestId, List<String> messages) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .responses(messages)
+                .flags(new ResponseFlags.Builder().responseType("RANDOM_REPLY").build())
+                .build();
+        String json = gson.toJson(respMsg);
+        platform.getNettyService().sendNettyMessage(json);
+    }
 }

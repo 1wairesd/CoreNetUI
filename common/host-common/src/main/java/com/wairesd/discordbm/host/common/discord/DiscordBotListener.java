@@ -175,6 +175,9 @@ public class DiscordBotListener extends ListenerAdapter {
             if (hasOptions && cmdDef.options() != null && cmdDef.options().size() > 2) {
                 return InteractionResponseType.DEFER_REPLY;
             }
+            if ((cmdDef.options() == null || cmdDef.options().isEmpty()) && (cmdDef.context() == null || !cmdDef.context().contains("form"))) {
+                return InteractionResponseType.DEFER_REPLY;
+            }
         }
 
         return InteractionResponseType.AUTO;

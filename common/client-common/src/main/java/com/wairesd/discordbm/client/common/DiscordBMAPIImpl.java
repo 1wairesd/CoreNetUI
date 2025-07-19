@@ -154,11 +154,14 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         return System.currentTimeMillis() - startTime;
     }
 
-    public Platform getPlatform() {
-        return platform;
+    public EphemeralRulesManager getEphemeralRulesManager() {
+        if (ephemeralRulesManager == null) {
+            throw new NullPointerException("EphemeralRulesManager is not initialized");
+        }
+        return ephemeralRulesManager;
     }
 
-    public EphemeralRulesManager getEphemeralRulesManager() {
-        return ephemeralRulesManager;
+    public Platform getPlatform() {
+        return platform;
     }
 } 
