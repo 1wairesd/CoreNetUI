@@ -11,8 +11,8 @@ include(
         ':common',
         ':common:client-common',
         ':common:host-common',
-        ':DiscordBMB',
-        ':DiscordBMV',
+        ':velocity',
+        ':bukkit',
         ':addons',
         ':addons:DBMGuiManager'
 )
