@@ -53,12 +53,14 @@ DiscordBM — мощная, гибкая платформа для разраб�
 
 **Команды (Minecraft):**
 ```
-/DiscordBMV reload
-/DiscordBMV clients
-/DiscordBMV help
-/DiscordBMV commands custom
-/DiscordBMV commands addons
-/DiscordBMV webhook <webhook_name> <true/false>
+/dbmv reload - перезагрузка
+/dbmv clients - статистика клиентов
+/dbmv help - помощь
+/dbmv commands custom - список команд из файла commands.yml
+/dbmv commands addons - спискок зарегестрированных команд от аддонов 
+/dbmv webhook <webhook_name> <true/false> - отключить или включить webhook
+/dbmv editor - редактор 
+/dbmv applyedits <код> - сохронить изменения из редактора
 ```
 
 ### Клиент (**DiscordBMB**)
@@ -67,8 +69,8 @@ DiscordBM — мощная, гибкая платформа для разраб�
 
 **Команды (Minecraft):**
 ```
-/DiscordBMB reload
-/DiscordBMB help
+/dbm reload - перезагрузка
+/dbm help - помощь
 ```
 
 ---
