@@ -1,0 +1,49 @@
+webhook_triggers:
+  - type: case_open_count
+    case: "*" # * — для всех кейсов, либо название конкретного кейса
+    count: 100
+    webhook: "DBMDonateCase_open"
+    message: "Игрок {player} открыл {count} кейсов {case}!"
+    enabled: true
+
+  - type: drop_obtained
+    case: "*"
+    drop: "Legendary Sword"
+    webhook: "DBMDonateCase_open"
+    message: "Игрок {player} выбил {drop} из кейса {case}!"
+    enabled: true
+
+  - type: first_open
+    case: "EpicCase"
+    webhook: "DBMDonateCase_open"
+    message: "Игрок {player} впервые открыл кейс {case}!"
+    enabled: true
+
+  - type: open_in_period
+    case: "*"
+    period: "day"
+    count: 10
+    webhook: "DBMDonateCase_open"
+    message: "Игрок {player} открыл 10 кейсов {case} за день!"
+    enabled: true
+
+  - type: rare_drop
+    case: "*"
+    chance_below: 1
+    webhook: "DBMDonateCase_open"
+    message: "Игрок {player} выбил ОЧЕНЬ редкий дроп {drop} ({chance}%) из кейса {case}!"
+    enabled: true
+
+  - type: player_open
+    case: "*"
+    player: "1wairesd"
+    webhook: "DBMDonateCase_open"
+    message: "VIP игрок {player} открыл кейс {case}!"
+    enabled: true
+
+  - type: global_open_count
+    case: "*"
+    count: 11
+    webhook: "DBMDonateCase_open"
+    message: "На сервере открыли уже 10 000 кейсов {case}!"
+    enabled: true 

@@ -1,0 +1,25 @@
+group = 'com.wairesd.discordbm'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {url = "https://repo.papermc.io/repository/maven-public/"}
+    maven {url = "https://oss.sonatype.org/content/groups/public/"}
+    maven {url = 'https://repo.jodex.xyz/releases'}
+}
+
+dependencies {
+    compileOnly project(":api")
+    compileOnly("com.jodexindustries.donatecase:spigot-api:2.1.0.5")
+
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}

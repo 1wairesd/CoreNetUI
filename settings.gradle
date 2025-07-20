@@ -14,5 +14,6 @@ include(
         ':velocity',
         ':bukkit',
         ':addons',
-        ':addons:DBMGuiManager'
+        ':addons:DBMGuiManager',
+        ':addons:DBMDonateCase'
 )
