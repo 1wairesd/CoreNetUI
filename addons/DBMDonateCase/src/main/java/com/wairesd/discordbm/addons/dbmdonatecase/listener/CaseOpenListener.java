@@ -1,15 +1,18 @@
 package com.wairesd.discordbm.addons.dbmdonatecase.listener;
 
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.player.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.manager.CaseManager;
 import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
 import com.wairesd.discordbm.api.DiscordBMAPI;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.WebhookTriggersConfig;
 import net.kyori.event.method.annotation.Subscribe;
+
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.Map;
 
@@ -31,34 +34,36 @@ public class CaseOpenListener implements Subscriber {
     @Subscribe
     public void onOpenCase(OpenCaseEvent event) {
         String player = event.player().getName();
-        String caseType = event.definition().settings().getType();
-        String caseName = event.definition().settings().getDisplayName().replaceAll("[§&][0-9a-fk-or]", "");
-        int playerOpenCount = openManager.get(caseType, player);
-        long now = System.currentTimeMillis();
-        for (WebhookTriggersConfig.Trigger trigger : triggersConfig.getEnabledTriggers()) {
-            if (trigger.type.equals("player_open")) {
-                boolean playerMatch = trigger.player != null && trigger.player.equalsIgnoreCase(player);
-                boolean caseMatch = trigger.caseName.equals("*") || trigger.caseName.equalsIgnoreCase(caseName);
-                if (playerMatch && caseMatch) {
-                    String msg = trigger.message.replace("{player}", player).replace("{case}", caseName);
-                    dbmApi.getMessageSender().sendWebhook(trigger.webhook, msg);
+        String caseType = event.definition().settings().type();
+        String caseName = event.definition().settings().displayName().replaceAll("[§&][0-9a-fk-or]", "");
+
+        openManager.getAsync(caseType, player).thenAccept(playerOpenCount -> {
+            long now = System.currentTimeMillis();
+            for (WebhookTriggersConfig.Trigger trigger : triggersConfig.getEnabledTriggers()) {
+                if (trigger.type.equals("player_open")) {
+                    boolean playerMatch = trigger.player != null && trigger.player.equalsIgnoreCase(player);
+                    boolean caseMatch = trigger.caseName.equals("*") || trigger.caseName.equalsIgnoreCase(caseName);
+                    if (playerMatch && caseMatch) {
+                        String msg = trigger.message.replace("{player}", player).replace("{case}", caseName);
+                        dbmApi.getMessageSender().sendWebhook(trigger.webhook, msg);
+                    }
+                }
+                if (trigger.type.equals("case_open_count")) {
+                    boolean caseMatch = trigger.caseName.equals("*") || trigger.caseName.equalsIgnoreCase(caseName);
+                    if (caseMatch && playerOpenCount.equals(trigger.count)) {
+                        String msg = trigger.message.replace("{player}", player).replace("{case}", caseName).replace("{count}", String.valueOf(playerOpenCount));
+                        dbmApi.getMessageSender().sendWebhook(trigger.webhook, msg);
+                    }
+                }
+                if (trigger.type.equals("first_open")) {
+                    boolean caseMatch = trigger.caseName.equals("*") || trigger.caseName.equalsIgnoreCase(caseName);
+                    if (caseMatch && playerOpenCount == 1) {
+                        String msg = trigger.message.replace("{player}", player).replace("{case}", caseName);
+                        dbmApi.getMessageSender().sendWebhook(trigger.webhook, msg);
+                    }
                 }
             }
-            if (trigger.type.equals("case_open_count")) {
-                boolean caseMatch = trigger.caseName.equals("*") || trigger.caseName.equalsIgnoreCase(caseName);
-                if (caseMatch && trigger.count != null && playerOpenCount == trigger.count) {
-                    String msg = trigger.message.replace("{player}", player).replace("{case}", caseName).replace("{count}", String.valueOf(playerOpenCount));
-                    dbmApi.getMessageSender().sendWebhook(trigger.webhook, msg);
-                }
-            }
-            if (trigger.type.equals("first_open")) {
-                boolean caseMatch = trigger.caseName.equals("*") || trigger.caseName.equalsIgnoreCase(caseName);
-                if (caseMatch && playerOpenCount == 1) {
-                    String msg = trigger.message.replace("{player}", player).replace("{case}", caseName);
-                    dbmApi.getMessageSender().sendWebhook(trigger.webhook, msg);
-                }
-            }
-        }
+        });
     }
 
     @Subscribe
@@ -66,9 +71,12 @@ public class CaseOpenListener implements Subscriber {
         ActiveCase ac = event.activeCase();
         String player = ac.player().getName();
         String caseType = ac.caseType();
-        String caseName = caseManager.get(caseType) != null ? caseManager.get(caseType).caseDisplayName().replaceAll("[§&][0-9a-fk-or]", "") : caseType;
-        CaseDataItem winItem = ac.winItem();
-        String dropName = winItem != null ? winItem.getName() : "";
+
+        Optional<CaseDefinition> optional = caseManager.getByType(caseType);
+
+        String caseName = optional.map(caseDefinition -> caseDefinition.settings().displayName().replaceAll("[§&][0-9a-fk-or]", "")).orElse(caseType);
+        CaseItem winItem = ac.winItem();
+        String dropName = winItem != null ? winItem.name() : "";
         double dropChance = winItem != null ? winItem.chance() : 0.0;
         int globalOpenCount = 0;
         try {
