@@ -8,6 +8,8 @@ rootProject.name = 'DiscordBM'
 
 include(
         ':api',
+        ':api:velocity-api',
+        ':api:bukkit-api',
         ':common',
         ':common:client-common',
         ':common:host-common',
@@ -16,5 +18,4 @@ include(
         ':addons',
         ':addons:DBMGuiManager',
         ':addons:DBMDonateCase'
-
 )
