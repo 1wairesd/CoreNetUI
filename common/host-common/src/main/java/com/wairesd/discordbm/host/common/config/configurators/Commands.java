@@ -136,7 +136,6 @@ public class Commands {
                 conditions,
                 actions,
                 failActions,
-                ephemeral,
                 permission,
                 pluginName
         );

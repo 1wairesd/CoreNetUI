@@ -27,7 +27,7 @@ public class CommandResponder {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
     public void handleFailedValidation(SlashCommandInteractionEvent event, CommandStructured command, Context context) {
-        List<CommandAction> failActions = command.getFailActions();
+        List<CommandAction> failActions = List.of();
         if (!failActions.isEmpty()) {
             event.deferReply(true).queue(hook -> {
                 context.setHook(hook);

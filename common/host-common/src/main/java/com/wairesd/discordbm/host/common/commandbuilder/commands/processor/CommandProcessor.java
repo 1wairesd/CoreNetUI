@@ -7,7 +7,6 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Cont
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.structures.CommandStructured;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.response.CommandResponder;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.messages.SendMessageAction;
-import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,7 @@ public class CommandProcessor {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
     public void process(CommandStructured command, Context context, SlashCommandInteractionEvent event, CommandResponder responder) {
-        boolean ephemeral = command.getEphemeral() != null ? command.getEphemeral() : Settings.isDefaultEphemeral();
+        boolean ephemeral = false;
 
         boolean hasCustomReply = false;
         for (CommandAction action : command.getActions()) {

@@ -41,7 +41,6 @@ public class CommandLoader {
                 conditions,
                 List.of(),
                 List.of(),
-                null,
                 def.permission(),
                 def.pluginName()
             );

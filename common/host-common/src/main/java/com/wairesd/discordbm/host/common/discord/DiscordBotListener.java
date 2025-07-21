@@ -90,7 +90,6 @@ public class DiscordBotListener extends ListenerAdapter {
                 conditions,
                 java.util.List.of(),
                 java.util.List.of(),
-                null,
                 cmdDef.permission(),
                 cmdDef.pluginName()
             );
