@@ -1,4 +1,4 @@
-no_cases: "Нет кейсов."
+no_cases: "Нет доступных кейсов."
 no_case_data: "Нет данных по открытиям кейсов."
 no_case_data_specific: "Нет данных по открытиям кейса %caseType%."
 no_player_data: "У игрока %player% нет ключей и не открыто кейсов."
@@ -12,3 +12,29 @@ keys_section: "Ключи:"
 opened_section: "Открыто кейсов:"
 top_entry: "%index%. %name% (открытий: %count%)"
 cases_title: "Список кейсов"
+dchistory_title: "История открытий игрока %player%"
+dchistory_no_data: "Нет открытий кейсов у этого игрока."
+dclastdrops_title: "Последние 10 открытий кейсов"
+dclastdrops_no_data: "Нет открытий кейсов на сервере."
+dchelp_title: "DBMDonateCase — команды"
+dchelp_list: |
+  **Доступные команды DBMDonateCase:**
+  /dchelp — Помощь по командам
+  /dcstats <player> — Показать количество ключей DonateCase у игрока
+  /dccases — Список всех кейсов DonateCase
+  /dctopcases — Топ 10 кейсов по количеству открытий
+  /dctopplayers <case> — Топ 10 игроков по открытию выбранного кейса
+  /dctopplayersall — Топ 10 игроков по всем открытым кейсам
+  /dclastdrops — Последние 10 открытий кейсов на сервере (кто, что, когда)
+  /dchistory <player> — Последние 10 открытий кейсов игроком (что и когда выпало, какой кейс)
+dcstats_no_player: "Не указан игрок."
+dcstats_no_player_data: "Нет данных по игроку %player%."
+dcstats_title: "Статистика игрока %player%"
+dcstats_keys_section: "Ключи:"
+dcstats_opened_section: "Открыто кейсов:"
+dcstats_no_case_data: "Нет данных по кейсам."
+dcstats_no_case_data_specific: "Нет данных по кейсу %caseType%."
+dcstats_top_entry: "%index%. %name% (открытий: %count%)"
+dcstats_top_cases_title: "Топ 10 кейсов по количеству открытий"
+dcstats_top_players_title: "Топ 10 игроков по открытию кейса %caseType%"
+dcstats_top_players_all_title: "Топ 10 игроков по всем открытым кейсам"

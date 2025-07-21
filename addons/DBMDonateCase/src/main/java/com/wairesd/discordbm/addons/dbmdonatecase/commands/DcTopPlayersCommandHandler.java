@@ -52,8 +52,11 @@ public class DcTopPlayersCommandHandler implements CommandHandler {
                 phEntry.put("count", String.valueOf(entry.getValue()));
                 sb.append(messages.get("top_entry", phEntry)).append("\n");
             }
+            String displayName = api.getCaseManager().getByType(caseType)
+                .map(def -> def.settings().displayName())
+                .orElse(caseType);
             Map<String, String> ph = new HashMap<>();
-            ph.put("caseType", caseType);
+            ph.put("caseType", displayName);
             var embed = dbmApi.createEmbedBuilder()
                 .setTitle(messages.get("top_players_title", ph))
                 .setDescription(sb.toString())

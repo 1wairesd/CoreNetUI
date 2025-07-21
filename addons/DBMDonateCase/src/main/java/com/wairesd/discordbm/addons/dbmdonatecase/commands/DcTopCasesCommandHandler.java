@@ -40,9 +40,12 @@ public class DcTopCasesCommandHandler implements CommandHandler {
             StringBuilder sb = new StringBuilder();
             int i = 1;
             for (var entry : top) {
+                String displayName = api.getCaseManager().getByType(entry.getKey())
+                    .map(def -> def.settings().displayName())
+                    .orElse(entry.getKey());
                 Map<String, String> ph = new HashMap<>();
                 ph.put("index", String.valueOf(i++));
-                ph.put("name", entry.getKey());
+                ph.put("name", displayName);
                 ph.put("count", String.valueOf(entry.getValue()));
                 sb.append(messages.get("top_entry", ph)).append("\n");
             }

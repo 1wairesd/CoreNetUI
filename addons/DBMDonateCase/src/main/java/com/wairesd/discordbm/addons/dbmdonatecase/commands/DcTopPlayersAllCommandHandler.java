@@ -35,7 +35,10 @@ public class DcTopPlayersAllCommandHandler implements CommandHandler {
             Map<String, Integer> playerCount = new HashMap<>();
             for (String player : allPlayers) {
                 Map<String, Integer> openMap = api.getCaseOpenManager().get(player);
-                int sum = openMap.values().stream().mapToInt(Integer::intValue).sum();
+                int sum = 0;
+                for (Map.Entry<String, Integer> entry : openMap.entrySet()) {
+                    sum += entry.getValue();
+                }
                 playerCount.put(player, sum);
             }
             var top = playerCount.entrySet().stream()

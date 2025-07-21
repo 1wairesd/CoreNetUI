@@ -5,6 +5,7 @@ import com.wairesd.discordbm.api.embed.EmbedBuilder;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.event.EventRegistry;
+import com.wairesd.discordbm.api.event.EventBus;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.role.RoleManager;
 import com.wairesd.discordbm.api.form.FormBuilder;
@@ -45,6 +46,13 @@ public interface DiscordBMAPI {
      * @return The event registry
      */
     EventRegistry getEventRegistry();
+    
+    /**
+     * Get the event bus for the Discord Bot Manager
+     * 
+     * @return The event bus
+     */
+    EventBus getEventBus();
     
     /**
      * Get the logger for the Discord Bot Manager

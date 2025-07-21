@@ -171,6 +171,20 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
                 }
             }
             return;
+        } else if ("send_webhook".equals(type)) {
+            String webhookName = json.get("webhookName").getAsString();
+            String message = json.get("message").getAsString();
+            var webhook = com.wairesd.discordbm.host.common.config.configurators.Webhooks.getWebhooks().stream()
+                .filter(w -> w.name().equals(webhookName) && w.enabled())
+                .findFirst()
+                .orElse(null);
+            if (webhook == null) {
+                ctx.writeAndFlush("{\"type\":\"error\",\"message\":\"Webhook not found: " + webhookName + "\"}");
+                return;
+            }
+            com.wairesd.discordbm.host.common.utils.WebhookSender.sendWebhook(webhook.url(), message);
+            // ctx.writeAndFlush("{\"type\":\"success\",\"message\":\"Webhook sent: " + webhookName + "\"}"); // Убрано чтобы не было NPE
+            return;
         } else {
             logger.warn("Unknown message type: {}", type);
         }

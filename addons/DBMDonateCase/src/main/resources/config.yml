@@ -43,7 +43,35 @@ webhook_triggers:
 
   - type: global_open_count
     case: "*"
-    count: 11
+    count: 100
     webhook: "DBMDonateCase_open"
-    message: "На сервере открыли уже 10 000 кейсов {case}!"
-    enabled: true 
+    message: "На сервере открыли уже {count} кейсов {case}!"
+    enabled: true
+
+  - type: global_open_count
+    case: "*"
+    count: 500
+    webhook: "DBMDonateCase_open"
+    message: "На сервере открыли уже {count} кейсов {case}!"
+    enabled: true
+
+  - type: global_open_count
+    case: "*"
+    count: 1000
+    webhook: "DBMDonateCase_open"
+    message: "На сервере открыли уже {count} кейсов {case}!"
+    enabled: true
+
+  - type: global_open_count
+    case: "*"
+    count: 5000
+    webhook: "DBMDonateCase_open"
+    message: "На сервере открыли уже {count} кейсов {case}!"
+    enabled: true
+
+  - type: global_open_count
+    case: "*"
+    count: 10000
+    webhook: "DBMDonateCase_open"
+    message: "На сервере открыли уже {count} кейсов {case}!"
+    enabled: true

@@ -10,8 +10,10 @@ import java.util.Map;
 
 public class Messages {
     private final Map<String, String> messages = new HashMap<>();
+    private final JavaPlugin plugin;
 
     public Messages(JavaPlugin plugin) {
+        this.plugin = plugin;
         try {
             File file = new File(plugin.getDataFolder(), "messages.yml");
             if (!file.exists()) {
@@ -40,5 +42,23 @@ public class Messages {
             }
         }
         return msg;
+    }
+
+    public void reload() {
+        messages.clear();
+        try {
+            File file = new File(plugin.getDataFolder(), "messages.yml");
+            if (!file.exists()) {
+                plugin.saveResource("messages.yml", false);
+            }
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(new java.io.FileInputStream(file), StandardCharsets.UTF_8)
+            );
+            for (String key : config.getKeys(false)) {
+                messages.put(key, config.getString(key, key));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 } 

@@ -276,4 +276,12 @@ public interface MessageSender {
      * @param mentionAuthor Whether to mention the author of the original message
      */
     void sendReplyToMessage(String requestId, String message, String replyMessageId, boolean mentionAuthor);
+
+    /**
+     * Отправить сообщение в Discord через webhook по имени из webhooks.yml
+     * @param webhookName имя вебхука из webhooks.yml
+     * @param message сообщение для отправки
+     * @throws IllegalArgumentException если вебхук не найден
+     */
+    void sendWebhook(String webhookName, String message);
 }

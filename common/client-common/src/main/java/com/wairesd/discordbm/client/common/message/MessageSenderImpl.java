@@ -636,4 +636,13 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
+
+    @Override
+    public void sendWebhook(String webhookName, String message) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("type", "send_webhook");
+        obj.addProperty("webhookName", webhookName);
+        obj.addProperty("message", message);
+        platform.getNettyService().sendNettyMessage(obj.toString());
+    }
 }

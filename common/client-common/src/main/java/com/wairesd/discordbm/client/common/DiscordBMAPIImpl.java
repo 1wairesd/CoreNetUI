@@ -21,11 +21,13 @@ import com.wairesd.discordbm.api.form.FormFieldBuilder;
 import com.wairesd.discordbm.client.common.form.FormBuilderImpl;
 import com.wairesd.discordbm.client.common.form.FormFieldBuilderImpl;
 import com.wairesd.discordbm.client.common.ephemeral.EphemeralRulesManager;
+import com.wairesd.discordbm.api.event.EventBus;
+import com.wairesd.discordbm.api.event.EventBusImpl;
 
 import java.util.Map;
 
 public class DiscordBMAPIImpl implements DiscordBMAPI {
-    
+
     private final Platform platform;
     private final MessageSenderImpl messageSender;
     private final ComponentRegistryImpl componentRegistry;
@@ -34,6 +36,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
     private final RoleManagerImpl roleManager;
     private final EphemeralRulesManager ephemeralRulesManager;
     private final long startTime = System.currentTimeMillis();
+    private final EventBus eventBus = new EventBusImpl();
 
     public DiscordBMAPIImpl(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -44,7 +47,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         this.roleManager = new RoleManagerImpl(platform);
         this.ephemeralRulesManager = new EphemeralRulesManager(platform);
     }
-    
+
     @Override
     public CommandRegistration getCommandRegistration() {
         if (platform == null) {
@@ -52,7 +55,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return platform.getCommandRegistration();
     }
-    
+
     @Override
     public MessageSender getMessageSender() {
         if (platform == null) {
@@ -60,7 +63,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return messageSender;
     }
-    
+
     @Override
     public ComponentRegistry getComponentRegistry() {
         if (platform == null) {
@@ -68,7 +71,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return componentRegistry;
     }
-    
+
     @Override
     public EventRegistry getEventRegistry() {
         if (platform == null) {
@@ -76,7 +79,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return eventRegistry;
     }
-    
+
     @Override
     public Logger getLogger() {
         if (platform == null) {
@@ -84,7 +87,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return logger;
     }
-    
+
     @Override
     public EmbedBuilder createEmbedBuilder() {
         if (platform == null) {
@@ -92,7 +95,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return new EmbedBuilderImpl();
     }
-    
+
     @Override
     public FormBuilder createFormBuilder() {
         if (platform == null) {
@@ -100,7 +103,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return new FormBuilderImpl();
     }
-    
+
     @Override
     public FormFieldBuilder createFormFieldBuilder() {
         if (platform == null) {
@@ -108,7 +111,7 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return new FormFieldBuilderImpl();
     }
-    
+
     @Override
     public String getServerName() {
         if (platform == null) {
@@ -116,15 +119,15 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         }
         return platform.getServerName();
     }
-    
+
     @Override
     public boolean isConnected() {
         if (platform == null) {
             throw new NullPointerException("DiscordBM API: Platform is not initialized");
         }
-        return platform.getNettyService() != null && 
-               platform.getNettyService().getNettyClient() != null && 
-               platform.getNettyService().getNettyClient().isActive();
+        return platform.getNettyService() != null &&
+                platform.getNettyService().getNettyClient() != null &&
+                platform.getNettyService().getNettyClient().isActive();
     }
 
     @Override
@@ -162,6 +165,17 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
     }
 
     public Platform getPlatform() {
+        if (platform == null) {
+            throw new NullPointerException("DiscordBM API: Platform is not initialized");
+        }
         return platform;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        if (eventBus == null) {
+            throw new NullPointerException("DiscordBM API: EventBus is not initialized");
+        }
+        return eventBus;
     }
 } 

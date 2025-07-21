@@ -28,7 +28,15 @@ public class DcCasesCommandHandler implements CommandHandler {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        cases.forEach((type, data) -> sb.append(type).append("\n"));
+        cases.forEach((type, data) -> {
+            String displayName = api.getCaseManager().getByType(type)
+                .map(def -> def.settings().displayName())
+                .orElse(data.caseDisplayName());
+            if (displayName != null) {
+                displayName = displayName.replaceAll("[§&][0-9a-fk-or]", "");
+            }
+            sb.append(type).append(" - ").append(displayName).append("\n");
+        });
         var embed = dbmApi.createEmbedBuilder()
             .setTitle(messages.get("cases_title"))
             .setDescription(sb.toString())

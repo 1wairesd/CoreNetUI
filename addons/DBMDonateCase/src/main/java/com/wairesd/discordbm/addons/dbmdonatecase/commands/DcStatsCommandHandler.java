@@ -44,11 +44,21 @@ public class DcStatsCommandHandler implements CommandHandler {
                 StringBuilder sb = new StringBuilder();
                 if (keys != null && !keys.isEmpty()) {
                     sb.append(messages.get("keys_section")).append("\n");
-                    keys.forEach((caseType, amount) -> sb.append("- ").append(caseType).append(": ").append(amount).append("\n"));
+                    keys.forEach((caseType, amount) -> {
+                        String displayName = api.getCaseManager().getByType(caseType)
+                            .map(def -> def.settings().displayName())
+                            .orElse(caseType);
+                        sb.append("- ").append(displayName).append(": ").append(amount).append("\n");
+                    });
                 }
                 if (opened != null && !opened.isEmpty()) {
                     sb.append(messages.get("opened_section")).append("\n");
-                    opened.forEach((caseType, amount) -> sb.append("- ").append(caseType).append(": ").append(amount).append("\n"));
+                    opened.forEach((caseType, amount) -> {
+                        String displayName = api.getCaseManager().getByType(caseType)
+                            .map(def -> def.settings().displayName())
+                            .orElse(caseType);
+                        sb.append("- ").append(displayName).append(": ").append(amount).append("\n");
+                    });
                 }
                 return sb.toString();
             }
