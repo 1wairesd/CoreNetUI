@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation project(":common:host-common")
+    implementation project(":api:velocity-api")
     implementation project(":common")
     implementation project(":api")
 

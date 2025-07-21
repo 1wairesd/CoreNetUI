@@ -30,8 +30,8 @@ public class DcTopPlayersAllCommandHandler implements CommandHandler {
                 return;
             }
             java.util.Set<String> allPlayers = historyList.stream()
-                .map(h -> h.playerName())
-                .collect(Collectors.toSet());
+                    .map(h -> h.playerName())
+                    .collect(Collectors.toSet());
             Map<String, Integer> playerCount = new HashMap<>();
             for (String player : allPlayers) {
                 Map<String, Integer> openMap = api.getCaseOpenManager().get(player);
@@ -42,9 +42,9 @@ public class DcTopPlayersAllCommandHandler implements CommandHandler {
                 playerCount.put(player, sum);
             }
             var top = playerCount.entrySet().stream()
-                .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
-                .limit(10)
-                .toList();
+                    .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
+                    .limit(10)
+                    .toList();
             StringBuilder sb = new StringBuilder();
             int i = 1;
             for (var entry : top) {
@@ -55,9 +55,9 @@ public class DcTopPlayersAllCommandHandler implements CommandHandler {
                 sb.append(messages.get("top_entry", ph)).append("\n");
             }
             var embed = dbmApi.createEmbedBuilder()
-                .setTitle(messages.get("top_players_all_title"))
-                .setDescription(sb.toString())
-                .build();
+                    .setTitle(messages.get("top_players_all_title"))
+                    .setDescription(sb.toString())
+                    .build();
             sender.sendResponse(reqId, embed);
         });
     }

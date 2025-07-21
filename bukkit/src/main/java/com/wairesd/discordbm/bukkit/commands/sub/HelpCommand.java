@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.bukkit.commands.sub;
 
 import com.wairesd.discordbm.bukkit.DBMBukkitPlugin;
+import com.wairesd.discordbm.bukkit.api.BukkitUtils;
 import com.wairesd.discordbm.client.common.service.ClientCommandService;
 import org.bukkit.command.CommandSender;
 
@@ -19,7 +20,7 @@ public class HelpCommand {
 
     public boolean execute(CommandSender sender) {
         for (String msg : clientCommandService.getHelp()) {
-            sender.sendMessage(msg);
+            BukkitUtils.sendMessage(sender, msg);
         }
         return true;
     }

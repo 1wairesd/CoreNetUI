@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.client.common.component;
+package com.wairesd.discordbm.common.component;
 
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.component.ButtonStyle;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import net.kyori.adventure.text.Component;
 import com.wairesd.discordbm.host.common.service.HostCommandService;
+import com.wairesd.discordbm.velocity.api.VelocityCommandSender;
 
 public class EditorCommand {
     private final Path dataDirectory;
@@ -14,11 +15,12 @@ public class EditorCommand {
     }
 
     public void execute(CommandSource source) {
+        VelocityCommandSender sender = new VelocityCommandSender(source);
         try {
             String url = HostCommandService.uploadCommandsToEditor(dataDirectory);
-            source.sendMessage(Component.text("Откройте редактор: " + url));
+            sender.sendMessage(Component.text("Откройте редактор: " + url));
         } catch (IOException e) {
-            source.sendMessage(Component.text("Ошибка: " + e.getMessage()));
+            sender.sendMessage(Component.text("Ошибка: " + e.getMessage()));
         }
     }
 } 

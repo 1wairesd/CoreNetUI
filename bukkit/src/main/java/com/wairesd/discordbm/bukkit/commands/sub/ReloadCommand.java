@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.bukkit.commands.sub;
 
 import com.wairesd.discordbm.bukkit.DBMBukkitPlugin;
+import com.wairesd.discordbm.bukkit.api.BukkitUtils;
 import com.wairesd.discordbm.client.common.config.configurators.Messages;
 import com.wairesd.discordbm.client.common.service.ClientCommandService;
 import org.bukkit.command.CommandSender;
@@ -19,12 +20,12 @@ public class ReloadCommand {
     }
 
     public boolean execute(CommandSender sender) {
-        if (!sender.hasPermission("discordbm.reload")) {
-            sender.sendMessage(Messages.getMessage(Messages.Keys.NO_PERMISSION));
+        if (!BukkitUtils.hasPermission(sender, "discordbm.reload")) {
+            BukkitUtils.sendMessage(sender, Messages.getMessage(Messages.Keys.NO_PERMISSION));
             return true;
         }
         for (String msg : clientCommandService.reload()) {
-            sender.sendMessage(msg);
+            BukkitUtils.sendMessage(sender, msg);
         }
         return true;
     }

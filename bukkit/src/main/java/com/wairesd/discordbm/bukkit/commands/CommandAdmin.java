@@ -4,6 +4,7 @@ import com.wairesd.discordbm.bukkit.DBMBukkitPlugin;
 import com.wairesd.discordbm.bukkit.commands.sub.HelpCommand;
 import com.wairesd.discordbm.bukkit.commands.sub.ReloadCommand;
 import com.wairesd.discordbm.client.common.service.ClientCommandService;
+import com.wairesd.discordbm.bukkit.api.BukkitUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -61,7 +62,7 @@ public class CommandAdmin implements CommandExecutor, TabCompleter {
 
     private void showHelp(CommandSender sender) {
         for (String msg : clientCommandService.getHelp()) {
-            sender.sendMessage(msg);
+            BukkitUtils.sendMessage(sender, msg);
         }
     }
 }

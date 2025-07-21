@@ -28,6 +28,9 @@ import java.util.zip.GZIPOutputStream;
 
 import java.util.List;
 import java.util.StringJoiner;
+import com.wairesd.discordbm.api.DiscordBMAPIProvider;
+import com.wairesd.discordbm.api.command.CommandRegistration;
+import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
 
 public class HostCommandService {
     private static final String BYTEBIN_URL = "https://bytebin.lucko.me/";
@@ -136,6 +139,21 @@ public class HostCommandService {
                         .computeIfAbsent(plugin, k -> new java.util.ArrayList<>())
                         .add(command);
                 total++;
+            }
+        }
+        
+        var api = DiscordBMAPIProvider.getInstance();
+        if (api != null) {
+            CommandRegistration reg = api.getCommandRegistration();
+            if (reg instanceof HostCommandRegistration hostReg) {
+                var hostCommands = hostReg.getRegisteredCommands();
+                for (var cmd : hostCommands) {
+                    String plugin = cmd.getPluginName() != null ? cmd.getPluginName() : "host";
+                    grouped.computeIfAbsent("host", k -> new java.util.HashMap<>())
+                            .computeIfAbsent(plugin, k -> new java.util.ArrayList<>())
+                            .add(cmd.getName());
+                    total++;
+                }
             }
         }
         if (total == 0) {

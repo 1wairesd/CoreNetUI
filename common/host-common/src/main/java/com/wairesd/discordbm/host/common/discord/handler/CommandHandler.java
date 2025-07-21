@@ -8,6 +8,9 @@ import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
+import com.wairesd.discordbm.api.DiscordBMAPIProvider;
+import com.wairesd.discordbm.api.command.CommandRegistration;
+import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.LoggerFactory;
 
@@ -51,14 +54,37 @@ public class CommandHandler {
                         .queue();
                 return;
             }
-        } else {
-            if (Settings.isDebugCommandNotFound()) {
-                logger.warn("Custom command '{}' not found", command);
-            }
-            event.reply("Command unavailable.")
-                    .setEphemeral(true)
-                    .queue();
             return;
         }
+
+        var api = DiscordBMAPIProvider.getInstance();
+        if (api != null) {
+            CommandRegistration reg = api.getCommandRegistration();
+            var registered = reg.getRegisteredCommands();
+            for (var cmd : registered) {
+                if (cmd.getName().equalsIgnoreCase(command)) {
+                    if (reg instanceof HostCommandRegistration hostReg) {
+                        var handler = hostReg.getHandler(command);
+                        if (handler != null) {
+                            String reqId = java.util.UUID.randomUUID().toString();
+                            event.deferReply(false).queue(hook -> {
+                                requestSender.getPendingRequests().put(java.util.UUID.fromString(reqId), event);
+                                handler.handleCommand(command, event.getOptions().stream().collect(
+                                    java.util.stream.Collectors.toMap(o -> o.getName(), o -> o.getAsString())
+                                ), reqId);
+                            });
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (Settings.isDebugCommandNotFound()) {
+            logger.warn("Custom command '{}' not found", command);
+        }
+        event.reply("Command unavailable.")
+                .setEphemeral(true)
+                .queue();
     }
 }

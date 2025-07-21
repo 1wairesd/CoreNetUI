@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import net.kyori.adventure.text.Component;
 import com.wairesd.discordbm.host.common.service.HostCommandService;
+import com.wairesd.discordbm.velocity.api.VelocityCommandSender;
 
 public class ApplyEditsCommand {
     private final Path dataDirectory;
@@ -13,16 +14,17 @@ public class ApplyEditsCommand {
         this.dataDirectory = dataDirectory;
     }
 
-    public void execute(CommandSource source, String code) {
-        if (code == null || code.isEmpty()) {
-            source.sendMessage(Component.text("Не указан код!"));
+    public void execute(CommandSource source, String arg) {
+        VelocityCommandSender sender = new VelocityCommandSender(source);
+        if (arg == null || arg.isEmpty()) {
+            sender.sendMessage(Component.text("Не указан код!"));
             return;
         }
         try {
-            HostCommandService.applyEditsFromEditor(dataDirectory, code);
-            source.sendMessage(Component.text("Изменения успешно применены!"));
+            HostCommandService.applyEditsFromEditor(dataDirectory, arg);
+            sender.sendMessage(Component.text("Изменения успешно применены!"));
         } catch (IOException e) {
-            source.sendMessage(Component.text("Ошибка применения изменений: " + e.getMessage()));
+            sender.sendMessage(Component.text("Ошибка применения изменений: " + e.getMessage()));
         }
     }
 } 

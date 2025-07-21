@@ -5,6 +5,7 @@ import com.wairesd.discordbm.api.component.ComponentHandler;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.common.component.ButtonImpl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -5,6 +5,7 @@ import com.wairesd.discordbm.common.utils.color.MessageContext;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.host.common.service.HostCommandService;
+import com.wairesd.discordbm.velocity.api.VelocityCommandSender;
 
 public class ReloadCommand {
 
@@ -15,11 +16,12 @@ public class ReloadCommand {
     }
 
     public void execute(CommandSource source, MessageContext context, DiscordBMHPlatformManager platformManager, java.nio.file.Path dataDirectory) {
+        VelocityCommandSender sender = new VelocityCommandSender(source);
         if (!source.hasPermission("discordbotmanager.reload")) {
-            source.sendMessage(Messages.getComponent(Messages.Keys.NO_PERMISSION, context));
+            sender.sendMessage(Messages.getComponent(Messages.Keys.NO_PERMISSION, context).toString());
             return;
         }
         String result = HostCommandService.reload(dataDirectory, platformManager);
-        source.sendMessage(Messages.getComponent(result, context));
+        sender.sendMessage(Messages.getComponent(result, context).toString());
     }
 }

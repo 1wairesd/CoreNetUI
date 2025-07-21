@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.client.common.form;
+package com.wairesd.discordbm.common.form;
 
 import com.wairesd.discordbm.api.form.FormField;
 import com.wairesd.discordbm.api.form.FormFieldBuilder;

@@ -59,7 +59,8 @@ public class DBMVelocityPlugin {
         timer.start();
         BannerPrinter.printBanner(BannerPrinter.Platform.VELOCITY);
         plugin = this;
-        platformManager = new DiscordBMHPlatformManager(proxy, logger, Pages.pageMap);
+        PluginLogger pluginLogger = new Slf4jPluginLogger(slf4jLogger);
+        platformManager = new DiscordBMHPlatformManager(proxy, pluginLogger, Pages.pageMap);
         Commands.setPlatform(platformManager);
         platformBootstrap = new DiscordBMHBootstrap(platformManager, dataDirectory, logger);
         registerCommands();

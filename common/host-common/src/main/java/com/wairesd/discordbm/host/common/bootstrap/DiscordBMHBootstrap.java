@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.host.common.bootstrap;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
+import com.wairesd.discordbm.host.common.api.HostMessageSender;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener.ButtonInteractionListener;
 import com.wairesd.discordbm.host.common.commandbuilder.components.forms.listener.FormInteractionListener;
@@ -13,6 +14,9 @@ import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import com.wairesd.discordbm.host.common.scheduler.WebhookScheduler;
+import com.wairesd.discordbm.api.DiscordBMAPIProvider;
+import com.wairesd.discordbm.host.common.api.HostDiscordBMAPIImpl;
+import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
 import net.dv8tion.jda.api.JDA;
 
 import java.nio.file.Path;
@@ -90,6 +94,10 @@ public class DiscordBMHBootstrap {
         commandManager = new CommandManager(nettyServer, jda);
         platformManager.setCommandManager(commandManager);
         commandManager.loadAndRegisterCommands();
+
+        HostCommandRegistration hostCommandRegistration = new HostCommandRegistration(discordBotManager);
+        HostMessageSender hostMessageSender = new HostMessageSender(jda);
+        DiscordBMAPIProvider.setInstance(new HostDiscordBMAPIImpl(hostCommandRegistration, hostMessageSender));
     }
 
     private void startNetty() {

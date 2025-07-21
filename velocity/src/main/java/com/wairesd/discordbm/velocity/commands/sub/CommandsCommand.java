@@ -8,6 +8,7 @@ import com.wairesd.discordbm.host.common.service.HostCommandService;
 import com.wairesd.discordbm.common.utils.color.ColorUtils;
 import net.kyori.adventure.text.Component;
 import com.wairesd.discordbm.common.utils.color.transform.AnsiColorTranslator;
+import com.wairesd.discordbm.velocity.api.VelocityCommandSender;
 
 public class CommandsCommand {
     private final DiscordBMHPlatformManager platformManager;
@@ -17,38 +18,39 @@ public class CommandsCommand {
     }
 
     public void execute(CommandSource source, String[] args, MessageContext context, DiscordBMHPlatformManager platformManager) {
+        VelocityCommandSender sender = new VelocityCommandSender(source);
         if (!source.hasPermission("discordbotmanager.commands")) {
-            source.sendMessage(Messages.getComponent(Messages.Keys.NO_PERMISSION, context));
+            sender.sendMessage(Messages.getComponent(Messages.Keys.NO_PERMISSION, context));
             return;
         }
         if (args.length < 2) {
             if (context == MessageContext.CONSOLE) {
-                source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
+                sender.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
             } else {
-                source.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
+                sender.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
             }
             return;
         }
         switch (args[1].toLowerCase()) {
             case "custom" -> {
                 if (context == MessageContext.CONSOLE) {
-                    source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getCustomCommands(context))));
+                    sender.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getCustomCommands(context))));
                 } else {
-                    source.sendMessage(ColorUtils.parseComponent(HostCommandService.getCustomCommands(context)));
+                    sender.sendMessage(ColorUtils.parseComponent(HostCommandService.getCustomCommands(context)));
                 }
             }
             case "addons" -> {
                 if (context == MessageContext.CONSOLE) {
-                    source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getAddonCommands(platformManager, context))));
+                    sender.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getAddonCommands(platformManager, context))));
                 } else {
-                    source.sendMessage(ColorUtils.parseComponent(HostCommandService.getAddonCommands(platformManager, context)));
+                    sender.sendMessage(ColorUtils.parseComponent(HostCommandService.getAddonCommands(platformManager, context)));
                 }
             }
             default -> {
                 if (context == MessageContext.CONSOLE) {
-                    source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
+                    sender.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
                 } else {
-                    source.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
+                    sender.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
                 }
             }
         }

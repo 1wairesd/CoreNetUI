@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.client.common.embed;
+package com.wairesd.discordbm.common.embed;
 
 import com.wairesd.discordbm.api.embed.EmbedField;
 

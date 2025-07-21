@@ -11,9 +11,6 @@ public class DiscordBMAPIProvider {
         instance = api;
     }
 
-    /**
-     * Returns the current instance of DiscordBMAPI or throws if not initialized.
-     */
     public static DiscordBMAPI getInstanceOrThrow() {
         if (instance == null) {
             throw new IllegalStateException("DiscordBMAPI is not initialized!");

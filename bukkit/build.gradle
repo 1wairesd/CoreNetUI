@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     implementation project(":common:client-common")
+    implementation project(":api:bukkit-api")
     implementation project(":common")
     implementation project(":api")
 

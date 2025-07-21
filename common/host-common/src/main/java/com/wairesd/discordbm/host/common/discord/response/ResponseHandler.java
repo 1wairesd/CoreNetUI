@@ -85,7 +85,17 @@ public class ResponseHandler {
         }
         
         try {
-            UUID requestId = UUID.fromString(respMsg.requestId());
+            UUID requestId = null;
+            switch (responseType) {
+                case MODAL:
+                case REPLY_MODAL:
+                case REPLY:
+                case EDIT_MESSAGE:
+                    requestId = UUID.fromString(respMsg.requestId());
+                    break;
+                default:
+                    break;
+            }
 
             switch (responseType) {
                 case MODAL:
@@ -112,16 +122,10 @@ public class ResponseHandler {
             }
 
             if (respMsg.flags() != null && respMsg.flags().shouldPreventMessageSend()) {
-                if (Settings.isDebugRequestProcessing()) {
-                    logger.info("Message sending prevented for requestId: {}", requestId);
-                }
                 return;
             }
 
             if (respMsg.flags() != null && respMsg.flags().isFormResponse()) {
-                if (Settings.isDebugRequestProcessing()) {
-                    logger.info("Ignoring response after modal form for requestId: {}", requestId);
-                }
                 return;
             }
 
@@ -152,52 +156,36 @@ public class ResponseHandler {
 
             InteractionHook storedHook = listener.getRequestSender().removeInteractionHook(requestId);
             if (storedHook != null) {
-                if (Settings.isDebugRequestProcessing()) {
-                    logger.info("Found stored hook for requestId: {}", requestId);
-                }
                 sendResponseWithHook(storedHook, respMsg);
                 return;
             }
 
+            final UUID finalRequestId = requestId;
             var event = listener.getRequestSender().getPendingRequests().remove(requestId);
             if (event == null) {
                 if (respMsg.embed() != null && respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
-                    if (Settings.isDebugRequestProcessing()) {
-                        logger.info("Response after modal form for requestId: {} - ignoring (normal behavior)", requestId);
-                    }
                     return;
                 }
-                
-                logger.warn("No event found for requestId: {}, retrying in 100ms", requestId);
                 new java.util.Timer().schedule(new java.util.TimerTask() {
                     @Override
                     public void run() {
-                        InteractionHook retryHook = listener.getRequestSender().removeInteractionHook(requestId);
+                        InteractionHook retryHook = listener.getRequestSender().removeInteractionHook(finalRequestId);
                         if (retryHook != null) {
-                            if (Settings.isDebugRequestProcessing()) {
-                                logger.info("Found stored hook for requestId: {} on retry", requestId);
-                            }
                             sendResponseWithHook(retryHook, respMsg);
                             return;
                         }
-                        
-                        var retryEvent = listener.getRequestSender().getPendingRequests().remove(requestId);
+                        var retryEvent = listener.getRequestSender().getPendingRequests().remove(finalRequestId);
                         if (retryEvent != null) {
-                            if (Settings.isDebugRequestProcessing()) {
-                                logger.info("Found event for requestId: {} on retry", requestId);
-                            }
                             sendResponse(retryEvent, respMsg);
                         } else {
-                            logger.error("Still no event or hook found for requestId: {}", requestId);
+                            logger.error("Still no event or hook found for requestId: {}", finalRequestId);
                         }
                     }
                 }, 100);
                 return;
+            } else {
+                sendResponse(event, respMsg);
             }
-            if (Settings.isDebugRequestProcessing()) {
-                logger.info("Found and removed event for requestId: {}", requestId);
-            }
-            sendResponse(event, respMsg);
         } catch (IllegalArgumentException e) {
             logInvalidUUID(respMsg.requestId(), e);
         }

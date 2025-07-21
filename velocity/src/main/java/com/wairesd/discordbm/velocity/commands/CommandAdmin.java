@@ -17,6 +17,8 @@ import net.kyori.adventure.text.Component;
 import com.wairesd.discordbm.common.utils.color.transform.AnsiColorTranslator;
 import com.wairesd.discordbm.velocity.commands.sub.EditorCommand;
 import com.wairesd.discordbm.velocity.commands.sub.ApplyEditsCommand;
+import com.wairesd.discordbm.velocity.api.VelocityCommandSender;
+import com.wairesd.discordbm.velocity.api.VelocityUtils;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;
@@ -44,14 +46,15 @@ public class CommandAdmin implements SimpleCommand {
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
+        VelocityCommandSender sender = new VelocityCommandSender(source);
         String[] args = invocation.arguments();
         MessageContext context = (source instanceof ConsoleCommandSource) ? MessageContext.CONSOLE : MessageContext.CHAT;
 
         if (args.length == 0) {
             if (context == MessageContext.CONSOLE) {
-                source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
+                sender.sendMessage(AnsiColorTranslator.translate(HostCommandService.getHelp(context)));
             } else {
-                source.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
+                sender.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)).toString());
             }
             return;
         }
@@ -65,16 +68,16 @@ public class CommandAdmin implements SimpleCommand {
             case "editor" -> editorCommand.execute(source);
             case "applyedits" -> {
                 if (args.length < 2) {
-                    source.sendMessage(Component.text("Укажите код изменений!"));
+                    sender.sendMessage("Укажите код изменений!");
                 } else {
                     applyEditsCommand.execute(source, args[1]);
                 }
             }
             default -> {
                 if (context == MessageContext.CONSOLE) {
-                    source.sendMessage(Component.text(AnsiColorTranslator.translate(HostCommandService.getHelp(context))));
+                    sender.sendMessage(AnsiColorTranslator.translate(HostCommandService.getHelp(context)));
                 } else {
-                    source.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)));
+                    sender.sendMessage(ColorUtils.parseComponent(HostCommandService.getHelp(context)).toString());
                 }
             }
         }
