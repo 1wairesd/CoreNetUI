@@ -28,7 +28,6 @@ commands:
 
   - name: "openwebsite"
     description: "Open the website"
-    ephemeral: false
     context: "both"
     actions:
       - type: send_message
@@ -81,16 +80,15 @@ commands:
   - name: "delete-test"
     description: "Delete the test message"
     context: server
-    ephemeral: true
     actions:
       - type: delete_message
         label: test_message
         response_message: "Test message has been deleted."
+        ephemeral: true
 
   - name: "send-to-channel"
     description: "Send a message to a specific channel"
     context: server
-    ephemeral: true
     options:
       - name: channel
         type: CHANNEL
@@ -107,11 +105,11 @@ commands:
       - type: send_message
         response_type: REPLY
         message: "Message sent to the specified channel."
+        ephemeral: true
 
   - name: "send-embed-to-channel"
     description: "Send an embed message to a specific channel"
     context: server
-    ephemeral: true
     options:
       - name: channel
         type: CHANNEL
@@ -136,6 +134,7 @@ commands:
       - type: send_message
         response_type: REPLY
         message: "Embed sent to the specified channel."
+        ephemeral: true
 
   - name: "delete-specific"
     description: "Delete the message sent to specific channel"

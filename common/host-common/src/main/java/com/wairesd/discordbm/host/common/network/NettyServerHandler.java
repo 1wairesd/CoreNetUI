@@ -66,9 +66,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
         }
         dbManager.isBlocked(ip).thenAcceptAsync(isBlocked -> {
             if (isBlocked) {
-                if (Settings.isViewConnectedBannedIp()) {
-                    logger.warn("Blocked connection attempt from {}", ip);
-                }
+                logger.warn("Blocked connection attempt from {}", ip);
                 ctx.writeAndFlush("Error: IP blocked due to multiple failed attempts");
                 ctx.close();
             }

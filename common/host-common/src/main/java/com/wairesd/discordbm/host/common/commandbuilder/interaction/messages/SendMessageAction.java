@@ -132,7 +132,6 @@ public class SendMessageAction implements CommandAction {
                                 }
                             });
                         } catch (Exception e) {
-                            logger.warn("Invalid reply_message_id: {}", replyMessageId);
                         }
                     } else {
                         ResponseStrategy strategy = ResponseStrategyFactory.getStrategy(responseType);

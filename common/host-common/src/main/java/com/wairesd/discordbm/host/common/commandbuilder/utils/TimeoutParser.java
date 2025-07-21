@@ -1,12 +1,10 @@
 package com.wairesd.discordbm.host.common.commandbuilder.utils;
 
-import com.wairesd.discordbm.host.common.config.configurators.Settings;
-
 public class TimeoutParser {
 
     public static long parseTimeout(Object timeoutObj) {
         if (timeoutObj == null) {
-            return Settings.getButtonTimeoutMs();
+            throw new IllegalArgumentException("Timeout for button must be specified explicitly (no global default)");
         }
 
         if (timeoutObj instanceof String str) {

@@ -146,14 +146,6 @@ public class Settings {
         return (String) getConfigValue("forwarding-secret-file", DEFAULT_FORWARDING_SECRET_FILE);
     }
 
-    public static boolean isDefaultEphemeral() {
-        return (boolean) getConfigValue("commands.default-ephemeral", false);
-    }
-
-    public static long getButtonTimeoutMs() {
-        return ((Number) getConfigValue("buttons.timeout-ms", 900_000)).longValue();
-    }
-
     public static boolean isDebugButtonRegister() {
         return getDebugOption("debug-button-register", false);
     }
@@ -168,10 +160,6 @@ public class Settings {
 
     public static String getActivityMessage() {
         return (String) getConfigValue("Discord.activity.message", "Velocity Server");
-    }
-
-    public static boolean isViewConnectedBannedIp() {
-        return (boolean) getConfigValue("view_connected_banned_ip", false);
     }
 
     public static boolean isMySQLEnabled() {

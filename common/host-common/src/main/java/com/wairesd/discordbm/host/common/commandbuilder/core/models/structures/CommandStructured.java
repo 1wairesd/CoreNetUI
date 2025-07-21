@@ -15,13 +15,12 @@ public class CommandStructured {
     private final List<CommandCondition> conditions;
     private final List<CommandAction> actions;
     private final List<CommandAction> failActions;
-    private final Boolean ephemeral;
     private final String permission;
     private final String pluginName;
 
     public CommandStructured(String name, String description, String context,
                              List<CommandOptions> options, List<CommandCondition> conditions,
-                             List<CommandAction> actions, List<CommandAction> failActions, Boolean ephemeral,
+                             List<CommandAction> actions, List<CommandAction> failActions,
                              String permission, String pluginName) {
         validateInputs(name, description, context);
         this.name = name;
@@ -31,17 +30,8 @@ public class CommandStructured {
         this.conditions = conditions != null ? List.copyOf(conditions) : List.of();
         this.actions = actions != null ? List.copyOf(actions) : List.of();
         this.failActions = failActions != null ? List.copyOf(failActions) : List.of();
-        this.ephemeral = ephemeral;
         this.permission = permission;
         this.pluginName = pluginName;
-    }
-
-    public Boolean getEphemeral() {
-        return ephemeral;
-    }
-
-    public List<CommandAction> getFailActions() {
-        return failActions;
     }
 
     private void validateInputs(String name, String description, String context) {
