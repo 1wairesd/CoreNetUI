@@ -9,8 +9,10 @@ import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.manager.CaseManager;
 import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.WebhookTriggersConfig;
+import net.kyori.event.PostOrders;
+import net.kyori.event.method.annotation.PostOrder;
 import net.kyori.event.method.annotation.Subscribe;
 
 import java.util.List;
@@ -18,13 +20,13 @@ import java.util.logging.Logger;
 import java.util.Map;
 
 public class CaseOpenListener implements Subscriber {
-    private final DiscordBMAPI dbmApi;
+    private final DBMAPI dbmApi;
     private final Logger logger;
     private final WebhookTriggersConfig triggersConfig;
     private final CaseOpenManager openManager;
     private final CaseManager caseManager;
 
-    public CaseOpenListener(DiscordBMAPI dbmApi, Logger logger, WebhookTriggersConfig triggersConfig, CaseOpenManager openManager, CaseManager caseManager) {
+    public CaseOpenListener(DBMAPI dbmApi, Logger logger, WebhookTriggersConfig triggersConfig, CaseOpenManager openManager, CaseManager caseManager) {
         this.dbmApi = dbmApi;
         this.logger = logger;
         this.triggersConfig = triggersConfig;
@@ -33,6 +35,7 @@ public class CaseOpenListener implements Subscriber {
     }
 
     @Subscribe
+    @PostOrder(PostOrders.LAST)
     public void onOpenCase(OpenCaseEvent event) {
         String player = event.player().getName();
         String caseType = event.definition().settings().type();
@@ -59,6 +62,7 @@ public class CaseOpenListener implements Subscriber {
     }
 
     @Subscribe
+    @PostOrder(PostOrders.LAST)
     public void onDrop(AnimationEndEvent event) {
         ActiveCase ac = event.activeCase();
         String player = ac.player().getName();

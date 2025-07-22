@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.platform.Platform;
@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class DBMBukkitPlugin extends JavaPlugin {
     private final PluginLogger pluginLogger = new JavaPluginLogger(getLogger());
-    private static DiscordBMAPI api;
+    private static DBMAPI api;
     private ConfigManager configManager;
     private Platform platform;
     private String serverName;
@@ -71,7 +71,7 @@ public class DBMBukkitPlugin extends JavaPlugin {
         return platform;
     }
 
-    public static DiscordBMAPI getApi() {
+    public static DBMAPI getApi() {
         return api;
     }
 
@@ -79,7 +79,7 @@ public class DBMBukkitPlugin extends JavaPlugin {
         this.platform = platform;
     }
 
-    public static void setApi(DiscordBMAPI apiInstance) {
+    public static void setApi(DBMAPI apiInstance) {
         api = apiInstance;
     }
 

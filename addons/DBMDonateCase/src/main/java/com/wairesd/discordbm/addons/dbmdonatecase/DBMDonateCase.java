@@ -4,8 +4,7 @@ import com.wairesd.discordbm.addons.dbmdonatecase.commands.*;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.WebhookTriggersConfig;
-import com.wairesd.discordbm.api.DiscordBMAPI;
-import com.wairesd.discordbm.api.DiscordBMAPIProvider;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.Command;
 import com.wairesd.discordbm.api.command.CommandOption;
 import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
@@ -18,19 +17,21 @@ import java.util.List;
 
 public final class DBMDonateCase extends JavaPlugin {
     private DCAPI api;
-    private DiscordBMAPI dbmApi;
+    private DBMAPI dbmApi;
     private CaseKeyManager keyManager;
     private CaseOpenManager openManager;
     private Messages messages;
     private CaseOpenListener caseOpenListener;
+    private DBMReloadListener listener = new DBMReloadListener(messages);
 
     @Override
     public void onEnable() {
         this.api = DCAPI.getInstance();
-        this.dbmApi = DiscordBMAPIProvider.getInstanceOrThrow();
+        this.dbmApi = DBMAPI.getInstance();
         this.keyManager = api.getCaseKeyManager();
         this.openManager = api.getCaseOpenManager();
         this.messages = new Messages(this);
+
 
         WebhookTriggersConfig triggersConfig = new WebhookTriggersConfig(this);
         caseOpenListener = new CaseOpenListener(
@@ -41,7 +42,7 @@ public final class DBMDonateCase extends JavaPlugin {
             api.getCaseManager()
         );
         api.getEventBus().register(caseOpenListener);
-        dbmApi.getEventBus().register(new DBMReloadListener(messages));
+        dbmApi.getEventBus().register(listener);
 
         CommandOption playerOpt = dbmApi.getCommandRegistration().createOptionBuilder()
             .name("player")
@@ -149,9 +150,8 @@ public final class DBMDonateCase extends JavaPlugin {
         dbmApi.getCommandRegistration().unregisterCommand("dclastdrops", getName());
         dbmApi.getCommandRegistration().unregisterCommand("dchistory", getName());
         dbmApi.getCommandRegistration().unregisterCommand("dchelp", getName());
-        if (caseOpenListener != null) {
-            api.getEventBus().unregister(caseOpenListener);
-        }
+        dbmApi.getEventBus().unregister(listener);
+        api.getEventBus().unregister(caseOpenListener);
         getLogger().info("DBMDonateCase is disabled!");
     }
 }

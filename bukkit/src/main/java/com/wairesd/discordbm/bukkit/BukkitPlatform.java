@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.client.common.DiscordBMAPIImpl;
 import com.wairesd.discordbm.client.common.platform.AbstractPlatform;
 import com.wairesd.discordbm.client.common.platform.PlatformPlaceholder;
@@ -59,8 +59,8 @@ public class BukkitPlatform extends AbstractPlatform {
     @Override
     public void onNettyConnected() {
         super.onNettyConnected();
-        RegisteredServiceProvider<DiscordBMAPI> provider =
-            Bukkit.getServicesManager().getRegistration(DiscordBMAPI.class);
+        RegisteredServiceProvider<DBMAPI> provider =
+            Bukkit.getServicesManager().getRegistration(DBMAPI.class);
         if (provider != null && provider.getProvider() instanceof DiscordBMAPIImpl) {
             DiscordBMAPIImpl impl = (DiscordBMAPIImpl) provider.getProvider();
             impl.getEphemeralRulesManager().resendAllEphemeralRules();

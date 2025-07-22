@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.host.common.discord.handler;
 
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
@@ -8,7 +9,6 @@ import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
 import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
-import com.wairesd.discordbm.api.DiscordBMAPIProvider;
 import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -57,7 +57,7 @@ public class CommandHandler {
             return;
         }
 
-        var api = DiscordBMAPIProvider.getInstance();
+        var api = DBMAPI.getInstance();
         if (api != null) {
             CommandRegistration reg = api.getCommandRegistration();
             var registered = reg.getRegisteredCommands();

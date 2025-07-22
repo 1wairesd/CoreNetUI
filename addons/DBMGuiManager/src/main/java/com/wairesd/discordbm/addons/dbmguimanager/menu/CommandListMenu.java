@@ -2,7 +2,7 @@ package com.wairesd.discordbm.addons.dbmguimanager.menu;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,17 +11,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 public class CommandListMenu extends AdvancedGui {
-    private final DiscordBMAPI api;
+    private final DBMAPI api;
     private final int page;
     private final List<Command> commands;
     private final int pageSize;
     private final JavaPlugin plugin;
 
-    public CommandListMenu(DiscordBMAPI api) {
+    public CommandListMenu(DBMAPI api) {
         this(api, 0);
     }
 
-    public CommandListMenu(DiscordBMAPI api, int page) {
+    public CommandListMenu(DBMAPI api, int page) {
         super(calcSize(api, page), "Зарегистрированные команды");
         this.api = api;
         this.page = page;
@@ -31,7 +31,7 @@ public class CommandListMenu extends AdvancedGui {
         initMenu();
     }
 
-    private static int calcSize(DiscordBMAPI api, int page) {
+    private static int calcSize(DBMAPI api, int page) {
         int count = api.getCommandRegistration().getRegisteredCommands().size();
         int maxPage = (count - 1) / 52;
         if (page < maxPage) return 54;

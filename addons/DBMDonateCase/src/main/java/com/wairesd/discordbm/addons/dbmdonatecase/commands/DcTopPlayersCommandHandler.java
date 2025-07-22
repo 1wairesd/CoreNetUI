@@ -1,7 +1,7 @@
 package com.wairesd.discordbm.addons.dbmdonatecase.commands;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 public class DcTopPlayersCommandHandler implements CommandHandler {
     private final DCAPI api;
-    private final DiscordBMAPI dbmApi;
+    private final DBMAPI dbmApi;
     private final Messages messages;
 
-    public DcTopPlayersCommandHandler(DCAPI api, DiscordBMAPI dbmApi, Messages messages) {
+    public DcTopPlayersCommandHandler(DCAPI api, DBMAPI dbmApi, Messages messages) {
         this.api = api;
         this.dbmApi = dbmApi;
         this.messages = messages;

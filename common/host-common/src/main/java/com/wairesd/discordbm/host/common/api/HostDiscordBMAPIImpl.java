@@ -1,11 +1,10 @@
 package com.wairesd.discordbm.host.common.api;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.api.embed.EmbedBuilder;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
-import com.wairesd.discordbm.api.event.EventRegistry;
 import com.wairesd.discordbm.api.event.EventBus;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.role.RoleManager;
@@ -14,7 +13,7 @@ import com.wairesd.discordbm.api.form.FormFieldBuilder;
 
 import java.util.Map;
 
-public class HostDiscordBMAPIImpl implements DiscordBMAPI {
+public class HostDiscordBMAPIImpl extends DBMAPI {
     private final CommandRegistration commandRegistration;
     private final MessageSender messageSender;
 
@@ -35,11 +34,6 @@ public class HostDiscordBMAPIImpl implements DiscordBMAPI {
 
     @Override
     public ComponentRegistry getComponentRegistry() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public EventRegistry getEventRegistry() {
         throw new UnsupportedOperationException("Not implemented");
     }
 

@@ -2,7 +2,7 @@ package com.wairesd.discordbm.addons.dbmguimanager.menu;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -14,9 +14,9 @@ import java.util.List;
 public class MainMenu extends AdvancedGui {
 
     private final Plugin plugin;
-    private final DiscordBMAPI api;
+    private final DBMAPI api;
 
-    public MainMenu(Plugin plugin, DiscordBMAPI api) {
+    public MainMenu(Plugin plugin, DBMAPI api) {
         super(27, "Простое меню");
         this.plugin = plugin;
         this.api = api;

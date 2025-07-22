@@ -1,15 +1,13 @@
 package com.wairesd.discordbm.client.common;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.embed.EmbedBuilder;
-import com.wairesd.discordbm.api.event.EventRegistry;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.client.common.component.ComponentRegistryImpl;
 import com.wairesd.discordbm.common.embed.EmbedBuilderImpl;
-import com.wairesd.discordbm.client.common.event.EventRegistryImpl;
 import com.wairesd.discordbm.client.common.logging.LoggerAdapter;
 import com.wairesd.discordbm.client.common.message.MessageSenderImpl;
 import com.wairesd.discordbm.client.common.platform.Platform;
@@ -22,16 +20,15 @@ import com.wairesd.discordbm.common.form.FormBuilderImpl;
 import com.wairesd.discordbm.common.form.FormFieldBuilderImpl;
 import com.wairesd.discordbm.client.common.ephemeral.EphemeralRulesManager;
 import com.wairesd.discordbm.api.event.EventBus;
-import com.wairesd.discordbm.api.event.EventBusImpl;
+import com.wairesd.discordbm.common.event.EventBusImpl;
 
 import java.util.Map;
 
-public class DiscordBMAPIImpl implements DiscordBMAPI {
+public class DiscordBMAPIImpl extends DBMAPI {
     
     private final Platform platform;
     private final MessageSenderImpl messageSender;
     private final ComponentRegistryImpl componentRegistry;
-    private final EventRegistryImpl eventRegistry;
     private final LoggerAdapter logger;
     private final RoleManagerImpl roleManager;
     private final EphemeralRulesManager ephemeralRulesManager;
@@ -43,7 +40,6 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
         this.logger = new LoggerAdapter(pluginLogger);
         this.messageSender = new MessageSenderImpl(platform, this.logger);
         this.componentRegistry = new ComponentRegistryImpl(platform, this.logger);
-        this.eventRegistry = new EventRegistryImpl(this.logger);
         this.roleManager = new RoleManagerImpl(platform);
         this.ephemeralRulesManager = new EphemeralRulesManager(platform);
     }
@@ -70,14 +66,6 @@ public class DiscordBMAPIImpl implements DiscordBMAPI {
             throw new NullPointerException("DiscordBM API: Platform is not initialized");
         }
         return componentRegistry;
-    }
-    
-    @Override
-    public EventRegistry getEventRegistry() {
-        if (platform == null) {
-            throw new NullPointerException("DiscordBM API: Platform is not initialized");
-        }
-        return eventRegistry;
     }
     
     @Override

@@ -2,7 +2,7 @@ package com.wairesd.discordbm.addons.dbmdonatecase.commands;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
 import java.text.SimpleDateFormat;
@@ -12,10 +12,10 @@ import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
 
 public class DcLastDropsCommandHandler implements CommandHandler {
     private final DCAPI api;
-    private final DiscordBMAPI dbmApi;
+    private final DBMAPI dbmApi;
     private final Messages messages;
 
-    public DcLastDropsCommandHandler(DCAPI api, DiscordBMAPI dbmApi, Messages messages) {
+    public DcLastDropsCommandHandler(DCAPI api, DBMAPI dbmApi, Messages messages) {
         this.api = api;
         this.dbmApi = dbmApi;
         this.messages = messages;

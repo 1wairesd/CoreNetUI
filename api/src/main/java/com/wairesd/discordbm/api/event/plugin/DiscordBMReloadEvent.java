@@ -1,11 +1,16 @@
 package com.wairesd.discordbm.api.event.plugin;
 
-import com.wairesd.discordbm.api.event.Event;
+import com.wairesd.discordbm.api.event.DBMEvent;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-/**
- * Event fired when the plugin is reloaded
- */
-public class DiscordBMReloadEvent implements Event {
+@EqualsAndHashCode(callSuper = true)
+@Accessors(fluent = true)
+@Data
+public class DiscordBMReloadEvent extends DBMEvent {
+
+    private final Type type;
     
     /**
      * The type of reload
@@ -30,30 +35,5 @@ public class DiscordBMReloadEvent implements Event {
          * Full plugin reload
          */
         FULL
-    }
-    
-    private final Type reloadType;
-    
-    /**
-     * Create a new reload event
-     * 
-     * @param reloadType The type of reload
-     */
-    public DiscordBMReloadEvent(Type reloadType) {
-        this.reloadType = reloadType;
-    }
-    
-    /**
-     * Get the type of reload
-     * 
-     * @return The type of reload
-     */
-    public Type getReloadType() {
-        return reloadType;
-    }
-    
-    @Override
-    public String getType() {
-        return "reload";
     }
 } 

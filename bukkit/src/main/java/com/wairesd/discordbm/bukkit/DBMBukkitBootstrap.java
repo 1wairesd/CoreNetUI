@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.bukkit;
 
-import com.wairesd.discordbm.api.DiscordBMAPI;
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.bukkit.commands.CommandAdmin;
 import com.wairesd.discordbm.bukkit.placeholders.BukkitPlaceholderService;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
@@ -20,7 +20,7 @@ public class DBMBukkitBootstrap implements PlatformBootstrap {
     private final PlatformPlaceholder platformPlaceholderService;
     private Platform platform;
     private ConfigManager configManager;
-    private DiscordBMAPI api;
+    private DBMAPI api;
     private NettyService nettyService;
 
     public DBMBukkitBootstrap(DBMBukkitPlugin plugin, PluginLogger logger) {
@@ -56,9 +56,9 @@ public class DBMBukkitBootstrap implements PlatformBootstrap {
 
     private void initApi() {
         api = new DiscordBMAPIImpl(platform, logger);
-        com.wairesd.discordbm.api.DiscordBMAPIProvider.setInstance(api);
+        DBMAPI.setInstance(api);
         DBMBukkitPlugin.setApi(api);
-        Bukkit.getServicesManager().register(DiscordBMAPI.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
+        Bukkit.getServicesManager().register(DBMAPI.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
         logger.info("DiscordBM API initialized");
     }
 
@@ -81,7 +81,7 @@ public class DBMBukkitBootstrap implements PlatformBootstrap {
     }
 
     @Override
-    public DiscordBMAPI getApi() {
+    public DBMAPI getApi() {
         return api;
     }
 

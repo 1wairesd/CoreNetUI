@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.host.common.service;
 
+import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.host.common.config.ConfigManager;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.host.common.manager.WebhookManager;
@@ -28,9 +29,10 @@ import java.util.zip.GZIPOutputStream;
 
 import java.util.List;
 import java.util.StringJoiner;
-import com.wairesd.discordbm.api.DiscordBMAPIProvider;
+
 import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
+import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
 
 public class HostCommandService {
     private static final String BYTEBIN_URL = "https://bytebin.lucko.me/";
@@ -43,6 +45,10 @@ public class HostCommandService {
             platformManager.updateActivity();
             platformManager.getCommandManager().loadAndRegisterCommands();
         }
+        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.FULL));
+        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG));
+        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
+        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK));
         return Messages.get(Messages.Keys.RELOAD_SUCCESS);
     }
 
@@ -142,7 +148,7 @@ public class HostCommandService {
             }
         }
         
-        var api = DiscordBMAPIProvider.getInstance();
+        var api = DBMAPI.getInstance();
         if (api != null) {
             CommandRegistration reg = api.getCommandRegistration();
             if (reg instanceof HostCommandRegistration hostReg) {
