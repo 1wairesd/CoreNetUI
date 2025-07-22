@@ -111,7 +111,6 @@ public class DiscordBotListener extends ListenerAdapter {
             InteractionResponseType responseType = determineResponseTypeForCommand(command, event);
             boolean requiresModal = false;
             boolean useDeferReply = false;
-            boolean useReply = false;
             boolean ephemeral;
             java.util.UUID requestId = java.util.UUID.randomUUID();
             Map<String, String> options = event.getOptions().stream()
@@ -122,7 +121,6 @@ public class DiscordBotListener extends ListenerAdapter {
             switch (responseType) {
                 case REPLY_MODAL -> requiresModal = true;
                 case DEFER_REPLY -> useDeferReply = true;
-                case REPLY -> useReply = true;
                 case AUTO -> {
                     if (event.getOptions().isEmpty()) {
                         requiresModal = true;
@@ -131,11 +129,7 @@ public class DiscordBotListener extends ListenerAdapter {
                     }
                 }
             }
-            
-            if (useReply) {
-                event.reply("...").queue();
-                return;
-            }
+
             if (useDeferReply) {
                 final boolean finalRequiresModal = requiresModal;
                 final boolean finalUseDeferReply = useDeferReply;
