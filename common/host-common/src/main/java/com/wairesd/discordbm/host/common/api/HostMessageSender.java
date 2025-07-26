@@ -1,31 +1,44 @@
 package com.wairesd.discordbm.host.common.api;
 
+import com.google.gson.JsonObject;
 import com.wairesd.discordbm.api.message.MessageSender;
+import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.form.Form;
-import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.form.FormDefinition;
+import com.wairesd.discordbm.common.embed.EmbedAdapter;
+import com.wairesd.discordbm.common.component.ButtonAdapter;
+import com.wairesd.discordbm.common.form.FormAdapter;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.config.configurators.Webhooks;
 import com.wairesd.discordbm.host.common.utils.WebhookSender;
-import com.wairesd.discordbm.common.component.ButtonAdapter;
-import com.wairesd.discordbm.common.form.FormAdapter;
-import com.wairesd.discordbm.common.embed.EmbedAdapter;
 import net.dv8tion.jda.api.JDA;
+
 import java.util.List;
-import java.util.UUID;
-import com.google.gson.JsonObject;
 
 public class HostMessageSender implements MessageSender {
     private final JDA jda;
+    private final HostDiscordBMAPIImpl dbmApi;
 
-    public HostMessageSender(JDA jda) {
+    public HostMessageSender(JDA jda, HostDiscordBMAPIImpl dbmApi) {
         this.jda = jda;
+        this.dbmApi = dbmApi;
+    }
+
+    private ResponseFlags createResponseFlags() {
+        ResponseFlags.Builder flagsBuilder = new ResponseFlags.Builder();
+        
+        ResponseType currentResponseType = dbmApi.getCurrentResponseType();
+        if (currentResponseType != null) {
+            flagsBuilder.responseType(currentResponseType.name());
+        }
+        
+        return flagsBuilder.build();
     }
 
     @Override
@@ -34,7 +47,7 @@ public class HostMessageSender implements MessageSender {
                 .type("response")
                 .requestId(requestId)
                 .response(message)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -45,7 +58,7 @@ public class HostMessageSender implements MessageSender {
                 .type("response")
                 .requestId(requestId)
                 .embed(convertToEmbedDefinition(embed))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -57,7 +70,19 @@ public class HostMessageSender implements MessageSender {
                 .requestId(requestId)
                 .embed(convertToEmbedDefinition(embed))
                 .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
+                .build();
+        ResponseHandler.handleResponse(respMsg);
+    }
+
+    @Override
+    public void sendResponse(String requestId, String message, List<Button> buttons) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("response")
+                .requestId(requestId)
+                .response(message)
+                .buttons(convertToButtonDefinitions(buttons))
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -68,7 +93,7 @@ public class HostMessageSender implements MessageSender {
                 .type("response")
                 .requestId(requestId)
                 .form(convertToFormDefinition(form))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -80,7 +105,7 @@ public class HostMessageSender implements MessageSender {
                 .requestId(requestId)
                 .response(message)
                 .form(convertToFormDefinition(form))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -91,42 +116,7 @@ public class HostMessageSender implements MessageSender {
                 .type("direct_message")
                 .userId(userId)
                 .response(message)
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendDirectMessage(String userId, Embed embed) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("direct_message")
-                .userId(userId)
-                .embed(convertToEmbedDefinition(embed))
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendDirectMessage(String userId, Embed embed, List<Button> buttons) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("direct_message")
-                .userId(userId)
-                .embed(convertToEmbedDefinition(embed))
-                .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendDirectMessage(String userId, String message, List<Button> buttons) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("direct_message")
-                .userId(userId)
-                .response(message)
-                .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -139,7 +129,42 @@ public class HostMessageSender implements MessageSender {
                 .response(message)
                 .requestId(requestId)
                 .channelId(channelId)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
+                .build();
+        ResponseHandler.handleResponse(respMsg);
+    }
+
+    @Override
+    public void sendDirectMessage(String userId, String message, List<Button> buttons) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .response(message)
+                .buttons(convertToButtonDefinitions(buttons))
+                .flags(createResponseFlags())
+                .build();
+        ResponseHandler.handleResponse(respMsg);
+    }
+
+    @Override
+    public void sendDirectMessage(String userId, Embed embed) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .embed(convertToEmbedDefinition(embed))
+                .flags(createResponseFlags())
+                .build();
+        ResponseHandler.handleResponse(respMsg);
+    }
+
+    @Override
+    public void sendDirectMessage(String userId, Embed embed, List<Button> buttons) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("direct_message")
+                .userId(userId)
+                .embed(convertToEmbedDefinition(embed))
+                .buttons(convertToButtonDefinitions(buttons))
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -149,32 +174,8 @@ public class HostMessageSender implements MessageSender {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")
                 .channelId(channelId)
-                .requestId(UUID.randomUUID().toString())
                 .response(message)
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendChannelMessage(String channelId, Embed embed) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("channel_message")
-                .channelId(channelId)
-                .embed(convertToEmbedDefinition(embed))
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("channel_message")
-                .channelId(channelId)
-                .embed(convertToEmbedDefinition(embed))
-                .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -186,7 +187,18 @@ public class HostMessageSender implements MessageSender {
                 .channelId(channelId)
                 .requestId(label)
                 .response(message)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
+                .build();
+        ResponseHandler.handleResponse(respMsg);
+    }
+
+    @Override
+    public void sendChannelMessage(String channelId, Embed embed) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .embed(convertToEmbedDefinition(embed))
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -198,7 +210,19 @@ public class HostMessageSender implements MessageSender {
                 .channelId(channelId)
                 .requestId(label)
                 .embed(convertToEmbedDefinition(embed))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
+                .build();
+        ResponseHandler.handleResponse(respMsg);
+    }
+
+    @Override
+    public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons) {
+        ResponseMessage respMsg = new ResponseMessage.Builder()
+                .type("channel_message")
+                .channelId(channelId)
+                .embed(convertToEmbedDefinition(embed))
+                .buttons(convertToButtonDefinitions(buttons))
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -211,7 +235,7 @@ public class HostMessageSender implements MessageSender {
                 .requestId(label)
                 .embed(convertToEmbedDefinition(embed))
                 .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -224,7 +248,7 @@ public class HostMessageSender implements MessageSender {
                 .requestId(label)
                 .response(message)
                 .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -236,19 +260,7 @@ public class HostMessageSender implements MessageSender {
                 .channelId(channelId)
                 .response(message)
                 .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendResponse(String requestId, String message, List<Button> buttons) {
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(requestId)
-                .response(message)
-                .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -258,7 +270,7 @@ public class HostMessageSender implements MessageSender {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .requestId(label)
                 .response(message)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -269,7 +281,7 @@ public class HostMessageSender implements MessageSender {
                 .type("response")
                 .requestId(label)
                 .embed(convertToEmbedDefinition(embed))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -281,7 +293,7 @@ public class HostMessageSender implements MessageSender {
                 .requestId(label)
                 .embed(convertToEmbedDefinition(embed))
                 .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -293,7 +305,7 @@ public class HostMessageSender implements MessageSender {
                 .requestId(label)
                 .response(message)
                 .buttons(convertToButtonDefinitions(buttons))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -304,7 +316,7 @@ public class HostMessageSender implements MessageSender {
                 .type("edit_message")
                 .requestId(label)
                 .response(newMessage)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -315,19 +327,19 @@ public class HostMessageSender implements MessageSender {
                 .type("edit_message")
                 .requestId(label)
                 .embed(convertToEmbedDefinition(newEmbed))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
 
     @Override
-    public void editMessage(String label, Embed newEmbed, List<Button> newButtons) {
+    public void editMessage(String label, Embed newEmbed, List<Button> buttons) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("edit_message")
                 .requestId(label)
                 .embed(convertToEmbedDefinition(newEmbed))
-                .buttons(convertToButtonDefinitions(newButtons))
-                .flags(new ResponseFlags.Builder().build())
+                .buttons(convertToButtonDefinitions(buttons))
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -343,7 +355,7 @@ public class HostMessageSender implements MessageSender {
                 .type("edit_component")
                 .requestId(label)
                 .response(responseObj.toString())
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.editComponent(respMsg);
     }
@@ -353,7 +365,7 @@ public class HostMessageSender implements MessageSender {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("delete_message")
                 .requestId(label)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .deleteAll(deleteAll)
                 .build();
         ResponseHandler.deleteMessage(respMsg);
@@ -372,7 +384,7 @@ public class HostMessageSender implements MessageSender {
                 .response(message)
                 .replyMessageId(replyMessageId)
                 .replyMentionAuthor(mentionAuthor)
-                .flags(new ResponseFlags.Builder().responseType("REPLY_TO_MESSAGE").build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -390,71 +402,6 @@ public class HostMessageSender implements MessageSender {
     }
 
     @Override
-    public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(requestId)
-                .response(message)
-                .conditions(serialized)
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions, String label) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(label)
-                .response(message)
-                .conditions(serialized)
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("channel_message")
-                .channelId(channelId)
-                .response(message)
-                .conditions(serialized)
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
-    public void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions, String label) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("channel_message")
-                .channelId(channelId)
-                .requestId(label)
-                .response(message)
-                .conditions(serialized)
-                .flags(new ResponseFlags.Builder().build())
-                .build();
-        ResponseHandler.handleResponse(respMsg);
-    }
-
-    @Override
     public void sendButtonWithForm(String requestId, String message, Button button, Form form) {
         ButtonDefinition buttonDef = button != null ? new ButtonAdapter(button).getInternalButton() : null;
         FormDefinition formDef = convertToFormDefinition(form);
@@ -464,7 +411,7 @@ public class HostMessageSender implements MessageSender {
                 .response(message)
                 .buttons(buttonDef != null ? java.util.Collections.singletonList(buttonDef) : null)
                 .form(formDef)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
@@ -475,7 +422,7 @@ public class HostMessageSender implements MessageSender {
                 .type("response")
                 .requestId(requestId)
                 .responses(messages)
-                .flags(new ResponseFlags.Builder().responseType("RANDOM_REPLY").build())
+                .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }

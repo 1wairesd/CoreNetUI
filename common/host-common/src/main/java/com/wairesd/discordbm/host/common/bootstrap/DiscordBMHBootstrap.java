@@ -96,7 +96,8 @@ public class DiscordBMHBootstrap {
         commandManager.loadAndRegisterCommands();
 
         HostCommandRegistration hostCommandRegistration = new HostCommandRegistration(discordBotManager);
-        HostMessageSender hostMessageSender = new HostMessageSender(jda);
+        HostDiscordBMAPIImpl hostApi = new HostDiscordBMAPIImpl(hostCommandRegistration, null);
+        HostMessageSender hostMessageSender = new HostMessageSender(jda, hostApi);
         DBMAPI.setInstance(new HostDiscordBMAPIImpl(hostCommandRegistration, hostMessageSender));
     }
 

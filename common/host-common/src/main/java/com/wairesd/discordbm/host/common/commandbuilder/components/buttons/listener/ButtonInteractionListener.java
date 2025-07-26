@@ -1,6 +1,8 @@
 package com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener;
 
 import com.google.gson.Gson;
+import com.wairesd.discordbm.api.interaction.InteractionResponseCallback;
+import com.wairesd.discordbm.host.common.api.HostDiscordBMAPIImpl;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.service.ButtonActionService;
 import com.wairesd.discordbm.host.common.commandbuilder.security.buttons.checker.RoleChecker;
@@ -15,6 +17,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUt
 import com.wairesd.discordbm.host.common.config.configurators.Forms;
 import com.wairesd.discordbm.host.common.models.request.RequestMessage;
 import com.wairesd.discordbm.host.common.network.NettyServer;
+import com.wairesd.discordbm.api.component.ComponentHandler;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -138,6 +141,92 @@ public class ButtonInteractionListener extends ListenerAdapter {
             return;
         }
 
+        ComponentHandler componentHandler = getComponentHandler(buttonId);
+        if (componentHandler != null) {
+            try {
+                InteractionResponseCallback responseCallback = new InteractionResponseCallback() {
+                    @Override
+                    public void respond(String message, boolean ephemeral) {
+                        event.reply(message).setEphemeral(ephemeral).queue();
+                    }
+                    
+                    @Override
+                    public void respond(com.wairesd.discordbm.api.embed.Embed embed, boolean ephemeral) {
+                        net.dv8tion.jda.api.EmbedBuilder builder = new net.dv8tion.jda.api.EmbedBuilder();
+                        if (embed.getTitle() != null) builder.setTitle(embed.getTitle());
+                        if (embed.getDescription() != null) builder.setDescription(embed.getDescription());
+                        if (embed.getColor() != null) builder.setColor(new java.awt.Color(embed.getColor()));
+                        event.replyEmbeds(builder.build()).setEphemeral(ephemeral).queue();
+                    }
+                    
+                    @Override
+                    public void respond(com.wairesd.discordbm.api.embed.Embed embed, List<com.wairesd.discordbm.api.component.Button> buttons, boolean ephemeral) {
+                        net.dv8tion.jda.api.EmbedBuilder builder = new net.dv8tion.jda.api.EmbedBuilder();
+                        if (embed.getTitle() != null) builder.setTitle(embed.getTitle());
+                        if (embed.getDescription() != null) builder.setDescription(embed.getDescription());
+                        if (embed.getColor() != null) builder.setColor(new java.awt.Color(embed.getColor()));
+
+                        List<net.dv8tion.jda.api.interactions.components.buttons.Button> jdaButtons = buttons.stream()
+                            .map(btn -> net.dv8tion.jda.api.interactions.components.buttons.Button.of(
+                                getJdaButtonStyle(btn.getStyle()), btn.getCustomId(), btn.getLabel()))
+                            .collect(java.util.stream.Collectors.toList());
+                        
+                        event.replyEmbeds(builder.build())
+                            .addActionRow(jdaButtons)
+                            .setEphemeral(ephemeral)
+                            .queue();
+                    }
+                    
+                    @Override
+                    public void updateMessage(String message) {
+                        event.editMessage(message).queue();
+                    }
+                    
+                    @Override
+                    public void updateMessage(com.wairesd.discordbm.api.embed.Embed embed) {
+                        net.dv8tion.jda.api.EmbedBuilder builder = new net.dv8tion.jda.api.EmbedBuilder();
+                        if (embed.getTitle() != null) builder.setTitle(embed.getTitle());
+                        if (embed.getDescription() != null) builder.setDescription(embed.getDescription());
+                        if (embed.getColor() != null) builder.setColor(new java.awt.Color(embed.getColor()));
+                        event.editMessageEmbeds(builder.build()).queue();
+                    }
+                    
+                    @Override
+                    public void updateMessage(com.wairesd.discordbm.api.embed.Embed embed, List<com.wairesd.discordbm.api.component.Button> buttons) {
+                        net.dv8tion.jda.api.EmbedBuilder builder = new net.dv8tion.jda.api.EmbedBuilder();
+                        if (embed.getTitle() != null) builder.setTitle(embed.getTitle());
+                        if (embed.getDescription() != null) builder.setDescription(embed.getDescription());
+                        if (embed.getColor() != null) builder.setColor(new java.awt.Color(embed.getColor()));
+                        
+                        List<net.dv8tion.jda.api.interactions.components.buttons.Button> jdaButtons = buttons.stream()
+                            .map(btn -> net.dv8tion.jda.api.interactions.components.buttons.Button.of(
+                                getJdaButtonStyle(btn.getStyle()), btn.getCustomId(), btn.getLabel()))
+                            .collect(java.util.stream.Collectors.toList());
+                        
+                        event.editMessageEmbeds(builder.build())
+                            .setActionRow(jdaButtons)
+                            .queue();
+                    }
+                    
+                    @Override
+                    public void deferResponse(boolean ephemeral) {
+                        event.deferReply(ephemeral).queue();
+                    }
+                };
+
+                Map<String, String> userData = new HashMap<>();
+                userData.put("userId", event.getUser().getId());
+                userData.put("guildId", event.getGuild() != null ? event.getGuild().getId() : "");
+                userData.put("channelId", event.getChannel().getId());
+                userData.put("messageId", event.getMessageId());
+                
+                componentHandler.handleInteraction(buttonId, userData, responseCallback);
+            } catch (Exception e) {
+                event.reply("Error executing button action: " + e.getMessage()).setEphemeral(true).queue();
+            }
+            return;
+        }
+
         String messageTemplate = actionService.getMessage(buttonId);
         if (messageTemplate != null) {
             Context context = new Context(event);
@@ -164,5 +253,40 @@ public class ButtonInteractionListener extends ListenerAdapter {
             }
         }
         return data;
+    }
+
+    private ComponentHandler getComponentHandler(String buttonId) {
+        try {
+            var api = com.wairesd.discordbm.api.DBMAPI.getInstance();
+            if (api != null) {
+                var componentRegistry = api.getComponentRegistry();
+                if (componentRegistry instanceof HostDiscordBMAPIImpl.HostComponentRegistry) {
+                    return ((HostDiscordBMAPIImpl.HostComponentRegistry) componentRegistry).getButtonHandler(buttonId);
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    private static net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle getJdaButtonStyle(com.wairesd.discordbm.api.component.ButtonStyle style) {
+        if (style == null) {
+            return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.PRIMARY;
+        }
+        
+        switch (style) {
+            case PRIMARY:
+                return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.PRIMARY;
+            case SECONDARY:
+                return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.SECONDARY;
+            case SUCCESS:
+                return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.SUCCESS;
+            case DANGER:
+                return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.DANGER;
+            case LINK:
+                return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.LINK;
+            default:
+                return net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.PRIMARY;
+        }
     }
 }

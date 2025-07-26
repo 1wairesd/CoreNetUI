@@ -45,10 +45,7 @@ public class CommandAdapter implements Command {
         return apiCommand.getOptions();
     }
 
-    @Override
-    public List<CommandCondition> getConditions() {
-        return apiCommand.getConditions();
-    }
+
 
     public com.wairesd.discordbm.client.common.models.command.Command getInternalCommand() {
         return internalCommand;
@@ -59,12 +56,8 @@ public class CommandAdapter implements Command {
             .map(this::convertToInternalOption)
             .collect(Collectors.toList());
         
+
         List<Map<String, Object>> serializedConditions = new ArrayList<>();
-        if (apiCommand.getConditions() != null) {
-            for (CommandCondition cond : apiCommand.getConditions()) {
-                serializedConditions.add(cond.serialize());
-            }
-        }
         
         return new com.wairesd.discordbm.client.common.models.command.Command.Builder()
             .name(apiCommand.getName())

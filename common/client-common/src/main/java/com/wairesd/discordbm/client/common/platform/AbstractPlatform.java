@@ -8,6 +8,7 @@ import com.wairesd.discordbm.client.common.listener.DiscordBMCRLB;
 import com.wairesd.discordbm.client.common.models.command.Command;
 import com.wairesd.discordbm.client.common.network.NettyService;
 import com.wairesd.discordbm.client.common.placeholders.PlaceholderService;
+import com.wairesd.discordbm.common.logging.LoggerAdapter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public abstract class AbstractPlatform implements Platform {
         this.pluginLogger = pluginLogger;
         this.nettyService = new NettyService(() -> this, pluginLogger);
         this.placeholderService = new PlaceholderService(platformPlaceholderService);
-        this.commandRegistration = new CommandRegistrationImpl(this, new com.wairesd.discordbm.client.common.logging.LoggerAdapter(pluginLogger));
+        this.commandRegistration = new CommandRegistrationImpl(this, new LoggerAdapter(pluginLogger));
     }
 
     @Override

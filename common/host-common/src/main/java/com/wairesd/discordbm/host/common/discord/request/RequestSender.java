@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
-import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import com.wairesd.discordbm.host.common.models.request.RequestMessage;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -91,6 +90,12 @@ public class RequestSender {
         options.put("user_Id", event.getUser().getId());
         if (event.getGuild() != null) {
             options.put("guild_Id", event.getGuild().getId());
+            
+            var member = event.getMember();
+            if (member != null && !member.getRoles().isEmpty()) {
+                String roleId = member.getRoles().get(0).getId();
+                options.put("role_id", roleId);
+            }
         }
         options.put("ephemeral", Boolean.toString(ephemeral));
         options.put("channelId", event.getChannel().getId());

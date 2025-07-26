@@ -25,6 +25,8 @@ public class ResponseMessage {
     private String replyMessageId;
     @SerializedName("replyMentionAuthor")
     private Boolean replyMentionAuthor;
+    private final String errorType;
+    private final Map<String, String> errorPlaceholders;
 
     private ResponseMessage(Builder builder) {
         this.type = builder.type;
@@ -41,6 +43,8 @@ public class ResponseMessage {
         this.responses = builder.responses;
         this.replyMessageId = builder.replyMessageId;
         this.replyMentionAuthor = builder.replyMentionAuthor;
+        this.errorType = builder.errorType;
+        this.errorPlaceholders = builder.errorPlaceholders;
     }
 
     public String type() {
@@ -97,6 +101,14 @@ public class ResponseMessage {
     public Boolean replyMentionAuthor() {
         return replyMentionAuthor;
     }
+    
+    public String errorType() {
+        return errorType;
+    }
+    
+    public Map<String, String> errorPlaceholders() {
+        return errorPlaceholders;
+    }
 
     public static class Builder {
         private String type;
@@ -113,6 +125,8 @@ public class ResponseMessage {
         private List<String> responses;
         private String replyMessageId;
         private Boolean replyMentionAuthor;
+        private String errorType;
+        private Map<String, String> errorPlaceholders;
 
         public Builder type(String type) {
             this.type = type;
@@ -180,6 +194,16 @@ public class ResponseMessage {
         }
         public Builder replyMentionAuthor(Boolean replyMentionAuthor) {
             this.replyMentionAuthor = replyMentionAuthor;
+            return this;
+        }
+        
+        public Builder errorType(String errorType) {
+            this.errorType = errorType;
+            return this;
+        }
+        
+        public Builder errorPlaceholders(Map<String, String> errorPlaceholders) {
+            this.errorPlaceholders = errorPlaceholders;
             return this;
         }
 

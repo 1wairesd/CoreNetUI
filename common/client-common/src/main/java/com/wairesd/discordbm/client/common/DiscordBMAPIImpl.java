@@ -8,7 +8,7 @@ import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.client.common.component.ComponentRegistryImpl;
 import com.wairesd.discordbm.common.embed.EmbedBuilderImpl;
-import com.wairesd.discordbm.client.common.logging.LoggerAdapter;
+import com.wairesd.discordbm.common.logging.LoggerAdapter;
 import com.wairesd.discordbm.client.common.message.MessageSenderImpl;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
@@ -20,6 +20,7 @@ import com.wairesd.discordbm.common.form.FormBuilderImpl;
 import com.wairesd.discordbm.common.form.FormFieldBuilderImpl;
 import com.wairesd.discordbm.client.common.ephemeral.EphemeralRulesManager;
 import com.wairesd.discordbm.api.event.EventBus;
+import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.common.event.EventBusImpl;
 
 import java.util.Map;
@@ -34,6 +35,7 @@ public class DiscordBMAPIImpl extends DBMAPI {
     private final EphemeralRulesManager ephemeralRulesManager;
     private final long startTime = System.currentTimeMillis();
     private final EventBus eventBus = new EventBusImpl();
+    private ResponseType currentResponseType;
 
     public DiscordBMAPIImpl(Platform platform, PluginLogger pluginLogger) {
         this.platform = platform;
@@ -165,5 +167,22 @@ public class DiscordBMAPIImpl extends DBMAPI {
             throw new NullPointerException("DiscordBM API: EventBus is not initialized");
         }
         return eventBus;
+    }
+    
+    @Override
+    public void setResponseType(ResponseType responseType) {
+        this.currentResponseType = responseType;
+        this.messageSender.setResponseType(responseType);
+    }
+    
+    @Override
+    public ResponseType getCurrentResponseType() {
+        return currentResponseType;
+    }
+    
+    @Override
+    public void clearResponseType() {
+        this.currentResponseType = null;
+        this.messageSender.clearResponseType();
     }
 } 

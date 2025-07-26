@@ -1,6 +1,5 @@
 package com.wairesd.discordbm.api.message;
 
-import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.form.Form;
@@ -83,14 +82,7 @@ public interface MessageSender {
      */
     void sendResponse(String requestId, String message, List<Button> buttons, String label);
 
-    /**
-     * Send a text message in response to a command, with conditions
-     */
-    void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions);
-    /**
-     * Send a text message in response to a command, with conditions and label
-     */
-    void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions, String label);
+
 
     // --- Direct Message ---
 
@@ -191,14 +183,7 @@ public interface MessageSender {
      */
     void sendChannelMessage(String channelId, String message, List<Button> buttons, String label);
 
-    /**
-     * Send a message to a channel, with conditions
-     */
-    void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions);
-    /**
-     * Send a message to a channel, with conditions and label
-     */
-    void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions, String label);
+
 
     /**
      * Send a message with a button that opens a form in response to a command

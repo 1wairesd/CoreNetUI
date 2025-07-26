@@ -2,7 +2,6 @@ package com.wairesd.discordbm.client.common.message;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.form.Form;
@@ -17,6 +16,7 @@ import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.client.common.platform.Platform;
+import com.wairesd.discordbm.api.message.ResponseType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +26,7 @@ public class MessageSenderImpl implements MessageSender {
     private final Platform platform;
     private final Logger logger;
     private final Gson gson = new Gson();
+    private ResponseType currentResponseType;
 
     public MessageSenderImpl(Platform platform, Logger logger) {
         this.platform = platform;
@@ -41,7 +42,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -57,7 +58,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -74,7 +75,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -90,7 +91,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(formDef)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -106,7 +107,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(formDef)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -121,7 +122,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         
         String json = gson.toJson(respMsg);
@@ -138,7 +139,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -155,7 +156,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -171,7 +172,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -186,7 +187,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         
         String json = gson.toJson(respMsg);
@@ -203,7 +204,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -220,13 +221,13 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
 
-    @Override
+        @Override
     public void sendChannelMessage(String channelId, String message, String label) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")
@@ -236,12 +237,12 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendChannelMessage(String channelId, Embed embed, String label) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -253,12 +254,12 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendChannelMessage(String channelId, String message, List<Button> buttons, String label) {
         List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
@@ -270,12 +271,12 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-
+    
     @Override
     public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons, String label) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -288,7 +289,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -304,7 +305,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -320,7 +321,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -335,7 +336,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -351,7 +352,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -368,7 +369,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -384,7 +385,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -399,7 +400,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -415,7 +416,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -432,7 +433,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(embedDef)
                 .buttons(buttonDefs)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -452,7 +453,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(null)
                 .form(null)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -469,7 +470,7 @@ public class MessageSenderImpl implements MessageSender {
                 .form(null)
                 .requestId(requestId)
                 .channelId(channelId)
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
@@ -511,88 +512,55 @@ public class MessageSenderImpl implements MessageSender {
         }
         return new FormAdapter(form).getInternalForm();
     }
-
-
-    @Override
-    public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
+    
+    private ResponseFlags createResponseFlags() {
+        ResponseFlags.Builder flagsBuilder = new ResponseFlags.Builder();
+        
+        if (currentResponseType != null) {
+            flagsBuilder.responseType(currentResponseType.name());
+            
+            // Устанавливаем специальные флаги в зависимости от типа
+            switch (currentResponseType) {
+                case MODAL:
+                    flagsBuilder.requiresModal(true).preventMessageSend(true).isFormResponse(true);
+                    break;
+                case REPLY_MODAL:
+                    flagsBuilder.isFormResponse(true).requiresModal(false);
+                    break;
+                case EDIT_MESSAGE:
+                    flagsBuilder.preventMessageSend(false).isFormResponse(false).requiresModal(false);
+                    break;
+                case DIRECT:
+                case CHANNEL:
+                    flagsBuilder.preventMessageSend(false).isFormResponse(false).requiresModal(false);
+                    break;
+                case REPLY_TO_MESSAGE:
+                    flagsBuilder.preventMessageSend(false).isFormResponse(false).requiresModal(false);
+                    break;
+                case REPLY:
+                default:
+                    flagsBuilder.preventMessageSend(false).isFormResponse(false).requiresModal(false);
+                    break;
+            }
         }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(requestId)
-                .response(message)
-                .embed(null)
-                .buttons(null)
-                .form(null)
-                .flags(new ResponseFlags.Builder().build())
-                .conditions(serialized)
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
+        
+        return flagsBuilder.build();
+    }
+    
+    public void setResponseType(ResponseType responseType) {
+        this.currentResponseType = responseType;
+    }
+    
+    public ResponseType getCurrentResponseType() {
+        return currentResponseType;
+    }
+    
+    public void clearResponseType() {
+        this.currentResponseType = null;
     }
 
-    @Override
-    public void sendResponseWithConditions(String requestId, String message, List<CommandCondition> conditions, String label) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("response")
-                .requestId(label)
-                .response(message)
-                .embed(null)
-                .buttons(null)
-                .form(null)
-                .flags(new ResponseFlags.Builder().build())
-                .conditions(serialized)
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
-    }
 
-    @Override
-    public void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("channel_message")
-                .channelId(channelId)
-                .response(message)
-                .embed(null)
-                .buttons(null)
-                .form(null)
-                .flags(new ResponseFlags.Builder().build())
-                .conditions(serialized)
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
-    }
 
-    @Override
-    public void sendChannelMessageWithConditions(String channelId, String message, List<CommandCondition> conditions, String label) {
-        List<java.util.Map<String, Object>> serialized = null;
-        if (conditions != null) {
-            serialized = conditions.stream().map(CommandCondition::serialize).toList();
-        }
-        ResponseMessage respMsg = new ResponseMessage.Builder()
-                .type("channel_message")
-                .channelId(channelId)
-                .requestId(label)
-                .response(message)
-                .embed(null)
-                .buttons(null)
-                .form(null)
-                .flags(new ResponseFlags.Builder().build())
-                .conditions(serialized)
-                .build();
-        String json = gson.toJson(respMsg);
-        platform.getNettyService().sendNettyMessage(json);
-    }
 
     @Override
     public void sendButtonWithForm(String requestId, String message, Button button, Form form) {
@@ -605,7 +573,7 @@ public class MessageSenderImpl implements MessageSender {
                 .embed(null)
                 .buttons(java.util.Collections.singletonList(buttonDef))
                 .form(convertToFormDefinition(form))
-                .flags(new ResponseFlags.Builder().build())
+                .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);

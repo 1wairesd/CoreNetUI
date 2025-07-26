@@ -9,6 +9,7 @@ import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.role.RoleManager;
 import com.wairesd.discordbm.api.form.FormBuilder;
 import com.wairesd.discordbm.api.form.FormFieldBuilder;
+import com.wairesd.discordbm.api.message.ResponseType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -119,4 +120,25 @@ public abstract class DBMAPI {
      * Returns the uptime of the client in milliseconds.
      */
     public abstract long getUptimeMillis();
+    
+    /**
+     * Set the response type for subsequent message operations.
+     * This will affect all sendResponse, sendDirectMessage, sendChannelMessage calls
+     * until cleared or changed.
+     * 
+     * @param responseType The response type to set
+     */
+    public abstract void setResponseType(ResponseType responseType);
+    
+    /**
+     * Get the currently set response type.
+     * 
+     * @return The current response type, or null if not set
+     */
+    public abstract ResponseType getCurrentResponseType();
+    
+    /**
+     * Clear the current response type, reverting to default behavior.
+     */
+    public abstract void clearResponseType();
 } 

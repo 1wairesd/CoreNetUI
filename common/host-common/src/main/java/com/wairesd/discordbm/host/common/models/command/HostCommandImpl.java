@@ -2,7 +2,6 @@ package com.wairesd.discordbm.host.common.models.command;
 
 import com.wairesd.discordbm.api.command.Command;
 import com.wairesd.discordbm.api.command.CommandOption;
-import com.wairesd.discordbm.api.command.CommandCondition;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,6 @@ public class HostCommandImpl implements Command {
     private final String pluginName;
     private final String context;
     private final List<CommandOption> options;
-    private final List<CommandCondition> conditions;
 
     private HostCommandImpl(Builder builder) {
         this.name = builder.name;
@@ -20,7 +18,6 @@ public class HostCommandImpl implements Command {
         this.pluginName = builder.pluginName;
         this.context = builder.context;
         this.options = builder.options != null ? builder.options : new ArrayList<>();
-        this.conditions = builder.conditions != null ? List.copyOf(builder.conditions) : List.of();
     }
 
     @Override
@@ -33,8 +30,6 @@ public class HostCommandImpl implements Command {
     public String getContext() { return context; }
     @Override
     public List<CommandOption> getOptions() { return options; }
-    @Override
-    public List<CommandCondition> getConditions() { return conditions; }
 
     public static class Builder implements Command.Builder {
         private String name;
@@ -42,7 +37,6 @@ public class HostCommandImpl implements Command {
         private String pluginName;
         private String context;
         private List<CommandOption> options;
-        private List<CommandCondition> conditions = new ArrayList<>();
         @Override
         public Builder name(String name) { this.name = name; return this; }
         @Override
@@ -53,10 +47,6 @@ public class HostCommandImpl implements Command {
         public Builder context(String context) { this.context = context; return this; }
         @Override
         public Builder options(List<CommandOption> options) { this.options = options; return this; }
-        @Override
-        public Builder addCondition(CommandCondition condition) { this.conditions.add(condition); return this; }
-        @Override
-        public Builder conditions(List<CommandCondition> conditions) { this.conditions = new ArrayList<>(conditions); return this; }
         @Override
         public Command build() { return new HostCommandImpl(this); }
     }

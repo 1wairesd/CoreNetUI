@@ -2,7 +2,6 @@ package com.wairesd.discordbm.client.common.command;
 
 import com.wairesd.discordbm.api.command.Command;
 import com.wairesd.discordbm.api.command.CommandOption;
-import com.wairesd.discordbm.api.command.CommandCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ public class CommandImpl implements Command {
     private final String pluginName;
     private final String context;
     private final List<CommandOption> options;
-    private final List<CommandCondition> conditions;
 
     private CommandImpl(Builder builder) {
         this.name = builder.name;
@@ -22,7 +20,6 @@ public class CommandImpl implements Command {
         this.pluginName = builder.pluginName;
         this.context = builder.context;
         this.options = builder.options != null ? builder.options : new ArrayList<>();
-        this.conditions = builder.conditions != null ? List.copyOf(builder.conditions) : List.of();
     }
     
     @Override
@@ -50,18 +47,12 @@ public class CommandImpl implements Command {
         return options;
     }
 
-    @Override
-    public List<CommandCondition> getConditions() {
-        return conditions;
-    }
-
     public static class Builder implements Command.Builder {
         private String name;
         private String description;
         private String pluginName;
         private String context;
         private List<CommandOption> options;
-        private List<CommandCondition> conditions = new ArrayList<>();
         
         @Override
         public Builder name(String name) {
@@ -93,17 +84,7 @@ public class CommandImpl implements Command {
             return this;
         }
         
-        @Override
-        public Builder addCondition(CommandCondition condition) {
-            this.conditions.add(condition);
-            return this;
-        }
 
-        @Override
-        public Builder conditions(List<CommandCondition> conditions) {
-            this.conditions = new ArrayList<>(conditions);
-            return this;
-        }
         
         @Override
         public Command build() {

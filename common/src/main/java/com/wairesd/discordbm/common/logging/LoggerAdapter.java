@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.client.common.logging;
+package com.wairesd.discordbm.common.logging;
 
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;

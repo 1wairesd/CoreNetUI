@@ -23,10 +23,12 @@ import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.C
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorMessages;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.error.CommandErrorType;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.registry.ButtonActionRegistry;
+import com.wairesd.discordbm.api.message.ResponseType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
@@ -57,7 +59,7 @@ public class ResponseHandler {
             logger.info("Response received for request " + respMsg.requestId() + ": " + respMsg.toString());
         }
 
-        ResponseTypeDetector.ResponseType responseType = ResponseTypeDetector.determineResponseType(respMsg);
+        ResponseType responseType = ResponseTypeDetector.determineResponseType(respMsg);
         if (Settings.isDebugRequestProcessing()) {
             logger.info("Auto-detected response type: {} for requestId: {}", responseType, respMsg.requestId());
         }
@@ -315,6 +317,11 @@ public class ResponseHandler {
         if (respMsg.embed() != null) {
             sendCustomEmbed(event, respMsg.embed(), respMsg.buttons(), UUID.fromString(respMsg.requestId()), ephemeral);
         } else if (respMsg.response() != null) {
+            if (respMsg.response().startsWith("ERROR:")) {
+                handleConditionError(event, respMsg.response(), ephemeral);
+                return;
+            }
+            
             if (respMsg.buttons() != null && !respMsg.buttons().isEmpty()) {
                 List<Button> jdaButtons = respMsg.buttons().stream()
                         .map(btn -> {
@@ -733,6 +740,47 @@ public class ResponseHandler {
             action.execute(null).join();
         } catch (Exception e) {
             logger.error("Failed to delete message for label: {}", label, e);
+        }
+    }
+    
+    private static void handleConditionError(SlashCommandInteractionEvent event, String errorMessage, boolean ephemeral) {
+        try {
+            String[] parts = errorMessage.split(":", 3);
+            if (parts.length < 2) {
+                event.getHook().sendMessage("Invalid error format").setEphemeral(ephemeral).queue();
+                return;
+            }
+            
+            String errorType = parts[1];
+            Map<String, String> placeholders = new HashMap<>();
+            
+            if (parts.length > 2) {
+                String[] placeholderPairs = parts[2].split(",");
+                for (String pair : placeholderPairs) {
+                    String[] keyValue = pair.split("=", 2);
+                    if (keyValue.length == 2) {
+                        placeholders.put(keyValue[0], keyValue[1]);
+                    }
+                }
+            }
+            
+            CommandErrorType commandErrorType = parseErrorType(errorType);
+            MessageEmbed embed = CommandErrorMessages.createErrorEmbed(commandErrorType, placeholders);
+            
+            event.getHook().sendMessageEmbeds(embed).setEphemeral(ephemeral).queue();
+            
+        } catch (Exception e) {
+            logger.error("Error handling condition error: {}", e.getMessage(), e);
+            event.getHook().sendMessage("Error processing condition").setEphemeral(ephemeral).queue();
+        }
+    }
+    
+    private static CommandErrorType parseErrorType(String errorType) {
+        try {
+            return CommandErrorType.valueOf(errorType);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Unknown error type: {}, using SERVER_ERROR", errorType);
+            return CommandErrorType.SERVER_ERROR;
         }
     }
 }

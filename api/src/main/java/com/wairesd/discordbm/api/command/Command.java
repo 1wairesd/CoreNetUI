@@ -42,12 +42,7 @@ public interface Command {
      */
     List<CommandOption> getOptions();
     
-    /**
-     * Get the conditions for this command
-     *
-     * @return The command conditions
-     */
-    List<CommandCondition> getConditions();
+
     
     /**
      * Builder interface for creating Command instances
@@ -93,21 +88,7 @@ public interface Command {
          */
         Builder options(List<CommandOption> options);
         
-        /**
-         * Add a condition to the command
-         *
-         * @param condition The command condition
-         * @return This builder
-         */
-        Builder addCondition(CommandCondition condition);
-        
-        /**
-         * Set all conditions for the command
-         *
-         * @param conditions The list of conditions
-         * @return This builder
-         */
-        Builder conditions(List<CommandCondition> conditions);
+
         
         /**
          * Build the command

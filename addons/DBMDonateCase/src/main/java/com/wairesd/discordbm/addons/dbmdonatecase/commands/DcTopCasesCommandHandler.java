@@ -5,6 +5,7 @@ import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
+import com.wairesd.discordbm.api.message.ResponseType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,37 +24,45 @@ public class DcTopCasesCommandHandler implements CommandHandler {
 
     @Override
     public void handleCommand(String command, Map<String, String> opts, String reqId) {
-        MessageSender sender = dbmApi.getMessageSender();
-        api.getDatabase().getHistoryData().thenAccept(historyList -> {
-            if (historyList == null || historyList.isEmpty()) {
-                sender.sendResponse(reqId, messages.get("no_case_data"));
-                return;
-            }
-            Map<String, Long> caseCount = historyList.stream()
-                .collect(Collectors.groupingBy(
-                    h -> h.caseType(), Collectors.counting()
-                ));
-            var top = caseCount.entrySet().stream()
-                .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
-                .limit(10)
-                .toList();
-            StringBuilder sb = new StringBuilder();
-            int i = 1;
-            for (var entry : top) {
-                String displayName = api.getCaseManager().getByType(entry.getKey())
-                    .map(def -> def.settings().displayName())
-                    .orElse(entry.getKey());
-                Map<String, String> ph = new HashMap<>();
-                ph.put("index", String.valueOf(i++));
-                ph.put("name", displayName);
-                ph.put("count", String.valueOf(entry.getValue()));
-                sb.append(messages.get("top_entry", ph)).append("\n");
-            }
-            var embed = dbmApi.createEmbedBuilder()
-                .setTitle(messages.get("top_cases_title"))
-                .setDescription(sb.toString())
-                .build();
-            sender.sendResponse(reqId, embed);
-        });
+        dbmApi.setResponseType(ResponseType.REPLY);
+        try {
+            MessageSender sender = dbmApi.getMessageSender();
+            api.getDatabase().getHistoryData().thenAccept(historyList -> {
+                if (historyList == null || historyList.isEmpty()) {
+                    sender.sendResponse(reqId, messages.get("no_case_data"));
+                    dbmApi.clearResponseType();
+                    return;
+                }
+                Map<String, Long> caseCount = historyList.stream()
+                    .collect(Collectors.groupingBy(
+                        h -> h.caseType(), Collectors.counting()
+                    ));
+                var top = caseCount.entrySet().stream()
+                    .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
+                    .limit(10)
+                    .toList();
+                StringBuilder sb = new StringBuilder();
+                int i = 1;
+                for (var entry : top) {
+                    String displayName = api.getCaseManager().getByType(entry.getKey())
+                        .map(def -> def.settings().displayName())
+                        .orElse(entry.getKey());
+                    Map<String, String> ph = new HashMap<>();
+                    ph.put("index", String.valueOf(i++));
+                    ph.put("name", displayName);
+                    ph.put("count", String.valueOf(entry.getValue()));
+                    sb.append(messages.get("top_entry", ph)).append("\n");
+                }
+                var embed = dbmApi.createEmbedBuilder()
+                    .setTitle(messages.get("top_cases_title"))
+                    .setDescription(sb.toString())
+                    .build();
+                sender.sendResponse(reqId, embed);
+                dbmApi.clearResponseType();
+            });
+        } catch (Exception e) {
+            dbmApi.clearResponseType();
+            throw e;
+        }
     }
 } 

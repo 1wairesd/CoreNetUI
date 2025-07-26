@@ -4,6 +4,7 @@ import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import com.wairesd.discordbm.api.message.ResponseType;
 import org.slf4j.LoggerFactory;
 
 public class ResponseTypeDetector {
@@ -118,16 +119,5 @@ public class ResponseTypeDetector {
 
         flagsBuilder.responseType(responseType.name());
         return flagsBuilder.build();
-    }
-
-    public enum ResponseType {
-        REPLY,
-        EDIT_MESSAGE,
-        MODAL,
-        REPLY_MODAL,
-        DIRECT,
-        CHANNEL,
-        RANDOM_REPLY,
-        REPLY_TO_MESSAGE
     }
 } 

@@ -13,12 +13,10 @@ import com.wairesd.discordbm.common.utils.color.MessageContext;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.velocity.commands.sub.WebHookCommand;
 import com.wairesd.discordbm.velocity.DBMVelocityPlugin;
-import net.kyori.adventure.text.Component;
 import com.wairesd.discordbm.common.utils.color.transform.AnsiColorTranslator;
 import com.wairesd.discordbm.velocity.commands.sub.EditorCommand;
 import com.wairesd.discordbm.velocity.commands.sub.ApplyEditsCommand;
 import com.wairesd.discordbm.velocity.api.VelocityCommandSender;
-import com.wairesd.discordbm.velocity.api.VelocityUtils;
 
 public class CommandAdmin implements SimpleCommand {
     private final ReloadCommand reloadCommand;

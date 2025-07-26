@@ -5,7 +5,6 @@ import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.command.CommandListener;
 import com.wairesd.discordbm.api.command.CommandOption;
 import com.wairesd.discordbm.api.command.CommandRegistration;
-import com.wairesd.discordbm.api.command.CommandCondition;
 import com.wairesd.discordbm.host.common.discord.DiscordBotManager;
 import com.wairesd.discordbm.host.common.models.option.OptionDefinition;
 import com.wairesd.discordbm.host.common.network.NettyServer;
@@ -75,7 +74,7 @@ public class HostCommandRegistration implements CommandRegistration {
                     new OptionDefinition(opt.getName(), opt.getType(), opt.getDescription(), opt.isRequired())
                 ).toList(),
                 null,
-                command.getConditions() != null ? command.getConditions().stream().map(CommandCondition::serialize).toList() : List.of(),
+                List.of(),
                 command.getPluginName()
             );
             nettyServer.getCommandDefinitions().put(def.name(), def);

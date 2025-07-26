@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
+import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +23,13 @@ public class DcTopPlayersCommandHandler implements CommandHandler {
 
     @Override
     public void handleCommand(String command, Map<String, String> opts, String reqId) {
+        dbmApi.setResponseType(ResponseType.REPLY);
+        
         String caseType = opts.getOrDefault("case", "");
         MessageSender sender = dbmApi.getMessageSender();
         if (caseType.isEmpty()) {
             sender.sendResponse(reqId, messages.get("no_case_type"));
+            dbmApi.clearResponseType();
             return;
         }
         api.getDatabase().getHistoryData(caseType).thenAccept(historyList -> {
@@ -33,6 +37,7 @@ public class DcTopPlayersCommandHandler implements CommandHandler {
                 Map<String, String> ph = new HashMap<>();
                 ph.put("caseType", caseType);
                 sender.sendResponse(reqId, messages.get("no_case_data_specific", ph));
+                dbmApi.clearResponseType();
                 return;
             }
             Map<String, Long> playerCount = historyList.stream()
@@ -62,6 +67,7 @@ public class DcTopPlayersCommandHandler implements CommandHandler {
                 .setDescription(sb.toString())
                 .build();
             sender.sendResponse(reqId, embed);
+            dbmApi.clearResponseType();
         });
     }
 } 
