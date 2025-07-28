@@ -1,16 +1,16 @@
-package com.wairesd.discordbm.common.models.form;
+package com.wairesd.discordbm.common.models.modal;
 
 /**
  * Model for form field definition used in network communication
  */
-public class FormFieldDefinition {
+public class ModalFieldDefinition {
     private final String label;
     private final String placeholder;
     private final String type;
     private final boolean required;
     private final String variable;
 
-    public FormFieldDefinition(String label, String placeholder, String type, boolean required, String variable) {
+    public ModalFieldDefinition(String label, String placeholder, String type, boolean required, String variable) {
         this.label = label;
         this.placeholder = placeholder;
         this.type = type;
@@ -70,8 +70,8 @@ public class FormFieldDefinition {
             return this;
         }
 
-        public FormFieldDefinition build() {
-            return new FormFieldDefinition(label, placeholder, type, required, variable);
+        public ModalFieldDefinition build() {
+            return new ModalFieldDefinition(label, placeholder, type, required, variable);
         }
     }
 } 

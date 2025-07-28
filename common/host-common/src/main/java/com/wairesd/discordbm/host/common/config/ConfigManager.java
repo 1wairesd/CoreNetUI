@@ -12,7 +12,6 @@ public class ConfigManager {
         Commands.init(dataDir);
         Forms.init(dataDir.toFile());
         Pages.init(dataDir.toFile());
-        CommandEphemeral.init(dataDir);
         Webhooks.init(dataDir.toFile());
     }
 
@@ -22,7 +21,6 @@ public class ConfigManager {
         Commands.reload();
         Forms.reload();
         Pages.reload();
-        CommandEphemeral.reload();
         Webhooks.reload();
     }
 }

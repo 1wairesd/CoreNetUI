@@ -2,7 +2,7 @@ package com.wairesd.discordbm.api.message;
 
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
-import com.wairesd.discordbm.api.form.Form;
+import com.wairesd.discordbm.api.modal.Modal;
 
 import java.util.List;
 
@@ -48,21 +48,21 @@ public interface MessageSender {
     void sendResponse(String requestId, String message, List<Button> buttons);
 
     /**
-     * Send a form in response to a command
+     * Send a modal in response to a command
      *
      * @param requestId The request ID of the command
-     * @param form The form to send
+     * @param modal The modal to send
      */
-    void sendForm(String requestId, Form form);
+    void sendModal(String requestId, Modal modal);
 
     /**
-     * Send a form with a message in response to a command
+     * Send a modal with a message in response to a command
      *
      * @param requestId The request ID of the command
-     * @param message The message to send with the form
-     * @param form The form to send
+     * @param message The message to send with the modal
+     * @param modal The modal to send
      */
-    void sendForm(String requestId, String message, Form form);
+    void sendModal(String requestId, String message, Modal modal);
 
     // --- Response с label ---
     /**
@@ -186,13 +186,13 @@ public interface MessageSender {
 
 
     /**
-     * Send a message with a button that opens a form in response to a command
+     * Send a message with a button that opens a modal in response to a command
      * @param requestId The request ID of the command
      * @param message The message to send
-     * @param button The button that will open the form
-     * @param form The form to open when the button is pressed
+     * @param button The button that will open the modal
+     * @param modal The modal to open when the button is pressed
      */
-    void sendButtonWithForm(String requestId, String message, Button button, Form form);
+    void sendButtonWithModal(String requestId, String message, Button button, Modal modal);
 
     /**
      * Send a random reply (random message from the list) in response to a command

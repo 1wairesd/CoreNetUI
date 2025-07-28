@@ -5,7 +5,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.host.common.api.HostMessageSender;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.listener.ButtonInteractionListener;
-import com.wairesd.discordbm.host.common.commandbuilder.components.forms.listener.FormInteractionListener;
+import com.wairesd.discordbm.host.common.commandbuilder.components.modal.listener.ModalInteractionListener;
 import com.wairesd.discordbm.host.common.config.ConfigManager;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.Database;
@@ -86,7 +86,7 @@ public class DiscordBMHBootstrap {
         Map<String, String> requestIdToCommand = new ConcurrentHashMap<>();
         DiscordBotListener listener = new DiscordBotListener(platformManager, nettyServer, logger, requestIdToCommand);
         jda.addEventListener(listener);
-        jda.addEventListener(new FormInteractionListener(platformManager, requestIdToCommand));
+        jda.addEventListener(new ModalInteractionListener(platformManager, requestIdToCommand));
 
         nettyServer.setJda(jda);
         ResponseHandler.init(listener, platformManager);

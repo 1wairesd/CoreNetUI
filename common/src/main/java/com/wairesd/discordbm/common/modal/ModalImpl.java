@@ -1,17 +1,17 @@
-package com.wairesd.discordbm.common.form;
+package com.wairesd.discordbm.common.modal;
 
-import com.wairesd.discordbm.api.form.Form;
-import com.wairesd.discordbm.api.form.FormField;
+import com.wairesd.discordbm.api.modal.Modal;
+import com.wairesd.discordbm.api.modal.ModalField;
 
 import java.util.List;
 
-public class FormImpl implements Form {
+public class ModalImpl implements Modal {
     
     private final String title;
-    private final List<FormField> fields;
+    private final List<ModalField> fields;
     private final String customId;
 
-    public FormImpl(String title, List<FormField> fields, String customId) {
+    public ModalImpl(String title, List<ModalField> fields, String customId) {
         this.title = title;
         this.fields = fields;
         this.customId = customId;
@@ -23,7 +23,7 @@ public class FormImpl implements Form {
     }
 
     @Override
-    public List<FormField> getFields() {
+    public List<ModalField> getFields() {
         return fields;
     }
 

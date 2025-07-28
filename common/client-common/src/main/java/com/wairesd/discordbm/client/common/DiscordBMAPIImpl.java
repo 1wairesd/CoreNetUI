@@ -14,16 +14,13 @@ import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.client.common.role.RoleManagerImpl;
 import com.wairesd.discordbm.api.role.RoleManager;
-import com.wairesd.discordbm.api.form.FormBuilder;
-import com.wairesd.discordbm.api.form.FormFieldBuilder;
-import com.wairesd.discordbm.common.form.FormBuilderImpl;
-import com.wairesd.discordbm.common.form.FormFieldBuilderImpl;
-import com.wairesd.discordbm.client.common.ephemeral.EphemeralRulesManager;
+import com.wairesd.discordbm.api.modal.ModalBuilder;
+import com.wairesd.discordbm.api.modal.ModalFieldBuilder;
+import com.wairesd.discordbm.common.modal.ModalBuilderImpl;
+import com.wairesd.discordbm.common.modal.ModalFieldBuilderImpl;
 import com.wairesd.discordbm.api.event.EventBus;
 import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.common.event.EventBusImpl;
-
-import java.util.Map;
 
 public class DiscordBMAPIImpl extends DBMAPI {
     
@@ -32,7 +29,6 @@ public class DiscordBMAPIImpl extends DBMAPI {
     private final ComponentRegistryImpl componentRegistry;
     private final LoggerAdapter logger;
     private final RoleManagerImpl roleManager;
-    private final EphemeralRulesManager ephemeralRulesManager;
     private final long startTime = System.currentTimeMillis();
     private final EventBus eventBus = new EventBusImpl();
     private ResponseType currentResponseType;
@@ -43,7 +39,6 @@ public class DiscordBMAPIImpl extends DBMAPI {
         this.messageSender = new MessageSenderImpl(platform, this.logger);
         this.componentRegistry = new ComponentRegistryImpl(platform, this.logger);
         this.roleManager = new RoleManagerImpl(platform);
-        this.ephemeralRulesManager = new EphemeralRulesManager(platform);
     }
     
     @Override
@@ -87,19 +82,19 @@ public class DiscordBMAPIImpl extends DBMAPI {
     }
     
     @Override
-    public FormBuilder createFormBuilder() {
+    public ModalBuilder createModalBuilder() {
         if (platform == null) {
             throw new NullPointerException("DiscordBM API: Platform is not initialized");
         }
-        return new FormBuilderImpl();
+        return new ModalBuilderImpl();
     }
     
     @Override
-    public FormFieldBuilder createFormFieldBuilder() {
+    public ModalFieldBuilder createModalFieldBuilder() {
         if (platform == null) {
             throw new NullPointerException("DiscordBM API: Platform is not initialized");
         }
-        return new FormFieldBuilderImpl();
+        return new ModalFieldBuilderImpl();
     }
     
     @Override
@@ -129,14 +124,6 @@ public class DiscordBMAPIImpl extends DBMAPI {
     }
 
     @Override
-    public void registerEphemeralRules(Map<String, Boolean> rules) {
-        if (platform == null) {
-            throw new NullPointerException("DiscordBM API: Platform is not initialized");
-        }
-        ephemeralRulesManager.registerEphemeralRules(rules);
-    }
-
-    @Override
     public long getUptimeMillis() {
         if (startTime == 0) {
             if (logger != null) {
@@ -145,13 +132,6 @@ public class DiscordBMAPIImpl extends DBMAPI {
             throw new NullPointerException("DiscordBMAPI: startTime is not initialized!");
         }
         return System.currentTimeMillis() - startTime;
-    }
-
-    public EphemeralRulesManager getEphemeralRulesManager() {
-        if (ephemeralRulesManager == null) {
-            throw new NullPointerException("EphemeralRulesManager is not initialized");
-        }
-        return ephemeralRulesManager;
     }
 
     public Platform getPlatform() {
@@ -182,7 +162,21 @@ public class DiscordBMAPIImpl extends DBMAPI {
     
     @Override
     public void clearResponseType() {
-        this.currentResponseType = null;
-        this.messageSender.clearResponseType();
+        messageSender.clearResponseType();
+    }
+
+    @Override
+    public void setEphemeral(boolean ephemeral) {
+        messageSender.setEphemeral(ephemeral);
+    }
+
+    @Override
+    public boolean getCurrentEphemeral() {
+        return messageSender.getCurrentEphemeral();
+    }
+
+    @Override
+    public void clearEphemeral() {
+        messageSender.clearEphemeral();
     }
 } 

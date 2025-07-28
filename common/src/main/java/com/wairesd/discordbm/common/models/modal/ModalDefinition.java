@@ -1,16 +1,16 @@
-package com.wairesd.discordbm.common.models.form;
+package com.wairesd.discordbm.common.models.modal;
 
 import java.util.List;
 
 /**
  * Model for form definition used in network communication
  */
-public class FormDefinition {
+public class ModalDefinition {
     private final String title;
     private final String customId;
-    private final List<FormFieldDefinition> fields;
+    private final List<ModalFieldDefinition> fields;
 
-    public FormDefinition(String title, String customId, List<FormFieldDefinition> fields) {
+    public ModalDefinition(String title, String customId, List<ModalFieldDefinition> fields) {
         this.title = title;
         this.customId = customId;
         this.fields = fields;
@@ -24,14 +24,14 @@ public class FormDefinition {
         return customId;
     }
 
-    public List<FormFieldDefinition> getFields() {
+    public List<ModalFieldDefinition> getFields() {
         return fields;
     }
 
     public static class Builder {
         private String title;
         private String customId;
-        private List<FormFieldDefinition> fields;
+        private List<ModalFieldDefinition> fields;
 
         public Builder title(String title) {
             this.title = title;
@@ -43,13 +43,13 @@ public class FormDefinition {
             return this;
         }
 
-        public Builder fields(List<FormFieldDefinition> fields) {
+        public Builder fields(List<ModalFieldDefinition> fields) {
             this.fields = fields;
             return this;
         }
 
-        public FormDefinition build() {
-            return new FormDefinition(title, customId, fields);
+        public ModalDefinition build() {
+            return new ModalDefinition(title, customId, fields);
         }
     }
 } 

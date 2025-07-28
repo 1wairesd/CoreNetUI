@@ -1,6 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.core.models.structures;
 
-import com.wairesd.discordbm.host.common.commandbuilder.components.forms.action.SendFormAction;
+import com.wairesd.discordbm.host.common.commandbuilder.components.modal.action.SendModalAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.options.CommandOptions;
@@ -47,7 +47,7 @@ public class CommandStructured {
     }
 
     public boolean hasFormAction() {
-        return actions.stream().anyMatch(action -> action instanceof SendFormAction);
+        return actions.stream().anyMatch(action -> action instanceof SendModalAction);
     }
 
     public String getName() {

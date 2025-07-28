@@ -3,7 +3,7 @@ package com.wairesd.discordbm.common.models.response;
 import com.google.gson.annotations.SerializedName;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
-import com.wairesd.discordbm.common.models.form.FormDefinition;
+import com.wairesd.discordbm.common.models.modal.ModalDefinition;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ public class ResponseMessage {
     private final String response;
     private final EmbedDefinition embed;
     private final List<ButtonDefinition> buttons;
-    private final FormDefinition form;
+    private final ModalDefinition modal;
     private final ResponseFlags flags;
     private final String userId;
     private final String channelId;
@@ -34,7 +34,7 @@ public class ResponseMessage {
         this.response = builder.response;
         this.embed = builder.embed;
         this.buttons = builder.buttons;
-        this.form = builder.form;
+        this.modal = builder.modal;
         this.flags = builder.flags;
         this.userId = builder.userId;
         this.channelId = builder.channelId;
@@ -67,8 +67,8 @@ public class ResponseMessage {
         return buttons;
     }
 
-    public FormDefinition form() {
-        return form;
+    public ModalDefinition modal() {
+        return modal;
     }
 
     public ResponseFlags flags() {
@@ -116,7 +116,7 @@ public class ResponseMessage {
         private String response;
         private EmbedDefinition embed;
         private List<ButtonDefinition> buttons;
-        private FormDefinition form;
+        private ModalDefinition modal;
         private ResponseFlags flags;
         private String userId;
         private String channelId;
@@ -153,8 +153,8 @@ public class ResponseMessage {
             return this;
         }
 
-        public Builder form(FormDefinition form) {
-            this.form = form;
+        public Builder modal(ModalDefinition modal) {
+            this.modal = modal;
             return this;
         }
 

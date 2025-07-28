@@ -63,7 +63,6 @@ public class BukkitPlatform extends AbstractPlatform {
             Bukkit.getServicesManager().getRegistration(DBMAPI.class);
         if (provider != null && provider.getProvider() instanceof DiscordBMAPIImpl) {
             DiscordBMAPIImpl impl = (DiscordBMAPIImpl) provider.getProvider();
-            impl.getEphemeralRulesManager().resendAllEphemeralRules();
         }
     }
 } 

@@ -1,7 +1,0 @@
-pasport_args:
-  player: true
-
-pasport: true
-
-somecmd:
-  arg1: false 

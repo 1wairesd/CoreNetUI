@@ -1,9 +1,9 @@
-package com.wairesd.discordbm.api.form;
+package com.wairesd.discordbm.api.modal;
 
 /**
  * Interface for building form fields
  */
-public interface FormFieldBuilder {
+public interface ModalFieldBuilder {
     
     /**
      * Set the label of the field
@@ -11,7 +11,7 @@ public interface FormFieldBuilder {
      * @param label The field label
      * @return This builder instance
      */
-    FormFieldBuilder setLabel(String label);
+    ModalFieldBuilder setLabel(String label);
     
     /**
      * Set the placeholder text for the field
@@ -19,7 +19,7 @@ public interface FormFieldBuilder {
      * @param placeholder The placeholder text
      * @return This builder instance
      */
-    FormFieldBuilder setPlaceholder(String placeholder);
+    ModalFieldBuilder setPlaceholder(String placeholder);
     
     /**
      * Set the type of the field
@@ -27,7 +27,7 @@ public interface FormFieldBuilder {
      * @param type The field type (SHORT, PARAGRAPH)
      * @return This builder instance
      */
-    FormFieldBuilder setType(String type);
+    ModalFieldBuilder setType(String type);
     
     /**
      * Set if the field is required
@@ -35,7 +35,7 @@ public interface FormFieldBuilder {
      * @param required True if required, false otherwise
      * @return This builder instance
      */
-    FormFieldBuilder setRequired(boolean required);
+    ModalFieldBuilder setRequired(boolean required);
     
     /**
      * Set the variable name for the field
@@ -43,12 +43,12 @@ public interface FormFieldBuilder {
      * @param variable The variable name
      * @return This builder instance
      */
-    FormFieldBuilder setVariable(String variable);
+    ModalFieldBuilder setVariable(String variable);
     
     /**
      * Build the form field
      * 
      * @return The built form field
      */
-    FormField build();
+    ModalField build();
 } 

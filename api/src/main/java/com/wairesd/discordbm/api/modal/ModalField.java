@@ -1,9 +1,9 @@
-package com.wairesd.discordbm.api.form;
+package com.wairesd.discordbm.api.modal;
 
 /**
  * Interface for form fields in Discord modal forms
  */
-public interface FormField {
+public interface ModalField {
     
     /**
      * Get the label of the field

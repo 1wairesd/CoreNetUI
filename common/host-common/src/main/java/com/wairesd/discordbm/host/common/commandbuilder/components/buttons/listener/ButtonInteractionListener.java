@@ -213,7 +213,8 @@ public class ButtonInteractionListener extends ListenerAdapter {
                         event.deferReply(ephemeral).queue();
                     }
                 };
-
+                
+                // Создаем userData из event
                 Map<String, String> userData = new HashMap<>();
                 userData.put("userId", event.getUser().getId());
                 userData.put("guildId", event.getGuild() != null ? event.getGuild().getId() : "");

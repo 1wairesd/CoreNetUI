@@ -162,7 +162,7 @@ public class NettyClient {
                     .response(respMsg.response())
                     .embed(respMsg.embed())
                     .buttons(respMsg.buttons())
-                    .form(respMsg.form())
+                    .modal(respMsg.modal())
                     .flags(updatedFlags)
                     .userId(respMsg.userId())
                     .channelId(respMsg.channelId())

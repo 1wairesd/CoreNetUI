@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonStyle;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
-import com.wairesd.discordbm.common.models.form.FormDefinition;
+import com.wairesd.discordbm.common.models.modal.ModalDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
@@ -194,7 +194,7 @@ public class ResponseHandler {
     }
 
     private static void handleFormResponse(UUID requestId, ResponseMessage respMsg) {
-        FormDefinition formDef = respMsg.form();
+        ModalDefinition formDef = respMsg.modal();
         if (formDef == null) {
             logger.error("Form definition is null for requestId: {}", requestId);
             return;
@@ -372,7 +372,7 @@ public class ResponseHandler {
         } else {
             event.getHook().sendMessage("No response provided.").setEphemeral(ephemeral).queue();
         }
-        if (respMsg.buttons() != null && !respMsg.buttons().isEmpty() && respMsg.form() != null) {
+        if (respMsg.buttons() != null && !respMsg.buttons().isEmpty() && respMsg.modal() != null) {
             for (var btn : respMsg.buttons()) {
                 if (btn.formName() != null && !btn.formName().isEmpty()) {
                     ButtonActionRegistry registry = new ButtonActionRegistry();

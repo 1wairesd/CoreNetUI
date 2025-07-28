@@ -1,11 +1,11 @@
-package com.wairesd.discordbm.api.form;
+package com.wairesd.discordbm.api.modal;
 
 import java.util.List;
 
 /**
  * Interface for Discord modal forms
  */
-public interface Form {
+public interface Modal {
     
     /**
      * Get the title of the form
@@ -19,7 +19,7 @@ public interface Form {
      * 
      * @return List of form fields
      */
-    List<FormField> getFields();
+    List<ModalField> getFields();
     
     /**
      * Get the custom ID of the form

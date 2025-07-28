@@ -73,9 +73,9 @@ public class Forms {
             Map<String, FormStructured> result = new HashMap<>();
             for (Map.Entry<String, Object> entry : formsMap.entrySet()) {
                 String formName = entry.getKey();
-                Map<String, Object> formData = (Map<String, Object>) entry.getValue();
-                String title = (String) formData.get("title");
-                List<Map<String, Object>> fieldsData = (List<Map<String, Object>>) formData.get("fields");
+                Map<String, Object> modalData = (Map<String, Object>) entry.getValue();
+                String title = (String) modalData.get("title");
+                List<Map<String, Object>> fieldsData = (List<Map<String, Object>>) modalData.get("fields");
 
                 List<FormStructured.Field> fields = fieldsData.stream()
                         .map(fieldMap -> new FormStructured.Field(

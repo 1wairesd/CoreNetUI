@@ -15,7 +15,6 @@ import com.wairesd.discordbm.host.common.discord.request.RequestSender;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHelper;
 import com.wairesd.discordbm.host.common.discord.selection.ServerSelector;
 import com.wairesd.discordbm.host.common.network.NettyServer;
-import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -115,7 +114,7 @@ public class DiscordBotListener extends ListenerAdapter {
             java.util.UUID requestId = java.util.UUID.randomUUID();
             Map<String, String> options = event.getOptions().stream()
                 .collect(Collectors.toMap(o -> o.getName(), o -> o.getAsString()));
-            Boolean configEphemeral = CommandEphemeral.getEphemeralForCommand(command, options);
+            Boolean configEphemeral = null;
             ephemeral = configEphemeral != null ? configEphemeral : false;
             
             switch (responseType) {

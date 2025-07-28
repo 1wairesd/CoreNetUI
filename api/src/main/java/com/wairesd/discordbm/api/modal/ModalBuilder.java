@@ -1,9 +1,9 @@
-package com.wairesd.discordbm.api.form;
+package com.wairesd.discordbm.api.modal;
 
 /**
  * Interface for building Discord modal forms
  */
-public interface FormBuilder {
+public interface ModalBuilder {
     
     /**
      * Set the title of the form
@@ -11,7 +11,7 @@ public interface FormBuilder {
      * @param title The form title
      * @return This builder instance
      */
-    FormBuilder setTitle(String title);
+    ModalBuilder setTitle(String title);
     
     /**
      * Add a field to the form
@@ -19,7 +19,7 @@ public interface FormBuilder {
      * @param field The field to add
      * @return This builder instance
      */
-    FormBuilder addField(FormField field);
+    ModalBuilder addField(ModalField field);
     
     /**
      * Set the custom ID of the form
@@ -27,12 +27,12 @@ public interface FormBuilder {
      * @param customId The custom ID
      * @return This builder instance
      */
-    FormBuilder setCustomId(String customId);
+    ModalBuilder setCustomId(String customId);
     
     /**
      * Build the form
      * 
      * @return The built form
      */
-    Form build();
+    Modal build();
 } 

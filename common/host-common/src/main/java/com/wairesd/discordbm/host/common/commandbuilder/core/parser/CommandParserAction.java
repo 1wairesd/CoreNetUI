@@ -11,7 +11,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.interaction.placeholders
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.roles.AddRoleAction;
 import com.wairesd.discordbm.host.common.commandbuilder.interaction.roles.RemoveRoleAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
-import com.wairesd.discordbm.host.common.commandbuilder.components.forms.action.SendFormAction;
+import com.wairesd.discordbm.host.common.commandbuilder.components.modal.action.SendModalAction;
 
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public class CommandParserAction {
             case "edit_component" -> new EditComponentAction(actionMap);
             case "resolve_placeholders" -> new ResolvePlaceholdersAction(actionMap, platformManager);
             case "delete_message" -> new DeleteMessageAction(actionMap);
-            case "send_form" -> new SendFormAction(actionMap, platformManager);
+            case "send_modal" -> new SendModalAction(actionMap, platformManager);
             case "add_role" -> new AddRoleAction(actionMap);
             case "remove_role" -> new RemoveRoleAction(actionMap);
             case "send_page" -> new SendPageAction(actionMap);

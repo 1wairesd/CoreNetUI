@@ -2,6 +2,7 @@ package com.wairesd.discordbm.host.common.utils;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
+import lombok.Getter;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+@Getter
 public class SecretManager {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final SecureRandom random = new SecureRandom();
@@ -57,7 +59,4 @@ public class SecretManager {
         return sb.toString();
     }
 
-    public String getSecretCode() {
-        return secretCode;
-    }
 }

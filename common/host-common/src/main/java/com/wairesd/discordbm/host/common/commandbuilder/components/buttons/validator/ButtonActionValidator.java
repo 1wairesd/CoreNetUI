@@ -21,7 +21,7 @@ public class ButtonActionValidator {
                 throw new IllegalArgumentException("url property is required for LINK button");
             }
         } else if (!props.containsKey("form_name") && ((String) props.getOrDefault("message", "")).isEmpty()) {
-            throw new IllegalArgumentException("message or form_name is required for non-LINK button");
+            throw new IllegalArgumentException("message or modal_name is required for non-LINK button");
         }
     }
 }

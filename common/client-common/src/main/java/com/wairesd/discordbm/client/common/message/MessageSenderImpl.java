@@ -4,15 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.wairesd.discordbm.api.component.Button;
 import com.wairesd.discordbm.api.embed.Embed;
-import com.wairesd.discordbm.api.form.Form;
+import com.wairesd.discordbm.api.modal.Modal;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.common.component.ButtonAdapter;
 import com.wairesd.discordbm.common.embed.EmbedAdapter;
-import com.wairesd.discordbm.common.form.FormAdapter;
+import com.wairesd.discordbm.common.modal.ModalAdapter;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
-import com.wairesd.discordbm.common.models.form.FormDefinition;
+import com.wairesd.discordbm.common.models.modal.ModalDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.client.common.platform.Platform;
@@ -27,6 +27,7 @@ public class MessageSenderImpl implements MessageSender {
     private final Logger logger;
     private final Gson gson = new Gson();
     private ResponseType currentResponseType;
+    private Boolean currentEphemeral;
 
     public MessageSenderImpl(Platform platform, Logger logger) {
         this.platform = platform;
@@ -41,7 +42,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -57,7 +58,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -74,7 +75,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -82,15 +83,15 @@ public class MessageSenderImpl implements MessageSender {
     }
     
     @Override
-    public void sendForm(String requestId, Form form) {
-        FormDefinition formDef = convertToFormDefinition(form);
+    public void sendModal(String requestId, Modal modal) {
+        ModalDefinition modalDef = convertToModalDefinition(modal);
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
                 .response(null)
                 .embed(null)
                 .buttons(null)
-                .form(formDef)
+                .modal(modalDef)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -98,15 +99,15 @@ public class MessageSenderImpl implements MessageSender {
     }
     
     @Override
-    public void sendForm(String requestId, String message, Form form) {
-        FormDefinition formDef = convertToFormDefinition(form);
+    public void sendModal(String requestId, String message, Modal modal) {
+        ModalDefinition modalDef = convertToModalDefinition(modal);
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(formDef)
+                .modal(modalDef)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -121,7 +122,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         
@@ -138,7 +139,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -155,7 +156,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -171,7 +172,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -186,7 +187,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         
@@ -203,7 +204,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -220,7 +221,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -236,7 +237,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -253,7 +254,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -270,7 +271,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -288,7 +289,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -304,7 +305,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -320,7 +321,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -335,7 +336,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -351,7 +352,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -368,7 +369,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -384,7 +385,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -399,7 +400,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(newMessage)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -415,7 +416,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -432,7 +433,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(null)
                 .embed(embedDef)
                 .buttons(buttonDefs)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -452,7 +453,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(responseObj.toString())
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);
@@ -467,7 +468,7 @@ public class MessageSenderImpl implements MessageSender {
                 .response(message)
                 .embed(null)
                 .buttons(null)
-                .form(null)
+                .modal(null)
                 .requestId(requestId)
                 .channelId(channelId)
                 .flags(createResponseFlags())
@@ -506,11 +507,11 @@ public class MessageSenderImpl implements MessageSender {
                 .collect(Collectors.toList());
     }
     
-    private FormDefinition convertToFormDefinition(Form form) {
-        if (form == null) {
+    private ModalDefinition convertToModalDefinition(Modal modal) {
+        if (modal == null) {
             return null;
         }
-        return new FormAdapter(form).getInternalForm();
+        return new ModalAdapter(modal).getInternalModal();
     }
     
     private ResponseFlags createResponseFlags() {
@@ -519,7 +520,6 @@ public class MessageSenderImpl implements MessageSender {
         if (currentResponseType != null) {
             flagsBuilder.responseType(currentResponseType.name());
             
-            // Устанавливаем специальные флаги в зависимости от типа
             switch (currentResponseType) {
                 case MODAL:
                     flagsBuilder.requiresModal(true).preventMessageSend(true).isFormResponse(true);
@@ -544,6 +544,10 @@ public class MessageSenderImpl implements MessageSender {
             }
         }
         
+        if (currentEphemeral != null) {
+            flagsBuilder.ephemeral(currentEphemeral);
+        }
+        
         return flagsBuilder.build();
     }
     
@@ -559,20 +563,29 @@ public class MessageSenderImpl implements MessageSender {
         this.currentResponseType = null;
     }
 
+    public void setEphemeral(boolean ephemeral) {
+        this.currentEphemeral = ephemeral;
+    }
 
+    public boolean getCurrentEphemeral() {
+        return currentEphemeral != null ? currentEphemeral : false;
+    }
 
+    public void clearEphemeral() {
+        this.currentEphemeral = null;
+    }
 
     @Override
-    public void sendButtonWithForm(String requestId, String message, Button button, Form form) {
+    public void sendButtonWithModal(String requestId, String message, Button button, Modal modal) {
         ButtonDefinition buttonDef = new ButtonAdapter(button).getInternalButton();
-        if (form == null) throw new IllegalArgumentException("Form must not be null for sendButtonWithForm");
+        if (modal == null) throw new IllegalArgumentException("Modal must not be null for sendButtonWithForm");
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
                 .response(message)
                 .embed(null)
                 .buttons(java.util.Collections.singletonList(buttonDef))
-                .form(convertToFormDefinition(form))
+                .modal(convertToModalDefinition(modal))
                 .flags(createResponseFlags())
                 .build();
         String json = gson.toJson(respMsg);

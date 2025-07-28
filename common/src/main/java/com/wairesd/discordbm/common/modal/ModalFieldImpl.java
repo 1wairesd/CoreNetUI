@@ -1,8 +1,8 @@
-package com.wairesd.discordbm.common.form;
+package com.wairesd.discordbm.common.modal;
 
-import com.wairesd.discordbm.api.form.FormField;
+import com.wairesd.discordbm.api.modal.ModalField;
 
-public class FormFieldImpl implements FormField {
+public class ModalFieldImpl implements ModalField {
     
     private final String label;
     private final String placeholder;
@@ -10,7 +10,7 @@ public class FormFieldImpl implements FormField {
     private final boolean required;
     private final String variable;
 
-    public FormFieldImpl(String label, String placeholder, String type, boolean required, String variable) {
+    public ModalFieldImpl(String label, String placeholder, String type, boolean required, String variable) {
         this.label = label;
         this.placeholder = placeholder;
         this.type = type;

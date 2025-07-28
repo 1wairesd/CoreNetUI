@@ -37,7 +37,7 @@ public class ResponseTypeDetector {
             }
         }
 
-        if (respMsg.form() != null) {
+        if (respMsg.modal() != null) {
             return ResponseType.MODAL;
         }
 

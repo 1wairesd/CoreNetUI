@@ -1,4 +1,4 @@
-package com.wairesd.discordbm.host.common.commandbuilder.components.forms.listener;
+package com.wairesd.discordbm.host.common.commandbuilder.components.modal.listener;
 
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
@@ -14,12 +14,12 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class FormInteractionListener extends ListenerAdapter {
+public class ModalInteractionListener extends ListenerAdapter {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private final DiscordBMHPlatformManager platformManager;
     private final Map<String, String> requestIdToCommand;
 
-    public FormInteractionListener(DiscordBMHPlatformManager platformManager, Map<String, String> requestIdToCommand) {
+    public ModalInteractionListener(DiscordBMHPlatformManager platformManager, Map<String, String> requestIdToCommand) {
         this.platformManager = platformManager;
         this.requestIdToCommand = requestIdToCommand;
     }
@@ -27,7 +27,7 @@ public class FormInteractionListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         String modalID = event.getModalId();
-        if (!modalID.startsWith("form_")) return;
+        if (!modalID.startsWith("modal_")) return;
 
         try {
             Object handler = platformManager.getFormHandlers().get(modalID);
@@ -72,10 +72,10 @@ public class FormInteractionListener extends ListenerAdapter {
                 var channel = servers.get(0).channel();
                 event.deferReply(ephemeral).queue(hook -> {
                     Map<String, Object> msg = new java.util.HashMap<>();
-                    msg.put("type", "form_submit");
+                    msg.put("type", "modal_submit");
                     msg.put("command", command);
                     msg.put("requestId", requestId);
-                    msg.put("formData", responses);
+                    msg.put("modalData", responses);
                     msg.put("ephemeral", ephemeral);
                     String json = new com.google.gson.Gson().toJson(msg);
                     nettyServer.sendMessage(channel, json);

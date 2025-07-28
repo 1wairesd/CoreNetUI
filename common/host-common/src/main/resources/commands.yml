@@ -150,8 +150,8 @@ commands:
       - type: "permission"
         role_id: "1234567890123456789" # example role ID
     actions:
-      - type: "send_form"
-        form_name: "feedback-form"
+      - type: "send_modal"
+        modal_name: "feedback-form"
       - type: "send_message"
         message: "Thanks for your feedback, {username}! You rated us {rating}/10. We'll consider your input: {review}"
         response_type: "REPLY"
@@ -163,8 +163,8 @@ commands:
       - type: "permission"
         role_id: "1234567890123456789" # example role ID
         actions:
-          - type: "send_form"
-            form_name: "register-form"
+          - type: "send_modal"
+            modal_name: "register-form"
           - type: "add_role"
             role_id: "1234567890123456789" # example role ID
           - type: "send_message"
@@ -175,8 +175,8 @@ commands:
     context: server
     description: "Simple poll"
     actions:
-      - type: "send_form"
-        form_name: "poll-form"
+      - type: "send_modal"
+        modal_name: "poll-form"
       - type: "send_message"
         message: "Thanks! Favorite mode: {mode}. Would recommend: {recommend}."
         response_type: "REPLY"
@@ -188,7 +188,7 @@ commands:
       - type: "button"
         label: "Leave Feedback"
         style: "PRIMARY"
-        form_name: "feedback-form"
+        modal_name: "feedback-form"
         required_role: "1234567890123456789" # example role ID
         message: "Thanks for your feedback, {username}! You rated us {rating}/10. We'll consider your input: {review}"
         timeout: infinite

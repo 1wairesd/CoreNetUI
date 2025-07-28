@@ -66,14 +66,14 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 }
                 return;
             }
-            if ("form_submit".equals(typeStr)) {
+            if ("modal_submit".equals(typeStr)) {
                 String command = json.get("command").getAsString();
                 String requestId = json.get("requestId").getAsString();
-                Map<String, String> formData = new HashMap<>();
-                if (json.has("formData")) {
-                    JsonObject formJson = json.getAsJsonObject("formData");
+                Map<String, String> modalData = new HashMap<>();
+                if (json.has("modalData")) {
+                    JsonObject formJson = json.getAsJsonObject("modalData");
                     for (Map.Entry<String, com.google.gson.JsonElement> entry : formJson.entrySet()) {
-                        formData.put(entry.getKey(), entry.getValue().getAsString());
+                        modalData.put(entry.getKey(), entry.getValue().getAsString());
                     }
                 }
 
@@ -86,7 +86,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<String> {
                 }
                 if (handler != null) {
                     try {
-                        handler.handleFormSubmit(command, formData, requestId);
+                        handler.handleFormSubmit(command, modalData, requestId);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

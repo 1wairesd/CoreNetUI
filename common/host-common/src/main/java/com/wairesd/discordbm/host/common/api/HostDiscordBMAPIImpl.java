@@ -11,17 +11,16 @@ import com.wairesd.discordbm.api.event.EventBus;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.api.role.RoleManager;
-import com.wairesd.discordbm.api.form.FormBuilder;
-import com.wairesd.discordbm.api.form.FormFieldBuilder;
+import com.wairesd.discordbm.api.modal.ModalBuilder;
+import com.wairesd.discordbm.api.modal.ModalFieldBuilder;
 import com.wairesd.discordbm.common.component.ButtonImpl;
 import com.wairesd.discordbm.common.embed.EmbedBuilderImpl;
-import com.wairesd.discordbm.common.form.FormBuilderImpl;
-import com.wairesd.discordbm.common.form.FormFieldBuilderImpl;
+import com.wairesd.discordbm.common.modal.ModalBuilderImpl;
+import com.wairesd.discordbm.common.modal.ModalFieldBuilderImpl;
 import com.wairesd.discordbm.common.logging.LoggerAdapter;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.common.event.EventBusImpl;
-import com.wairesd.discordbm.host.common.config.configurators.CommandEphemeral;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
@@ -38,6 +37,7 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
     private final long startTime = System.currentTimeMillis();
     private ResponseType currentResponseType;
     private final Map<String, Boolean> localEphemeralRules = new ConcurrentHashMap<>();
+    private Boolean currentEphemeral;
 
     public HostDiscordBMAPIImpl(CommandRegistration commandRegistration, MessageSender messageSender) {
         this.commandRegistration = commandRegistration;
@@ -80,13 +80,13 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
     }
 
     @Override
-    public FormBuilder createFormBuilder() {
-        return new FormBuilderImpl();
+    public ModalBuilder createModalBuilder() {
+        return new ModalBuilderImpl();
     }
 
     @Override
-    public FormFieldBuilder createFormFieldBuilder() {
-        return new FormFieldBuilderImpl();
+    public ModalFieldBuilder createModalFieldBuilder() {
+        return new ModalFieldBuilderImpl();
     }
 
     @Override
@@ -105,28 +105,23 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
     }
 
     @Override
-    public void registerEphemeralRules(Map<String, Boolean> rules) {
-        if (rules != null) {
-            localEphemeralRules.putAll(rules);
-        }
-    }
-
-    /**
-     * Checks if an ephemeral response should be used for the command
-     * @param command the command name
-     * @param options command parameters
-     * @return true if ephemeral, otherwise false
-     */
-    public boolean isEphemeral(String command, Map<String, String> options) {
-        Boolean local = localEphemeralRules.get(command);
-        if (local != null) return local;
-        Boolean global = CommandEphemeral.getEphemeralForCommand(command, options != null ? options : Map.of());
-        return global != null && global;
+    public long getUptimeMillis() {
+        return System.currentTimeMillis() - startTime;
     }
 
     @Override
-    public long getUptimeMillis() {
-        return System.currentTimeMillis() - startTime;
+    public void setEphemeral(boolean ephemeral) {
+        this.currentEphemeral = ephemeral;
+    }
+
+    @Override
+    public boolean getCurrentEphemeral() {
+        return currentEphemeral != null ? currentEphemeral : false;
+    }
+
+    @Override
+    public void clearEphemeral() {
+        this.currentEphemeral = null;
     }
 
     @Override

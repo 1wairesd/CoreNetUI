@@ -1,9 +1,9 @@
-package com.wairesd.discordbm.common.form;
+package com.wairesd.discordbm.common.modal;
 
-import com.wairesd.discordbm.api.form.FormField;
-import com.wairesd.discordbm.api.form.FormFieldBuilder;
+import com.wairesd.discordbm.api.modal.ModalField;
+import com.wairesd.discordbm.api.modal.ModalFieldBuilder;
 
-public class FormFieldBuilderImpl implements FormFieldBuilder {
+public class ModalFieldBuilderImpl implements ModalFieldBuilder {
     
     private String label;
     private String placeholder = "";
@@ -12,37 +12,37 @@ public class FormFieldBuilderImpl implements FormFieldBuilder {
     private String variable;
 
     @Override
-    public FormFieldBuilder setLabel(String label) {
+    public ModalFieldBuilder setLabel(String label) {
         this.label = label;
         return this;
     }
 
     @Override
-    public FormFieldBuilder setPlaceholder(String placeholder) {
+    public ModalFieldBuilder setPlaceholder(String placeholder) {
         this.placeholder = placeholder;
         return this;
     }
 
     @Override
-    public FormFieldBuilder setType(String type) {
+    public ModalFieldBuilder setType(String type) {
         this.type = type;
         return this;
     }
 
     @Override
-    public FormFieldBuilder setRequired(boolean required) {
+    public ModalFieldBuilder setRequired(boolean required) {
         this.required = required;
         return this;
     }
 
     @Override
-    public FormFieldBuilder setVariable(String variable) {
+    public ModalFieldBuilder setVariable(String variable) {
         this.variable = variable;
         return this;
     }
 
     @Override
-    public FormField build() {
+    public ModalField build() {
         if (label == null || label.isEmpty()) {
             throw new IllegalStateException("Field label is required");
         }
@@ -51,6 +51,6 @@ public class FormFieldBuilderImpl implements FormFieldBuilder {
             throw new IllegalStateException("Field variable is required");
         }
         
-        return new FormFieldImpl(label, placeholder, type, required, variable);
+        return new ModalFieldImpl(label, placeholder, type, required, variable);
     }
 } 

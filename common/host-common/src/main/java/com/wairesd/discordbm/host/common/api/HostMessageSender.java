@@ -1,19 +1,19 @@
 package com.wairesd.discordbm.host.common.api;
 
 import com.google.gson.JsonObject;
+import com.wairesd.discordbm.api.modal.Modal;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.component.Button;
-import com.wairesd.discordbm.api.form.Form;
+import com.wairesd.discordbm.common.modal.ModalAdapter;
+import com.wairesd.discordbm.common.models.modal.ModalDefinition;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
 import com.wairesd.discordbm.common.models.response.ResponseFlags;
 import com.wairesd.discordbm.common.models.embed.EmbedDefinition;
 import com.wairesd.discordbm.common.models.buttons.ButtonDefinition;
-import com.wairesd.discordbm.common.models.form.FormDefinition;
 import com.wairesd.discordbm.common.embed.EmbedAdapter;
 import com.wairesd.discordbm.common.component.ButtonAdapter;
-import com.wairesd.discordbm.common.form.FormAdapter;
 import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.config.configurators.Webhooks;
 import com.wairesd.discordbm.host.common.utils.WebhookSender;
@@ -37,6 +37,9 @@ public class HostMessageSender implements MessageSender {
         if (currentResponseType != null) {
             flagsBuilder.responseType(currentResponseType.name());
         }
+        
+        boolean currentEphemeral = dbmApi.getCurrentEphemeral();
+        flagsBuilder.ephemeral(currentEphemeral);
         
         return flagsBuilder.build();
     }
@@ -88,23 +91,23 @@ public class HostMessageSender implements MessageSender {
     }
 
     @Override
-    public void sendForm(String requestId, Form form) {
+    public void sendModal(String requestId, Modal modal) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
-                .form(convertToFormDefinition(form))
+                .modal(convertToFormDefinition(modal))
                 .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
     }
 
     @Override
-    public void sendForm(String requestId, String message, Form form) {
+    public void sendModal(String requestId, String message, Modal modal) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
                 .response(message)
-                .form(convertToFormDefinition(form))
+                .modal(convertToFormDefinition(modal))
                 .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
@@ -402,15 +405,15 @@ public class HostMessageSender implements MessageSender {
     }
 
     @Override
-    public void sendButtonWithForm(String requestId, String message, Button button, Form form) {
+    public void sendButtonWithModal(String requestId, String message, Button button, Modal modal) {
         ButtonDefinition buttonDef = button != null ? new ButtonAdapter(button).getInternalButton() : null;
-        FormDefinition formDef = convertToFormDefinition(form);
+        ModalDefinition formDef = convertToFormDefinition(modal);
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("response")
                 .requestId(requestId)
                 .response(message)
                 .buttons(buttonDef != null ? java.util.Collections.singletonList(buttonDef) : null)
-                .form(formDef)
+                .modal(formDef)
                 .flags(createResponseFlags())
                 .build();
         ResponseHandler.handleResponse(respMsg);
@@ -435,8 +438,8 @@ public class HostMessageSender implements MessageSender {
         if (buttons == null) return null;
         return buttons.stream().map(b -> new ButtonAdapter(b).getInternalButton()).toList();
     }
-    private FormDefinition convertToFormDefinition(Form form) {
-        if (form == null) return null;
-        return new FormAdapter(form).getInternalForm();
+    private ModalDefinition convertToFormDefinition(Modal modal) {
+        if (modal == null) return null;
+        return new ModalAdapter(modal).getInternalModal();
     }
 } 
