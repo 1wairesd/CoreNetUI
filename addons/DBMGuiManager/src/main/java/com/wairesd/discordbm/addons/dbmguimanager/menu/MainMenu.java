@@ -3,6 +3,7 @@ package com.wairesd.discordbm.addons.dbmguimanager.menu;
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
 import com.wairesd.discordbm.addons.dbmguimanager.DBMGuiManager;
+import com.wairesd.discordbm.addons.dbmguimanager.menu.command.CommandListMenu;
 import com.wairesd.discordbm.api.DBMAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

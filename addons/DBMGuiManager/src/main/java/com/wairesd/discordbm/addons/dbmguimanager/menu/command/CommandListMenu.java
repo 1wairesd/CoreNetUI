@@ -1,7 +1,8 @@
-package com.wairesd.discordbm.addons.dbmguimanager.menu;
+package com.wairesd.discordbm.addons.dbmguimanager.menu.command;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
+import com.wairesd.discordbm.addons.dbmguimanager.DBMGuiManager;
 import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.Command;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ public class CommandListMenu extends AdvancedGui {
     private final List<Command> commands;
     private final int pageSize;
     private final JavaPlugin plugin;
+    private final CommandDataLoader dataLoader;
 
     public CommandListMenu(DBMAPI api) {
         this(api, 0);
@@ -28,6 +30,7 @@ public class CommandListMenu extends AdvancedGui {
         this.commands = api.getCommandRegistration().getRegisteredCommands();
         this.pageSize = holder().getInventory().getSize() - (hasNextPage() ? 1 : 0) - (hasPrevPage() ? 1 : 0);
         this.plugin = JavaPlugin.getProvidingPlugin(getClass());
+        this.dataLoader = new CommandDataLoader(commands, page);
         initMenu();
     }
 
@@ -50,24 +53,11 @@ public class CommandListMenu extends AdvancedGui {
     }
 
     private void initMenu() {
-        int start = page * 52;
-        int end = Math.min(start + 52, commands.size());
-        int slot = hasPrevPage() ? 1 : 0;
-        for (int i = start; i < end; i++) {
-            final Command cmd = commands.get(i);
-            final int currentSlot = slot;
-            registerItem("cmd_" + i, builder -> {
-                builder.slots(currentSlot)
-                        .defaultItem(ItemWrapper.builder(Material.PAPER)
-                                .displayName("&a" + cmd.getName())
-                                .lore("&7" + cmd.getDescription())
-                                .build()
-                        );
-            });
-            slot++;
-            if (slot >= holder().getInventory().getSize() || (hasNextPage() && slot == 53)) break;
-        }
-        if (hasNextPage()) {
+        registerLoader(dataLoader);
+
+        registerItem("cmd", builder -> builder.itemHandler(DBMGuiManager.COMMAND_ITEM_KEY));
+
+        if (dataLoader.hasNextPage()) {
             registerItem("next_page", builder -> {
                 builder.slots(53)
                         .defaultItem(ItemWrapper.builder(Material.ARROW)
@@ -81,7 +71,7 @@ public class CommandListMenu extends AdvancedGui {
                         });
             });
         }
-        if (hasPrevPage()) {
+        if (dataLoader.hasPrevPage()) {
             registerItem("prev_page", builder -> {
                 builder.slots(45)
                         .defaultItem(ItemWrapper.builder(Material.ARROW)

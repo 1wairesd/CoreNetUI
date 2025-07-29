@@ -3,7 +3,9 @@ package com.wairesd.discordbm.addons.dbmguimanager;
 import com.jodexindustries.jguiwrapper.api.placeholder.PlaceholderEngine;
 import com.jodexindustries.jguiwrapper.common.JGuiInitializer;
 import com.wairesd.discordbm.addons.dbmguimanager.menu.MainMenu;
+import com.wairesd.discordbm.addons.dbmguimanager.menu.command.CommandItemHandler;
 import com.wairesd.discordbm.api.DBMAPI;
+import net.kyori.adventure.key.Key;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -16,6 +18,8 @@ public final class DBMGuiManager extends JavaPlugin {
     private DBMAPI api;
     private PlaceholderEngine placeholderEngine;
 
+    public static final Key COMMAND_ITEM_KEY = Key.key("dbm", "command");
+
     @Override
     public void onEnable() {
         this.api = DBMAPI.getInstance();
@@ -23,6 +27,8 @@ public final class DBMGuiManager extends JavaPlugin {
         saveDefaultConfig();
 
         JGuiInitializer.init(this);
+
+        JGuiInitializer.get().getRegistry().registerHandler(COMMAND_ITEM_KEY, new CommandItemHandler());
 
         initPlaceholders();
 
