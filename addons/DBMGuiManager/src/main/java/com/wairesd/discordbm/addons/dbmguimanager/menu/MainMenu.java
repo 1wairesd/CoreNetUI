@@ -2,6 +2,7 @@ package com.wairesd.discordbm.addons.dbmguimanager.menu;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
+import com.wairesd.discordbm.addons.dbmguimanager.DBMGuiManager;
 import com.wairesd.discordbm.api.DBMAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,25 +16,14 @@ public class MainMenu extends AdvancedGui {
 
     private final Plugin plugin;
     private final DBMAPI api;
+    private final DBMGuiManager guiManager;
 
-    public MainMenu(Plugin plugin, DBMAPI api) {
+    public MainMenu(DBMGuiManager guiManager, DBMAPI api) {
         super(27, "Простое меню");
-        this.plugin = plugin;
+        this.plugin = guiManager;
         this.api = api;
+        this.guiManager = guiManager;
         initMenu();
-    }
-
-    private String formatUptime(long uptimeMillis) {
-        String format = plugin.getConfig().getString("uptime-format", "short");
-        long seconds = uptimeMillis / 1000 % 60;
-        long minutes = uptimeMillis / (1000 * 60) % 60;
-        long hours = uptimeMillis / (1000 * 60 * 60) % 24;
-        long days = uptimeMillis / (1000 * 60 * 60 * 24);
-        if (format.equalsIgnoreCase("long")) {
-            return String.format("%d дней %d часов %d минут %d секунд", days, hours, minutes, seconds);
-        } else {
-            return String.format("%d:%02d:%02d:%02d", days, hours, minutes, seconds);
-        }
     }
 
     private void initMenu() {
@@ -44,8 +34,9 @@ public class MainMenu extends AdvancedGui {
                                     .displayName("&eВремя работы клиента")
                                     .lore(List.of(
                                             LEGACY_AMPERSAND.deserialize("&7Аптайм:"),
-                                            LEGACY_AMPERSAND.deserialize("&f" + formatUptime(api.getUptimeMillis()))
+                                            LEGACY_AMPERSAND.deserialize("&f%uptime%")
                                     ))
+                                    .placeholderEngine(guiManager.getPlaceholderEngine())
                                     .build()
                     );
         });

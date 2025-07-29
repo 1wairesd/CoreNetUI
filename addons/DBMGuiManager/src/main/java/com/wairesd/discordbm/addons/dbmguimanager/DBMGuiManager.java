@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.addons.dbmguimanager;
 
+import com.jodexindustries.jguiwrapper.api.placeholder.PlaceholderEngine;
 import com.jodexindustries.jguiwrapper.common.JGuiInitializer;
 import com.wairesd.discordbm.addons.dbmguimanager.menu.MainMenu;
 import com.wairesd.discordbm.api.DBMAPI;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public final class DBMGuiManager extends JavaPlugin {
 
     private DBMAPI api;
+    private PlaceholderEngine placeholderEngine;
 
     @Override
     public void onEnable() {
@@ -22,8 +24,34 @@ public final class DBMGuiManager extends JavaPlugin {
 
         JGuiInitializer.init(this);
 
+        initPlaceholders();
+
         PluginCommand command = getCommand("opengui");
         if (command != null) command.setExecutor(this);
+    }
+
+    private void initPlaceholders() {
+        placeholderEngine = PlaceholderEngine.of();
+
+        placeholderEngine.register("%uptime%", player -> formatUptime(api.getUptimeMillis()));
+    }
+
+    private String formatUptime(long uptimeMillis) {
+        String format = getConfig().getString("uptime-format", "short");
+        long seconds = uptimeMillis / 1000 % 60;
+        long minutes = uptimeMillis / (1000 * 60) % 60;
+        long hours = uptimeMillis / (1000 * 60 * 60) % 24;
+        long days = uptimeMillis / (1000 * 60 * 60 * 24);
+        
+        if (format.equalsIgnoreCase("long")) {
+            return String.format("%d дней %d часов %d минут %d секунд", days, hours, minutes, seconds);
+        } else {
+            return String.format("%d:%02d:%02d:%02d", days, hours, minutes, seconds);
+        }
+    }
+
+    public PlaceholderEngine getPlaceholderEngine() {
+        return placeholderEngine;
     }
 
     @Override
