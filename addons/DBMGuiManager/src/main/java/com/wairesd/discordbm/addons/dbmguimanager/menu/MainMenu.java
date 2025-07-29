@@ -11,7 +11,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-
 public class MainMenu extends AdvancedGui {
 
     private final Plugin plugin;
@@ -24,6 +23,7 @@ public class MainMenu extends AdvancedGui {
         this.api = api;
         this.guiManager = guiManager;
         initMenu();
+        startUptimeUpdater();
     }
 
     private void initMenu() {
@@ -55,9 +55,15 @@ public class MainMenu extends AdvancedGui {
                         player.sendMessage("§aОткрывается меню команд!");
                         player.closeInventory();
                         Bukkit.getScheduler().runTask(plugin, () -> new CommandListMenu(api).open(player));
-
-                    })
-            ;
+                    });
         });
+    }
+
+    private void startUptimeUpdater() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            getController("uptime").ifPresent(controller -> {
+                controller.updateItems(item -> item.update(), 4);
+            });
+        }, 20L, 20L);
     }
 }
