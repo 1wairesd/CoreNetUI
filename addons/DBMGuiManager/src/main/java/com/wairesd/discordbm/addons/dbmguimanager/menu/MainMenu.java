@@ -23,6 +23,7 @@ public class MainMenu extends AdvancedGui {
         this.api = api;
         this.guiManager = guiManager;
         initMenu();
+        startUptimeUpdater();
     }
 
     private void initMenu() {
@@ -54,5 +55,13 @@ public class MainMenu extends AdvancedGui {
 
                 })
         );
+    }
+
+    private void startUptimeUpdater() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            getController("uptime").ifPresent(controller -> {
+                controller.updateItems(item -> item.update(), 4);
+            });
+        }, 20L, 20L);
     }
 }
