@@ -9,8 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
-
 
 public class MainMenu extends AdvancedGui {
 
@@ -27,37 +25,33 @@ public class MainMenu extends AdvancedGui {
     }
 
     private void initMenu() {
-        registerItem("uptime", builder -> {
-            builder.slots(4)
-                    .defaultItem(
-                            ItemWrapper.builder(Material.CLOCK)
-                                    .displayName("&eВремя работы клиента")
-                                    .lore(List.of(
-                                            LEGACY_AMPERSAND.deserialize("&7Аптайм:"),
-                                            LEGACY_AMPERSAND.deserialize("&f%uptime%")
-                                    ))
-                                    .placeholderEngine(guiManager.getPlaceholderEngine())
-                                    .build()
-                    );
-        });
+        registerItem("uptime", builder -> builder.slots(4)
+                .defaultItem(
+                        ItemWrapper.builder(Material.CLOCK)
+                                .displayName("&eВремя работы клиента")
+                                .lore("&7Аптайм:", "&f%uptime%")
+                                .placeholderEngine(guiManager.getPlaceholderEngine())
+                                .build()
+                )
+        );
 
-        registerItem("menu", builder -> {
-            builder.slots(13)
-                    .defaultItem(ItemWrapper.builder(Material.COMPASS)
-                            .displayName("&bОткрыть другое меню")
-                            .lore(List.of(LEGACY_AMPERSAND.deserialize("&7Нажмите, чтобы открыть другое меню")))
-                            .build())
-                    .defaultClickHandler((event, controller) -> {
-                        HumanEntity player = event.getWhoClicked();
+        registerItem("menu", builder -> builder.slots(13)
+                .defaultItem(
+                        ItemWrapper.builder(Material.COMPASS)
+                                .displayName("&bОткрыть другое меню")
+                                .lore("&7Нажмите, чтобы открыть другое меню")
+                                .build()
+                )
+                .defaultClickHandler((event, controller) -> {
+                    HumanEntity player = event.getWhoClicked();
 
-                        event.setCancelled(true);
+                    event.setCancelled(true);
 
-                        player.sendMessage("§aОткрывается меню команд!");
-                        player.closeInventory();
-                        Bukkit.getScheduler().runTask(plugin, () -> new CommandListMenu(api).open(player));
+                    player.sendMessage(LEGACY_AMPERSAND.deserialize("&aОткрывается меню команд!"));
+                    close(player);
+                    Bukkit.getScheduler().runTask(plugin, () -> new CommandListMenu(api).open(player));
 
-                    })
-            ;
-        });
+                })
+        );
     }
 }

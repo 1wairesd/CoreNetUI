@@ -59,8 +59,8 @@ public class CommandListMenu extends AdvancedGui {
             registerItem("cmd_" + i, builder -> {
                 builder.slots(currentSlot)
                         .defaultItem(ItemWrapper.builder(Material.PAPER)
-                                .displayName(LEGACY_AMPERSAND.deserialize("&a" + cmd.getName()))
-                                .lore(List.of(LEGACY_AMPERSAND.deserialize("&7" + cmd.getDescription())))
+                                .displayName("&a" + cmd.getName())
+                                .lore("&7" + cmd.getDescription())
                                 .build()
                         );
             });
@@ -71,7 +71,7 @@ public class CommandListMenu extends AdvancedGui {
             registerItem("next_page", builder -> {
                 builder.slots(53)
                         .defaultItem(ItemWrapper.builder(Material.ARROW)
-                                .displayName(LEGACY_AMPERSAND.deserialize("&bСледующая страница"))
+                                .displayName("&bСледующая страница")
                                 .build())
                         .defaultClickHandler((event, controller) -> {
                             HumanEntity player = event.getWhoClicked();
@@ -85,7 +85,7 @@ public class CommandListMenu extends AdvancedGui {
             registerItem("prev_page", builder -> {
                 builder.slots(45)
                         .defaultItem(ItemWrapper.builder(Material.ARROW)
-                                .displayName(LEGACY_AMPERSAND.deserialize("&bПредыдущая страница"))
+                                .displayName("&bПредыдущая страница")
                                 .build())
                         .defaultClickHandler((event, controller) -> {
                             HumanEntity player = event.getWhoClicked();
@@ -96,4 +96,4 @@ public class CommandListMenu extends AdvancedGui {
             });
         }
     }
-} 
+}
