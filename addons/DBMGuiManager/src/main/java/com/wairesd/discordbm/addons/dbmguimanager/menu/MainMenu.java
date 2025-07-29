@@ -58,10 +58,8 @@ public class MainMenu extends AdvancedGui {
     }
 
     private void startUptimeUpdater() {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            getController("uptime").ifPresent(controller -> {
-                controller.updateItems(item -> item.update(), 4);
-            });
-        }, 20L, 20L);
+        Bukkit.getScheduler().runTaskTimer(plugin, () ->
+                getController("uptime").ifPresent(controller ->
+                        controller.updateItems(ItemWrapper::update, 4)), 20L, 20L);
     }
 }
