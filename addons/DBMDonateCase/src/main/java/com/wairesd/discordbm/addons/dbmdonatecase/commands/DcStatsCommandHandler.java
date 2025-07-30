@@ -7,9 +7,10 @@ import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
+import com.wairesd.discordbm.api.message.ResponseType;
+
 import java.util.HashMap;
 import java.util.Map;
-import com.wairesd.discordbm.api.message.ResponseType;
 
 public class DcStatsCommandHandler implements CommandHandler {
     private final DCAPI api;

@@ -6,8 +6,9 @@ import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.addons.dbmdonatecase.configurators.Messages;
-import java.util.Map;
 import com.wairesd.discordbm.api.message.ResponseType;
+
+import java.util.Map;
 
 public class DcCasesCommandHandler implements CommandHandler {
     private final DCAPI api;

@@ -12,6 +12,8 @@ import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
 import com.wairesd.discordbm.addons.dbmdonatecase.listener.CaseOpenListener;
 import com.wairesd.discordbm.addons.dbmdonatecase.listener.DBMReloadListener;
 import com.wairesd.discordbm.api.embed.Embed;
+import com.wairesd.dceverydaycase.api.DailyCaseApi;
+
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
@@ -23,6 +25,8 @@ public final class DBMDonateCase extends JavaPlugin {
     private Messages messages;
     private CaseOpenListener caseOpenListener;
     private DBMReloadListener listener = new DBMReloadListener(messages);
+    private DailyCaseApi edcApi;
+    private boolean edcAvailable = false;
 
     @Override
     public void onEnable() {
@@ -31,6 +35,17 @@ public final class DBMDonateCase extends JavaPlugin {
         this.keyManager = api.getCaseKeyManager();
         this.openManager = api.getCaseOpenManager();
         this.messages = new Messages(this);
+
+        try {
+            this.edcApi = DailyCaseApi.getInstance();
+            this.edcAvailable = true;
+        } catch (IllegalStateException e) {
+            getLogger().warning("DCEveryDayCase API is not available: " + e.getMessage());
+            this.edcAvailable = false;
+        } catch (Exception e) {
+            getLogger().warning("Error initializing DCEveryDayCase API: " + e.getMessage());
+            this.edcAvailable = false;
+        }
 
 
         WebhookTriggersConfig triggersConfig = new WebhookTriggersConfig(this);
@@ -46,14 +61,14 @@ public final class DBMDonateCase extends JavaPlugin {
 
         CommandOption playerOpt = dbmApi.getCommandRegistration().createOptionBuilder()
             .name("player")
-            .description("Ник игрока в майнкрафте")
+            .description(messages.get("cmd_player_option"))
             .type("STRING")
             .required(true)
             .build();
 
         Command dcStatsCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dcstats")
-            .description("Показать количество ключей DonateCase у игрока")
+            .description(messages.get("cmd_dcstats_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .options(List.of(playerOpt))
@@ -63,7 +78,7 @@ public final class DBMDonateCase extends JavaPlugin {
 
         Command dcCasesCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dccases")
-            .description("Список всех кейсов DonateCase")
+            .description(messages.get("cmd_dccases_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .build();
@@ -71,7 +86,7 @@ public final class DBMDonateCase extends JavaPlugin {
 
         Command dcTopCasesCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dctopcases")
-            .description("Топ 10 кейсов по количеству открытий")
+            .description(messages.get("cmd_dctopcases_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .build();
@@ -79,13 +94,13 @@ public final class DBMDonateCase extends JavaPlugin {
 
         CommandOption caseOpt = dbmApi.getCommandRegistration().createOptionBuilder()
             .name("case")
-            .description("Тип кейса (casetype)")
+            .description(messages.get("cmd_case_type_option"))
             .type("STRING")
             .required(true)
             .build();
         Command dcTopPlayersCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dctopplayers")
-            .description("Топ 10 игроков по открытию выбранного кейса")
+            .description(messages.get("cmd_dctopplayers_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .options(List.of(caseOpt))
@@ -94,7 +109,7 @@ public final class DBMDonateCase extends JavaPlugin {
 
         Command dcTopPlayersAllCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dctopplayersall")
-            .description("Топ 10 игроков по всем открытым кейсам")
+            .description(messages.get("cmd_dctopplayersall_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .build();
@@ -102,7 +117,7 @@ public final class DBMDonateCase extends JavaPlugin {
 
         Command dcLastDropsCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dclastdrops")
-            .description("Показать последние 10 открытий кейсов на сервере (кто, что, когда)")
+            .description(messages.get("cmd_dclastdrops_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .build();
@@ -110,13 +125,13 @@ public final class DBMDonateCase extends JavaPlugin {
 
         CommandOption playerOptHistory = dbmApi.getCommandRegistration().createOptionBuilder()
             .name("player")
-            .description("Ник игрока в майнкрафте")
+            .description(messages.get("cmd_player_option"))
             .type("STRING")
             .required(true)
             .build();
         Command dcHistoryCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dchistory")
-            .description("Показать последние 10 открытий кейсов игроком (что и когда выпало, какой кейс)")
+            .description(messages.get("cmd_dchistory_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .options(List.of(playerOptHistory))
@@ -125,17 +140,49 @@ public final class DBMDonateCase extends JavaPlugin {
 
         Command dcHelpCmd = dbmApi.getCommandRegistration().createCommandBuilder()
             .name("dchelp")
-            .description("Показать все команды DBMDonateCase")
+            .description(messages.get("cmd_dchelp_description"))
             .pluginName("DBMDonateCase")
             .context("both")
             .build();
         dbmApi.getCommandRegistration().registerCommand(dcHelpCmd, (cmd, options, requestId) -> {
+            StringBuilder helpText = new StringBuilder();
+            helpText.append(messages.get("dchelp_list"));
             Embed embed = dbmApi.createEmbedBuilder()
                 .setTitle(messages.get("dchelp_title"))
-                .setDescription(messages.get("dchelp_list"))
+                .setDescription(helpText.toString())
                 .build();
             dbmApi.getMessageSender().sendResponse(requestId, embed);
         });
+
+        if (edcAvailable && edcApi != null) {
+            CommandOption edcPlayerOpt = dbmApi.getCommandRegistration().createOptionBuilder()
+                .name("player")
+                .description(messages.get("cmd_player_option"))
+                .type("STRING")
+                .required(true)
+                .build();
+
+            Command edcStatsCmd = dbmApi.getCommandRegistration().createCommandBuilder()
+                .name("edcstats")
+                .description(messages.get("cmd_edcstats_description"))
+                .pluginName("DBMDonateCase")
+                .context("both")
+                .options(List.of(edcPlayerOpt))
+                .build();
+            dbmApi.getCommandRegistration().registerCommand(edcStatsCmd, new EdcStatsCommandHandler(edcApi, dbmApi, messages));
+
+            Command edcTopPlayersCmd = dbmApi.getCommandRegistration().createCommandBuilder()
+                .name("edctopplayers")
+                .description(messages.get("cmd_edctopplayers_description"))
+                .pluginName("DBMDonateCase")
+                .context("both")
+                .build();
+            dbmApi.getCommandRegistration().registerCommand(edcTopPlayersCmd, new EdcTopPlayersCommandHandler(edcApi, dbmApi, messages));
+
+            getLogger().info("EDC commands registered: edcstats, edctopplayers");
+        } else {
+            getLogger().warning("EDC commands not registered - DCEveryDayCase is not available");
+        }
 
         getLogger().info("DBMDonateCase is enabled!");
     }
@@ -150,6 +197,12 @@ public final class DBMDonateCase extends JavaPlugin {
         dbmApi.getCommandRegistration().unregisterCommand("dclastdrops", getName());
         dbmApi.getCommandRegistration().unregisterCommand("dchistory", getName());
         dbmApi.getCommandRegistration().unregisterCommand("dchelp", getName());
+
+        if (edcAvailable) {
+            dbmApi.getCommandRegistration().unregisterCommand("edcstats", getName());
+            dbmApi.getCommandRegistration().unregisterCommand("edctopplayers", getName());
+        }
+        
         dbmApi.getEventBus().unregister(listener);
         api.getEventBus().unregister(caseOpenListener);
         getLogger().info("DBMDonateCase is disabled!");
