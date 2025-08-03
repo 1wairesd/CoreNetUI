@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.wairesd.discordbm'
-version = '1.0.0'
+version = properties['api']
 
 repositories {
     mavenCentral()
@@ -36,6 +36,7 @@ java {
 publishing {
     publications {
         maven(MavenPublication) {
+            groupId = 'com.wairesd.discordbm'
             artifactId = 'api'
             from components.java
         }
@@ -43,22 +44,13 @@ publishing {
 
     repositories {
         maven {
-            // Публикация в локальный Maven репозиторий для тестирования
-            name = 'localRepo'
-            url = layout.buildDirectory.dir("repo")
-        }
-
-        // Для публикации в удаленный репозиторий (раскомментируйте и настройте)
-        /*
-        maven {
-            name = 'yourRemoteRepo'
-            url = "https://your-maven-repo-url"
+            name = 'GitHubPackages'
+            url = uri("https://maven.pkg.github.com/1wairesd/DiscordBM")
             credentials {
-                username = project.findProperty("mavenUsername") ?: System.getenv("MAVEN_USERNAME")
-                password = project.findProperty("mavenPassword") ?: System.getenv("MAVEN_PASSWORD")
+                username = project.findProperty("gpr.user") ?: rootProject.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: rootProject.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
             }
         }
-        */
     }
 }
 

@@ -4,8 +4,20 @@ plugins {
     id 'com.gradleup.shadow' version '9.0.0-rc1'
 }
 
+def loadSecrets() {
+    def secretsFile = file('maven.secret')
+    if (secretsFile.exists()) {
+        Properties props = new Properties()
+        props.load(secretsFile.newDataInputStream())
+        return props
+    }
+    return new Properties()
+}
+
+def secrets = loadSecrets()
+
 group = 'com.wairesd.discordbm'
-version = '1.0'
+version = properties['version']
 
 repositories {
     mavenCentral()
@@ -41,7 +53,7 @@ subprojects {
         options.release.set(17)
     }
 
-    if (project.name in ['DiscordBMB', 'DiscordBMV']) {
+    if (project.name in ['bukkit', 'velocity']) {
         tasks.named('shadowJar') {
             archiveClassifier.set('')
             mergeServiceFiles()

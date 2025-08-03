@@ -1,5 +1,5 @@
 name: DBMGuiManager
-version: '1.0'
+version: '${version}'
 main: com.wairesd.discordbm.addons.dbmguimanager.DBMGuiManager
 api-version: '1.21'
 authors: [1wairesd]

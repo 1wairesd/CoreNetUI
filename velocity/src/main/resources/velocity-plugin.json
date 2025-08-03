@@ -1,7 +1,7 @@
 {
   "id": "discordbm",
   "name": "DiscordBM",
-  "version": "1.0",
+  "version": "${version}",
   "description": "Description of your plugin",
   "authors": ["1wairesd"],
   "dependencies": [],

@@ -1,5 +1,5 @@
 name: DiscordBM
-version: '1.0'
+version: '${version}'
 main: com.wairesd.discordbm.bukkit.DBMBukkitPlugin
 api-version: '1.21'
 softdepend: [PlaceholderAPI]

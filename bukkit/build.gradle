@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.wairesd.discordbm.bukkit'
-version = '1.0'
+version = properties['version']
 
 repositories {
     mavenCentral()

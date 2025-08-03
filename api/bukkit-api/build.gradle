@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.wairesd.discordbm'
-version = '1.0'
+version = properties['api']
 
 repositories {
     mavenCentral()
@@ -21,4 +21,25 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.wairesd.discordbm'
+            artifactId = 'bukkit-api'
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'GitHubPackages'
+            url = uri("https://maven.pkg.github.com/1wairesd/DiscordBM")
+            credentials {
+                username = project.findProperty("gpr.user") ?: rootProject.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: rootProject.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
