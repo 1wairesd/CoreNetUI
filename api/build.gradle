@@ -18,8 +18,6 @@ dependencies {
     compileOnly("com.google.guava:guava:33.4.8-jre")
     compileOnly("org.checkerframework:checker-qual:3.42.0")
 
-
-    compileOnly("org.projectlombok:lombok:1.18.32")
     annotationProcessor("org.projectlombok:lombok:1.18.32")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
@@ -39,4 +37,41 @@ tasks.withType(JavaCompile) {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'api'
+
+            from components.java
+
+            pom {
+                name = 'DiscordBM API'
+                description = 'API for DiscordBM plugin'
+                url = 'https://github.com/wairesd/DiscordBM'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'wairesd'
+                        name = 'wairesd'
+                        email = 'wairesd@example.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:https://github.com/wairesd/DiscordBM.git'
+                    developerConnection = 'scm:git:git@github.com:wairesd/DiscordBM.git'
+                    url = 'https://github.com/wairesd/DiscordBM'
+                }
+            }
+        }
+    }
 }
