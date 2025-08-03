@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.wairesd.discordbm'
-version = '1.0'
+version = properties['api']
 
 repositories {
     mavenCentral()
