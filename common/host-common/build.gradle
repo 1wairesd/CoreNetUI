@@ -30,6 +30,7 @@ dependencies {
     compileOnly("org.apache.commons:commons-lang3:3.17.0")
     compileOnly("org.apache.commons:commons-collections4:4.5.0")
     compileOnly("io.netty:netty-all:4.2.2.Final")
+    compileOnly("net.kyori:event-api:3.0.0")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")

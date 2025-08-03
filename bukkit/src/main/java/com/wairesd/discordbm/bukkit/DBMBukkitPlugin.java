@@ -5,6 +5,8 @@ import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.client.common.config.ConfigManager;
 import com.wairesd.discordbm.client.common.platform.Platform;
 import com.wairesd.discordbm.client.common.platform.PlatformBootstrap;
+import com.wairesd.discordbm.bukkit.listener.player.PlayerJoinListener;
+import com.wairesd.discordbm.bukkit.listener.player.PlayerQuitListener;
 import com.wairesd.discordbm.common.utils.BannerPrinter;
 import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.common.utils.StartupTimer;
@@ -34,6 +36,9 @@ public class DBMBukkitPlugin extends JavaPlugin {
         api = bootstrap.getApi();
         if (platform instanceof BukkitPlatform) {
             ((BukkitPlatform) platform).logAllRegisteredServices();
+        
+            ((BukkitPlatform) platform).registerListener(new PlayerJoinListener(platform));
+            ((BukkitPlatform) platform).registerListener(new PlayerQuitListener(platform));
         }
         timer.stop();
         timer.printElapsed();

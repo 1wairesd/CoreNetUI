@@ -21,7 +21,7 @@ import com.wairesd.discordbm.api.message.ResponseType;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageSenderImpl implements MessageSender {
+public class MessageSenderImpl extends MessageSender {
     
     private final Platform platform;
     private final Logger logger;
@@ -228,7 +228,7 @@ public class MessageSenderImpl implements MessageSender {
         platform.getNettyService().sendNettyMessage(json);
     }
 
-        @Override
+    @Override
     public void sendChannelMessage(String channelId, String message, String label) {
         ResponseMessage respMsg = new ResponseMessage.Builder()
                 .type("channel_message")
@@ -243,7 +243,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-    
+
     @Override
     public void sendChannelMessage(String channelId, Embed embed, String label) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);
@@ -260,7 +260,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-    
+
     @Override
     public void sendChannelMessage(String channelId, String message, List<Button> buttons, String label) {
         List<ButtonDefinition> buttonDefs = convertToButtonDefinitions(buttons);
@@ -277,7 +277,7 @@ public class MessageSenderImpl implements MessageSender {
         String json = gson.toJson(respMsg);
         platform.getNettyService().sendNettyMessage(json);
     }
-    
+
     @Override
     public void sendChannelMessage(String channelId, Embed embed, List<Button> buttons, String label) {
         EmbedDefinition embedDef = convertToEmbedDefinition(embed);

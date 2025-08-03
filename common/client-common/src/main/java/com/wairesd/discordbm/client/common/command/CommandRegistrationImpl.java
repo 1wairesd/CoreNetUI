@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CommandRegistrationImpl implements CommandRegistration {
+public class CommandRegistrationImpl extends CommandRegistration {
     
     private final Platform platform;
     private final Logger logger;

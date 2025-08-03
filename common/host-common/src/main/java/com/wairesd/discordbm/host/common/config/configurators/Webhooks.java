@@ -15,7 +15,7 @@ public class Webhooks {
     private static Path dataDirectory;
     private static List<Webhook> webhooks = new ArrayList<>();
 
-    public record Webhook(String name, String url, boolean enabled, List<Action> actions) {
+    public record Webhook(String name, String url, boolean enabled, List<Action> actions, String server) {
         public record Field(String name, String value) {}
         public record Action(String type, String message, String schedule, String title, String description, String color, List<Field> fields, String event) {}
     }
@@ -73,6 +73,7 @@ public class Webhooks {
                 String name = (String) webhookMap.get("name");
                 String url = (String) webhookMap.get("url");
                 boolean enabled = Boolean.TRUE.equals(webhookMap.get("enabled"));
+                String server = (String) webhookMap.get("server");
                 List<Webhook.Action> actions = new ArrayList<>();
                 List<Object> actionsList = (List<Object>) webhookMap.get("actions");
                 if (actionsList != null) {
@@ -98,7 +99,7 @@ public class Webhooks {
                         actions.add(new Webhook.Action(type, message, schedule, title, description, color, fields, event));
                     }
                 }
-                result.add(new Webhook(name, url, enabled, actions));
+                result.add(new Webhook(name, url, enabled, actions, server));
             }
             return result;
         } catch (ClassCastException | IllegalArgumentException e) {

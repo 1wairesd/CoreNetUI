@@ -3,7 +3,7 @@ package com.wairesd.discordbm.common.logging;
 import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 
-public class LoggerAdapter implements Logger {
+public class LoggerAdapter extends Logger {
     
     private final PluginLogger pluginLogger;
 

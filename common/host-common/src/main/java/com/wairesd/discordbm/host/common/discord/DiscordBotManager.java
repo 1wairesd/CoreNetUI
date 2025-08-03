@@ -48,7 +48,6 @@ public class DiscordBotManager {
                     .build()
                     .awaitReady();
 
-            logger.info("Discord bot initialized successfully");
             initialized = true;
         } catch (InvalidTokenException e) {
             logger.error("Invalid bot token provided!");

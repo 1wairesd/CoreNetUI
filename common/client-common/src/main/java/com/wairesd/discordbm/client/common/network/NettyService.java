@@ -31,7 +31,7 @@ public class NettyService {
         int port = platform.getVelocityPort();
         
         if (host == null || host.isEmpty() || port <= 0) {
-            pluginLogger.warn("Invalid Velocity host or port configuration. Check your settings.yml.");
+            pluginLogger.warn("Invalid host host or port configuration. Check your settings.yml.");
             return;
         }
         
@@ -40,7 +40,7 @@ public class NettyService {
             nettyClient.connect();
         } catch (Exception e) {
             if (platform.isDebugErrors()) {
-                pluginLogger.warn("Failed to connect to Velocity Netty server: " + e.getMessage());
+                pluginLogger.warn("Failed to connect to host Netty server: " + e.getMessage());
             }
         }
     }

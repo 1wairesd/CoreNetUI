@@ -7,9 +7,9 @@ import com.wairesd.discordbm.api.modal.Modal;
 import java.util.List;
 
 /**
- * Interface for sending messages to Discord
+ * Abstract class for sending messages to Discord
  */
-public interface MessageSender {
+public abstract class MessageSender {
 
     // --- Response ---
 
@@ -19,7 +19,7 @@ public interface MessageSender {
      * @param requestId The request ID of the command
      * @param message The message to send
      */
-    void sendResponse(String requestId, String message);
+    public abstract void sendResponse(String requestId, String message);
 
     /**
      * Send an embed in response to a command
@@ -27,7 +27,7 @@ public interface MessageSender {
      * @param requestId The request ID of the command
      * @param embed The embed to send
      */
-    void sendResponse(String requestId, Embed embed);
+    public abstract void sendResponse(String requestId, Embed embed);
 
     /**
      * Send an embed with buttons in response to a command
@@ -36,7 +36,7 @@ public interface MessageSender {
      * @param embed The embed to send
      * @param buttons The buttons to add to the message
      */
-    void sendResponse(String requestId, Embed embed, List<Button> buttons);
+    public abstract void sendResponse(String requestId, Embed embed, List<Button> buttons);
 
     /**
      * Send a text message with buttons in response to a command
@@ -45,7 +45,7 @@ public interface MessageSender {
      * @param message The message to send
      * @param buttons The buttons to add to the message
      */
-    void sendResponse(String requestId, String message, List<Button> buttons);
+    public abstract void sendResponse(String requestId, String message, List<Button> buttons);
 
     /**
      * Send a modal in response to a command
@@ -53,7 +53,7 @@ public interface MessageSender {
      * @param requestId The request ID of the command
      * @param modal The modal to send
      */
-    void sendModal(String requestId, Modal modal);
+    public abstract void sendModal(String requestId, Modal modal);
 
     /**
      * Send a modal with a message in response to a command
@@ -62,27 +62,25 @@ public interface MessageSender {
      * @param message The message to send with the modal
      * @param modal The modal to send
      */
-    void sendModal(String requestId, String message, Modal modal);
+    public abstract void sendModal(String requestId, String message, Modal modal);
 
     // --- Response с label ---
     /**
      * Send a text message in response to a command, with label
      */
-    void sendResponse(String requestId, String message, String label);
+    public abstract void sendResponse(String requestId, String message, String label);
     /**
      * Send an embed in response to a command, with label
      */
-    void sendResponse(String requestId, Embed embed, String label);
+    public abstract void sendResponse(String requestId, Embed embed, String label);
     /**
      * Send an embed with buttons in response to a command, with label
      */
-    void sendResponse(String requestId, Embed embed, List<Button> buttons, String label);
+    public abstract void sendResponse(String requestId, Embed embed, List<Button> buttons, String label);
     /**
      * Send a text message with buttons in response to a command, with label
      */
-    void sendResponse(String requestId, String message, List<Button> buttons, String label);
-
-
+    public abstract void sendResponse(String requestId, String message, List<Button> buttons, String label);
 
     // --- Direct Message ---
 
@@ -92,7 +90,7 @@ public interface MessageSender {
      * @param userId The ID of the user to send the message to
      * @param message The message to send
      */
-    void sendDirectMessage(String userId, String message);
+    public abstract void sendDirectMessage(String userId, String message);
 
     /**
      * Send an embed as a direct message to a user
@@ -100,7 +98,7 @@ public interface MessageSender {
      * @param userId The ID of the user to send the message to
      * @param embed The embed to send
      */
-    void sendDirectMessage(String userId, Embed embed);
+    public abstract void sendDirectMessage(String userId, Embed embed);
 
     /**
      * Send an embed as a direct message to a user
@@ -109,7 +107,7 @@ public interface MessageSender {
      * @param embed The embed to send
      * @param buttons The buttons to add to the message
      */
-    void sendDirectMessage(String userId, Embed embed, List<Button> buttons);
+    public abstract void sendDirectMessage(String userId, Embed embed, List<Button> buttons);
 
     /**
      * Send a direct message to a user with buttons
@@ -118,7 +116,7 @@ public interface MessageSender {
      * @param message The message to send
      * @param buttons The buttons to add to the message
      */
-    void sendDirectMessage(String userId, String message, List<Button> buttons);
+    public abstract void sendDirectMessage(String userId, String message, List<Button> buttons);
 
     /**
      * Send a direct message to a user with requestId and channelId
@@ -128,7 +126,7 @@ public interface MessageSender {
      * @param requestId The request ID of the command
      * @param channelId The ID of the channel to send the message to
      */
-    void sendDirectMessage(String userId, String message, String requestId, String channelId);
+    public abstract void sendDirectMessage(String userId, String message, String requestId, String channelId);
 
     // --- Channel Message ---
 
@@ -138,7 +136,7 @@ public interface MessageSender {
      * @param channelId The ID of the channel to send the message to
      * @param message The message to send
      */
-    void sendChannelMessage(String channelId, String message);
+    public abstract void sendChannelMessage(String channelId, String message);
 
     /**
      * Send an embed to a channel
@@ -146,7 +144,7 @@ public interface MessageSender {
      * @param channelId The ID of the channel to send the message to
      * @param embed The embed to send
      */
-    void sendChannelMessage(String channelId, Embed embed);
+    public abstract void sendChannelMessage(String channelId, Embed embed);
 
     /**
      * Send an embed to a channel
@@ -155,7 +153,7 @@ public interface MessageSender {
      * @param embed The embed to send
      * @param buttons The buttons to add to the message
      */
-    void sendChannelMessage(String channelId, Embed embed, List<Button> buttons);
+    public abstract void sendChannelMessage(String channelId, Embed embed, List<Button> buttons);
 
     /**
      * Send a message to a channel with buttons
@@ -164,26 +162,24 @@ public interface MessageSender {
      * @param message The message to send
      * @param buttons The buttons to add to the message
      */
-    void sendChannelMessage(String channelId, String message, List<Button> buttons);
+    public abstract void sendChannelMessage(String channelId, String message, List<Button> buttons);
 
     /**
      * Send a message to a channel, with label
      */
-    void sendChannelMessage(String channelId, String message, String label);
+    public abstract void sendChannelMessage(String channelId, String message, String label);
     /**
      * Send an embed to a channel, with label
      */
-    void sendChannelMessage(String channelId, Embed embed, String label);
+    public abstract void sendChannelMessage(String channelId, Embed embed, String label);
     /**
      * Send an embed to a channel with buttons, with label
      */
-    void sendChannelMessage(String channelId, Embed embed, List<Button> buttons, String label);
+    public abstract void sendChannelMessage(String channelId, Embed embed, List<Button> buttons, String label);
     /**
      * Send a message to a channel with buttons, with label
      */
-    void sendChannelMessage(String channelId, String message, List<Button> buttons, String label);
-
-
+    public abstract void sendChannelMessage(String channelId, String message, List<Button> buttons, String label);
 
     /**
      * Send a message with a button that opens a modal in response to a command
@@ -192,14 +188,14 @@ public interface MessageSender {
      * @param button The button that will open the modal
      * @param modal The modal to open when the button is pressed
      */
-    void sendButtonWithModal(String requestId, String message, Button button, Modal modal);
+    public abstract void sendButtonWithModal(String requestId, String message, Button button, Modal modal);
 
     /**
      * Send a random reply (random message from the list) in response to a command
      * @param requestId The request ID of the command
      * @param messages The list of possible messages
      */
-    void sendRandomReply(String requestId, List<String> messages);
+    public abstract void sendRandomReply(String requestId, List<String> messages);
 
     /**
      * Edit a previously sent message by label, replacing its text.
@@ -207,7 +203,7 @@ public interface MessageSender {
      * @param label The label/id of the message to edit
      * @param newMessage The new message text
      */
-    void editMessage(String label, String newMessage);
+    public abstract void editMessage(String label, String newMessage);
 
     /**
      * Edit a previously sent message by label, replacing its embed.
@@ -215,7 +211,7 @@ public interface MessageSender {
      * @param label The label/id of the message to edit
      * @param newEmbed The new embed
      */
-    void editMessage(String label, Embed newEmbed);
+    public abstract void editMessage(String label, Embed newEmbed);
 
     /**
      * Edit a previously sent message by label, replacing its embed and buttons.
@@ -224,7 +220,7 @@ public interface MessageSender {
      * @param newEmbed The new embed
      * @param newButtons The new buttons
      */
-    void editMessage(String label, Embed newEmbed, List<Button> newButtons);
+    public abstract void editMessage(String label, Embed newEmbed, List<Button> newButtons);
 
     /**
      * Edit a component (e.g., button) in a previously sent message by label and component id.
@@ -235,7 +231,7 @@ public interface MessageSender {
      * @param newStyle The new style for the component (nullable)
      * @param disabled Whether the component should be disabled (nullable)
      */
-    void editComponent(String label, String componentId, String newLabel, String newStyle, Boolean disabled);
+    public abstract void editComponent(String label, String componentId, String newLabel, String newStyle, Boolean disabled);
 
     /**
      * Delete a previously sent message by label/id.
@@ -243,13 +239,13 @@ public interface MessageSender {
      * @param label The label/id of the message to delete
      * @param deleteAll If true, delete all messages with this label; if false, only the last one
      */
-    void deleteMessage(String label, boolean deleteAll);
+    public abstract void deleteMessage(String label, boolean deleteAll);
 
     /**
      * Delete all messages with the given label (default behavior).
      * @param label The label/id of the message to delete
      */
-    default void deleteMessage(String label) {
+    public void deleteMessage(String label) {
         deleteMessage(label, true);
     }
 
@@ -260,7 +256,7 @@ public interface MessageSender {
      * @param replyMessageId The ID of the message to reply to
      * @param mentionAuthor Whether to mention the author of the original message
      */
-    void sendReplyToMessage(String requestId, String message, String replyMessageId, boolean mentionAuthor);
+    public abstract void sendReplyToMessage(String requestId, String message, String replyMessageId, boolean mentionAuthor);
 
     /**
      * Отправить сообщение в Discord через webhook по имени из webhooks.yml
@@ -268,5 +264,5 @@ public interface MessageSender {
      * @param message сообщение для отправки
      * @throws IllegalArgumentException если вебхук не найден
      */
-    void sendWebhook(String webhookName, String message);
+    public abstract void sendWebhook(String webhookName, String message);
 }

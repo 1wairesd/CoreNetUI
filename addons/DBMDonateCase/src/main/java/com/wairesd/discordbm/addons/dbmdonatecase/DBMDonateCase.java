@@ -12,7 +12,6 @@ import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
 import com.wairesd.discordbm.addons.dbmdonatecase.listener.CaseOpenListener;
 import com.wairesd.discordbm.addons.dbmdonatecase.listener.DBMReloadListener;
 import com.wairesd.discordbm.api.embed.Embed;
-import com.wairesd.dceverydaycase.api.DailyCaseApi;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
@@ -25,7 +24,7 @@ public final class DBMDonateCase extends JavaPlugin {
     private Messages messages;
     private CaseOpenListener caseOpenListener;
     private DBMReloadListener listener = new DBMReloadListener(messages);
-    private DailyCaseApi edcApi;
+    private Object edcApi;
     private boolean edcAvailable = false;
 
     @Override
@@ -37,10 +36,11 @@ public final class DBMDonateCase extends JavaPlugin {
         this.messages = new Messages(this);
 
         try {
-            this.edcApi = DailyCaseApi.getInstance();
+            Class<?> dailyCaseApiClass = Class.forName("com.wairesd.dceverydaycase.api.DailyCaseApi");
+            this.edcApi = dailyCaseApiClass.getMethod("getInstance").invoke(null);
             this.edcAvailable = true;
-        } catch (IllegalStateException e) {
-            getLogger().warning("DCEveryDayCase API is not available: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            getLogger().warning("DCEveryDayCase API is not available: DailyCaseApi class not found");
             this.edcAvailable = false;
         } catch (Exception e) {
             getLogger().warning("Error initializing DCEveryDayCase API: " + e.getMessage());
@@ -155,31 +155,35 @@ public final class DBMDonateCase extends JavaPlugin {
         });
 
         if (edcAvailable && edcApi != null) {
-            CommandOption edcPlayerOpt = dbmApi.getCommandRegistration().createOptionBuilder()
-                .name("player")
-                .description(messages.get("cmd_player_option"))
-                .type("STRING")
-                .required(true)
-                .build();
+            try {
+                CommandOption edcPlayerOpt = dbmApi.getCommandRegistration().createOptionBuilder()
+                    .name("player")
+                    .description(messages.get("cmd_player_option"))
+                    .type("STRING")
+                    .required(true)
+                    .build();
 
-            Command edcStatsCmd = dbmApi.getCommandRegistration().createCommandBuilder()
-                .name("edcstats")
-                .description(messages.get("cmd_edcstats_description"))
-                .pluginName("DBMDonateCase")
-                .context("both")
-                .options(List.of(edcPlayerOpt))
-                .build();
-            dbmApi.getCommandRegistration().registerCommand(edcStatsCmd, new EdcStatsCommandHandler(edcApi, dbmApi, messages));
+                Command edcStatsCmd = dbmApi.getCommandRegistration().createCommandBuilder()
+                    .name("edcstats")
+                    .description(messages.get("cmd_edcstats_description"))
+                    .pluginName("DBMDonateCase")
+                    .context("both")
+                    .options(List.of(edcPlayerOpt))
+                    .build();
+                dbmApi.getCommandRegistration().registerCommand(edcStatsCmd, new EdcStatsCommandHandler(edcApi, dbmApi, messages));
 
-            Command edcTopPlayersCmd = dbmApi.getCommandRegistration().createCommandBuilder()
-                .name("edctopplayers")
-                .description(messages.get("cmd_edctopplayers_description"))
-                .pluginName("DBMDonateCase")
-                .context("both")
-                .build();
-            dbmApi.getCommandRegistration().registerCommand(edcTopPlayersCmd, new EdcTopPlayersCommandHandler(edcApi, dbmApi, messages));
+                Command edcTopPlayersCmd = dbmApi.getCommandRegistration().createCommandBuilder()
+                    .name("edctopplayers")
+                    .description(messages.get("cmd_edctopplayers_description"))
+                    .pluginName("DBMDonateCase")
+                    .context("both")
+                    .build();
+                dbmApi.getCommandRegistration().registerCommand(edcTopPlayersCmd, new EdcTopPlayersCommandHandler(edcApi, dbmApi, messages));
 
-            getLogger().info("EDC commands registered: edcstats, edctopplayers");
+                getLogger().info("EDC commands registered: edcstats, edctopplayers");
+            } catch (Exception e) {
+                getLogger().warning("Failed to register EDC commands: " + e.getMessage());
+            }
         } else {
             getLogger().warning("EDC commands not registered - DCEveryDayCase is not available");
         }

@@ -6,6 +6,7 @@ import com.wairesd.discordbm.common.models.register.ClientRegisterMessage;
 import com.wairesd.discordbm.common.models.unregister.UnregisterMessage;
 import com.wairesd.discordbm.common.models.request.AddRoleRequest;
 import com.wairesd.discordbm.common.models.request.RemoveRoleRequest;
+import com.wairesd.discordbm.common.models.request.WebhookEventRequest;
 import com.wairesd.discordbm.common.models.placeholders.response.CanHandleResponse;
 import com.wairesd.discordbm.common.models.placeholders.response.PlaceholdersResponse;
 import com.wairesd.discordbm.common.models.response.ResponseMessage;
@@ -19,6 +20,7 @@ import com.wairesd.discordbm.host.common.discord.response.ResponseHandler;
 import com.wairesd.discordbm.host.common.handler.role.AddRoleHandler;
 import com.wairesd.discordbm.host.common.handler.role.RemoveRoleHandler;
 import com.wairesd.discordbm.host.common.handler.unregister.UnregisterHandler;
+import com.wairesd.discordbm.host.common.service.WebhookEventService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.LoggerFactory;
@@ -173,6 +175,35 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
             }
             com.wairesd.discordbm.host.common.utils.WebhookSender.sendWebhook(webhook.url(), message);
             // ctx.writeAndFlush("{\"type\":\"success\",\"message\":\"Webhook sent: " + webhookName + "\"}"); // Убрано чтобы не было NPE
+            return;
+        } else if ("webhook_event".equals(type)) {
+            // Handle webhook events from clients
+            try {
+                String data = json.get("data").getAsString();
+                WebhookEventRequest request = gson.fromJson(data, WebhookEventRequest.class);
+                if (request != null) {
+                    switch (request.getType()) {
+                        case "player_join":
+                            WebhookEventService.handlePlayerJoinEvent(
+                                request.getPlayerName(), 
+                                request.getPlayerIp(), 
+                                request.getServerName()
+                            );
+                            break;
+                            
+                        case "player_quit":
+                            WebhookEventService.handlePlayerQuitEvent(
+                                request.getPlayerName(), 
+                                request.getPlayerIp(), 
+                                request.getReason(), 
+                                request.getServerName()
+                            );
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("Error handling webhook event from client: {}", e.getMessage());
+            }
             return;
         } else {
             logger.warn("Unknown message type: {}", type);

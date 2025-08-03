@@ -19,7 +19,8 @@ import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
 import com.wairesd.discordbm.velocity.commands.CommandAdmin;
 import com.wairesd.discordbm.host.common.scheduler.WebhookScheduler;
 import com.wairesd.discordbm.velocity.libraries.LibraryLoader;
-import com.wairesd.discordbm.velocity.listener.PlayerJoinListener;
+import com.wairesd.discordbm.velocity.listener.player.PlayerJoinListener;
+import com.wairesd.discordbm.velocity.listener.player.PlayerQuitListener;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
@@ -65,6 +66,7 @@ public class DBMVelocityPlugin {
         platformBootstrap = new DiscordBMHBootstrap(platformManager, dataDirectory, logger);
         registerCommands();
         proxy.getEventManager().register(this, new PlayerJoinListener());
+        proxy.getEventManager().register(this, new PlayerQuitListener());
         platformBootstrap.initialize();
         timer.stop();
         timer.printElapsed();

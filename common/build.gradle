@@ -18,8 +18,8 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.23.0")
     compileOnly("com.google.code.gson:gson:2.13.1")
     compileOnly("org.slf4j:slf4j-api:1.7.36")
-    implementation("net.kyori:event-api:3.0.0")
-    implementation("net.kyori:event-method:3.0.0")
+    compileOnly("com.google.guava:guava:33.4.8-jre")
+    compileOnly("net.kyori:event-method:3.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")

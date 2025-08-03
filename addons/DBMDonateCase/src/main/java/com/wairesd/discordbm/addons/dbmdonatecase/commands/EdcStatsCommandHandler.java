@@ -1,6 +1,5 @@
 package com.wairesd.discordbm.addons.dbmdonatecase.commands;
 
-import com.wairesd.dceverydaycase.api.DailyCaseApi;
 import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
@@ -12,11 +11,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class EdcStatsCommandHandler implements CommandHandler {
-    private final DailyCaseApi edcApi;
+    private final Object edcApi;
     private final DBMAPI dbmApi;
     private final Messages messages;
 
-    public EdcStatsCommandHandler(DailyCaseApi edcApi, DBMAPI dbmApi, Messages messages) {
+    public EdcStatsCommandHandler(Object edcApi, DBMAPI dbmApi, Messages messages) {
         this.edcApi = edcApi;
         this.dbmApi = dbmApi;
         this.messages = messages;
@@ -34,12 +33,12 @@ public class EdcStatsCommandHandler implements CommandHandler {
                 return;
             }
 
-            long nextClaimTime = edcApi.getNextClaimTime(player);
+            long nextClaimTime = (Long) edcApi.getClass().getMethod("getNextClaimTime", String.class).invoke(edcApi, player);
             long currentTime = System.currentTimeMillis();
-            boolean isPending = edcApi.isPending(player);
-            long cooldown = edcApi.getClaimCooldown();
-            String caseName = edcApi.getCaseName();
-            int keysAmount = edcApi.getKeysAmount();
+            boolean isPending = (Boolean) edcApi.getClass().getMethod("isPending", String.class).invoke(edcApi, player);
+            long cooldown = (Long) edcApi.getClass().getMethod("getClaimCooldown").invoke(edcApi);
+            String caseName = (String) edcApi.getClass().getMethod("getCaseName").invoke(edcApi);
+            int keysAmount = (Integer) edcApi.getClass().getMethod("getKeysAmount").invoke(edcApi);
 
             StringBuilder sb = new StringBuilder();
             sb.append("**").append(messages.get("edc_info_title")).append("**\n\n");

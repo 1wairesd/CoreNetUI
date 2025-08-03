@@ -67,14 +67,14 @@ public class NettyClient {
                 if (future.isSuccess()) {
                     channel = future.channel();
                     if (platform.isDebugConnections()) {
-                        pluginLogger.info("Connected to Velocity at " + address.getHostString() + ":" + address.getPort());
+                        pluginLogger.info("Connected to host at " + address.getHostString() + ":" + address.getPort());
                     }
                     registerClient();
                 } else {
                     if (platform.isDebugConnections() || platform.isDebugErrors()) {
-                        pluginLogger.warn("Failed to connect to Velocity at " + address.getHostString() + ":" + address.getPort() + ": " + (future.cause() != null ? future.cause().getMessage() : "Unknown error"));
+                        pluginLogger.warn("Failed to connect to host at " + address.getHostString() + ":" + address.getPort() + ": " + (future.cause() != null ? future.cause().getMessage() : "Unknown error"));
                     } else {
-                        pluginLogger.warn("Failed to connect to Velocity server. Check your settings.yml configuration.");
+                        pluginLogger.warn("Failed to connect to host server. Check your settings.yml configuration.");
                     }
                     shutdownGroupAndNotify();
                 }
@@ -87,9 +87,9 @@ public class NettyClient {
             }
         }).exceptionally(throwable -> {
             if (platform.isDebugErrors()) {
-                pluginLogger.error("Error connecting to Velocity: " + (throwable != null ? throwable.getMessage() : "Unknown error"));
+                pluginLogger.error("Error connecting to host: " + (throwable != null ? throwable.getMessage() : "Unknown error"));
             } else {
-                pluginLogger.warn("Failed to connect to Velocity server. Check your settings.yml configuration.");
+                pluginLogger.warn("Failed to connect to host: server. Check your settings.yml configuration.");
             }
             shutdownGroupAndNotify();
             return null;

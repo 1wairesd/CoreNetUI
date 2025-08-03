@@ -45,7 +45,7 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
         PluginLogger pluginLogger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
         this.logger = new LoggerAdapter(pluginLogger);
         this.componentRegistry = new HostComponentRegistry(logger);
-        this.eventBus = new EventBusImpl();
+        this.eventBus = new EventBusImpl(logger);
         this.roleManager = new HostRoleManager();
     }
 
@@ -139,7 +139,7 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
         this.currentResponseType = null;
     }
 
-    public static class HostComponentRegistry implements ComponentRegistry {
+    public static class HostComponentRegistry extends ComponentRegistry {
         private final Logger logger;
         private final Map<String, ComponentHandler> buttonHandlers = new ConcurrentHashMap<>();
 
@@ -169,7 +169,7 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
         }
     }
 
-    private static class HostRoleManager implements RoleManager {
+    private static class HostRoleManager extends RoleManager {
         @Override
         public CompletableFuture<Boolean> addRole(String guildId, String userId, String roleId) {
             return CompletableFuture.completedFuture(true);

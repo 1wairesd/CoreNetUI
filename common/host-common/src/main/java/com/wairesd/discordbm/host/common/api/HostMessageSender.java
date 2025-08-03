@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.JDA;
 
 import java.util.List;
 
-public class HostMessageSender implements MessageSender {
+public class HostMessageSender extends MessageSender {
     private final JDA jda;
     private final HostDiscordBMAPIImpl dbmApi;
 

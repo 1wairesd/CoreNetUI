@@ -12,12 +12,12 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-@Getter
 public class SecretManager {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final SecureRandom random = new SecureRandom();
 
     private final Path secretFilePath;
+    @Getter
     private final String secretCode;
 
     public SecretManager(Path dataDirectory, String secretFileName) {

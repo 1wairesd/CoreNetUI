@@ -10,7 +10,7 @@ import com.wairesd.discordbm.common.component.ButtonImpl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ComponentRegistryImpl implements ComponentRegistry {
+public class ComponentRegistryImpl extends ComponentRegistry {
     
     private final Platform platform;
     private final Logger logger;

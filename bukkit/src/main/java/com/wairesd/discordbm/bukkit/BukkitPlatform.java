@@ -10,6 +10,7 @@ import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
@@ -64,5 +65,14 @@ public class BukkitPlatform extends AbstractPlatform {
         if (provider != null && provider.getProvider() instanceof DiscordBMAPIImpl) {
             DiscordBMAPIImpl impl = (DiscordBMAPIImpl) provider.getProvider();
         }
+    }
+    
+    /**
+     * Register a Bukkit event listener
+     * 
+     * @param listener The listener to register
+     */
+    public void registerListener(Listener listener) {
+        plugin.getServer().getPluginManager().registerEvents(listener, plugin);
     }
 } 

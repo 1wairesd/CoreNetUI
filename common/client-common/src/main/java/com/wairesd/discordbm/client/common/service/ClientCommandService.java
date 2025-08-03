@@ -32,10 +32,10 @@ public class ClientCommandService {
         List<String> result = new ArrayList<>();
         configManager.reloadConfigs();
         if (api != null) {
-            api.getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG));
-            api.getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK));
-            api.getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
-            api.getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.FULL));
+            api.getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG));
+            api.getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK));
+            api.getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
+            api.getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.FULL));
             logger.info("Fired reload events");
         }
         result.add(Messages.getMessage(Messages.Keys.RELOAD_SUCCESS));

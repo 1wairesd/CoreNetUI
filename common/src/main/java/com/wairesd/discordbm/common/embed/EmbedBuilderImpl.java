@@ -3,7 +3,7 @@ package com.wairesd.discordbm.common.embed;
 import com.wairesd.discordbm.api.embed.Embed;
 import com.wairesd.discordbm.api.embed.EmbedBuilder;
 
-public class EmbedBuilderImpl implements EmbedBuilder {
+public class EmbedBuilderImpl extends EmbedBuilder {
     
     private final EmbedImpl.Builder builder = new EmbedImpl.Builder();
     

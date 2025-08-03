@@ -30,7 +30,7 @@ public class DiscordBMAPIImpl extends DBMAPI {
     private final LoggerAdapter logger;
     private final RoleManagerImpl roleManager;
     private final long startTime = System.currentTimeMillis();
-    private final EventBus eventBus = new EventBusImpl();
+    private final EventBus eventBus;
     private ResponseType currentResponseType;
 
     public DiscordBMAPIImpl(Platform platform, PluginLogger pluginLogger) {
@@ -39,6 +39,7 @@ public class DiscordBMAPIImpl extends DBMAPI {
         this.messageSender = new MessageSenderImpl(platform, this.logger);
         this.componentRegistry = new ComponentRegistryImpl(platform, this.logger);
         this.roleManager = new RoleManagerImpl(platform);
+        this.eventBus = new EventBusImpl(this.logger);
     }
     
     @Override

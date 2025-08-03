@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.common.embed;
 
 import com.wairesd.discordbm.api.embed.Embed;
+import com.wairesd.discordbm.api.embed.EmbedBuilder;
 import com.wairesd.discordbm.api.embed.EmbedField;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class EmbedImpl implements Embed {
         return hasTimestamp;
     }
 
-    public static class Builder implements com.wairesd.discordbm.api.embed.EmbedBuilder {
+    public static class Builder extends EmbedBuilder {
         private String title;
         private String description;
         private Integer color;

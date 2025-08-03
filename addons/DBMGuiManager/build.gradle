@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly project(":api")
+    compileOnly project(":api:bukkit-api")
     implementation("com.jodexindustries.jguiwrapper:common:1.0.0.3")
 
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")

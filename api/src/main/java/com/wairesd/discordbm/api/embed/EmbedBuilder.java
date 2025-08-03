@@ -1,9 +1,9 @@
 package com.wairesd.discordbm.api.embed;
 
 /**
- * Interface for building Discord embeds
+ * Abstract class for building Discord embeds
  */
-public interface EmbedBuilder {
+public abstract class EmbedBuilder {
     
     /**
      * Set the title of the embed
@@ -11,7 +11,7 @@ public interface EmbedBuilder {
      * @param title The title
      * @return This builder
      */
-    EmbedBuilder setTitle(String title);
+    public abstract EmbedBuilder setTitle(String title);
     
     /**
      * Set the description of the embed
@@ -19,7 +19,7 @@ public interface EmbedBuilder {
      * @param description The description
      * @return This builder
      */
-    EmbedBuilder setDescription(String description);
+    public abstract EmbedBuilder setDescription(String description);
     
     /**
      * Set the color of the embed
@@ -27,7 +27,7 @@ public interface EmbedBuilder {
      * @param color The color as an RGB integer
      * @return This builder
      */
-    EmbedBuilder setColor(int color);
+    public abstract EmbedBuilder setColor(int color);
     
     /**
      * Set the color of the embed using a hex string
@@ -35,7 +35,7 @@ public interface EmbedBuilder {
      * @param hexColor The color as a hex string (e.g. "#FF0000")
      * @return This builder
      */
-    EmbedBuilder setColor(String hexColor);
+    public abstract EmbedBuilder setColor(String hexColor);
     
     /**
      * Add a field to the embed
@@ -45,7 +45,7 @@ public interface EmbedBuilder {
      * @param inline Whether the field should be inline
      * @return This builder
      */
-    EmbedBuilder addField(String name, String value, boolean inline);
+    public abstract EmbedBuilder addField(String name, String value, boolean inline);
     
     /**
      * Set the thumbnail URL of the embed
@@ -53,7 +53,7 @@ public interface EmbedBuilder {
      * @param url The thumbnail URL
      * @return This builder
      */
-    EmbedBuilder setThumbnail(String url);
+    public abstract EmbedBuilder setThumbnail(String url);
     
     /**
      * Set the image URL of the embed
@@ -61,7 +61,7 @@ public interface EmbedBuilder {
      * @param url The image URL
      * @return This builder
      */
-    EmbedBuilder setImage(String url);
+    public abstract EmbedBuilder setImage(String url);
     
     /**
      * Set the footer text of the embed
@@ -69,7 +69,7 @@ public interface EmbedBuilder {
      * @param text The footer text
      * @return This builder
      */
-    EmbedBuilder setFooter(String text);
+    public abstract EmbedBuilder setFooter(String text);
     
     /**
      * Set the footer text and icon of the embed
@@ -78,19 +78,19 @@ public interface EmbedBuilder {
      * @param iconUrl The footer icon URL
      * @return This builder
      */
-    EmbedBuilder setFooter(String text, String iconUrl);
+    public abstract EmbedBuilder setFooter(String text, String iconUrl);
     
     /**
      * Set the timestamp of the embed to the current time
      * 
      * @return This builder
      */
-    EmbedBuilder setTimestamp();
+    public abstract EmbedBuilder setTimestamp();
     
     /**
      * Build the embed
      * 
      * @return The built embed
      */
-    Embed build();
+    public abstract Embed build();
 } 

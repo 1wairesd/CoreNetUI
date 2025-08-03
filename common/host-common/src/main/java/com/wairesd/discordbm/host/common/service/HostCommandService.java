@@ -45,10 +45,10 @@ public class HostCommandService {
             platformManager.updateActivity();
             platformManager.getCommandManager().loadAndRegisterCommands();
         }
-        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.FULL));
-        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG));
-        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
-        DBMAPI.getInstance().getEventBus().fireEvent(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK));
+        DBMAPI.getInstance().getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.FULL));
+        DBMAPI.getInstance().getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.CONFIG));
+        DBMAPI.getInstance().getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.COMMANDS));
+        DBMAPI.getInstance().getEventBus().post(new DiscordBMReloadEvent(DiscordBMReloadEvent.Type.NETWORK));
         return Messages.get(Messages.Keys.RELOAD_SUCCESS);
     }
 

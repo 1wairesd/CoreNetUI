@@ -19,10 +19,4 @@ public class DBMReloadListener implements Subscriber {
     public void onEvent(DiscordBMReloadEvent event) {
         messages.reload();
     }
-
-    @Subscribe
-    @PostOrder(PostOrders.LAST)
-    public Class<DiscordBMReloadEvent> getEventType() {
-        return DiscordBMReloadEvent.class;
-    }
 } 

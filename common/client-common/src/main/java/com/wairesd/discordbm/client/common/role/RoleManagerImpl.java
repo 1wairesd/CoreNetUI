@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RoleManagerImpl implements RoleManager {
+public class RoleManagerImpl extends RoleManager {
     private final Platform platform;
     private final Gson gson = new Gson();
     private final ConcurrentHashMap<String, CompletableFuture<Boolean>> pendingRequests = new ConcurrentHashMap<>();

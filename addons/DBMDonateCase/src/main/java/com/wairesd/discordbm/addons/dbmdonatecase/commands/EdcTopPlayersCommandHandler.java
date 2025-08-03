@@ -1,6 +1,5 @@
 package com.wairesd.discordbm.addons.dbmdonatecase.commands;
 
-import com.wairesd.dceverydaycase.api.DailyCaseApi;
 import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandHandler;
 import com.wairesd.discordbm.api.message.MessageSender;
@@ -14,11 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EdcTopPlayersCommandHandler implements CommandHandler {
-    private final DailyCaseApi edcApi;
+    private final Object edcApi;
     private final DBMAPI dbmApi;
     private final Messages messages;
 
-    public EdcTopPlayersCommandHandler(DailyCaseApi edcApi, DBMAPI dbmApi, Messages messages) {
+    public EdcTopPlayersCommandHandler(Object edcApi, DBMAPI dbmApi, Messages messages) {
         this.edcApi = edcApi;
         this.dbmApi = dbmApi;
         this.messages = messages;
@@ -30,7 +29,8 @@ public class EdcTopPlayersCommandHandler implements CommandHandler {
         try {
             MessageSender sender = dbmApi.getMessageSender();
             
-            Map<String, Long> allClaimTimes = edcApi.getAllNextClaimTimes();
+            @SuppressWarnings("unchecked")
+            Map<String, Long> allClaimTimes = (Map<String, Long>) edcApi.getClass().getMethod("getAllNextClaimTimes").invoke(edcApi);
             long currentTime = System.currentTimeMillis();
             
             List<PlayerClaimInfo> playerInfos = new ArrayList<>();
