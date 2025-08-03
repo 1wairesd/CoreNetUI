@@ -33,27 +33,6 @@ java {
     withSourcesJar()
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.wairesd.discordbm'
-            artifactId = 'api'
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            name = 'GitHubPackages'
-            url = uri("https://maven.pkg.github.com/1wairesd/DiscordBM")
-            credentials {
-                username = project.findProperty("gpr.user") ?: rootProject.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
-                password = project.findProperty("gpr.key") ?: rootProject.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
