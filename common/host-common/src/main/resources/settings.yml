@@ -10,11 +10,11 @@ Discord:
   Bot-token: "your-bot-token"
   activity:
     type: "playing"
-    message: "Velocity Server"
+    message: "DiscordBM"
 
 netty:
   ip : "127.0.0.1"
-  port: 8080
+  port: "8080"
 
 forwarding-secret-file: "secret.complete.code"
 
