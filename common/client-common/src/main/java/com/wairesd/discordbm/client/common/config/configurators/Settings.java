@@ -1,12 +1,18 @@
 package com.wairesd.discordbm.client.common.config.configurators;
 
 import com.wairesd.discordbm.client.common.platform.PlatformConfig;
-import org.spongepowered.configurate.CommentedConfigurationNode;
-import org.spongepowered.configurate.ConfigurateException;
+import com.wairesd.discordbm.client.common.config.converter.ConfigConverter;
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
+import org.spongepowered.configurate.*;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Settings {
     private static CommentedConfigurationNode settingsConfig;
@@ -20,10 +26,51 @@ public class Settings {
 
         loader = YamlConfigurationLoader.builder()
                 .file(settingsFile)
+                .indent(2)
                 .build();
 
         try {
             settingsConfig = loader.load();
+
+            if (!settingsConfig.node("velocity").virtual()) {
+                Map<String, Object> oldConfig = new HashMap<>();
+                for (Map.Entry<Object, ? extends ConfigurationNode> entry : settingsConfig.childrenMap().entrySet()) {
+                    oldConfig.put(entry.getKey().toString(), entry.getValue().get(Object.class));
+                }
+
+                Map<String, Object> newConfig = ConfigConverter.convert(oldConfig, "settings");
+
+                try (java.io.FileWriter writer = new FileWriter(settingsFile)) {
+                    Yaml yaml = ConfigConverter.createFormattedYaml();
+                    yaml.dump(newConfig, writer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                java.util.Map<String, Object> cleanedConfig = new java.util.HashMap<>(newConfig);
+                cleanedConfig.remove("velocity");
+                cleanedConfig.remove("server");
+                cleanedConfig.remove("debug");
+                
+                try (java.io.FileWriter writer = new FileWriter(settingsFile)) {
+                    Yaml yaml = ConfigConverter.createFormattedYaml();
+                    yaml.dump(cleanedConfig, writer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    ConfigMetaMigrator.ensureMeta(settingsFile.toPath(), "settings", 1);
+                } catch (IOException e) {
+                    config.logError("Failed to add config meta", e);
+                }
+
+                config.logInfo("Конвертация settings.yml успешно завершена");
+            } else if (settingsConfig.node("config", "version").virtual()) {
+                settingsConfig.node("config", "version").set(1);
+                settingsConfig.node("config", "type").set("settings");
+                loader.save(settingsConfig);
+            }
         } catch (ConfigurateException e) {
             config.logError("Failed to load settings.yml", e);
         }
@@ -43,39 +90,44 @@ public class Settings {
         }
     }
 
-    public static String getVelocityHost() {
-        return settingsConfig.node("velocity", "host").getString("127.0.0.1");
+    public static String getHostHost() {
+        CommentedConfigurationNode hostIpNode = settingsConfig.node("DiscordBM", "host", "ip");
+        return hostIpNode.getString("127.0.0.1");
     }
 
-    public static int getVelocityPort() {
-        return settingsConfig.node("velocity", "port").getInt(8080);
+    public static int getHostPort() {
+        CommentedConfigurationNode hostPortNode = settingsConfig.node("DiscordBM", "host", "port");
+        return hostPortNode.getInt(25565);
     }
 
     public static String getServerName() {
-        return settingsConfig.node("server").getString("ServerName");
+        CommentedConfigurationNode serverNode = settingsConfig.node("DiscordBM", "server");
+        return serverNode.getString("ServerName");
     }
 
     public static String getSecretCode() {
-        return settingsConfig.node("velocity", "secret").getString("");
+        CommentedConfigurationNode secretNode = settingsConfig.node("DiscordBM", "host", "secret");
+        return secretNode.getString("");
     }
 
     public static boolean isDebugConnections() {
-        return settingsConfig.node("debug", "debug-connections").getBoolean(true);
+        return settingsConfig.node("DiscordBM", "debug", "debug-connections").getBoolean(false);
     }
 
     public static boolean isDebugClientResponses() {
-        return settingsConfig.node("debug", "debug-client-responses").getBoolean(false);
+        return settingsConfig.node("DiscordBM", "debug", "debug-client-responses").getBoolean(false);
     }
 
+
     public static boolean isDebugCommandRegistrations() {
-        return settingsConfig.node("debug", "debug-command-registrations").getBoolean(false);
+        return settingsConfig.node("DiscordBM", "debug", "debug-command-registrations").getBoolean(false);
     }
 
     public static boolean isDebugErrors() {
-        return settingsConfig.node("debug", "debug-errors").getBoolean(true);
+        return settingsConfig.node("DiscordBM", "debug", "debug-errors").getBoolean(true);
     }
 
     public static boolean isDebugRegisteredServices() {
-        return settingsConfig.node("debug", "debug-registered-services").getBoolean(false);
+        return settingsConfig.node("DiscordBM", "debug", "debug-registered-services").getBoolean(false);
     }
 }

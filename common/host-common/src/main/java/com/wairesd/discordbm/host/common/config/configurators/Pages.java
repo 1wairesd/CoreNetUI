@@ -6,6 +6,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +37,8 @@ public class Pages {
             if (!configFile.exists()) {
                 createDefaultConfig();
             }
+            // ensure meta
+            ConfigMetaMigrator.ensureMeta(configFile.toPath(), "pages", 1);
             Yaml yaml = new Yaml();
             try (FileInputStream inputStream = new FileInputStream(configFile)) {
                 rawConfig = yaml.load(inputStream);
@@ -63,16 +66,16 @@ public class Pages {
         pageMap.clear();
         if (rawConfig == null) return;
 
-        List<Map<String, Object>> pages = (List<Map<String, Object>>) rawConfig.get("pages");
+        List<Map<String, Object>> pages = asListOfMaps(rawConfig.get("pages"));
         if (pages == null) return;
 
         for (Map<String, Object> pageData : pages) {
             String id = (String) pageData.get("id");
             String content = (String) pageData.get("content");
-            Map<String, Object> embedConfig = (Map<String, Object>) pageData.get("embed");
+            Map<String, Object> embedConfig = asStringObjectMap(pageData.get("embed"));
             List<ButtonConfig> buttons = new ArrayList<>();
 
-            List<Map<String, String>> buttonsList = (List<Map<String, String>>) pageData.get("buttons");
+            List<Map<String, String>> buttonsList = asListOfStringMaps(pageData.get("buttons"));
             if (buttonsList != null) {
                 for (Map<String, String> btn : buttonsList) {
                     String label = btn.get("label");
@@ -87,6 +90,41 @@ public class Pages {
     public static void reload() {
         loadPages();
         logger.info("pages.yml reloaded successfully");
+    }
+
+    private static Map<String, Object> asStringObjectMap(Object obj) {
+        if (!(obj instanceof Map<?, ?> m)) return new HashMap<>();
+        Map<String, Object> res = new HashMap<>();
+        for (Map.Entry<?, ?> e : m.entrySet()) {
+            res.put(String.valueOf(e.getKey()), e.getValue());
+        }
+        return res;
+    }
+
+    private static List<Map<String, Object>> asListOfMaps(Object obj) {
+        if (!(obj instanceof List<?> list)) return null;
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (Object o : list) {
+            if (o instanceof Map<?, ?>) {
+                res.add(asStringObjectMap(o));
+            }
+        }
+        return res;
+    }
+
+    private static List<Map<String, String>> asListOfStringMaps(Object obj) {
+        if (!(obj instanceof List<?> list)) return null;
+        List<Map<String, String>> res = new ArrayList<>();
+        for (Object o : list) {
+            if (o instanceof Map<?, ?> m) {
+                Map<String, String> sm = new HashMap<>();
+                for (Map.Entry<?, ?> e : m.entrySet()) {
+                    sm.put(String.valueOf(e.getKey()), e.getValue() == null ? null : String.valueOf(e.getValue()));
+                }
+                res.add(sm);
+            }
+        }
+        return res;
     }
 }
 

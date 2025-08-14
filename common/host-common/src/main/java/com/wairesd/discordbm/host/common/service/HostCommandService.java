@@ -1,6 +1,11 @@
 package com.wairesd.discordbm.host.common.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.wairesd.discordbm.api.DBMAPI;
+import com.wairesd.discordbm.api.command.CommandRegistration;
+import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
+import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
 import com.wairesd.discordbm.host.common.config.ConfigManager;
 import com.wairesd.discordbm.host.common.config.configurators.Messages;
 import com.wairesd.discordbm.host.common.manager.WebhookManager;
@@ -14,6 +19,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.DumperOptions;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,17 +28,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import okhttp3.*;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import java.util.zip.GZIPOutputStream;
-
 import java.util.List;
 import java.util.StringJoiner;
-
-import com.wairesd.discordbm.api.command.CommandRegistration;
-import com.wairesd.discordbm.host.common.models.command.HostCommandRegistration;
-import com.wairesd.discordbm.api.event.plugin.DiscordBMReloadEvent;
+import okhttp3.*;
 
 public class HostCommandService {
     private static final String BYTEBIN_URL = "https://bytebin.lucko.me/";

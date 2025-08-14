@@ -61,6 +61,7 @@ public class DiscordBMHBootstrap {
         String dbUrl = Settings.getDatabaseJdbcUrl(sqlitePath);
         dbManager = new Database(dbUrl);
         logger.info("Database initialized ({} mode)", Settings.isMySQLEnabled() ? "MySQL" : "SQLite");
+        platformManager.attachDatabaseToManagers(dbManager);
     }
 
     private void initNetty() {

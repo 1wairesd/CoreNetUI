@@ -8,7 +8,6 @@ import com.wairesd.discordbm.api.embed.EmbedBuilder;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.event.EventBus;
-import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.ResponseType;
 import com.wairesd.discordbm.api.role.RoleManager;
 import com.wairesd.discordbm.api.modal.ModalBuilder;
@@ -69,10 +68,7 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
         return eventBus;
     }
 
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
+
 
     @Override
     public EmbedBuilder createEmbedBuilder() {
@@ -140,10 +136,10 @@ public class HostDiscordBMAPIImpl extends DBMAPI {
     }
 
     public static class HostComponentRegistry extends ComponentRegistry {
-        private final Logger logger;
+        private final LoggerAdapter logger;
         private final Map<String, ComponentHandler> buttonHandlers = new ConcurrentHashMap<>();
 
-        public HostComponentRegistry(Logger logger) {
+        public HostComponentRegistry(LoggerAdapter logger) {
             this.logger = logger;
         }
 

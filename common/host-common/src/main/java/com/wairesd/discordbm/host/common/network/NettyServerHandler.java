@@ -177,7 +177,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String>
             // ctx.writeAndFlush("{\"type\":\"success\",\"message\":\"Webhook sent: " + webhookName + "\"}"); // Убрано чтобы не было NPE
             return;
         } else if ("webhook_event".equals(type)) {
-            // Handle webhook events from clients
             try {
                 String data = json.get("data").getAsString();
                 WebhookEventRequest request = gson.fromJson(data, WebhookEventRequest.class);

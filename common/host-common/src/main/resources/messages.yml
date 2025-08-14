@@ -1,3 +1,7 @@
+config:
+  version: 1
+  type: messages
+
 no-permission: "&cYou don't have permission"
 reload-success: "&aConfiguration reloaded"
 command-unavailable: "&cCommand unavailable: plugin is not connected."

@@ -35,13 +35,12 @@ public abstract class AbstractPlatform implements Platform {
     }
 
     @Override
-    public String getVelocityHost() {
-        return Settings.getVelocityHost();
+    public String getHostIp() {
+        return Settings.getHostHost();
     }
 
-    @Override
-    public int getVelocityPort() {
-        return Settings.getVelocityPort();
+    public int getHostPort() {
+        return Settings.getHostPort();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.wairesd.discordbm.host.common.config.configurators;
 
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ public class Webhooks {
             if (!Files.exists(webhooksPath)) {
                 createDefaultWebhooksFile(webhooksPath);
             }
+            ConfigMetaMigrator.ensureMeta(webhooksPath, "webhooks", 1);
             List<Webhook> newWebhooks = loadWebhooksFromFile(webhooksPath);
             webhooks = Collections.unmodifiableList(newWebhooks);
             return webhooks;

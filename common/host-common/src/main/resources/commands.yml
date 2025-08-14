@@ -6,6 +6,10 @@
 # Документация и примеры: https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/DiscordBMV/Configs/dscordbmv-main-commands
 # Если что-то не понятно — смотри по ссылке выше!
 
+config:
+  version: 1
+  type: commands
+
 # Example
 commands:
   - name: "hello"

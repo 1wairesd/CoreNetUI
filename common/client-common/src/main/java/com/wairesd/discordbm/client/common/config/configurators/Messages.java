@@ -1,6 +1,7 @@
 package com.wairesd.discordbm.client.common.config.configurators;
 
 import com.wairesd.discordbm.common.utils.color.ColorUtils;
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
 import com.wairesd.discordbm.client.common.platform.PlatformConfig;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.MessageFormat;
 
 public class Messages {
     private static CommentedConfigurationNode messagesConfig;
@@ -44,6 +44,12 @@ public class Messages {
             }
         }
 
+        try {
+            ConfigMetaMigrator.ensureMeta(messagesFile.toPath(), "messages", 1);
+        } catch (IOException e) {
+            config.logWarning("Could not ensure messages.yml meta: " + e.getMessage());
+        }
+
         loader = YamlConfigurationLoader.builder()
                 .file(messagesFile)
                 .build();
@@ -58,11 +64,6 @@ public class Messages {
         } catch (ConfigurateException e) {
             config.logError("Failed to reload messages.yml", e);
         }
-    }
-
-    public static String get(String key, Object... args) {
-        String template = getMessage(key);
-        return MessageFormat.format(template, args);
     }
 
     public static String getMessage(String key) {

@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface Platform {
-    String getVelocityHost();
-    int getVelocityPort();
+    String getHostIp();
+    int getHostPort();
     String getServerName();
     String getSecretCode();
     boolean isDebugCommandRegistrations();

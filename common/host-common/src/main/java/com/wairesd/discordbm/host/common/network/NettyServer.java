@@ -9,6 +9,7 @@ import com.wairesd.discordbm.host.common.models.command.CommandRegistrationServi
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
 import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.models.command.CommandDefinition;
+import com.wairesd.discordbm.host.common.utils.ClientInfo;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,7 +19,6 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.LoggerFactory;
-import com.wairesd.discordbm.host.common.utils.ClientInfo;
 
 import java.net.BindException;
 import java.util.ArrayList;
