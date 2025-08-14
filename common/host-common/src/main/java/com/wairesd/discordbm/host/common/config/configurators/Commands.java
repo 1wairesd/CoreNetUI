@@ -54,7 +54,7 @@ public class Commands {
                 createDefaultCommandsFile(commandsPath);
             }
             // ensure meta
-            ConfigMetaMigrator.ensureMeta(commandsPath, "commands", 2);
+            ConfigMetaMigrator.ensureMeta(commandsPath, "commands", 1);
 
             List<CommandStructured> newCommands = loadCommandsFromFile(commandsPath);
             customCommands = Collections.unmodifiableList(newCommands);
