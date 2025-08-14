@@ -36,5 +36,5 @@ compileOnly("com.github.wairesd:DiscordBM:<b>PLATFORM</b>-1.0.1")
 
 ### Usage Examples
 ```groovy
-compileOnly("com.github.wairesd:DiscordBM:api-1.0.0")
+compileOnly("com.github.wairesd:DiscordBM:api-1.0.1")
 ```
