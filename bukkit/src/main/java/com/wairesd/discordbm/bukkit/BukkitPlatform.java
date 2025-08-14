@@ -66,12 +66,7 @@ public class BukkitPlatform extends AbstractPlatform {
             DiscordBMAPIImpl impl = (DiscordBMAPIImpl) provider.getProvider();
         }
     }
-    
-    /**
-     * Register a Bukkit event listener
-     * 
-     * @param listener The listener to register
-     */
+
     public void registerListener(Listener listener) {
         plugin.getServer().getPluginManager().registerEvents(listener, plugin);
     }

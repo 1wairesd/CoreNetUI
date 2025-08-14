@@ -2,6 +2,7 @@ package com.wairesd.discordbm.host.common.config.configurators;
 
 import com.wairesd.discordbm.common.utils.color.MessageContext;
 import net.kyori.adventure.text.Component;
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +66,8 @@ public class Messages {
             if (!Files.exists(messagesPath)) {
                 createDefaultMessagesFile(messagesPath);
             }
+            // ensure meta
+            ConfigMetaMigrator.ensureMeta(messagesPath, "messages", 1);
             com.wairesd.discordbm.common.utils.MessagesUN.load(new File(dataDirectory.toFile(), MESSAGES_FILE_NAME));
         } catch (IOException e) {
             System.err.println("Error loading messages.yml: " + e.getMessage());

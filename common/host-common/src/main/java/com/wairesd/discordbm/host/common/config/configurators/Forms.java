@@ -3,6 +3,7 @@ package com.wairesd.discordbm.host.common.config.configurators;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import org.slf4j.LoggerFactory;
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -36,6 +37,8 @@ public class Forms {
             if (!Files.exists(formsPath)) {
                 createDefaultFormsFile(formsPath);
             }
+            // ensure meta
+            ConfigMetaMigrator.ensureMeta(formsPath, "forms", 1);
 
             Map<String, FormStructured> newForms = loadFormsFromFile(formsPath);
             forms = Collections.unmodifiableMap(newForms);
@@ -69,13 +72,13 @@ public class Forms {
                 return Collections.emptyMap();
             }
 
-            Map<String, Object> formsMap = (Map<String, Object>) loaded.get("forms");
+            Map<String, Object> formsMap = asStringObjectMap(loaded.get("forms"));
             Map<String, FormStructured> result = new HashMap<>();
             for (Map.Entry<String, Object> entry : formsMap.entrySet()) {
                 String formName = entry.getKey();
-                Map<String, Object> modalData = (Map<String, Object>) entry.getValue();
+                Map<String, Object> modalData = asStringObjectMap(entry.getValue());
                 String title = (String) modalData.get("title");
-                List<Map<String, Object>> fieldsData = (List<Map<String, Object>>) modalData.get("fields");
+                List<Map<String, Object>> fieldsData = asListOfMaps(modalData.get("fields"));
 
                 List<FormStructured.Field> fields = fieldsData.stream()
                         .map(fieldMap -> new FormStructured.Field(
@@ -97,5 +100,25 @@ public class Forms {
 
     public static Map<String, FormStructured> getForms() {
         return forms;
+    }
+
+    private static Map<String, Object> asStringObjectMap(Object obj) {
+        if (!(obj instanceof Map<?, ?> m)) return new HashMap<>();
+        Map<String, Object> res = new HashMap<>();
+        for (Map.Entry<?, ?> e : m.entrySet()) {
+            res.put(String.valueOf(e.getKey()), e.getValue());
+        }
+        return res;
+    }
+
+    private static List<Map<String, Object>> asListOfMaps(Object obj) {
+        if (!(obj instanceof List<?> list)) return new ArrayList<>();
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (Object o : list) {
+            if (o instanceof Map<?, ?>) {
+                res.add(asStringObjectMap(o));
+            }
+        }
+        return res;
     }
 }

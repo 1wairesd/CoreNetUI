@@ -6,6 +6,7 @@ import com.wairesd.discordbm.common.utils.DiscordBMThreadPool;
 import com.wairesd.discordbm.host.common.commandbuilder.commands.core.CommandManager;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
 import com.wairesd.discordbm.host.common.config.configurators.Settings;
+import com.wairesd.discordbm.host.common.database.Database;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
@@ -45,6 +46,10 @@ public class DiscordBMHPlatformManager {
         this.nettyServer = nettyServer;
     }
 
+    public void attachDatabaseToManagers(Database database) {
+        this.messageManager.setDatabase(database);
+    }
+
     public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
     }
@@ -57,8 +62,8 @@ public class DiscordBMHPlatformManager {
         this.pageMap = pageMap;
     }
 
-    public Map<UUID, Object> getPendingButtonRequests() {
-        return (Map)pendingButtonRequests;
+    public Map<UUID, InteractionHook> getPendingButtonRequests() {
+        return pendingButtonRequests;
     }
 
     public void storePendingButtonRequest(UUID requestId, InteractionHook hook) {

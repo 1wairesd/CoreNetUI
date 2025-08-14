@@ -3,6 +3,7 @@ package com.wairesd.discordbm.host.common.config.configurators;
 import com.wairesd.discordbm.common.utils.logging.PluginLogger;
 import com.wairesd.discordbm.common.utils.logging.Slf4jPluginLogger;
 import com.wairesd.discordbm.host.common.discord.DiscordBMHPlatformManager;
+import com.wairesd.discordbm.common.config.ConfigMetaMigrator;
 import com.wairesd.discordbm.host.common.commandbuilder.core.parser.CommandParserAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.conditions.CommandCondition;
@@ -52,6 +53,8 @@ public class Commands {
             if (!Files.exists(commandsPath)) {
                 createDefaultCommandsFile(commandsPath);
             }
+            // ensure meta
+            ConfigMetaMigrator.ensureMeta(commandsPath, "commands", 2);
 
             List<CommandStructured> newCommands = loadCommandsFromFile(commandsPath);
             customCommands = Collections.unmodifiableList(newCommands);
@@ -86,19 +89,35 @@ public class Commands {
                 throw new IllegalArgumentException("Incorrect YAML format: Root Map expected");
             }
 
+            int version = 1;
+            Object v = map.get("version");
+            if (v instanceof Number) {
+                version = ((Number) v).intValue();
+            } else if (v instanceof String s) {
+                try { version = Integer.parseInt(s.trim()); } catch (NumberFormatException ignored) { }
+            }
+
             Object rawCommands = map.get("commands");
+            if (rawCommands == null) {
+                Object nm = map.get("DiscordBM");
+                if (nm instanceof Map<?, ?> nmMap) {
+                    rawCommands = nmMap.get("commands");
+                }
+            }
             if (!(rawCommands instanceof List<?> list)) {
                 return Collections.emptyList();
             }
 
             List<Map<String, Object>> commandMaps = list.stream()
                     .filter(e -> e instanceof Map)
-                    .map(e -> (Map<String, Object>) e)
+                    .map(e -> asStringObjectMap(e))
                     .toList();
 
-            return commandMaps.stream()
+            List<CommandStructured> parsed = commandMaps.stream()
                     .map(Commands::parseCommand)
                     .collect(Collectors.toList());
+            logger.info("Loaded {} commands (commands.yml v{})", parsed.size(), version);
+            return parsed;
 
         } catch (ClassCastException | IllegalArgumentException e) {
             throw new IOException("Error when parsing a YAML file: " + e.getMessage(), e);
@@ -124,8 +143,7 @@ public class Commands {
         List<CommandCondition> conditions = getConditions(cmdData);
         List<CommandAction> actions = getActions(cmdData);
         List<CommandAction> failActions = CommandParserFailAction.parse(cmdData, platformInstance);
-        Boolean ephemeral = cmdData.containsKey("ephemeral") ?
-                (Boolean) cmdData.get("ephemeral") : null;
+        // ephemeral is parsed per-action; command-level ephemeral currently unused
         String permission = cmdData.containsKey("permission") ? (String) cmdData.get("permission") : null;
 
         return new CommandStructured(
@@ -162,11 +180,28 @@ public class Commands {
     }
 
     private static <T> List<T> getList(Map<String, Object> data, String key, CommandParser<T> parser) {
-        List<Map<String, Object>> listData = (List<Map<String, Object>>) data.getOrDefault(key, Collections.emptyList());
+        Object raw = data.getOrDefault(key, Collections.emptyList());
+        List<Map<String, Object>> listData;
+        if (raw instanceof List<?> rl) {
+            listData = rl.stream()
+                    .filter(it -> it instanceof Map)
+                    .map(Commands::asStringObjectMap)
+                    .collect(Collectors.toList());
+        } else {
+            listData = Collections.emptyList();
+        }
         return listData.stream()
                 .map(parser::parse)
                 .filter(item -> item != null)
                 .collect(Collectors.toList());
+    }
+
+    private static Map<String, Object> asStringObjectMap(Object e) {
+        Map<?, ?> m = (Map<?, ?>) e;
+        return m.entrySet().stream().collect(Collectors.toMap(
+                entry -> String.valueOf(entry.getKey()),
+                Map.Entry::getValue
+        ));
     }
 
     private static CommandOptions createOption(Map<String, Object> data) {

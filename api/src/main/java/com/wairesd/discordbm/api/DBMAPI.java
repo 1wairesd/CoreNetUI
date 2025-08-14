@@ -5,7 +5,6 @@ import com.wairesd.discordbm.api.embed.EmbedBuilder;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.event.EventBus;
-import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.role.RoleManager;
 import com.wairesd.discordbm.api.modal.ModalBuilder;
 import com.wairesd.discordbm.api.modal.ModalFieldBuilder;
@@ -58,13 +57,6 @@ public abstract class DBMAPI {
      * @return The event bus
      */
     public abstract EventBus getEventBus();
-    
-    /**
-     * Get the logger for the Discord Bot Manager
-     * 
-     * @return The logger
-     */
-    public abstract Logger getLogger();
     
     /**
      * Create a new embed builder

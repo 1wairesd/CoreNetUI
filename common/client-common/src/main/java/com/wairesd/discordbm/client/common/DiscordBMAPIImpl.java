@@ -4,7 +4,6 @@ import com.wairesd.discordbm.api.DBMAPI;
 import com.wairesd.discordbm.api.command.CommandRegistration;
 import com.wairesd.discordbm.api.component.ComponentRegistry;
 import com.wairesd.discordbm.api.embed.EmbedBuilder;
-import com.wairesd.discordbm.api.logging.Logger;
 import com.wairesd.discordbm.api.message.MessageSender;
 import com.wairesd.discordbm.client.common.component.ComponentRegistryImpl;
 import com.wairesd.discordbm.common.embed.EmbedBuilderImpl;
@@ -64,14 +63,6 @@ public class DiscordBMAPIImpl extends DBMAPI {
             throw new NullPointerException("DiscordBM API: Platform is not initialized");
         }
         return componentRegistry;
-    }
-    
-    @Override
-    public Logger getLogger() {
-        if (platform == null) {
-            throw new NullPointerException("DiscordBM API: Platform is not initialized");
-        }
-        return logger;
     }
     
     @Override

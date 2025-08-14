@@ -27,8 +27,8 @@ public class NettyService {
 
     public void initializeNettyClient() {
         Platform platform = platformSupplier.get();
-        String host = platform.getVelocityHost();
-        int port = platform.getVelocityPort();
+        String host = platform.getHostIp();
+        int port = platform.getHostPort();
         
         if (host == null || host.isEmpty() || port <= 0) {
             pluginLogger.warn("Invalid host host or port configuration. Check your settings.yml.");

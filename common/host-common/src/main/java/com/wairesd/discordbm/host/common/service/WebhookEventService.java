@@ -13,11 +13,10 @@ public class WebhookEventService {
     public static void handlePlayerJoinEvent(String playerName, String playerIp, String serverName) {
         for (Webhook webhook : Webhooks.getWebhooks()) {
             if (!webhook.enabled()) continue;
-            
-            // Check if webhook is for specific server
+
             String webhookServer = webhook.server();
             if (webhookServer != null && !webhookServer.equalsIgnoreCase(serverName)) {
-                continue; // Skip if webhook is for different server
+                continue;
             }
             
             for (Action action : webhook.actions()) {
@@ -41,11 +40,10 @@ public class WebhookEventService {
     public static void handlePlayerQuitEvent(String playerName, String playerIp, String reason, String serverName) {
         for (Webhook webhook : Webhooks.getWebhooks()) {
             if (!webhook.enabled()) continue;
-            
-            // Check if webhook is for specific server
+
             String webhookServer = webhook.server();
             if (webhookServer != null && !webhookServer.equalsIgnoreCase(serverName)) {
-                continue; // Skip if webhook is for different server
+                continue;
             }
             
             for (Action action : webhook.actions()) {
