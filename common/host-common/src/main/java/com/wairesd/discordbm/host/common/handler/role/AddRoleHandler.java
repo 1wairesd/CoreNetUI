@@ -6,40 +6,75 @@ import com.wairesd.discordbm.common.models.response.RoleActionResponse;
 import io.netty.channel.ChannelHandlerContext;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 public class AddRoleHandler {
-    private final Object jda;
+
+    private static final Gson gson = new Gson();
+    private static final String GUILD_NOT_FOUND_ERROR = "Guild not found";
+    private static final String ROLE_NOT_FOUND_ERROR = "Role not found";
+
+    private final JDA jda;
 
     public AddRoleHandler(Object jda) {
-        this.jda = jda;
+        this.jda = (JDA) jda;
     }
 
     public void handle(ChannelHandlerContext ctx, AddRoleRequest req) {
-        JDA jdaInstance = (JDA) jda;
-        Guild guild = jdaInstance.getGuildById(req.getGuildId());
+        Guild guild = validateAndGetGuild(ctx, req);
         if (guild == null) {
-            sendRoleActionResponse(ctx, req.getRequestId(), false, "Guild not found");
             return;
         }
 
+        Role role = validateAndGetRole(ctx, req, guild);
+        if (role == null) {
+            return;
+        }
+
+        addRoleToMember(ctx, req, guild, role);
+    }
+
+    private Guild validateAndGetGuild(ChannelHandlerContext ctx, AddRoleRequest req) {
+        Guild guild = jda.getGuildById(req.getGuildId());
+        if (guild == null) {
+            sendErrorResponse(ctx, req.getRequestId(), GUILD_NOT_FOUND_ERROR);
+        }
+        return guild;
+    }
+
+    private Role validateAndGetRole(ChannelHandlerContext ctx, AddRoleRequest req, Guild guild) {
         Role role = guild.getRoleById(req.getRoleId());
         if (role == null) {
-            sendRoleActionResponse(ctx, req.getRequestId(), false, "Role not found");
-            return;
+            sendErrorResponse(ctx, req.getRequestId(), ROLE_NOT_FOUND_ERROR);
         }
+        return role;
+    }
 
+    private void addRoleToMember(ChannelHandlerContext ctx, AddRoleRequest req, Guild guild, Role role) {
         guild.retrieveMemberById(req.getUserId()).queue(
-                member -> guild.addRoleToMember(member, role).queue(
-                        success -> sendRoleActionResponse(ctx, req.getRequestId(), true, null),
-                        error -> sendRoleActionResponse(ctx, req.getRequestId(), false, error.getMessage())
-                ),
-                error -> sendRoleActionResponse(ctx, req.getRequestId(), false, error.getMessage())
+                member -> executeAddRoleAction(ctx, req, guild, member, role),
+                error -> sendErrorResponse(ctx, req.getRequestId(), error.getMessage())
         );
     }
 
+    private void executeAddRoleAction(ChannelHandlerContext ctx, AddRoleRequest req, Guild guild, Member member, Role role) {
+        guild.addRoleToMember(member, role).queue(
+                success -> sendSuccessResponse(ctx, req.getRequestId()),
+                error -> sendErrorResponse(ctx, req.getRequestId(), error.getMessage())
+        );
+    }
+
+    private void sendSuccessResponse(ChannelHandlerContext ctx, String requestId) {
+        sendRoleActionResponse(ctx, requestId, true, null);
+    }
+
+    private void sendErrorResponse(ChannelHandlerContext ctx, String requestId, String errorMessage) {
+        sendRoleActionResponse(ctx, requestId, false, errorMessage);
+    }
+
     private void sendRoleActionResponse(ChannelHandlerContext ctx, String requestId, boolean success, String error) {
-        RoleActionResponse resp = new RoleActionResponse(requestId, success, error);
-        ctx.channel().writeAndFlush(new Gson().toJson(resp));
+        RoleActionResponse response = new RoleActionResponse(requestId, success, error);
+        ctx.channel().writeAndFlush(gson.toJson(response));
     }
 }

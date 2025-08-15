@@ -39,18 +39,27 @@ public class Settings {
 
     private static void loadConfig() {
         try {
-            Yaml yaml = new Yaml();
+            Yaml yaml = ConfigConverter.createFormattedYaml();
             try (FileInputStream inputStream = new FileInputStream(configFile)) {
                 config = yaml.load(inputStream);
             }
             if (config == null) {
                 config = new LinkedHashMap<>();
             }
+
+            if (migrateConfigIfNeeded()) {
+                try (BufferedWriter writer = Files.newBufferedWriter(configFile.toPath(), StandardCharsets.UTF_8)) {
+                    yaml.dump(config, writer);
+                }
+                logger.info("settings.yml migrated to latest version");
+            }
+
             validateConfig();
         } catch (Exception e) {
             logger.error("Error loading settings.yml: {}", e.getMessage(), e);
         }
     }
+
 
     public static void reload() {
         loadConfig();
@@ -189,17 +198,20 @@ public class Settings {
 
     public static String getDatabaseJdbcUrl(String sqlitePath) {
         if (isMySQLEnabled()) {
-            return String.format(
-                    "jdbc:mysql://%s:%d/%s%s",
-                    getMySQLHost(),
-                    getMySQLPort(),
-                    getMySQLDatabase(),
-                    getMySQLParams()
-            ) + String.format("&user=%s&password=%s", getMySQLUsername(), getMySQLPassword());
+            String host = getConfigValue(NEW_ROOT + ".mysql.host", "localhost").toString();
+            int port = getIntConfigValue(NEW_ROOT + ".mysql.port", 3306);
+            String database = getConfigValue(NEW_ROOT + ".mysql.database", "discordbm").toString();
+            String params = getConfigValue(NEW_ROOT + ".mysql.params", "?useSSL=false&serverTimezone=UTC").toString();
+            String user = getConfigValue(NEW_ROOT + ".mysql.username", "root").toString();
+            String pass = getConfigValue(NEW_ROOT + ".mysql.password", "password").toString();
+
+            return String.format("jdbc:mysql://%s:%d/%s%s&user=%s&password=%s",
+                    host, port, database, params, user, pass);
         } else {
             return "jdbc:sqlite:" + sqlitePath;
         }
     }
+
 
     private static Object getConfigValue(String path, Object defaultValue) {
         String[] keys = path.split("\\.");

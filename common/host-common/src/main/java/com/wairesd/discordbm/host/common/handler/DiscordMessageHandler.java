@@ -10,28 +10,38 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 
 public class DiscordMessageHandler {
+
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
     private static final String DISCORD_MESSAGE_CHANNEL = "discord:message";
 
-    public DiscordMessageHandler() {
-    }
-
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        if (DISCORD_MESSAGE_CHANNEL.equals(event.getIdentifier().getId())) {
-            handleDiscordMessage(event);
+        if (isDiscordMessageChannel(event)) {
+            processDiscordMessage(event);
         }
     }
 
-    private void handleDiscordMessage(PluginMessageEvent event) {
-        String message = new String(event.getData(), StandardCharsets.UTF_8);
-        logDebugMessage(message);
-        event.setResult(PluginMessageEvent.ForwardResult.handled());
+    private boolean isDiscordMessageChannel(PluginMessageEvent event) {
+        return DISCORD_MESSAGE_CHANNEL.equals(event.getIdentifier().getId());
     }
 
-    private void logDebugMessage(String message) {
+    private void processDiscordMessage(PluginMessageEvent event) {
+        String message = extractMessageFromEvent(event);
+        logMessageIfDebugEnabled(message);
+        markEventAsHandled(event);
+    }
+
+    private String extractMessageFromEvent(PluginMessageEvent event) {
+        return new String(event.getData(), StandardCharsets.UTF_8);
+    }
+
+    private void logMessageIfDebugEnabled(String message) {
         if (Settings.isDebugPluginConnections()) {
             logger.info("Received message from Bukkit plugin: {}", message);
         }
+    }
+
+    private void markEventAsHandled(PluginMessageEvent event) {
+        event.setResult(PluginMessageEvent.ForwardResult.handled());
     }
 }

@@ -8,6 +8,7 @@ import com.wairesd.discordbm.host.common.models.request.RequestMessage;
 import com.wairesd.discordbm.host.common.network.NettyServer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
@@ -21,9 +22,9 @@ public class ServerSelector {
     private static final String SELECT_MENU_PREFIX = "select_server_";
 
     private final ConcurrentHashMap<String, SelectionInfo> pendingSelections = new ConcurrentHashMap<>();
-
     private final RequestSender requestSender;
     private final ResponseHelper responseHelper;
+    private final Gson gson = new Gson();
 
     public ServerSelector(RequestSender requestSender, ResponseHelper responseHelper) {
         this.requestSender = requestSender;
@@ -35,11 +36,7 @@ public class ServerSelector {
         pendingSelections.put(selectMenuId, new SelectionInfo(event, servers));
 
         StringSelectMenu menu = createServerSelectMenu(selectMenuId, servers);
-
-        event.reply(Messages.get(Messages.Keys.SERVER_SELECTION_PROMPT))
-                .addActionRow(menu)
-                .setEphemeral(true)
-                .queue();
+        replyWithSelectionMenu(event, menu);
     }
 
     public boolean isValidSelectMenu(StringSelectInteractionEvent event) {
@@ -47,13 +44,13 @@ public class ServerSelector {
     }
 
     public void handleSelection(StringSelectInteractionEvent event) {
-        SelectionInfo selectionInfo = pendingSelections.remove(event.getComponentId());
+        SelectionInfo selectionInfo = removePendingSelection(event.getComponentId());
         if (selectionInfo == null) {
             responseHelper.replySelectionTimeout(event);
             return;
         }
 
-        String chosenServerName = event.getValues().stream().findFirst().orElse(null);
+        String chosenServerName = extractSelectedServerName(event);
         if (chosenServerName == null) {
             responseHelper.replyNoServerSelected(event);
             return;
@@ -65,24 +62,61 @@ public class ServerSelector {
             return;
         }
 
-        event.deferEdit().queue(hook -> {
-            SlashCommandInteractionEvent originalEvent = selectionInfo.event();
-            String commandName = originalEvent.getName();
+        processServerSelection(event, selectionInfo.event(), targetServer, chosenServerName);
+    }
 
+    private void replyWithSelectionMenu(SlashCommandInteractionEvent event, StringSelectMenu menu) {
+        event.reply(Messages.get(Messages.Keys.SERVER_SELECTION_PROMPT))
+                .addActionRow(menu)
+                .setEphemeral(true)
+                .queue();
+    }
+
+    private SelectionInfo removePendingSelection(String componentId) {
+        return pendingSelections.remove(componentId);
+    }
+
+    private String extractSelectedServerName(StringSelectInteractionEvent event) {
+        return event.getValues().stream().findFirst().orElse(null);
+    }
+
+    private void processServerSelection(StringSelectInteractionEvent event, SlashCommandInteractionEvent originalEvent,
+                                        NettyServer.ServerInfo targetServer, String chosenServerName) {
+        event.deferEdit().queue(hook -> {
             UUID requestId = UUID.randomUUID();
-            Map<String, String> options = originalEvent.getOptions().stream()
-                    .collect(Collectors.toMap(opt -> opt.getName(), opt -> opt.getAsString()));
-            
-            RequestMessage request = new RequestMessage("request", commandName, options, requestId.toString());
-            String json = new Gson().toJson(request);
-            
-            requestSender.storeInteractionHook(requestId, hook);
-            requestSender.storeServerNameForRequest(requestId, chosenServerName);
-            
-            targetServer.channel().writeAndFlush(json);
-            
-            hook.editOriginal(Messages.get(Messages.Keys.SERVER_PROCESSING, chosenServerName)).queue();
+            RequestMessage request = createRequestMessage(originalEvent, requestId);
+            String json = gson.toJson(request);
+
+            storeRequestData(requestId, hook, chosenServerName);
+            sendRequestToServer(targetServer, json);
+            updateUserInterface(hook, chosenServerName);
         });
+    }
+
+    private RequestMessage createRequestMessage(SlashCommandInteractionEvent originalEvent, UUID requestId) {
+        String commandName = originalEvent.getName();
+        Map<String, String> options = extractOptionsFromEvent(originalEvent);
+        return new RequestMessage("request", commandName, options, requestId.toString());
+    }
+
+    private Map<String, String> extractOptionsFromEvent(SlashCommandInteractionEvent event) {
+        return event.getOptions().stream()
+                .collect(Collectors.toMap(opt -> opt.getName(), opt -> opt.getAsString()));
+    }
+
+    private void storeRequestData(UUID requestId, InteractionHook hook, String chosenServerName) {
+        requestSender.storeInteractionHook(requestId, hook);
+        requestSender.storeServerNameForRequest(requestId, chosenServerName);
+    }
+
+    private void sendRequestToServer(NettyServer.ServerInfo targetServer, String json) {
+        targetServer.channel().writeAndFlush(json);
+    }
+
+    private void updateUserInterface(Object hook, String chosenServerName) {
+        ((net.dv8tion.jda.api.interactions.InteractionHook) hook)
+                .editOriginal(Messages.get(Messages.Keys.SERVER_PROCESSING, chosenServerName))
+                .queue();
     }
 
     private NettyServer.ServerInfo findTargetServer(List<NettyServer.ServerInfo> servers, String chosenServerName) {
@@ -97,10 +131,17 @@ public class ServerSelector {
     }
 
     private StringSelectMenu createServerSelectMenu(String selectMenuId, List<NettyServer.ServerInfo> servers) {
-        List<SelectOption> options = servers.stream()
+        List<SelectOption> options = createSelectOptions(servers);
+        return buildStringSelectMenu(selectMenuId, options);
+    }
+
+    private List<SelectOption> createSelectOptions(List<NettyServer.ServerInfo> servers) {
+        return servers.stream()
                 .map(server -> SelectOption.of(server.serverName(), server.serverName()))
                 .collect(Collectors.toList());
+    }
 
+    private StringSelectMenu buildStringSelectMenu(String selectMenuId, List<SelectOption> options) {
         return StringSelectMenu.create(selectMenuId)
                 .setPlaceholder(Messages.get(Messages.Keys.SERVER_SELECTION_PLACEHOLDER))
                 .setRequiredRange(1, 1)
@@ -110,4 +151,4 @@ public class ServerSelector {
 
     public record SelectionInfo(SlashCommandInteractionEvent event, List<NettyServer.ServerInfo> servers) {
     }
-} 
+}
