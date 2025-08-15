@@ -15,17 +15,47 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class EmbedFactoryUtils {
-    private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
 
-    public static CompletableFuture<MessageEmbed> create(Map<String, Object> embedMap, Interaction event, Context context) {
+    private static final PluginLogger logger =
+            new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
+
+    public static CompletableFuture<MessageEmbed> create(
+            Map<String, Object> embedMap, Interaction event, Context context) {
         EmbedBuilder builder = new EmbedBuilder();
         List<CompletableFuture<?>> futures = new ArrayList<>();
 
+        processBasicStrings(embedMap, event, context, futures, builder);
+        processUrls(embedMap, event, context, futures, builder);
+        processColor(embedMap, builder);
+        processAuthor(embedMap, event, context, futures, builder);
+        processFooter(embedMap, event, context, futures, builder);
+        processFields(embedMap, event, context, futures, builder);
+
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> builder.build());
+    }
+
+    private static void processBasicStrings(
+            Map<String, Object> embedMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
         processString(embedMap, "title", event, context, futures, builder::setTitle);
         processString(embedMap, "description", event, context, futures, builder::setDescription);
+    }
+
+    private static void processUrls(
+            Map<String, Object> embedMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
         processUrl(embedMap, "thumbnail", event, context, futures, builder::setThumbnail);
         processUrl(embedMap, "image", event, context, futures, builder::setImage);
+    }
 
+    private static void processColor(Map<String, Object> embedMap, EmbedBuilder builder) {
         if (embedMap.containsKey("color")) {
             try {
                 builder.setColor(parseColor(embedMap.get("color")));
@@ -33,40 +63,72 @@ public class EmbedFactoryUtils {
                 logger.warn("Invalid color format: {}", embedMap.get("color"));
             }
         }
-
-        if (embedMap.get("author") instanceof Map) {
-            Map<String, Object> authorMap = (Map<String, Object>) embedMap.get("author");
-            processAuthor(authorMap, event, context, futures, builder);
-        } else if (embedMap.get("author") instanceof String) {
-            processString(embedMap, "author", event, context, futures, (name) -> builder.setAuthor(name, null, null));
-        }
-
-        if (embedMap.get("footer") instanceof Map) {
-            Map<String, Object> footerMap = (Map<String, Object>) embedMap.get("footer");
-            processFooter(footerMap, event, context, futures, builder);
-        } else if (embedMap.get("footer") instanceof String) {
-            processString(embedMap, "footer", event, context, futures, (text) -> builder.setFooter(text, null));
-        }
-
-        if (embedMap.get("fields") instanceof List) {
-            List<Map<String, Object>> fields = (List<Map<String, Object>>) embedMap.get("fields");
-            processFields(fields, event, context, futures, builder);
-        }
-
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .thenApply(v -> builder.build());
     }
 
-    private static void processString(Map<String, Object> map, String key, Interaction event, Context context, List<CompletableFuture<?>> futures, Consumer<String> consumer) {
+    private static void processAuthor(
+            Map<String, Object> embedMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
+        Object authorObj = embedMap.get("author");
+        if (authorObj instanceof Map) {
+            processAuthorMap((Map<String, Object>) authorObj, event, context, futures, builder);
+        } else if (authorObj instanceof String) {
+            processString(embedMap, "author", event, context, futures,
+                    name -> builder.setAuthor(name, null, null));
+        }
+    }
+
+    private static void processFooter(
+            Map<String, Object> embedMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
+        Object footerObj = embedMap.get("footer");
+        if (footerObj instanceof Map) {
+            processFooterMap((Map<String, Object>) footerObj, event, context, futures, builder);
+        } else if (footerObj instanceof String) {
+            processString(embedMap, "footer", event, context, futures, text -> builder.setFooter(text, null));
+        }
+    }
+
+    private static void processFields(
+            Map<String, Object> embedMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
+        Object fieldsObj = embedMap.get("fields");
+        if (fieldsObj instanceof List) {
+            processFieldsList((List<Map<String, Object>>) fieldsObj, event, context, futures, builder);
+        }
+    }
+
+    private static void processString(
+            Map<String, Object> map,
+            String key,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            Consumer<String> consumer) {
         if (map.containsKey(key)) {
             Object value = map.get(key);
             if (value != null) {
-                futures.add(MessageFormatterUtils.format(value.toString(), event, context, false).thenAccept(consumer));
+                futures.add(MessageFormatterUtils.format(value.toString(), event, context, false)
+                        .thenAccept(consumer));
             }
         }
     }
 
-    private static void processUrl(Map<String, Object> map, String key, Interaction event, Context context, List<CompletableFuture<?>> futures, Consumer<String> consumer) {
+    private static void processUrl(
+            Map<String, Object> map,
+            String key,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            Consumer<String> consumer) {
         processString(map, key, event, context, futures, url -> {
             if (isValidUrl(url)) {
                 consumer.accept(url);
@@ -74,7 +136,12 @@ public class EmbedFactoryUtils {
         });
     }
 
-    private static void processAuthor(Map<String, Object> authorMap, Interaction event, Context context, List<CompletableFuture<?>> futures, EmbedBuilder builder) {
+    private static void processAuthorMap(
+            Map<String, Object> authorMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
         Object nameObj = authorMap.get("name");
         if (nameObj != null) {
             CompletableFuture<String> nameFuture = MessageFormatterUtils.format(nameObj.toString(), event, context, false);
@@ -86,7 +153,12 @@ public class EmbedFactoryUtils {
         }
     }
 
-    private static void processFooter(Map<String, Object> footerMap, Interaction event, Context context, List<CompletableFuture<?>> futures, EmbedBuilder builder) {
+    private static void processFooterMap(
+            Map<String, Object> footerMap,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
         Object textObj = footerMap.get("text");
         if (textObj != null) {
             CompletableFuture<String> textFuture = MessageFormatterUtils.format(textObj.toString(), event, context, false);
@@ -97,7 +169,12 @@ public class EmbedFactoryUtils {
         }
     }
 
-    private static void processFields(List<Map<String, Object>> fields, Interaction event, Context context, List<CompletableFuture<?>> futures, EmbedBuilder builder) {
+    private static void processFieldsList(
+            List<Map<String, Object>> fields,
+            Interaction event,
+            Context context,
+            List<CompletableFuture<?>> futures,
+            EmbedBuilder builder) {
         for (Map<String, Object> field : fields) {
             Object nameObj = field.get("name");
             Object valueObj = field.get("value");
@@ -111,7 +188,7 @@ public class EmbedFactoryUtils {
             }
         }
     }
-    
+
     private static boolean isValidUrl(String url) {
         return url != null && (url.startsWith("http://") || url.startsWith("https://"));
     }

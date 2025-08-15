@@ -1,7 +1,6 @@
 package com.wairesd.discordbm.host.common.commandbuilder.interaction.page;
 
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.actions.CommandAction;
-import com.wairesd.discordbm.host.common.commandbuilder.components.buttons.model.ButtonConfig;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.context.Context;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.pages.Page;
 import com.wairesd.discordbm.host.common.commandbuilder.core.models.placeholders.PlaceholdersResolved;
@@ -9,10 +8,7 @@ import com.wairesd.discordbm.host.common.commandbuilder.utils.EmbedFactoryUtils;
 import com.wairesd.discordbm.host.common.commandbuilder.utils.MessageFormatterUtils;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.slf4j.LoggerFactory;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -28,33 +24,47 @@ public class SendPageAction implements CommandAction {
 
     @Override
     public CompletableFuture<Void> execute(Context context) {
-        String pageId = PlaceholdersResolved.replaceSync(pageIdTemplate, context);
-        if (pageId == null || pageId.isBlank()) pageId = "1";
+        String pageId = resolvePageId(context);
+        Page page = getPageOrSetError(context, pageId);
+        if (page == null) return CompletableFuture.completedFuture(null);
 
+        context.addActionRow(createButtonsRow(page));
+
+        return resolvePageContent(page, context);
+    }
+
+    private String resolvePageId(Context context) {
+        String id = PlaceholdersResolved.replaceSync(pageIdTemplate, context);
+        return (id == null || id.isBlank()) ? "1" : id;
+    }
+
+    private Page getPageOrSetError(Context context, String pageId) {
         Page page = pageMap.get(pageId);
         if (page == null) {
             context.setMessageText("Page not found. (ID=" + pageId + ")");
-            return CompletableFuture.completedFuture(null);
         }
+        return page;
+    }
 
-        List<Button> buttons = new ArrayList<>();
-        for (ButtonConfig cfg : page.getButtons()) {
-            buttons.add(Button.primary("goto:" + cfg.getTargetPage(), cfg.getLabel()));
-        }
-        context.addActionRow(ActionRow.of(buttons));
+    private ActionRow createButtonsRow(Page page) {
+        List<Button> buttons = page.getButtons().stream()
+                .map(cfg -> Button.primary("goto:" + cfg.getTargetPage(), cfg.getLabel()))
+                .toList();
+        return ActionRow.of(buttons);
+    }
 
+    private CompletableFuture<Void> resolvePageContent(Page page, Context context) {
         if (page.getEmbedConfig() != null) {
-            return EmbedFactoryUtils
-                    .create(page.getEmbedConfig(), context.getEvent(), context)
+            return EmbedFactoryUtils.create(page.getEmbedConfig(), context.getEvent(), context)
                     .thenAccept(context::setEmbed);
         }
-        else if (page.getContent() != null) {
+
+        if (page.getContent() != null) {
             return MessageFormatterUtils.format(page.getContent(), context.getEvent(), context, false)
                     .thenAccept(context::setMessageText);
         }
-        else {
-            context.setMessageText("Invalid page configuration - no content or embed found. (ID=" + pageId + ")");
-            return CompletableFuture.completedFuture(null);
-        }
+
+        context.setMessageText("Invalid page configuration - no content or embed found. (ID=" + resolvePageId(context) + ")");
+        return CompletableFuture.completedFuture(null);
     }
 }

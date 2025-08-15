@@ -16,13 +16,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DiscordBMHPlatformManager {
+    private static final int DEFAULT_THREAD_POOL_SIZE = 4;
+
     private final ProxyServer proxyServer;
     private final PluginLogger logger;
     private final DiscordBMThreadPool threadPool;
-    private final Map<String, Object> formHandlers = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<UUID, InteractionHook> pendingButtonRequests = new ConcurrentHashMap<>();
-    
+    private final Map<String, Object> formHandlers;
+    private final Map<UUID, InteractionHook> pendingButtonRequests;
     private final MessageManager messageManager;
+
     private CommandManager commandManager;
     private NettyServer nettyServer;
     private DiscordBotManager discordBotManager;
@@ -32,14 +34,12 @@ public class DiscordBMHPlatformManager {
         this.proxyServer = proxyServer;
         this.logger = logger;
         this.pageMap = pageMap;
-        this.threadPool = new DiscordBMThreadPool(4);
+        this.threadPool = createThreadPool();
         this.messageManager = new MessageManager();
+        this.formHandlers = new ConcurrentHashMap<>();
+        this.pendingButtonRequests = new ConcurrentHashMap<>();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (threadPool != null) {
-                threadPool.shutdown();
-            }
-        }));
+        registerShutdownHook();
     }
 
     public void setNettyServer(NettyServer nettyServer) {
@@ -47,7 +47,7 @@ public class DiscordBMHPlatformManager {
     }
 
     public void attachDatabaseToManagers(Database database) {
-        this.messageManager.setDatabase(database);
+        messageManager.setDatabase(database);
     }
 
     public void setCommandManager(CommandManager commandManager) {
@@ -58,16 +58,33 @@ public class DiscordBMHPlatformManager {
         this.discordBotManager = discordBotManager;
     }
 
-    public void setPageMap(Map<String, Page> pageMap) {
-        this.pageMap = pageMap;
-    }
-
-    public Map<UUID, InteractionHook> getPendingButtonRequests() {
-        return pendingButtonRequests;
+    public void updateActivity() {
+        if (isDiscordBotManagerAvailable()) {
+            discordBotManager.updateActivity(
+                    Settings.getActivityType(),
+                    Settings.getActivityMessage()
+            );
+        }
     }
 
     public void storePendingButtonRequest(UUID requestId, InteractionHook hook) {
         pendingButtonRequests.put(requestId, hook);
+    }
+
+    public void setGlobalMessageLabel(String key, String channelId, String messageId) {
+        messageManager.setGlobalMessageLabel(key, channelId, messageId);
+    }
+
+    public void removeGlobalMessageLabel(String key) {
+        messageManager.removeGlobalMessageLabel(key);
+    }
+
+    public void removeMessageReference(String key, String channelId, String messageId) {
+        messageManager.removeMessageReference(key, channelId, messageId);
+    }
+
+    public Map<UUID, InteractionHook> getPendingButtonRequests() {
+        return pendingButtonRequests;
     }
 
     public Map<String, Page> getPageMap() {
@@ -90,21 +107,12 @@ public class DiscordBMHPlatformManager {
         return formHandlers;
     }
 
-    public void updateActivity() {
-        if (discordBotManager != null) {
-            discordBotManager.updateActivity(
-                Settings.getActivityType(),
-                Settings.getActivityMessage()
-            );
-        }
-    }
-
     public ProxyServer getVelocityProxy() {
         return proxyServer;
     }
 
-    public void setGlobalMessageLabel(String key, String channelId, String messageId) {
-        messageManager.setGlobalMessageLabel(key, channelId, messageId);
+    public PluginLogger getLogger() {
+        return logger;
     }
 
     public String getGlobalMessageLabel(String key) {
@@ -115,24 +123,30 @@ public class DiscordBMHPlatformManager {
         return messageManager.getMessageReference(key);
     }
 
+    public List<String[]> getAllMessageReferencesByLabel(String key) {
+        return messageManager.getAllMessageReferencesByLabel(key);
+    }
+
     @Deprecated
     public List<String[]> getAllMessageReferences(String labelPrefix, String guildId) {
         return messageManager.getAllMessageReferences(labelPrefix, guildId);
     }
 
-    public void removeGlobalMessageLabel(String key) {
-        messageManager.removeGlobalMessageLabel(key);
+    private DiscordBMThreadPool createThreadPool() {
+        return new DiscordBMThreadPool(DEFAULT_THREAD_POOL_SIZE);
     }
 
-    public PluginLogger getLogger() {
-        return logger;
+    private void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownThreadPool));
     }
 
-    public List<String[]> getAllMessageReferencesByLabel(String key) {
-        return messageManager.getAllMessageReferencesByLabel(key);
+    private void shutdownThreadPool() {
+        if (threadPool != null) {
+            threadPool.shutdown();
+        }
     }
 
-    public void removeMessageReference(String key, String channelId, String messageId) {
-        messageManager.removeMessageReference(key, channelId, messageId);
+    private boolean isDiscordBotManagerAvailable() {
+        return discordBotManager != null;
     }
-} 
+}

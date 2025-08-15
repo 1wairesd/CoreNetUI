@@ -118,7 +118,6 @@ public class Settings {
         return settingsConfig.node("DiscordBM", "debug", "debug-client-responses").getBoolean(false);
     }
 
-
     public static boolean isDebugCommandRegistrations() {
         return settingsConfig.node("DiscordBM", "debug", "debug-command-registrations").getBoolean(false);
     }

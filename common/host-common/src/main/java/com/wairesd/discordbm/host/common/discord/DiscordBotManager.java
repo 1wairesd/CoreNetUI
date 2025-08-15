@@ -15,65 +15,48 @@ import java.util.EnumSet;
 
 public class DiscordBotManager {
     private static final PluginLogger logger = new Slf4jPluginLogger(LoggerFactory.getLogger("DiscordBM"));
+    private static final String DEFAULT_INVALID_TOKEN = "your-bot-token";
+
+    private final ActivityFactory activityFactory;
     private JDA jda;
     private boolean initialized = false;
 
     public DiscordBotManager() {
+        this.activityFactory = new ActivityFactory();
     }
 
     public void initializeBot(String token, String activityType, String activityMessage) {
-        if (token == null || token.isEmpty() || "your-bot-token".equals(token)) {
-            logger.error("❌ Bot token is not specified or invalid!");
-            logger.error("Please set a valid bot token in settings.yml under Discord.Bot-token");
+        if (!isValidToken(token)) {
+            logInvalidToken();
             return;
         }
-        if (initialized) {
-            logger.warn("Bot is already initialized!");
+
+        if (isAlreadyInitialized()) {
             return;
         }
 
         try {
-            ActivityFactory activityFactory = new ActivityFactory();
             Activity activity = activityFactory.createActivity(activityType, activityMessage);
-
-            jda = JDABuilder.createDefault(token)
-                    .enableIntents(EnumSet.of(
-                            GatewayIntent.GUILD_MESSAGES,
-                            GatewayIntent.DIRECT_MESSAGES,
-                            GatewayIntent.MESSAGE_CONTENT,
-                            GatewayIntent.GUILD_PRESENCES,
-                            GatewayIntent.GUILD_MEMBERS
-                    ))
-                    .setActivity(activity)
-                    .build()
-                    .awaitReady();
-
+            jda = buildJda(token, activity);
             initialized = true;
         } catch (InvalidTokenException e) {
-            logger.error("Invalid bot token provided!");
-            logger.error("Please check your bot token in settings.yml and make sure it's correct");
-            jda = null;
-            initialized = false;
+            handleInvalidTokenException();
         } catch (Exception e) {
-            logger.error("Error initializing Discord bot: {}", e.getMessage());
-            jda = null;
-            initialized = false;
+            handleInitializationException(e);
         }
     }
 
     public void updateActivity(String activityType, String activityMessage) {
-        if (!initialized || jda == null) {
-            logger.warn("JDA is not initialized — cannot update activity");
+        if (!isJdaReady()) {
             return;
         }
-        ActivityFactory activityFactory = new ActivityFactory();
+
         ActivityUpdater activityUpdater = new ActivityUpdater(jda, activityFactory);
         activityUpdater.updateActivity(activityType, activityMessage);
     }
 
     public JDA getJda() {
-        if (!initialized || jda == null) {
-            logger.warn("JDA is not initialized yet!");
+        if (!isJdaReady()) {
             return null;
         }
         return jda;
@@ -83,5 +66,64 @@ public class DiscordBotManager {
         if (jda != null) {
             jda.shutdownNow();
         }
+    }
+
+    private boolean isValidToken(String token) {
+        return token != null && !token.isEmpty() && !DEFAULT_INVALID_TOKEN.equals(token);
+    }
+
+    private void logInvalidToken() {
+        logger.error("❌ Bot token is not specified or invalid!");
+        logger.error("Please set a valid bot token in settings.yml under Discord.Bot-token");
+    }
+
+    private boolean isAlreadyInitialized() {
+        if (initialized) {
+            logger.warn("Bot is already initialized!");
+            return true;
+        }
+        return false;
+    }
+
+    private JDA buildJda(String token, Activity activity) throws Exception {
+        return JDABuilder.createDefault(token)
+                .enableIntents(getRequiredIntents())
+                .setActivity(activity)
+                .build()
+                .awaitReady();
+    }
+
+    private EnumSet<GatewayIntent> getRequiredIntents() {
+        return EnumSet.of(
+                GatewayIntent.GUILD_MESSAGES,
+                GatewayIntent.DIRECT_MESSAGES,
+                GatewayIntent.MESSAGE_CONTENT,
+                GatewayIntent.GUILD_PRESENCES,
+                GatewayIntent.GUILD_MEMBERS
+        );
+    }
+
+    private void handleInvalidTokenException() {
+        logger.error("Invalid bot token provided!");
+        logger.error("Please check your bot token in settings.yml and make sure it's correct");
+        resetJdaState();
+    }
+
+    private void handleInitializationException(Exception e) {
+        logger.error("Error initializing Discord bot: {}", e.getMessage());
+        resetJdaState();
+    }
+
+    private void resetJdaState() {
+        jda = null;
+        initialized = false;
+    }
+
+    private boolean isJdaReady() {
+        if (!initialized || jda == null) {
+            logger.warn("JDA is not initialized — cannot update activity");
+            return false;
+        }
+        return true;
     }
 }
