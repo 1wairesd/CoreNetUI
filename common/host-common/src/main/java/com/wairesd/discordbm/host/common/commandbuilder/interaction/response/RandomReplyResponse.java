@@ -17,7 +17,7 @@ public class RandomReplyResponse implements ResponseStrategy {
                 : context.getMessageText();
         InteractionHook hook = context.getHook();
         if (hook != null) {
-            hook.sendMessage(message).queue();
+            hook.sendMessage(message).setEphemeral(context.isEphemeral()).queue();
         }
     }
 } 

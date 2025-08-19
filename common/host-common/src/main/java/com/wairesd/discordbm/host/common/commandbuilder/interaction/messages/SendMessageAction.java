@@ -36,6 +36,7 @@ public class SendMessageAction implements CommandAction {
     private final String replyMessageId;
     private final boolean replyMentionAuthor;
     private final List<String> messageList;
+    private final boolean ephemeral;
     private static final Random RANDOM = new Random();
 
     public SendMessageAction(Map<String, Object> properties) {
@@ -61,10 +62,15 @@ public class SendMessageAction implements CommandAction {
         this.label = (String) properties.get("label");
         this.replyMessageId = (String) properties.get("reply_message_id");
         this.replyMentionAuthor = properties.get("reply_mention_author") instanceof Boolean ? (Boolean) properties.get("reply_mention_author") : false;
+        this.ephemeral = properties.get("ephemeral") instanceof Boolean ? (Boolean) properties.get("ephemeral") : false;
     }
 
     public String getReplyMessageId() {
         return replyMessageId;
+    }
+
+    public boolean isEphemeral() {
+        return ephemeral;
     }
 
     @Override
@@ -134,6 +140,7 @@ public class SendMessageAction implements CommandAction {
                         } catch (Exception e) {
                         }
                     } else {
+                        context.setEphemeral(this.ephemeral);
                         ResponseStrategy strategy = ResponseStrategyFactory.getStrategy(responseType);
                         strategy.apply(context, formattedTargetId);
                     }

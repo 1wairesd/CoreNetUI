@@ -18,6 +18,17 @@ public class CommandProcessor {
     public void process(CommandStructured command, Context context, SlashCommandInteractionEvent event, CommandResponder responder) {
         boolean ephemeral = false;
 
+        for (CommandAction action : command.getActions()) {
+            if (action instanceof SendMessageAction sendMsg) {
+                if (sendMsg.getReplyMessageId() != null && !sendMsg.getReplyMessageId().isEmpty()) {
+                } else if (sendMsg.isEphemeral()) {
+                    ephemeral = true;
+                }
+            }
+        }
+
+        context.setEphemeral(ephemeral);
+
         boolean hasCustomReply = false;
         for (CommandAction action : command.getActions()) {
             if (action instanceof SendMessageAction sendMsg && sendMsg.getReplyMessageId() != null && !sendMsg.getReplyMessageId().isEmpty()) {

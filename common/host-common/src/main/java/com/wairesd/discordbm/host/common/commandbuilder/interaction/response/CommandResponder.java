@@ -91,7 +91,7 @@ public class CommandResponder {
         var msg = hook.sendMessage(context.replacePlaceholders(context.getMessageText()));
         if (context.getEmbed() != null) msg.setEmbeds(context.getEmbed());
         if (!context.getActionRows().isEmpty()) msg.setComponents(context.getActionRows());
-        msg.queue(m -> label(context, m.getChannel().getId(), m.getId()));
+        msg.setEphemeral(context.isEphemeral()).queue(m -> label(context, m.getChannel().getId(), m.getId()));
     }
 
     private void sendToChannel(JDA jda, Context context) {

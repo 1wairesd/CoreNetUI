@@ -36,6 +36,7 @@ public class Context {
     private Map<String, String> resolvedPlaceholders = new HashMap<>();
     private ButtonData buttonData;
     private List<String> messageList;
+    private boolean ephemeral = false;
 
     public Context(ModalInteractionEvent event) {
         if (event == null) {
@@ -266,5 +267,13 @@ public class Context {
     }
     public void setMessageList(List<String> messageList) {
         this.messageList = messageList;
+    }
+
+    public boolean isEphemeral() {
+        return ephemeral;
+    }
+
+    public void setEphemeral(boolean ephemeral) {
+        this.ephemeral = ephemeral;
     }
 }
