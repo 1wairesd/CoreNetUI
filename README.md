@@ -3,7 +3,9 @@
 | [Wiki](https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/dscordbm-main) |
 |------------------------------------------------------------------------------------------|
 
-**PROJECT IS CURRENTLY IN BETA VERSION**
+<div style="background-color:#FFA500; color:white; padding:10px; border-radius:8px; text-align:center; font-weight:bold; font-size:1.2em;">
+PROJECT IS CURRENTLY IN BETA VERSION
+</div>
 
 ## API
 
