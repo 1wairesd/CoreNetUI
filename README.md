@@ -3,7 +3,7 @@
 | [Wiki](https://1wairesd.github.io/1wairesdIndustriesWiki/docs/DiscordBM/dscordbm-main) |
 |------------------------------------------------------------------------------------------|
 
-<span style="color:orange">Project is currently in beta version</span>
+**PROJECT IS CURRENTLY IN BETA VERSION**
 
 ## API
 
