@@ -36,11 +36,11 @@ public final class DBMDonateCase extends JavaPlugin {
         this.messages = new Messages(this);
 
         try {
-            Class<?> dailyCaseApiClass = Class.forName("com.wairesd.dceverydaycase.api.DailyCaseApi");
+            Class<?> dailyCaseApiClass = Class.forName("com.wairesd.dceverydaycase.api.DCEDCAPI");
             this.edcApi = dailyCaseApiClass.getMethod("getInstance").invoke(null);
             this.edcAvailable = true;
         } catch (ClassNotFoundException e) {
-            getLogger().warning("DCEveryDayCase API is not available: DailyCaseApi class not found");
+            getLogger().warning("DCEveryDayCase API is not available: DCEDCAPI class not found");
             this.edcAvailable = false;
         } catch (Exception e) {
             getLogger().warning("Error initializing DCEveryDayCase API: " + e.getMessage());

@@ -7,13 +7,12 @@ repositories {
     maven {url = "https://repo.papermc.io/repository/maven-public/"}
     maven {url = "https://oss.sonatype.org/content/groups/public/"}
     maven {url = "https://repo.jodex.xyz/releases"}
-    maven {url = "https://jitpack.io"}
 }
 
 dependencies {
     compileOnly project(":api:bukkit-api")
     compileOnly("com.jodexindustries.donatecase:spigot-api:2.1.0.5")
-    compileOnly("com.github.1wairesd:DCEveryDayCase:8166ea2")
+    compileOnly("com.wairesd.dceverydaycase:api:2.0")
 
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 }
