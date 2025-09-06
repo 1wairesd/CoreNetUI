@@ -30,7 +30,7 @@ maven {
 }
 ```
 ```groovy
-compileOnly("com.github.wairesd:DiscordBM:<b>PLATFORM</b>-1.0.1")
+compileOnly("com.github.wairesd:DiscordBM:${platform}-1.0.1")
 ```
 
 ### Available Platforms
