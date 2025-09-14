@@ -1,0 +1,45 @@
+plugins {
+    alias(libs.plugins.blossom)
+    alias(libs.plugins.shadow)
+}
+
+blossom {
+    replaceTokenIn('src/main/java/com/wairesd/discordbm/velocity/DBMVelocityPlugin.java')
+    replaceToken '@version@', project.ext.fullVersion
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://repo.alessiodp.com/releases/' }
+}
+
+dependencies {
+    implementation project(":adapters:discordbm:common:host-common")
+    implementation project(":adapters:discordbm:api:velocity-api")
+    implementation project(":adapters:discordbm:common")
+
+    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    implementation("net.byteflux:libby-velocity:1.3.1")
+    compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
+    compileOnly("com.google.code.gson:gson:2.10.1")
+}
+
+shadowJar {
+    archiveFileName = "DiscordBM-Velocity-${project.ext.fullVersion}.jar"
+
+    dependencies {
+        include(dependency("net.byteflux:libby-velocity:1.3.1"))
+        include(dependency("com.squareup.okhttp3:okhttp:4.12.0"))
+        include(dependency("com.google.code.gson:gson:2.10.1"))
+    }
+
+    relocate 'net.byteflux', 'com.wairesd.discordbm.lib.byteflux'
+    relocate 'okhttp3', 'com.wairesd.discordbm.lib.okhttp3'
+    relocate 'com.google.gson', 'com.wairesd.discordbm.lib.gson'
+}
+
+artifacts {
+    archives shadowJar
+}

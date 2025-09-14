@@ -1,0 +1,43 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.wairesd.discordbm'
+version = properties['version']
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+dependencies {
+    implementation project(':adapters:discordbm:api')
+
+    compileOnly("io.netty:netty-all:4.2.2.Final")
+    compileOnly("org.yaml:snakeyaml:2.0")
+    compileOnly("org.apache.logging.log4j:log4j-api:2.25.0")
+    compileOnly("org.apache.logging.log4j:log4j-core:2.25.0")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:4.23.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.23.0")
+    compileOnly("net.kyori:adventure-api:4.23.0")
+    compileOnly("com.google.code.gson:gson:2.13.1")
+    compileOnly("org.slf4j:slf4j-api:1.7.36")
+    compileOnly("com.google.guava:guava:33.4.8-jre")
+    compileOnly("net.kyori:event-method:3.0.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+}
