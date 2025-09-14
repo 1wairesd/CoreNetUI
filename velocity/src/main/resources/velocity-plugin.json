@@ -1,9 +1,0 @@
-{
-  "id": "discordbm",
-  "name": "DiscordBM",
-  "version": "${version}",
-  "description": "Description of your plugin",
-  "authors": ["1wairesd"],
-  "dependencies": [],
-  "main": "com.wairesd.discordbm.velocity.DBMVelocityPlugin"
-}

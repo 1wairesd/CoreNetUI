@@ -1,5 +1,0 @@
-# Конфиг для DBMGuiManager
-# Формат отображения времени клиента:
-# 'short' - <day>:<hours>:<minute>:<sec>
-# 'long'  - <time> дней <time> часов <time> минут <time> секунд
-uptime-format: short 

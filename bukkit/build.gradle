@@ -1,5 +1,5 @@
 plugins {
-    id 'xyz.jpenilla.run-paper' version '2.3.1'
+    id 'java-library'
 }
 
 group = 'com.wairesd.discordbm.bukkit'
@@ -24,41 +24,4 @@ dependencies {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs.add("-Xlint:deprecation")
-    options.encoding = 'UTF-8'
-    options.release.set(17)
-}
-
-tasks.named('compileJava') {
-    dependsOn(':common:build')
-}
-
-tasks.named('jar') {
-    enabled = false
-}
-
-tasks.named('shadowJar') {
-    dependsOn(':common:build', ':api:build')
-    archiveBaseName.set('DiscordBM-Bukkit')
-    archiveClassifier.set('')
-    mergeServiceFiles()
-}
-
-tasks.named('build') {
-    dependsOn(tasks.named('shadowJar'))
-}
-
-tasks.named('runServer') {
-    minecraftVersion("1.20.4")
-}
-
-tasks.named('processResources') {
-    def props = [version: version]
-    filteringCharset = 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand(props)
-    }
 }
