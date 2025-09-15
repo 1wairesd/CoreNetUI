@@ -14,7 +14,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly project(":adapters:discordbm:api:bukkit-api")
     compileOnly("com.jodexindustries.donatecase:spigot-api:2.1.0.5")
     compileOnly("com.wairesd.dceverydaycase:api:2.0")
 

@@ -9,20 +9,20 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'corenetui'
+rootProject.name = 'flexcore'
 
 include(
         ':adapters',
         ':adapters:discordbm',
         ':adapters:discordbm:api',
-        ':adapters:discordbm:api:velocity-api',
-        ':adapters:discordbm:api:bukkit-api',
         ':adapters:discordbm:common',
         ':adapters:discordbm:common:client-common',
         ':adapters:discordbm:common:host-common',
-        ':adapters:discordbm:velocity',
-        ':adapters:discordbm:bukkit',
-        ':adapters:discordbm:addons',
-        ':adapters:discordbm:addons:DBMGuiManager',
-        ':adapters:discordbm:addons:DBMDonateCase'
+        ':adapters:discordbm:adapter',
+        ':core:api',
+        ':core:impl',
+        ':wrappers:velocity',
+        ':wrappers:bukkit',
+        // ':adapters:discordbm:addons:DBMGuiManager',
+        // ':adapters:discordbm:addons:DBMDonateCase'
 )
