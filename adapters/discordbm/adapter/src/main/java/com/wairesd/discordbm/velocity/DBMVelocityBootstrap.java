@@ -7,10 +7,10 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 
 @Plugin(id = "discordbm", name = "DiscordBM", version = "1.0", authors = {"wairesd"})
-public class DBMVelocityBootstrap {
+public class DBMBootstrap {
 
     @Inject
-    public DBMVelocityBootstrap() {
+    public DBMBootstrap() {
     }
 
     @Subscribe
