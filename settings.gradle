@@ -4,18 +4,21 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'discordbm'
+rootProject.name = 'DiscordBM'
 
 include(
-        ':api',
+        'api',
         ':api:velocity-api',
         ':api:bukkit-api',
-        ':common',
+        'common',
         ':common:client-common',
         ':common:host-common',
-        ':velocity',
-        ':bukkit',
-        ':addons',
-        ':addons:DBMGuiManager',
-        ':addons:DBMDonateCase'
+        'velocity',
+        'bukkit',
 )
+
+file("addons").listFiles()?.each { dir ->
+    if (dir.directory) {
+        include("addons:${dir.name}")
+    }
+}
