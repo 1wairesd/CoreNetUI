@@ -5,7 +5,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
 
-    group = 'com.wairesd.discordbm'
+    group = 'com.wairesd.flexcore'
     version = '1.0'
 
     sourceCompatibility = 17

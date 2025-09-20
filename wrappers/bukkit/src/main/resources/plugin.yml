@@ -1,0 +1,4 @@
+name: bukkit
+version: '1.0'
+main: com.wairesdindustries.flexcore.bukkit.FCBukkitBootstrap
+api-version: '1.21'

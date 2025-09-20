@@ -1,0 +1,40 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.wairesd.discordbm'
+version = properties['version']
+
+repositories {
+    mavenCentral()
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    maven { url = "https://oss.sonatype.org/content/groups/public/" }
+    maven { url = "https://repo.jodex.xyz/releases" }
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    implementation("com.jodexindustries.jguiwrapper:common:1.0.0.3")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+// Просто обычный JAR, без Shadow
+jar {
+    archiveBaseName.set('DBMGuiManager')
+}
