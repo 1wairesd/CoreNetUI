@@ -18,9 +18,9 @@ PROJECT IS CURRENTLY IN BETA VERSION
 ```
 ```xml
 <dependency>
-  <groupId>com.github.wairesd</groupId>
+  <groupId>com.github.wairesdindustries</groupId>
   <artifactId>DiscordBM</artifactId>
-  <version><PLATFORM>-1.0.1</version>
+  <version>paper-1.0.0</version>
 </dependency>
 ```
 > Gradle
@@ -30,15 +30,5 @@ maven {
 }
 ```
 ```groovy
-compileOnly("com.github.wairesd:DiscordBM:<PLATFORM>-1.0.1")
-```
-
-### Available Platforms
-- `api` - Core API
-- `bukkit-api` - Bukkit API
-- `velocity-api` - Velocity API
-
-### Usage Examples
-```groovy
-compileOnly("com.github.wairesd:DiscordBM:api-1.0.0")
+compileOnly("com.github.wairesdindustries:DiscordBM:paper-1.0.0")
 ```
