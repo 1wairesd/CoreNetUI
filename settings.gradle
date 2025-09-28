@@ -8,13 +8,9 @@ rootProject.name = 'DiscordBM'
 
 include(
         'api',
-        ':api:velocity-api',
-        ':api:bukkit-api',
+        ':api:paper-api',
         'common',
-        ':common:client-common',
-        ':common:host-common',
-        'velocity',
-        'bukkit',
+        'paper',
 )
 
 file("addons").listFiles()?.each { dir ->

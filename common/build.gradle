@@ -1,0 +1,12 @@
+group = 'com.wairesdindustries.discordbm'
+version = properties['version']
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+dependencies {
+    implementation project(':api')
+
+}
