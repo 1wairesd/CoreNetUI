@@ -1,14 +1,7 @@
 package com.wairesd.discordbm.bukkit;
 
-import org.bukkit.plugin.java.JavaPlugin;
+public class DBMBukkitPlugin {
 
-public class DBMBukkitPlugin extends JavaPlugin {
-
-    @Override
-    public void onEnable() {
+    public DBMBukkitPlugin() {
     }
-
-    @Override
-    public void onDisable() {
-    }
-}
+} 

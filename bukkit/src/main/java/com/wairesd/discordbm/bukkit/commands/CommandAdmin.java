@@ -1,13 +1,13 @@
 package com.wairesd.discordbm.bukkit.commands;
 
-import com.wairesd.discordbm.bukkit.DBMBukkitPlugin;
+import com.wairesd.discordbm.bukkit.DBMBukkitBootstrap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class CommandAdmin implements CommandExecutor {
 
-    public CommandAdmin(DBMBukkitPlugin plugin) {
+    public CommandAdmin(DBMBukkitBootstrap plugin) {
     }
 
     @Override

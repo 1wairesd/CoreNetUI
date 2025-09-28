@@ -1,7 +1,20 @@
 package com.wairesd.discordbm.bukkit;
 
-public class DBMBukkitBootstrap  {
+import org.bukkit.plugin.java.JavaPlugin;
+import com.wairesd.discordbm.common.util.StartupTimer;
 
-    public DBMBukkitBootstrap() {
+public class DBMBukkitBootstrap extends JavaPlugin {
+    private final StartupTimer timer = new StartupTimer();
+
+    @Override
+    public void onEnable() {
+        timer.start();
+
+        timer.stop();
+        timer.printElapsed();
     }
-} 
+
+    @Override
+    public void onDisable() {
+    }
+}
